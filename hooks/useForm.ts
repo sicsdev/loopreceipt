@@ -27,8 +27,7 @@ export function useForm(
     });
   };
   const resetForm = () => {
-    // setValues(initalFormState);
-    // setErrors({});
+    setFormState(initalFormState);
   };
   return {
     formState,

@@ -1,90 +1,23 @@
 import Navbar from "@components/Navbar";
 
 import Button from "@components/Button";
-import InputBox from "@components/Controls/InputBox";
+
 import { makeStyles } from "@material-ui/core";
-import { useForm } from "@hooks/useForm";
+
 import { useState } from "react";
 import ConfirmDialog from "@components/ConfirmDialog";
 import Image from "next/image";
-import InputType from "@interfaces/InputType";
+import { useForm } from "@hooks/useForm";
+
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
-import validations from "@helpers/validations";
-
-const initialFormState: {
-  [key: string]: InputType;
-} = {
-  receivingCompanyName: {
-    name: "receivingCompanyName",
-    label: "Receiving Company Name",
-    placeholder: "Your full name",
-    value: "",
-    type: "text",
-
-    validate: function () {
-      return (
-        // we can give custom message to validation
-        validations.isRequired(this, "Receiving Company Name can't be empty") &&
-        validations.minMaxLength({ min: 5 })(this)
-        // this way we can chain validations
-      );
-    },
-  },
-
-  shippingAddress: {
-    name: "shippingAddress",
-    label: "Shipping Address",
-    placeholder: "Your full name",
-    value: "",
-    type: "text",
-
-    validate: function () {
-      return validations.minMaxLength({ max: 5 })(this);
-      // default validation message is used
-    },
-  },
-  country: {
-    name: "country",
-    label: "Country",
-    placeholder: "Your full name",
-    value: "",
-    type: "text",
-    validate: function () {
-      return validations.isRequired(this);
-    },
-    errorText: "custom error",
-    customError: true,
-    // now custom error message is given to field
-    // this message will override all the validation messages
-  },
-  city: {
-    name: "city",
-    label: "City",
-    placeholder: "Your full name",
-    value: "",
-    type: "text",
-  },
-  province: {
-    name: "province",
-    label: "Province",
-    placeholder: "Your full name",
-    value: "",
-    type: "text",
-  },
-  zipCode: {
-    name: "zipCode",
-    label: "Zip Code",
-    placeholder: "Your full name",
-    value: "",
-    type: "number",
-  },
-};
+import Form from "@components/Form";
+import recepientDetailsForm from "forms/recepientDetailsForm";
+import companyDetailsForm from "forms/companyDetailsForm";
+const forms = [recepientDetailsForm, companyDetailsForm];
 function Home() {
   const styles = useStyles();
-  const { formState, handleInputChange, setFormState } = useForm(
-    initialFormState,
-    false
-  );
+  const [activeFormIndex, setActiveFormIndex] = useState(0);
+  const formsProps = forms.map((form) => useForm(form.initialState, false));
   const [searchInput, setSearchInput] = useState("");
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
@@ -97,47 +30,33 @@ function Home() {
     },
   });
   const handleSubmit = () => {
-    validateAllFields();
+    let allValid = validateAllFields();
+    if (allValid) {
+      console.log("all fields are valid");
+      // formsProps[activeFormIndex].resetForm();
+      forms[activeFormIndex].submit(formsProps[activeFormIndex].formState);
+    }
   };
-  const validateField = (fieldName: string) => {
-    setFormState((prevFormState) => {
-      const updatedFormState = { ...prevFormState };
-
-      const input = { ...updatedFormState[fieldName] };
+  const validateAllFields = () => {
+    let allValid = true;
+    const updatedFormState = { ...formsProps[activeFormIndex].formState };
+    for (const name in updatedFormState) {
+      const input = { ...updatedFormState[name] };
       if (input.validate) {
         const valid = input.validate();
         // console.log(valid);
         if (!valid) {
           input.error = input.errorText;
+          allValid = false;
         } else {
           input.error = "";
         }
         // console.log(input);
-        updatedFormState[fieldName] = input;
+        updatedFormState[name] = input;
       }
-
-      return updatedFormState;
-    });
-  };
-  const validateAllFields = () => {
-    setFormState((prevFormState) => {
-      const updatedFormState = { ...prevFormState };
-      for (const name in updatedFormState) {
-        const input = { ...updatedFormState[name] };
-        if (input.validate) {
-          const valid = input.validate();
-          // console.log(valid);
-          if (!valid) {
-            input.error = input.errorText;
-          } else {
-            input.error = "";
-          }
-          // console.log(input);
-          updatedFormState[name] = input;
-        }
-      }
-      return updatedFormState;
-    });
+    }
+    formsProps[activeFormIndex].setFormState(updatedFormState);
+    return allValid;
   };
   return (
     <div>
@@ -169,31 +88,32 @@ function Home() {
             }}
           ></Button>
           <Button
+            text="Prev"
+            variant="contained"
+            onClick={() => {
+              // handleSubmit();
+              if (activeFormIndex > 0) setActiveFormIndex(activeFormIndex - 1);
+            }}
+          ></Button>
+          <Button
             text="Next"
             variant="contained"
             onClick={() => {
-              console.log(formState);
+              // handleSubmit();
+              if (activeFormIndex < forms.length - 1)
+                setActiveFormIndex(activeFormIndex + 1);
+            }}
+          ></Button>
+          <Button
+            text="Submit"
+            variant="contained"
+            onClick={() => {
               handleSubmit();
             }}
           ></Button>
         </div>
         <div className="rest">
-          <form>
-            {Object.keys(formState).map((inputName, i) => {
-              // console.log(inputName);
-              const input = formState[inputName];
-              return (
-                <InputBox
-                  key={i}
-                  input={input}
-                  onChange={handleInputChange}
-                  onBlur={(e) => {
-                    validateField(inputName);
-                  }}
-                />
-              );
-            })}
-          </form>
+          <Form {...formsProps[activeFormIndex]} validateOnBlur={true} />
         </div>
       </div>
     </div>
