@@ -1,31 +1,40 @@
+import InputType from "@interfaces/InputType";
 import { useState } from "react";
 export function useForm(
-  initialFValues: any,
-  validate: any,
+  initalFormState: {
+    [key: string]: InputType;
+  },
   validateOnChange = false
 ) {
-  const [values, setValues] = useState(initialFValues);
-  const [errors, setErrors] = useState<any>({});
-  const handleInputChange = (e: any) => {
+  const [formState, setFormState] = useState(initalFormState);
+  const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const { name, value } = e.target;
-    setValues({
-      ...values,
-      [name]: value,
+    // console.log(name);
+    // console.log(value);
+    setFormState(() => {
+      const updatedFormField = { ...formState[name], value };
+      if (updatedFormField.error || validateOnChange) {
+        if (updatedFormField.validate?.()) {
+          updatedFormField.error = "";
+        } else {
+          updatedFormField.error = updatedFormField.errorText;
+        }
+      }
+      return {
+        ...formState,
+        [name]: updatedFormField,
+      };
     });
-    if (validateOnChange) {
-      validate({ [name]: value });
-    }
   };
   const resetForm = () => {
-    setValues(initialFValues);
-    setErrors({});
+    // setValues(initalFormState);
+    // setErrors({});
   };
   return {
-    values,
-    setValues,
+    formState,
+    setFormState,
     handleInputChange,
-    errors,
-    setErrors,
+
     resetForm,
   };
 }

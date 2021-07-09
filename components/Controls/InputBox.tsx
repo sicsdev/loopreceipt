@@ -1,29 +1,25 @@
+import InputType from "@interfaces/InputType";
 import { makeStyles } from "@material-ui/core";
 
 interface InputBoxProps {
-  label?: string;
-  placeholder?: string;
-  value?: string;
-  name?: string;
+  input: InputType;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
 }
-function InputBox({
-  label,
-  name,
-  placeholder,
-  value,
-  onChange,
-}: InputBoxProps) {
-  const classes = useStyles();
+function InputBox({ input, onChange, onBlur }: InputBoxProps) {
+  const styles = useStyles();
   return (
-    <div className={classes.inputBox}>
-      <label className="label">{label}</label>
+    <div className={styles.inputBox}>
+      <label className="label">{input.label}</label>
       <input
-        name={name}
-        value={value}
+        type={input.type}
+        name={input.name}
+        value={input.value}
         onChange={onChange}
-        placeholder={placeholder}
+        placeholder={input.placeholder}
+        onBlur={onBlur}
       ></input>
+      <p className="error">{input.error}</p>
     </div>
   );
 }
@@ -31,9 +27,8 @@ function InputBox({
 export default InputBox;
 const useStyles = makeStyles((theme) => ({
   inputBox: {
-    padding: "1rem",
     "& .label": {
-      display: "inline-block",
+      display: "block",
       fontWeight: "bold",
       marginBottom: ".5rem",
       fontSize: "1.1rem",
@@ -44,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: "4px",
       border: "1px solid #DDDDDD",
       outline: "none",
+    },
+    "& .error": {
+      color: "red",
     },
   },
 }));

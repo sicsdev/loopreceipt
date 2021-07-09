@@ -1,17 +1,31 @@
 import { makeStyles } from "@material-ui/core";
+import Image from "next/image";
 interface NavbarPropTypes {}
 const Navbar = ({}: NavbarPropTypes) => {
-  const classes = useStyles();
+  const styles = useStyles();
 
   return (
-    <div className={classes.navbar}>
-      <div className="logo"></div>
+    <div className={styles.navbar}>
+      <div className="logo">
+        <Image src="/icons/logo.png" width="189" height="58" />
+      </div>
       <div className="items">
-        <div className="item">i</div>
-        <div className="item">i</div>
         <div className="item">
-          <div className="image"></div>
-          <p className="text">Account</p>i
+          <Image src="/icons/search.svg" width="20" height="20" />
+        </div>
+        <div className="item">
+          <Image src="/icons/bell.svg" width="20" height="20" />
+        </div>
+        <div className="item">
+          <Image src="/icons/message.svg" width="20" height="20" />
+        </div>
+        <div className="item">
+          <div className="image">
+            {" "}
+            <Image src="/icons/profile.png" width="36" height="36" />
+          </div>
+          <p className="text">Account</p>
+          <Image src="/icons/arrow-down.svg" width="20" height="20" />
         </div>
       </div>
     </div>
@@ -22,6 +36,7 @@ export default Navbar;
 
 const useStyles = makeStyles({
   navbar: {
+    zIndex: 10,
     position: "fixed",
     top: 0,
     height: "70px",
@@ -31,10 +46,12 @@ const useStyles = makeStyles({
     display: "flex",
     "& .logo": {
       flexBasis: "250px",
-      background: "red",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     },
     "& .items": {
-      border: "2px solid red",
+      // border: "2px solid red",
       display: "flex",
       flex: 1,
       justifyContent: "flex-end",
@@ -43,16 +60,11 @@ const useStyles = makeStyles({
         border: "1px solid #F5F6F9",
 
         background: "white",
-        padding: "0 1rem",
+        padding: "0 2rem",
         display: "flex",
         alignItems: "center",
         gap: "10px",
-        "& .image": {
-          width: "30px",
-          height: "30px",
-          borderRadius: "50%",
-          background: "green",
-        },
+        "& .image": {},
       },
     },
   },

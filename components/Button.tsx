@@ -15,16 +15,17 @@ function Button({
   text,
   ...other
 }: ButtonPropTypes) {
-  const classes = useStyles();
+  const styles = useStyles();
   return (
     <MuiButton
+      className={styles.root}
       variant={variant}
       size={size}
       color={color}
       onClick={onClick}
       {...other}
       classes={{
-        label: classes.label,
+        label: styles.label,
       }}
     >
       {text}
@@ -34,6 +35,9 @@ function Button({
 
 export default Button;
 const useStyles = makeStyles((theme) => ({
+  root: {
+    borderRadius: "8px",
+  },
   label: {
     fontWeight: "bold",
     textTransform: "none",
