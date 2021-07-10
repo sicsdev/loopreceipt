@@ -1,4 +1,5 @@
 import { Button as MuiButton, makeStyles } from "@material-ui/core";
+import classNames from "classnames";
 interface ButtonPropTypes {
   variant?: "text" | "outlined" | "contained";
   size?: "medium" | "large" | "small";
@@ -6,6 +7,7 @@ interface ButtonPropTypes {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   text?: string;
   other?: object;
+  shrink?: boolean;
 }
 function Button({
   variant = "contained",
@@ -13,17 +15,16 @@ function Button({
   color = "primary",
   onClick,
   text,
-  ...other
+  shrink = false,
 }: ButtonPropTypes) {
   const styles = useStyles();
   return (
     <MuiButton
-      className={styles.root}
+      className={classNames(styles.root, { shrink: "shrink" })}
       variant={variant}
       size={size}
       color={color}
       onClick={onClick}
-      {...other}
       classes={{
         label: styles.label,
       }}
@@ -36,7 +37,11 @@ function Button({
 export default Button;
 const useStyles = makeStyles((theme) => ({
   root: {
-    borderRadius: "8px",
+    borderRadius: 8,
+    "&.shrink": {
+      paddingTop: 1,
+      paddingBottom: 1,
+    },
   },
   label: {
     fontWeight: "bold",

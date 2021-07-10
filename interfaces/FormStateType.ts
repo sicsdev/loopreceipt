@@ -1,5 +1,5 @@
 import InputType from "@interfaces/InputType";
 
-export default interface FormState {
+export default interface FormStateType {
   [key: string]: InputType;
 }

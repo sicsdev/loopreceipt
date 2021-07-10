@@ -1,6 +1,12 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { createTheme, ThemeProvider, CssBaseline } from "@material-ui/core";
+import {
+  createTheme,
+  ThemeProvider,
+  CssBaseline,
+  makeStyles,
+} from "@material-ui/core";
+import Navbar from "@components/Navbar";
 const theme = createTheme({
   palette: {
     primary: {
@@ -9,9 +15,13 @@ const theme = createTheme({
   },
 });
 function MyApp({ Component, pageProps }: AppProps) {
+  const styles = useStyles();
   return (
     <ThemeProvider theme={theme}>
-      <Component {...pageProps} />
+      <Navbar />
+      <div className={styles.content}>
+        <Component {...pageProps} />
+      </div>
       <CssBaseline />
       {/* this sets up the base styles for the app
       like fontFamilty: 'Roboto' * { boxSizing: 'border-box'} */}
@@ -19,3 +29,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 export default MyApp;
+const useStyles = makeStyles((theme) => ({
+  content: {
+    // border: "1px solid blue",
+    marginTop: 70, // 70px is navbar height
+  },
+}));

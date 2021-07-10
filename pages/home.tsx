@@ -1,5 +1,3 @@
-import Navbar from "@components/Navbar";
-
 import Button from "@components/Button";
 
 import { makeStyles } from "@material-ui/core";
@@ -13,6 +11,7 @@ import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 import Form from "@components/Form";
 import recepientDetailsForm from "forms/recepientDetailsForm";
 import companyDetailsForm from "forms/companyDetailsForm";
+import Box from "@components/Box";
 const forms = [recepientDetailsForm, companyDetailsForm];
 function Home() {
   const styles = useStyles();
@@ -59,9 +58,8 @@ function Home() {
     return allValid;
   };
   return (
-    <div>
-      <Navbar />
-      <div className={styles.container}>
+    <Box>
+      <div className={styles.root}>
         <ConfirmDialog
           confirmDialog={confirmDialog}
           setConfirmDialog={setConfirmDialog}
@@ -69,6 +67,7 @@ function Home() {
         <div className="top">
           <div className="searchBar">
             <input
+              className={"searchInput"}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Enter name, email or user group"
@@ -80,6 +79,7 @@ function Home() {
           <Button
             text="Cancel"
             variant="text"
+            shrink
             onClick={() => {
               setConfirmDialog({
                 ...confirmDialog,
@@ -90,6 +90,7 @@ function Home() {
           <Button
             text="Prev"
             variant="contained"
+            shrink
             onClick={() => {
               // handleSubmit();
               if (activeFormIndex > 0) setActiveFormIndex(activeFormIndex - 1);
@@ -98,6 +99,7 @@ function Home() {
           <Button
             text="Next"
             variant="contained"
+            shrink
             onClick={() => {
               // handleSubmit();
               if (activeFormIndex < forms.length - 1)
@@ -107,6 +109,7 @@ function Home() {
           <Button
             text="Submit"
             variant="contained"
+            shrink
             onClick={() => {
               handleSubmit();
             }}
@@ -116,24 +119,18 @@ function Home() {
           <Form {...formsProps[activeFormIndex]} validateOnBlur={true} />
         </div>
       </div>
-    </div>
+    </Box>
   );
 }
 
 export default Home;
 const useStyles = makeStyles({
-  container: {
-    marginTop: "calc(70px + 2rem)",
-    borderRadius: "4px",
-    border: "1px solid #A09E9E",
-    width: "80%",
-    margin: "auto",
-    minHeight: "80vh",
-
+  root: {
     "& .top": {
       padding: "1rem",
       borderBottom: "2px solid #DDDDDD",
       display: "flex",
+      alignItems: "center",
       gap: 10,
       "& .searchBar": {
         position: "relative",
@@ -144,7 +141,7 @@ const useStyles = makeStyles({
         padding: 8,
         borderRadius: 12,
         boxShadow: "0px 2px 4px rgba(97, 97, 97, 0.18)",
-        "& input": {
+        "& .searchInput": {
           backgroundColor: "#e9e9e9",
           outline: "none",
           border: "none",

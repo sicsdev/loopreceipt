@@ -11,30 +11,6 @@ import {
 import React from "react";
 import Button from "@components/Button";
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
-const useStyles = makeStyles((theme) => ({
-  dialog: {
-    padding: theme.spacing(2),
-    position: "absolute",
-    top: theme.spacing(5),
-  },
-  dialogContent: {
-    textAlign: "center",
-  },
-  dialogActions: {
-    justifyContent: "center",
-  },
-  titleIcon: {
-    backgroundColor: theme.palette.secondary.light,
-    color: theme.palette.secondary.main,
-    "&:hover": {
-      backgroundColor: theme.palette.secondary.light,
-      cursor: "default",
-    },
-    "& .MuiSvgIcon-root": {
-      fontSize: "8rem",
-    },
-  },
-}));
 
 interface ConfirmDialogProps {
   confirmDialog: ConfirmDialogType;
@@ -78,3 +54,27 @@ export default function ConfirmDialog({
     </Dialog>
   );
 }
+const useStyles = makeStyles((theme) => ({
+  dialog: {
+    padding: theme.spacing(2),
+    position: "absolute",
+    top: theme.spacing(5),
+  },
+  dialogContent: {
+    textAlign: "center",
+  },
+  dialogActions: {
+    justifyContent: "center",
+  },
+  titleIcon: {
+    backgroundColor: theme.palette.secondary.light,
+    color: theme.palette.secondary.main,
+    "&:hover": {
+      backgroundColor: theme.palette.secondary.light,
+      cursor: "default",
+    },
+    "& .MuiSvgIcon-root": {
+      fontSize: "8rem",
+    },
+  },
+}));

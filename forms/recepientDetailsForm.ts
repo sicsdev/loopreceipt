@@ -1,9 +1,9 @@
 import validations from "@helpers/validations";
-import FormState from "@interfaces/FormState";
+import FormStateType from "@interfaces/FormStateType";
 
 const recepientDetailsForm: {
-  initialState: FormState;
-  submit: (formState: FormState) => void;
+  initialState: FormStateType;
+  submit: (formState: FormStateType) => void;
 } = {
   submit: (formState) => {
     console.log(formState);
