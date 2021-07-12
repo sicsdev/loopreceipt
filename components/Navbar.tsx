@@ -36,7 +36,7 @@ export default Navbar;
 
 const useStyles = makeStyles({
   root: {
-    zIndex: 10,
+    zIndex: 100,
     position: "fixed",
     top: 0,
     height: "70px",

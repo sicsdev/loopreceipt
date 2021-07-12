@@ -42,12 +42,14 @@ const SidebarItem = ({ iconSrc, text, active, onClick }: SidebarItemProps) => {
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    background: "white",
     width: 250,
     display: "flex",
     flexDirection: "column",
     paddingTop: "2rem",
     // filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
     borderRight: "2px solid #E5E5E5",
+    position: "fixed",
     height: "100vh",
   },
   item: {

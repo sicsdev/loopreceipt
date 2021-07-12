@@ -33,13 +33,11 @@ export default function ConfirmDialog({
         <Typography variant="subtitle2">{confirmDialog.subTitle}</Typography>
       </DialogContent>
       <DialogActions className={styles.dialogActions}>
+        <Button color="primary" onClick={confirmDialog.onConfirm} size="small">
+          {confirmDialog.confirmText}
+        </Button>
+
         <Button
-          text={confirmDialog.confirmText}
-          color="primary"
-          onClick={confirmDialog.onConfirm}
-        />
-        <Button
-          text={confirmDialog.cancelText}
           variant="text"
           onClick={() =>
             setConfirmDialog((prev) => {
@@ -49,7 +47,10 @@ export default function ConfirmDialog({
               };
             })
           }
-        />
+          size="small"
+        >
+          {confirmDialog.cancelText}
+        </Button>
       </DialogActions>
     </Dialog>
   );

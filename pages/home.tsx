@@ -12,6 +12,8 @@ import Form from "@components/Form";
 import recepientDetailsForm from "forms/recepientDetailsForm";
 import companyDetailsForm from "forms/companyDetailsForm";
 import Box from "@components/Box";
+import UpperBar from "@components/UpperBar";
+import SearchCard from "@components/SearchCard";
 const forms = [recepientDetailsForm, companyDetailsForm];
 function Home() {
   const styles = useStyles();
@@ -58,113 +60,160 @@ function Home() {
     return allValid;
   };
   return (
-    <Box>
-      <div className={styles.root}>
-        <ConfirmDialog
-          confirmDialog={confirmDialog}
-          setConfirmDialog={setConfirmDialog}
-        />
-        <div className="top">
-          <div className="searchBar">
-            <input
-              className={"searchInput"}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Enter name, email or user group"
-            />
-            <div className="image">
-              <Image src="/icons/search-gray.svg" width={19} height={19} />
-            </div>
+    <div>
+      <UpperBar>
+        <div className={styles.upperBar}>
+          <div className="button">
+            <Button expand>Back</Button>
           </div>
-          <Button
-            text="Cancel"
-            variant="text"
-            shrink
-            onClick={() => {
-              setConfirmDialog({
-                ...confirmDialog,
-                isOpen: true,
-              });
+
+          <div className="info">
+            <p>Step 1 of 3</p>
+            <p>Add Recp Details</p>
+          </div>
+          <div
+            className="button"
+            style={{
+              visibility: "hidden",
             }}
-          ></Button>
-          <Button
-            text="Prev"
-            variant="contained"
-            shrink
-            onClick={() => {
-              // handleSubmit();
-              if (activeFormIndex > 0) setActiveFormIndex(activeFormIndex - 1);
-            }}
-          ></Button>
-          <Button
-            text="Next"
-            variant="contained"
-            shrink
-            onClick={() => {
-              // handleSubmit();
-              if (activeFormIndex < forms.length - 1)
-                setActiveFormIndex(activeFormIndex + 1);
-            }}
-          ></Button>
-          <Button
-            text="Submit"
-            variant="contained"
-            shrink
-            onClick={() => {
-              handleSubmit();
-            }}
-          ></Button>
+          >
+            <Button expand>Back</Button>
+          </div>
         </div>
-        <div className="rest">
-          <Form {...formsProps[activeFormIndex]} validateOnBlur={true} />
+      </UpperBar>
+      <Box>
+        <div>
+          <ConfirmDialog
+            confirmDialog={confirmDialog}
+            setConfirmDialog={setConfirmDialog}
+          />
+
+          <div className={styles.top}>
+            <div className="searchBar">
+              <input
+                className={"searchInput"}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Enter name, email or user group"
+              />
+              <div className="image">
+                <Image src="/icons/search-gray.svg" width={19} height={19} />
+              </div>
+              {searchInput && <SearchCard searchString={searchInput} />}
+            </div>
+            <Button
+              variant="text"
+              size="large"
+              shrink
+              onClick={() => {
+                setConfirmDialog({
+                  ...confirmDialog,
+                  isOpen: true,
+                });
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              shrink
+              onClick={() => {
+                // handleSubmit();
+                if (activeFormIndex > 0)
+                  setActiveFormIndex(activeFormIndex - 1);
+              }}
+            >
+              Prev
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              shrink
+              onClick={() => {
+                // handleSubmit();
+                if (activeFormIndex < forms.length - 1)
+                  setActiveFormIndex(activeFormIndex + 1);
+              }}
+            >
+              Next
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              shrink
+              onClick={() => {
+                handleSubmit();
+              }}
+            >
+              Submit
+            </Button>
+          </div>
+          <div className={styles.rest}>
+            <Form {...formsProps[activeFormIndex]} validateOnBlur={true} />
+          </div>
         </div>
-      </div>
-    </Box>
+      </Box>
+    </div>
   );
 }
 
 export default Home;
 const useStyles = makeStyles({
-  root: {
-    "& .top": {
-      padding: "1rem",
-      borderBottom: "2px solid #DDDDDD",
+  upperBar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "80%",
+    margin: "auto",
+    "& .button": {
+      width: 100,
+    },
+    "& .info": {
+      fontWeight: "bold",
+      display: "flex",
+      gap: 10,
+    },
+  },
+  top: {
+    padding: "1rem",
+    borderBottom: "2px solid #DDDDDD",
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    "& .searchBar": {
+      position: "relative",
       display: "flex",
       alignItems: "center",
-      gap: 10,
-      "& .searchBar": {
-        position: "relative",
+      flexBasis: "60%",
+      marginRight: "auto",
+      padding: 8,
+      borderRadius: 12,
+      boxShadow: "0px 2px 4px rgba(97, 97, 97, 0.18)",
+      "& .searchInput": {
+        backgroundColor: "#e9e9e9",
+        outline: "none",
+        border: "none",
+        height: "100%",
+        width: "100%",
+        borderRadius: 8,
+        padding: 8,
+      },
+      "& .image": {
         display: "flex",
         alignItems: "center",
-        flexBasis: "60%",
-        marginRight: "auto",
-        padding: 8,
-        borderRadius: 12,
-        boxShadow: "0px 2px 4px rgba(97, 97, 97, 0.18)",
-        "& .searchInput": {
-          backgroundColor: "#e9e9e9",
-          outline: "none",
-          border: "none",
-          height: "100%",
-          width: "100%",
-          borderRadius: 8,
-          padding: 8,
-        },
-        "& .image": {
-          display: "flex",
-          alignItems: "center",
-          position: "absolute",
-          right: 20,
-        },
+        position: "absolute",
+        right: 20,
       },
     },
-    "& .rest": {
-      padding: "2rem",
-      "& form": {
-        display: "flex",
-        flexDirection: "column",
-        gap: "2rem",
-      },
+  },
+  rest: {
+    padding: "2rem",
+    minHeight: "80vh",
+    "& form": {
+      display: "flex",
+      flexDirection: "column",
+      gap: "2rem",
     },
   },
 });
