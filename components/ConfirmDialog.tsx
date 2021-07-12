@@ -58,8 +58,6 @@ export default function ConfirmDialog({
 const useStyles = makeStyles((theme) => ({
   dialog: {
     padding: theme.spacing(2),
-    position: "absolute",
-    top: theme.spacing(5),
   },
   dialogContent: {
     textAlign: "center",

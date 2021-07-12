@@ -7,6 +7,8 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import Navbar from "@components/Navbar";
+import { Provider } from "react-redux";
+import store from "@store/store";
 const theme = createTheme({
   palette: {
     primary: {
@@ -17,15 +19,17 @@ const theme = createTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   const styles = useStyles();
   return (
-    <ThemeProvider theme={theme}>
-      <Navbar />
-      <div className={styles.content}>
-        <Component {...pageProps} />
-      </div>
-      <CssBaseline />
-      {/* this sets up the base styles for the app
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <Navbar />
+        <div className={styles.content}>
+          <Component {...pageProps} />
+        </div>
+        <CssBaseline />
+        {/* this sets up the base styles for the app
       like fontFamilty: 'Roboto' * { boxSizing: 'border-box'} */}
-    </ThemeProvider>
+      </ThemeProvider>
+    </Provider>
   );
 }
 export default MyApp;

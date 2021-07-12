@@ -69,6 +69,7 @@ const Create = ({}: CreateProps) => {
             <OptionCard
               iconSrc="/icons/create/delivery-notification.svg"
               text="Create a delivery notification"
+              onClick={() => setShow(!show)}
             />
             <OptionCard
               iconSrc="/icons/create/add-user.svg"
@@ -137,6 +138,7 @@ const useStyles = makeStyles((theme) => ({
     "& .cards": {
       display: "flex",
       justifyContent: "center",
+      gap: 30,
     },
   },
 }));

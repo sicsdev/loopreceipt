@@ -3,11 +3,12 @@ import Image from "next/image";
 interface OptionCardProps {
   iconSrc: string;
   text: string;
+  onClick?: React.MouseEventHandler<any>;
 }
-const OptionCard = ({ iconSrc, text }: OptionCardProps) => {
+const OptionCard = ({ iconSrc, text, onClick }: OptionCardProps) => {
   const styles = useStyles();
   return (
-    <div className={styles.root}>
+    <div className={styles.root} onClick={onClick}>
       <Image src={iconSrc} width={50} height={50} />
       <p className="text">{text}</p>
     </div>
