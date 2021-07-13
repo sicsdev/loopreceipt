@@ -1,14 +1,12 @@
 import validations from "@helpers/validations";
-import FormStateType from "@interfaces/FormStateType";
+import { FormType } from "@interfaces/FormTypes";
 
-const companyDetailsForm: {
-  initialState: FormStateType;
-  submit: (formState: FormStateType) => void;
-} = {
-  submit: (formState) => {
-    console.log(formState);
-  },
+const companyDetailsForm: FormType = {
+  formName: "companyDetailsForm",
+  formHeading: "Add Company Details",
+
   initialState: {
+    // note key and object name must be same
     shippingAddress: {
       name: "shippingAddress",
       label: "Shipping Address",

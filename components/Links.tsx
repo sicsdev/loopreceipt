@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
       fontSize: "1.2rem",
       "&.active": {
         color: "black",
-        borderBottom: "2px solid #234361",
+        borderBottom: `2px solid ${theme.palette.secondary.main}`,
       },
     },
   },

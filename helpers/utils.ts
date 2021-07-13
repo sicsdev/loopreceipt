@@ -60,3 +60,11 @@ export const largestCommonSubstring = (s1: string, s2: string) => {
   }
   return ans;
 };
+export const getLastChar = (str: string) => {
+  return str.slice(str.length - 1, str.length);
+};
+export const setLastChar = (str: string, v: string) => {
+  const arr = str.split("");
+  arr[arr.length - 1] = v;
+  return arr.join("");
+};

@@ -1,4 +1,5 @@
-export default interface InputType {
+export type InputIconType = "email" | "location" | "phone";
+export interface InputType {
   name: string;
   label: string;
   placeholder: string;
@@ -8,4 +9,5 @@ export default interface InputType {
   error?: string;
   errorText?: string;
   customError?: boolean;
+  iconType?: InputIconType;
 }

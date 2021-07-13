@@ -1,12 +1,19 @@
 import validations from "@helpers/validations";
-import FormStateType from "@interfaces/FormStateType";
+import { FormType } from "@interfaces/FormTypes";
 
-const recepientDetailsForm: {
-  initialState: FormStateType;
-  submit: (formState: FormStateType) => void;
-} = {
-  submit: (formState) => {
-    console.log(formState);
+const recipientDetailsForm: FormType = {
+  formName: "recipientDetailsForm",
+  formHeading: "Add  Recp Details",
+
+  methods: {
+    getCompleteAddress: (formState) => {
+      let ans = `${formState.province.value},
+       ${formState.city.value},
+        ${formState.country.value},
+         ${formState.city.value},
+          ${formState.zipCode.value}`;
+      return ans;
+    },
   },
   initialState: {
     receivingCompanyName: {
@@ -34,7 +41,7 @@ const recepientDetailsForm: {
       placeholder: "Your full name",
       value: "",
       type: "text",
-
+      iconType: "location",
       validate: function () {
         return validations.minMaxLength({ max: 5 })(this);
         // default validation message is used
@@ -46,6 +53,7 @@ const recepientDetailsForm: {
       placeholder: "Your full name",
       value: "",
       type: "text",
+
       validate: function () {
         return validations.isRequired(this);
         // we pass 'this' so that we can change the errorText according to
@@ -79,4 +87,4 @@ const recepientDetailsForm: {
     },
   },
 };
-export default recepientDetailsForm;
+export default recipientDetailsForm;

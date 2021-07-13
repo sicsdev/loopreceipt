@@ -6,21 +6,34 @@ import Button from "@components/Button";
 import Image from "next/image";
 import { useState } from "react";
 import OptionCard from "@components/OptionCard";
-const dialogItems = [
-  {
-    title: "Internal Loopreceipts",
-    description: "Create loops within the members of your organization.",
-    src: "/icons/create/internal.svg",
-  },
-  {
-    title: "External Looprecipts",
-    description: "Create loops with partners outside of your organization.",
-    src: "/icons/create/external.svg",
-  },
-];
+import { useRouter } from "next/router";
+import { useAppDispatch } from "@store/hooks";
+import { setType } from "@store/slices/loopReceiptSlice";
 interface CreateProps {}
 
 const Create = ({}: CreateProps) => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const dialogItems = [
+    {
+      title: "Internal Loopreceipts",
+      description: "Create loops within the members of your organization.",
+      src: "/icons/create/internal.svg",
+      click: () => {
+        dispatch(setType({ type: "internal" }));
+        router.push("/home");
+      },
+    },
+    {
+      title: "External Looprecipts",
+      description: "Create loops with partners outside of your organization.",
+      src: "/icons/create/external.svg",
+      click: () => {
+        dispatch(setType({ type: "external" }));
+        router.push("/home");
+      },
+    },
+  ];
   const styles = useStyles();
   const [show, setShow] = useState(false);
   return (
@@ -41,7 +54,7 @@ const Create = ({}: CreateProps) => {
           {show && (
             <div className={"dialog"}>
               {dialogItems.map((item, i) => (
-                <div key={i} className="item">
+                <div key={i} className="item" onClick={item.click}>
                   <Image src={item.src} width="40" height="40" />
                   <div className="content">
                     <p className={"title"}>{item.title}</p>
@@ -72,7 +85,9 @@ const Create = ({}: CreateProps) => {
             <OptionCard
               iconSrc="/icons/create/delivery-notification.svg"
               text="Create a delivery notification"
-              onClick={() => setShow(!show)}
+              onClick={() => {
+                setShow(!show);
+              }}
             />
             <OptionCard
               iconSrc="/icons/create/add-user.svg"
@@ -127,6 +142,7 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         gap: "1rem",
         padding: "1rem",
+        cursor: "pointer",
         "&:not(:last-child)": {
           borderBottom: "2px solid #F4F3F3",
         },

@@ -14,7 +14,7 @@ const SideBar = ({}: SideBarProps) => {
         text="Create Loopreceipt"
         active
       />
-      <SidebarItem iconSrc="/icons/search.svg" text="Recepients" />
+      <SidebarItem iconSrc="/icons/search.svg" text="Recipients" />
       <SidebarItem iconSrc="/icons/search.svg" text="Integration" />
     </div>
   );

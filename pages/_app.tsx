@@ -17,6 +17,9 @@ const theme = createTheme({
     secondary: {
       main: "#234361",
     },
+    text: {
+      primary: "#0F001A",
+    },
   },
 });
 function MyApp({ Component, pageProps }: AppProps) {
