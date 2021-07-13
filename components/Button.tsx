@@ -13,17 +13,24 @@ function Button({
   children,
   shrink = false,
   expand = false,
-}: ButtonProps & { shrink?: boolean; expand?: boolean }) {
+  labelColor = "black",
+  labelWeight = "normal",
+}: ButtonProps & {
+  shrink?: boolean;
+  expand?: boolean;
+  labelColor?: "black" | "white" | "gray";
+  labelWeight?: "bold" | "normal";
+}) {
   const styles = useStyles();
   return (
     <MuiButton
-      className={classNames(styles.root, { shrink, expand })}
+      className={classNames(styles.button, { shrink, expand })}
       variant={variant}
       size={size}
       color={color}
       onClick={onClick}
       classes={{
-        label: styles.label,
+        label: classNames(styles.label, labelColor, labelWeight),
       }}
     >
       {children}
@@ -33,8 +40,9 @@ function Button({
 
 export default Button;
 const useStyles = makeStyles((theme) => ({
-  root: {
+  button: {
     borderRadius: 8,
+    margin: 0,
     "&.shrink": {
       paddingTop: 2,
       paddingBottom: 2,
@@ -45,8 +53,18 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   label: {
-    fontWeight: "bold",
     textTransform: "none",
-    color: "black",
+    "&.bold": {
+      fontWeight: "bold",
+    },
+    "&.black": {
+      color: "black",
+    },
+    "&.white": {
+      color: "white",
+    },
+    "&.gray": {
+      color: "#7A7A7A",
+    },
   },
 }));

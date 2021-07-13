@@ -24,7 +24,7 @@ const Create = ({}: CreateProps) => {
   const styles = useStyles();
   const [show, setShow] = useState(false);
   return (
-    <div className={styles.root}>
+    <div className={styles.create}>
       <Sidebar />
       <div className={styles.right}>
         <Links links={["outgoing", "received", "drafts"]} />
@@ -64,6 +64,9 @@ const Create = ({}: CreateProps) => {
               You dont have any loop recipts yet.
             </p>
             <p>You’ll want to add receiptants to create loops with you.</p>
+            <Button color="secondary" labelColor="white">
+              Generate Loopreceipt
+            </Button>
           </div>
           <div className="cards">
             <OptionCard
@@ -83,7 +86,7 @@ const Create = ({}: CreateProps) => {
 };
 export default Create;
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  create: {},
   right: {
     marginLeft: 250,
     padding: "1rem 4rem",

@@ -8,7 +8,7 @@ interface OptionCardProps {
 const OptionCard = ({ iconSrc, text, onClick }: OptionCardProps) => {
   const styles = useStyles();
   return (
-    <div className={styles.root} onClick={onClick}>
+    <div className={styles.optionCard} onClick={onClick}>
       <Image src={iconSrc} width={50} height={50} />
       <p className="text">{text}</p>
     </div>
@@ -16,7 +16,7 @@ const OptionCard = ({ iconSrc, text, onClick }: OptionCardProps) => {
 };
 export default OptionCard;
 const useStyles = makeStyles((theme) => ({
-  root: {
+  optionCard: {
     width: 280,
     height: 182,
     display: "flex",

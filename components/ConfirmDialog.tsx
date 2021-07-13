@@ -1,11 +1,9 @@
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogActions,
   Typography,
   makeStyles,
-  IconButton,
 } from "@material-ui/core";
 
 import React from "react";
@@ -33,12 +31,19 @@ export default function ConfirmDialog({
         <Typography variant="subtitle2">{confirmDialog.subTitle}</Typography>
       </DialogContent>
       <DialogActions className={styles.dialogActions}>
-        <Button color="primary" onClick={confirmDialog.onConfirm} size="small">
+        <Button
+          color="primary"
+          onClick={confirmDialog.onConfirm}
+          size="large"
+          expand
+          labelWeight="bold"
+        >
           {confirmDialog.confirmText}
         </Button>
 
         <Button
-          variant="text"
+          variant="outlined"
+          color="default"
           onClick={() =>
             setConfirmDialog((prev) => {
               return {
@@ -47,7 +52,9 @@ export default function ConfirmDialog({
               };
             })
           }
-          size="small"
+          size="large"
+          expand
+          labelColor="gray"
         >
           {confirmDialog.cancelText}
         </Button>
@@ -63,7 +70,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   dialogActions: {
-    justifyContent: "center",
+    display: "grid",
+    gridTemplateColumns: `repeat(2, 1fr)`,
+    gap: 8,
   },
   titleIcon: {
     backgroundColor: theme.palette.secondary.light,

@@ -73,7 +73,7 @@ const SearchCard = ({ searchString }: SearchCardProps) => {
           name={user.name}
           email={user.email}
           active={user.active}
-          onClick={() =>
+          onClick={() => {
             setUsers((prevUsers) => {
               return prevUsers.map((user, idx) => {
                 if (idx === i) {
@@ -88,8 +88,9 @@ const SearchCard = ({ searchString }: SearchCardProps) => {
                   };
                 }
               });
-            })
-          }
+            });
+            // now we can close the search bar
+          }}
         />
       ))}
 

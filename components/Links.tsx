@@ -7,7 +7,7 @@ const Links = ({ links }: LinksProps) => {
   const styles = useStyles();
   const activeIndex = 0;
   return (
-    <div className={styles.root}>
+    <div className={styles.links}>
       {links.map((link, i) => (
         <p
           key={i}
@@ -21,7 +21,7 @@ const Links = ({ links }: LinksProps) => {
 };
 export default Links;
 const useStyles = makeStyles((theme) => ({
-  root: {
+  links: {
     display: "flex",
     gap: "2rem",
     "& .link": {

@@ -5,7 +5,7 @@ interface SideBarProps {}
 const SideBar = ({}: SideBarProps) => {
   const styles = useStyles();
   return (
-    <div className={styles.root}>
+    <div className={styles.sideBar}>
       <SidebarItem iconSrc="/icons/search.svg" text="Dashboard" />
       <SidebarItem iconSrc="/icons/search.svg" text="Packages" />
       <SidebarItem iconSrc="/icons/search.svg" text="Analytics" />
@@ -41,7 +41,7 @@ const SidebarItem = ({ iconSrc, text, active, onClick }: SidebarItemProps) => {
 };
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  sideBar: {
     background: "white",
     width: 250,
     display: "flex",

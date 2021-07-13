@@ -4,11 +4,11 @@ interface BoxProps {
 }
 const Box = ({ children }: BoxProps) => {
   const styles = useStyles();
-  return <div className={styles.root}>{children}</div>;
+  return <div className={styles.box}>{children}</div>;
 };
 export default Box;
 const useStyles = makeStyles((theme) => ({
-  root: {
+  box: {
     borderRadius: "4px",
     border: "1px solid #A09E9E",
     width: "80%",

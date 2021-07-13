@@ -9,7 +9,7 @@ interface InputBoxProps {
 function InputBox({ input, onChange, onBlur }: InputBoxProps) {
   const styles = useStyles();
   return (
-    <div className={styles.root}>
+    <div className={styles.inputBox}>
       <label className="label">{input.label}</label>
       <input
         type={input.type}
@@ -26,7 +26,7 @@ function InputBox({ input, onChange, onBlur }: InputBoxProps) {
 
 export default InputBox;
 const useStyles = makeStyles((theme) => ({
-  root: {
+  inputBox: {
     "& .label": {
       display: "block",
       fontWeight: "bold",

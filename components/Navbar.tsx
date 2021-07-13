@@ -5,7 +5,7 @@ const Navbar = ({}: NavbarPropTypes) => {
   const styles = useStyles();
 
   return (
-    <div className={styles.root}>
+    <div className={styles.navbar}>
       <div className="logo">
         <Image src="/icons/logo.png" width="189" height="58" />
       </div>
@@ -21,7 +21,6 @@ const Navbar = ({}: NavbarPropTypes) => {
         </div>
         <div className="item">
           <div className="image">
-            {" "}
             <Image src="/icons/profile.png" width="36" height="36" />
           </div>
           <p className="text">Account</p>
@@ -35,7 +34,7 @@ const Navbar = ({}: NavbarPropTypes) => {
 export default Navbar;
 
 const useStyles = makeStyles({
-  root: {
+  navbar: {
     zIndex: 100,
     position: "fixed",
     top: 0,
