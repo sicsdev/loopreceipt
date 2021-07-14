@@ -58,7 +58,10 @@ function Home() {
   );
 
   const handleSubmit = async () => {
-    let allValid = validateAllFields();
+    let allValid = validateAllForms();
+    // validating all forms is not necessary
+    // since we are validating individual form when clicking next
+
     if (allValid) {
       console.log("all fields are valid");
       for (let i = 0; i < formsProps.length; i++) {
@@ -129,29 +132,34 @@ function Home() {
       setSummaryPageActive(false);
     }
   };
-  const validateAllFields = () => {
-    let allValid = true;
+  const validateAllForms = () => {
+    let allFormsValid = true;
     for (let i = 0; i < formsProps.length; i++) {
-      const updatedFormState = { ...formsProps[i].formState };
-      for (const name in updatedFormState) {
-        const input = { ...updatedFormState[name] };
-        if (input.validate) {
-          const valid = input.validate();
-          // console.log(valid);
-          if (!valid) {
-            input.error = input.errorText;
-            allValid = false;
-          } else {
-            input.error = "";
-          }
-          // console.log(input);
-          updatedFormState[name] = input;
-        }
-      }
-      formsProps[activeFormIndex].setFormState(updatedFormState);
+      allFormsValid = validateFieldsOfForm(i) && allFormsValid;
     }
 
-    return allValid;
+    return allFormsValid;
+  };
+  const validateFieldsOfForm = (formIndex: number) => {
+    let allFieldsValid = true;
+    const updatedFormState = { ...formsProps[formIndex].formState };
+    for (const name in updatedFormState) {
+      const input = { ...updatedFormState[name] };
+      if (input.validate) {
+        const valid = input.validate();
+        // console.log(valid);
+        if (!valid) {
+          input.error = input.errorText;
+          allFieldsValid = false;
+        } else {
+          input.error = "";
+        }
+        // console.log(input);
+        updatedFormState[name] = input;
+      }
+    }
+    formsProps[activeFormIndex].setFormState(updatedFormState);
+    return allFieldsValid;
   };
   const backButton = (
     <div
@@ -225,10 +233,13 @@ function Home() {
                 shrink
                 onClick={() => {
                   // handleSubmit();
-                  if (activeFormIndex < forms.length - 1) {
-                    setActiveFormIndex(activeFormIndex + 1);
-                  } else {
-                    setSummaryPageActive(true);
+                  if (validateFieldsOfForm(activeFormIndex)) {
+                    // if current form is valid only then navigate to next
+                    if (activeFormIndex < forms.length - 1) {
+                      setActiveFormIndex(activeFormIndex + 1);
+                    } else {
+                      setSummaryPageActive(true);
+                    }
                   }
                 }}
               >

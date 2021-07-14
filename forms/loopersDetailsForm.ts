@@ -12,6 +12,9 @@ const loopersDetailsForm: FormType = {
       placeholder: "Robert",
       value: "",
       type: "text",
+      validate: function () {
+        return validations.isRequired(this);
+      },
     },
     looperEmail1: {
       name: "looperEmail1",
@@ -20,6 +23,9 @@ const loopersDetailsForm: FormType = {
       value: "",
       type: "email",
       iconType: "email",
+      validate: function () {
+        return validations.isRequired(this);
+      },
     },
   },
 };
