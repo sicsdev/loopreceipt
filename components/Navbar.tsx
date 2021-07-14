@@ -1,4 +1,6 @@
 import { makeStyles } from "@material-ui/core";
+import Button from "@components/Button";
+
 import Image from "next/image";
 interface NavbarPropTypes {}
 const Navbar = ({}: NavbarPropTypes) => {
@@ -10,6 +12,9 @@ const Navbar = ({}: NavbarPropTypes) => {
         <Image src="/icons/logo.png" width="189" height="58" />
       </div>
       <div className="items">
+        <div className="item">
+          <Button>+ New Loopreceipt</Button>
+        </div>
         <div className="item">
           <Image src="/icons/search.svg" width="20" height="20" />
         </div>

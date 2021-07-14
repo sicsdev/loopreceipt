@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
+import { useRouter } from "next/router";
 import {
   createTheme,
   ThemeProvider,
@@ -24,12 +25,14 @@ const theme = createTheme({
 });
 function MyApp({ Component, pageProps }: AppProps) {
   const styles = useStyles();
+  const router = useRouter();
+  let path = router.asPath;
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <Navbar />
         <div className={styles.content}>
-          <Component {...pageProps} />
+          <Component {...pageProps} path={path} />
         </div>
         <CssBaseline />
         {/* this sets up the base styles for the app

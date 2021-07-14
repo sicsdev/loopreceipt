@@ -1,21 +1,50 @@
 import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
+import Link from "next/link";
 import classNames from "classnames";
-interface SideBarProps {}
-const SideBar = ({}: SideBarProps) => {
+interface SideBarProps {
+  path: string;
+}
+const SideBar = ({ path }: SideBarProps) => {
   const styles = useStyles();
   return (
     <div className={styles.sideBar}>
-      <SidebarItem iconSrc="/icons/search.svg" text="Dashboard" />
-      <SidebarItem iconSrc="/icons/search.svg" text="Packages" />
-      <SidebarItem iconSrc="/icons/search.svg" text="Analytics" />
       <SidebarItem
-        iconSrc="/icons/search.svg"
-        text="Create Loopreceipt"
-        active
+        iconSrc="/icons/sidebar/dashboard.png"
+        text="Dashboard"
+        link="/dashboard"
+        active={path == "/dashboard"}
       />
-      <SidebarItem iconSrc="/icons/search.svg" text="Recipients" />
-      <SidebarItem iconSrc="/icons/search.svg" text="Integration" />
+      <SidebarItem
+        iconSrc="/icons/sidebar/package.png"
+        text="Packages"
+        link="/package"
+        active={path == "/package"}
+      />
+      <SidebarItem
+        iconSrc="/icons/sidebar/analytics.png"
+        text="Analytics"
+        link="/analytics"
+        active={path == "/analytics"}
+      />
+      <SidebarItem
+        iconSrc="/icons/sidebar/add.png"
+        text="Create Loopreceipt"
+        link="/create"
+        active={path == "/create"}
+      />
+      <SidebarItem
+        iconSrc="/icons/sidebar/recepients.png"
+        text="Recipients"
+        link="/recipients"
+        active={path == "/recipients"}
+      />
+      <SidebarItem
+        iconSrc="/icons/sidebar/integration.png"
+        text="Integration"
+        link="/integration"
+        active={path == "/integration"}
+      />
     </div>
   );
 };
@@ -24,18 +53,19 @@ interface SidebarItemProps {
   iconSrc: string;
   text: string;
   active?: boolean;
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  link: string;
 }
-const SidebarItem = ({ iconSrc, text, active, onClick }: SidebarItemProps) => {
+const SidebarItem = ({ iconSrc, text, active, link }: SidebarItemProps) => {
   const styles = useStyles();
   return (
-    <div
-      className={classNames(styles.item, { active: active })}
-      onClick={onClick}
-    >
-      <Image src={iconSrc} width={18} height={18} />
-      <span>{text}</span>
-      <span className="dot"></span>
+    <div className={classNames(styles.item, { active: active })}>
+      <Link href={link}>
+        <a href={link} className={classNames(styles.item) + " sidebar-links"}>
+          <Image src={iconSrc} width={18} height={18} />
+          <span>{text}</span>
+          <span className="dot"></span>
+        </a>
+      </Link>
     </div>
   );
 };
@@ -69,9 +99,19 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: "50%",
       display: "none",
     },
+    "& .sidebar-links": {
+      textDecoration: "none",
+      color: "inherit",
+      width: "100%",
+      padding: "0px",
+      "&:hover": {
+        color: "#000",
+      },
+    },
     "&.active": {
       background:
         "linear-gradient(90deg, rgba(33, 249, 174, 0.150034) -97.53%, rgba(74, 144, 226, 3e-05) 100%)",
+      color: "#234361",
       borderLeft: "4px solid " + theme.palette.primary.main,
       "& .dot": {
         display: "inline",

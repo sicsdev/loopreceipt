@@ -26,10 +26,14 @@ const useStyles = makeStyles((theme) => ({
     gap: "2rem",
     "& .link": {
       textTransform: "capitalize",
-      fontSize: "1.2rem",
+      fontSize: "22px",
+      cursor: "pointer",
+      fontWeight: "normal",
+      lineHeight: "28px",
       "&.active": {
         color: "black",
         borderBottom: `2px solid ${theme.palette.secondary.main}`,
+        fontWeight: "500",
       },
     },
   },
