@@ -1,13 +1,14 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
+import Head from "next/head";
+import Navbar from "@components/Navbar/Navbar";
 import {
   createTheme,
   ThemeProvider,
   CssBaseline,
   makeStyles,
 } from "@material-ui/core";
-import Navbar from "@components/Navbar";
 import { Provider } from "react-redux";
 import store from "@store/store";
 const theme = createTheme({
@@ -30,6 +31,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
+        <Head>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          />
+        </Head>
         <Navbar />
         <div className={styles.content}>
           <Component {...pageProps} path={path} />

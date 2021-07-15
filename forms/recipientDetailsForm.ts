@@ -3,7 +3,7 @@ import { FormType } from "@interfaces/FormTypes";
 
 const recipientDetailsForm: FormType = {
   formName: "recipientDetailsForm",
-  formHeading: "Add  Recp Details",
+  formHeading: "Add Recipient Details",
 
   methods: {
     getCompleteAddress: (formState) => {
@@ -23,16 +23,16 @@ const recipientDetailsForm: FormType = {
       value: "",
       type: "text",
 
-      validate: function () {
-        return (
-          // we can give custom message to validation
-          validations.isRequired(
-            this,
-            "Receiving Company Name can't be empty"
-          ) && validations.minMaxLength({ min: 5 })(this)
-          // this way we can chain validations
-        );
-      },
+      // validate: function () {
+      //   return (
+      //     // we can give custom message to validation
+      //     validations.isRequired(
+      //       this,
+      //       "Receiving Company Name can't be empty"
+      //     ) && validations.minMaxLength({ min: 5 })(this)
+      //     // this way we can chain validations
+      //   );
+      // },
     },
 
     shippingAddress: {
@@ -42,10 +42,10 @@ const recipientDetailsForm: FormType = {
       value: "",
       type: "text",
       iconType: "location",
-      validate: function () {
-        return validations.minMaxLength({ max: 5 })(this);
-        // default validation message is used
-      },
+      // validate: function () {
+      //   return validations.minMaxLength({ max: 5 })(this);
+      //   // default validation message is used
+      // },
     },
     country: {
       name: "country",
@@ -54,11 +54,11 @@ const recipientDetailsForm: FormType = {
       value: "",
       type: "text",
 
-      validate: function () {
-        return validations.isRequired(this);
-        // we pass 'this' so that we can change the errorText according to
-        // the validation that is failing
-      },
+      // validate: function () {
+      //   return validations.isRequired(this);
+      //   // we pass 'this' so that we can change the errorText according to
+      //   // the validation that is failing
+      // },
       errorText: "custom error",
       customError: true,
       // now custom error message is given to field

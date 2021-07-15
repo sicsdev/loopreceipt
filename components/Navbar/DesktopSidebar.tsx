@@ -2,10 +2,10 @@ import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import Link from "next/link";
 import classNames from "classnames";
-interface SideBarProps {
+interface DesktopSideBarProps {
   path: string;
 }
-const SideBar = ({ path }: SideBarProps) => {
+const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
   const styles = useStyles();
   return (
     <div className={styles.sideBar}>
@@ -48,7 +48,7 @@ const SideBar = ({ path }: SideBarProps) => {
     </div>
   );
 };
-export default SideBar;
+export default DesktopSideBar;
 interface SidebarItemProps {
   iconSrc: string;
   text: string;

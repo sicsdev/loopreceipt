@@ -25,23 +25,30 @@ function InputBox({ input, onChange, onBlur }: InputBoxProps) {
 }
 
 export default InputBox;
-const useStyles = makeStyles((theme) => ({
-  inputBox: {
-    "& .label": {
-      display: "block",
-      fontWeight: "bold",
-      marginBottom: ".5rem",
-      fontSize: "1.1rem",
+const useStyles = makeStyles((theme) => {
+  console.log(theme.breakpoints.values);
+  return {
+    inputBox: {
+      "& .label": {
+        display: "block",
+        fontWeight: "bold",
+        marginBottom: ".5rem",
+        fontSize: "1.1rem",
+      },
+      "& input": {
+        width: "80%",
+
+        padding: ".7rem",
+        borderRadius: "4px",
+        border: "1px solid #DDDDDD",
+        outline: "none",
+        [theme.breakpoints.down("md")]: {
+          width: "100%",
+        },
+      },
+      "& .error": {
+        color: "red",
+      },
     },
-    "& input": {
-      width: "80%",
-      padding: ".7rem",
-      borderRadius: "4px",
-      border: "1px solid #DDDDDD",
-      outline: "none",
-    },
-    "& .error": {
-      color: "red",
-    },
-  },
-}));
+  };
+});

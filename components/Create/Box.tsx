@@ -13,6 +13,8 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid #A09E9E",
     width: "80%",
     margin: "2rem auto",
-    marginTop: "calc(70px + 2rem)",
+    [theme.breakpoints.down("sm")]: {
+      width: "95%",
+    },
   },
 }));

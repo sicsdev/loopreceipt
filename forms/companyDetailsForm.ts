@@ -14,10 +14,10 @@ const companyDetailsForm: FormType = {
       value: "",
       type: "text",
 
-      validate: function () {
-        return validations.minMaxLength({ max: 5 })(this);
-        // default validation message is used
-      },
+      // validate: function () {
+      //   return validations.minMaxLength({ max: 5 })(this);
+      //   // default validation message is used
+      // },
     },
     country: {
       name: "country",
@@ -25,11 +25,11 @@ const companyDetailsForm: FormType = {
       placeholder: "Canada",
       value: "",
       type: "text",
-      validate: function () {
-        return validations.isRequired(this);
-        // we pass 'this' so that we can change the errorText according to
-        // the validation that is failing
-      },
+      // validate: function () {
+      //   return validations.isRequired(this);
+      //   // we pass 'this' so that we can change the errorText according to
+      //   // the validation that is failing
+      // },
       errorText: "custom error",
       customError: true,
       // now custom error message is given to field

@@ -4,6 +4,12 @@ import {
   ButtonProps,
 } from "@material-ui/core";
 import classNames from "classnames";
+interface AdditionalButtonProps {
+  shrink?: boolean;
+  expand?: boolean;
+  labelColor?: "black" | "white" | "gray";
+  labelWeight?: "bold" | "normal";
+}
 
 function Button({
   variant = "contained",
@@ -15,13 +21,8 @@ function Button({
   expand = false,
   labelColor = "black",
   labelWeight = "normal",
-}: ButtonProps & {
-  shrink?: boolean;
-  expand?: boolean;
-  labelColor?: "black" | "white" | "gray";
-  labelWeight?: "bold" | "normal";
-}) {
-  const styles = useStyles();
+}: ButtonProps & AdditionalButtonProps) {
+  const styles = useStyles({ labelColor, labelWeight });
   return (
     <MuiButton
       className={classNames(styles.button, { shrink, expand })}
@@ -30,7 +31,7 @@ function Button({
       color={color}
       onClick={onClick}
       classes={{
-        label: classNames(styles.label, labelColor, labelWeight),
+        label: classNames(styles.label),
       }}
     >
       {children}
@@ -52,19 +53,10 @@ const useStyles = makeStyles((theme) => ({
       paddingRight: "2.5rem",
     },
   },
-  label: {
+  label: (props: AdditionalButtonProps) => ({
     textTransform: "none",
-    "&.bold": {
-      fontWeight: "bold",
-    },
-    "&.black": {
-      color: "black",
-    },
-    "&.white": {
-      color: "white",
-    },
-    "&.gray": {
-      color: "#7A7A7A",
-    },
-  },
+    fontWeight: props.labelWeight,
+    color: props.labelColor,
+    whiteSpace: "nowrap",
+  }),
 }));

@@ -1,17 +1,17 @@
 import { makeStyles } from "@material-ui/core";
-import Sidebar from "@components/Sidebar";
-import Links from "@components/Links";
-import UpperBar from "@components/UpperBar";
-import Button from "@components/Button";
+import Sidebar from "@components/Navbar/DesktopSidebar";
+import Links from "@components/Dashboard/Links";
+import UpperBar from "@components/Create/UpperBar";
+import Button from "@components/Controls/Button";
 import Image from "next/image";
 import { useRef, useState } from "react";
-import OptionCard from "@components/OptionCard";
+import OptionCard from "@components/Dashboard/OptionCard";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "@store/hooks";
 import { setType } from "@store/slices/loopReceiptSlice";
 import Typography from "@material-ui/core/Typography";
-import MovableModal from "@components/MovableModal";
-import ListenClickAtParentElement from "@components/ListenClickAtParentElement";
+import MovableModal from "@components/shared/MovableModal";
+import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 interface DashboardProps {
   path: string;
 }
@@ -30,7 +30,7 @@ const Dashboard = ({ path }: DashboardProps) => {
       src: "/icons/create/internal.svg",
       click: () => {
         dispatch(setType({ type: "internal" }));
-        router.push("/home");
+        router.push("/create");
       },
     },
     {
@@ -39,7 +39,7 @@ const Dashboard = ({ path }: DashboardProps) => {
       src: "/icons/create/external.svg",
       click: () => {
         dispatch(setType({ type: "external" }));
-        router.push("/home");
+        router.push("/create");
       },
     },
   ];

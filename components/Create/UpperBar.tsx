@@ -11,6 +11,9 @@ const useStyles = makeStyles((theme) => ({
   upperBar: {
     paddingTop: "3rem",
     paddingBottom: "1rem",
+    [theme.breakpoints.down("sm")]: {
+      padding: "1.5rem 0",
+    },
     borderBottom: "1px solid #ddd",
   },
 }));

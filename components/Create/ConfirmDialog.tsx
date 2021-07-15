@@ -6,8 +6,8 @@ import {
   makeStyles,
 } from "@material-ui/core";
 
-import React from "react";
-import Button from "@components/Button";
+import React, { useEffect } from "react";
+import Button from "@components/Controls/Button";
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 
 interface ConfirmDialogProps {
@@ -19,6 +19,15 @@ export default function ConfirmDialog({
   setConfirmDialog,
 }: ConfirmDialogProps) {
   const styles = useStyles();
+  const closeDialog = () => {
+    setConfirmDialog((prev) => {
+      return {
+        ...prev,
+        isOpen: false,
+      };
+    });
+  };
+
   return (
     <Dialog
       open={confirmDialog.isOpen}
@@ -34,7 +43,7 @@ export default function ConfirmDialog({
         <Button
           color="primary"
           onClick={confirmDialog.onConfirm}
-          size="large"
+          size="medium"
           expand
           labelWeight="bold"
         >
@@ -44,15 +53,8 @@ export default function ConfirmDialog({
         <Button
           variant="outlined"
           color="default"
-          onClick={() =>
-            setConfirmDialog((prev) => {
-              return {
-                ...prev,
-                isOpen: false,
-              };
-            })
-          }
-          size="large"
+          onClick={closeDialog}
+          size="medium"
           expand
           labelColor="gray"
         >
@@ -64,25 +66,22 @@ export default function ConfirmDialog({
 }
 const useStyles = makeStyles((theme) => ({
   dialog: {
-    padding: theme.spacing(2),
+    padding: "1rem",
+    [theme.breakpoints.down("xs")]: {
+      minWidth: "90vw",
+      padding: "1rem .8rem",
+    },
   },
   dialogContent: {
+    marginBottom: "1.5rem",
     textAlign: "center",
   },
   dialogActions: {
     display: "grid",
     gridTemplateColumns: `repeat(2, 1fr)`,
-    gap: 8,
-  },
-  titleIcon: {
-    backgroundColor: theme.palette.secondary.light,
-    color: theme.palette.secondary.main,
-    "&:hover": {
-      backgroundColor: theme.palette.secondary.light,
-      cursor: "default",
-    },
-    "& .MuiSvgIcon-root": {
-      fontSize: "8rem",
+    gap: ".5rem",
+    [theme.breakpoints.down("xs")]: {
+      gap: ".1rem",
     },
   },
 }));

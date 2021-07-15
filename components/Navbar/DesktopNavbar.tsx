@@ -1,19 +1,19 @@
 import { makeStyles } from "@material-ui/core";
-import Button from "@components/Button";
+import Button from "@components/Controls/Button";
 
 import Image from "next/image";
-interface NavbarPropTypes {}
-const Navbar = ({}: NavbarPropTypes) => {
+interface DesktopNavbarPropTypes {}
+const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
   const styles = useStyles();
 
   return (
-    <div className={styles.navbar}>
+    <div className={styles.DesktopNavbar}>
       <div className="logo">
         <Image src="/icons/logo.png" width="189" height="58" />
       </div>
       <div className="items">
         <div className="item">
-          <Button>+ New Loopreceipt</Button>
+          <Button size="medium">+ New Loopreceipt</Button>
         </div>
         <div className="item">
           <Image src="/icons/search.svg" width="20" height="20" />
@@ -36,18 +36,15 @@ const Navbar = ({}: NavbarPropTypes) => {
   );
 };
 
-export default Navbar;
+export default DesktopNavbar;
 
-const useStyles = makeStyles({
-  navbar: {
-    zIndex: 100,
-    position: "fixed",
-    top: 0,
+const useStyles = makeStyles((theme) => ({
+  DesktopNavbar: {
     height: "70px",
-    width: "100%",
     background: "white",
     filter: "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25))",
     display: "flex",
+
     "& .logo": {
       flexBasis: "250px",
       display: "flex",
@@ -72,4 +69,4 @@ const useStyles = makeStyles({
       },
     },
   },
-});
+}));
