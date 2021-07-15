@@ -34,7 +34,7 @@ function Home() {
         return [recipientDetailsForm, companyDetailsForm, loopersDetailsForm];
     }
   });
-  const formsProps = forms.map((form) => useForm(form.initialState, false));
+  const formsProps = forms.map((form) => useForm(form.initialState, true));
   const [searchInput, setSearchInput] = useState("");
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
@@ -82,8 +82,8 @@ function Home() {
       const loopersState = formsProps[loopersFormIndex].formState;
       const loppersStateKeys = Object.keys(loopersState);
       for (let i = 0; i < loppersStateKeys.length; i += 2) {
-        const name = loopersState[loppersStateKeys[i]];
-        const email = loopersState[loppersStateKeys[i + 1]];
+        const name = loopersState[loppersStateKeys[i]].value;
+        const email = loopersState[loppersStateKeys[i + 1]].value;
         if (name && email) {
           loopers.push({
             name,
@@ -247,7 +247,11 @@ function Home() {
               </Button>
             </div>
             <div className={styles.rest}>
-              <Form {...formsProps[activeFormIndex]} validateOnBlur={true} />
+              <Form
+                {...formsProps[activeFormIndex]}
+                validateOnBlur={true}
+                autoComplete="off"
+              />
               {forms[activeFormIndex].formName === "loopersDetailsForm" && (
                 <div className="button">
                   <Button

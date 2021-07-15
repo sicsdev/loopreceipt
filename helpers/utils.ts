@@ -68,3 +68,13 @@ export const setLastChar = (str: string, v: string) => {
   arr[arr.length - 1] = v;
   return arr.join("");
 };
+export const runSequentiallyAfterDelay = (
+  funcArray: (() => void)[],
+  delay: number
+) => {
+  for (let i = 0; i < funcArray.length; i++) {
+    setTimeout(() => {
+      funcArray[i]();
+    }, delay * i);
+  }
+};

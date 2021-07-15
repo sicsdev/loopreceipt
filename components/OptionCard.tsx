@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "0px 0px 4px rgba(33, 249, 174, 0.28)",
     borderRadius: 20,
     cursor: "pointer",
+    userSelect: "none",
     "& .text": {
       textDecoration: "underline",
       fontWeight: "bold",

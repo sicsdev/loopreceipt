@@ -4,29 +4,24 @@ import Links from "@components/Links";
 import UpperBar from "@components/UpperBar";
 import Button from "@components/Button";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import OptionCard from "@components/OptionCard";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "@store/hooks";
 import { setType } from "@store/slices/loopReceiptSlice";
 import Typography from "@material-ui/core/Typography";
-interface CreateProps {
+import MovableModal from "@components/MovableModal";
+import ListenClickAtParentElement from "@components/ListenClickAtParentElement";
+interface DashboardProps {
   path: string;
 }
-const Create = ({ path }: CreateProps) => {
+const Dashboard = ({ path }: DashboardProps) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const styles = useStyles();
   const [show, setShow] = useState(false);
-  useEffect(() => {
-    const closeDialog = () => {
-      setShow(false);
-    };
-    window.addEventListener("click", closeDialog);
-    return () => {
-      window.removeEventListener("click", closeDialog);
-    };
-  }, []);
+  const [mouseEvent, setMouseEvent] =
+    useState<React.MouseEvent<any, MouseEvent>>();
 
   const dialogItems = [
     {
@@ -48,9 +43,16 @@ const Create = ({ path }: CreateProps) => {
       },
     },
   ];
-
+  const openModal: React.MouseEventHandler<any> = (e) => {
+    // whenever we open the modal we need to stopPropagation
+    // since modal adds modal close listener on window.click
+    // console.log(e.target);
+    e.stopPropagation();
+    setMouseEvent(e);
+    setShow(true);
+  };
   return (
-    <div className={styles.create}>
+    <div className={styles.dashboard}>
       <Sidebar path={path} />
       <div className={styles.right}>
         <Links links={["outgoing", "received", "drafts"]} />
@@ -60,29 +62,22 @@ const Create = ({ path }: CreateProps) => {
               <p className="icon">G</p>
               <p>Gari Boetang</p>
             </div>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                // should be done since click is attached to window
-                setShow(!show);
-              }}
-            >
-              + New Loopreceipt
-            </Button>
+            {ListenClickAtParentElement(openModal, (childClick) => (
+              <Button onClick={childClick}>+ New Loopreceipt</Button>
+            ))}
           </div>
         </UpperBar>
         <div className={styles.rest}>
-          {show && (
+          <MovableModal
+            mouseEvent={mouseEvent}
+            showModal={show}
+            setShowModal={setShow}
+            translationsFrom="element"
+            positionWRTPoint={{ bottom: true }}
+          >
             <div className={"dialog"}>
               {dialogItems.map((item, i) => (
-                <div
-                  key={i}
-                  className="item"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    item.click();
-                  }}
-                >
+                <div key={i} className="item" onClick={item.click}>
                   <Image src={item.src} width="31" height="31" />
                   <div className="content">
                     <p className={"title"}>{item.title}</p>
@@ -91,7 +86,8 @@ const Create = ({ path }: CreateProps) => {
                 </div>
               ))}
             </div>
-          )}
+          </MovableModal>
+
           <div
             style={{
               marginTop: "1rem",
@@ -113,13 +109,14 @@ const Create = ({ path }: CreateProps) => {
             </Typography>
           </div>
           <div className="cards">
-            <OptionCard
-              iconSrc="/icons/create/delivery-notification.svg"
-              text="Create a delivery notification"
-              onClick={() => {
-                setShow(!show);
-              }}
-            />
+            {ListenClickAtParentElement(openModal, (childClick) => (
+              <OptionCard
+                iconSrc="/icons/create/delivery-notification.svg"
+                text="Create a delivery notification"
+                onClick={childClick}
+              />
+            ))}
+
             <OptionCard
               iconSrc="/icons/create/add-user.svg"
               text="Invite your team"
@@ -130,12 +127,12 @@ const Create = ({ path }: CreateProps) => {
     </div>
   );
 };
-export default Create;
+export default Dashboard;
 const useStyles = makeStyles((theme) => ({
-  create: {},
+  dashboard: {},
   right: {
     marginLeft: 250,
-    padding: "1rem 4rem",
+    padding: "3rem 4rem",
     // border: "2px solid blue",
   },
   bar: {
@@ -160,14 +157,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   rest: {
-    position: "relative",
     "& .dialog": {
       zIndex: 10,
       backgroundColor: "white",
-      maxWidth: 350,
-      position: "absolute",
-      right: 0,
-      top: -15,
+      width: 350,
       boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
       borderRadius: "8px",
       "& .item": {

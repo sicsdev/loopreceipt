@@ -24,7 +24,7 @@ const loopersDetailsForm: FormType = {
       type: "email",
       iconType: "email",
       validate: function () {
-        return validations.isRequired(this);
+        return validations.isRequired(this) && validations.email(this);
       },
     },
   },

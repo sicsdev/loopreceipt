@@ -1,6 +1,6 @@
 import InputBox from "@components/Controls/InputBox";
 import { makeStyles } from "@material-ui/core";
-import InputType from "@interfaces/InputType";
+import { InputType } from "@interfaces/InputTypes";
 
 interface FormProps {
   formState: {
@@ -14,6 +14,7 @@ interface FormProps {
   handleInputChange: React.ChangeEventHandler<HTMLInputElement>;
   resetForm: () => void;
   validateOnBlur: boolean;
+  autoComplete?: string;
 }
 const Form = ({
   formState,
@@ -21,6 +22,7 @@ const Form = ({
   handleInputChange,
   resetForm,
   validateOnBlur = true,
+  autoComplete,
 }: FormProps) => {
   const styles = useStyles();
 
@@ -46,7 +48,7 @@ const Form = ({
   };
 
   return (
-    <form>
+    <form autoComplete={autoComplete}>
       {Object.keys(formState).map((inputName, i) => {
         // console.log(inputName);
         const input = formState[inputName];

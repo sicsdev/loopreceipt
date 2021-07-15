@@ -1,4 +1,4 @@
-import InputType from "@interfaces/InputType";
+import { InputType } from "@interfaces/InputTypes";
 import { useState } from "react";
 export function useForm(
   initalFormState: {

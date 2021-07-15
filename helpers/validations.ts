@@ -1,4 +1,4 @@
-import InputType from "@interfaces/InputType";
+import { InputType } from "@interfaces/InputTypes";
 
 const validations = {
   isRequired: (
@@ -26,6 +26,16 @@ const validations = {
         return true;
       return false;
     };
+  },
+  email: (
+    input: InputType,
+    errorMessage: string = "Please enter a valid email"
+  ) => {
+    const re =
+      /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    if (!input.customError) input.errorText = errorMessage;
+
+    return re.test(input.value.trim().toLowerCase());
   },
 };
 export default validations;
