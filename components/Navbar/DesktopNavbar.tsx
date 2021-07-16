@@ -1,7 +1,9 @@
 import { makeStyles } from "@material-ui/core";
 import Button from "@components/Controls/Button";
+import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 
 import Image from "next/image";
+import { openModal } from "@store/slices/modalSlice";
 interface DesktopNavbarPropTypes {}
 const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
   const styles = useStyles();
@@ -13,7 +15,26 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
       </div>
       <div className="items">
         <div className="item">
-          <Button size="medium">+ New Loopreceipt</Button>
+          {ListenClickAtParentElement(
+            (e) => {
+              openModal(e, {
+                translationsFrom: "element",
+                positionWRTPoint: {
+                  bottom: true,
+                  right: true,
+                },
+                translations: {
+                  y: 20,
+                  x: -100,
+                },
+              });
+            },
+            (childClick) => (
+              <Button size="medium" onClick={childClick}>
+                + New Loopreceipt
+              </Button>
+            )
+          )}
         </div>
         <div className="item">
           <Image src="/icons/search.svg" width="20" height="20" />

@@ -6,6 +6,7 @@ interface NavbarPropTypes {}
 const Navbar = ({}: NavbarPropTypes) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
+
   return (
     <div className={styles.Navbar}>
       {windowDimensions.innerWidth < 960 ? <MobileNavbar /> : <DesktopNavbar />}

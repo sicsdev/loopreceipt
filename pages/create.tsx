@@ -13,7 +13,7 @@ import recipientDetailsForm from "forms/recipientDetailsForm";
 import companyDetailsForm from "forms/companyDetailsForm";
 import Box from "@components/Create/Box";
 import UpperBar from "@components/Create/UpperBar";
-
+import Layout from "@components/Layout";
 import loopersDetailsForm from "forms/loopersDetailsForm";
 import { FormStateType } from "@interfaces/FormTypes";
 import { getLastChar, setLastChar } from "@helpers/utils";
@@ -264,129 +264,137 @@ function Create() {
     });
   };
   return (
-    <div>
-      <UpperBar>
-        {windowDimensions.innerWidth >= theme.breakpoints.values.sm ? (
-          upperBarContent
-        ) : (
-          <div className={styles.newButton} onClick={handleBackButtonClick}>
-            <Image src="/icons/create/back.svg" width="20" height="20" /> New
-            Loopreceipt
-          </div>
-        )}
-      </UpperBar>
-
-      <Box>
-        <>
-          {windowDimensions.innerWidth < theme.breakpoints.values.sm &&
-            upperBarContent}
-          {!summaryPageActive ? (
-            <div>
-              <ConfirmDialog
-                confirmDialog={confirmDialog}
-                setConfirmDialog={setConfirmDialog}
-              />
-
-              <div className={styles.top}>
-                <SearchBar />
-                {windowDimensions.innerWidth >= theme.breakpoints.values.sm &&
-                  nextCancelButtons}
-              </div>
-              <div className={styles.rest}>
-                <Form
-                  {...formsProps[activeFormIndex]}
-                  validateOnBlur={true}
-                  autoComplete="off"
-                />
-                {forms[activeFormIndex].formName === "loopersDetailsForm" && (
-                  <div className="button">
-                    <Button
-                      color="secondary"
-                      labelColor="white"
-                      onClick={addLooper}
-                    >
-                      + Add more
-                    </Button>
-                  </div>
-                )}
-                {windowDimensions.innerWidth < theme.breakpoints.values.sm && (
-                  <>
-                    <div style={{ flex: 2 }}></div>
-                    {nextCancelButtons}
-                  </>
-                )}
-              </div>
-            </div>
+    <Layout>
+      <div>
+        <UpperBar>
+          {windowDimensions.innerWidth >= theme.breakpoints.values.sm ? (
+            upperBarContent
           ) : (
-            <div className={styles.summaryPage}>
-              {windowDimensions.innerWidth >= theme.breakpoints.values.sm && (
-                <div className={styles.top}>
-                  <h1 className="head">Summary</h1>
-                </div>
-              )}
-
-              <div className="content">
-                <div className="left">
-                  <Entry
-                    inputIcon="location"
-                    text={
-                      formsProps[recipientFormIdx].formState
-                        .receivingCompanyName.value
-                    }
-                  />
-                  <Entry
-                    inputIcon="location"
-                    text={
-                      forms[recipientFormIdx].methods?.getCompleteAddress(
-                        formsProps[recipientFormIdx].formState
-                      )!
-                    }
-                  />
-                  <Entry inputIcon="phone" text={"+234 081-1236-4568"} />
-                  <Entry inputIcon="email" text={"hello@info.com.ng"} />
-                </div>
-                <div className="line">
-                  <p></p>
-                </div>
-                <div className="right">
-                  {windowDimensions.innerWidth < theme.breakpoints.values.sm ? (
-                    <h1
-                      style={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Loopers:
-                    </h1>
-                  ) : (
-                    <h1>Loopers</h1>
-                  )}
-
-                  {Object.values(formsProps[loopersFormIndex].formState).map(
-                    (input, i) => {
-                      return (
-                        input.type === "email" && (
-                          <Entry key={i} inputIcon="email" text={input.value} />
-                        )
-                      );
-                    }
-                  )}
-                </div>
-              </div>
-              <div className="bottom">
-                <Button
-                  color="secondary"
-                  labelColor="white"
-                  onClick={handleSubmit}
-                >
-                  Generate Loopreceipt
-                </Button>
-                <Image src="/icons/form/man.svg" width={300} height={300} />
-              </div>
+            <div className={styles.newButton} onClick={handleBackButtonClick}>
+              <Image src="/icons/create/back.svg" width="20" height="20" /> New
+              Loopreceipt
             </div>
           )}
-        </>
-      </Box>
-    </div>
+        </UpperBar>
+
+        <Box>
+          <>
+            {windowDimensions.innerWidth < theme.breakpoints.values.sm &&
+              upperBarContent}
+            {!summaryPageActive ? (
+              <div>
+                <ConfirmDialog
+                  confirmDialog={confirmDialog}
+                  setConfirmDialog={setConfirmDialog}
+                />
+
+                <div className={styles.top}>
+                  <SearchBar />
+                  {windowDimensions.innerWidth >= theme.breakpoints.values.sm &&
+                    nextCancelButtons}
+                </div>
+                <div className={styles.rest}>
+                  <Form
+                    {...formsProps[activeFormIndex]}
+                    validateOnBlur={true}
+                    autoComplete="off"
+                  />
+                  {forms[activeFormIndex].formName === "loopersDetailsForm" && (
+                    <div className="button">
+                      <Button
+                        color="secondary"
+                        labelColor="white"
+                        onClick={addLooper}
+                      >
+                        + Add more
+                      </Button>
+                    </div>
+                  )}
+                  {windowDimensions.innerWidth <
+                    theme.breakpoints.values.sm && (
+                    <>
+                      <div style={{ flex: 2 }}></div>
+                      {nextCancelButtons}
+                    </>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className={styles.summaryPage}>
+                {windowDimensions.innerWidth >= theme.breakpoints.values.sm && (
+                  <div className={styles.top}>
+                    <h1 className="head">Summary</h1>
+                  </div>
+                )}
+
+                <div className="content">
+                  <div className="left">
+                    <Entry
+                      inputIcon="location"
+                      text={
+                        formsProps[recipientFormIdx].formState
+                          .receivingCompanyName.value
+                      }
+                    />
+                    <Entry
+                      inputIcon="location"
+                      text={
+                        forms[recipientFormIdx].methods?.getCompleteAddress(
+                          formsProps[recipientFormIdx].formState
+                        )!
+                      }
+                    />
+                    <Entry inputIcon="phone" text={"+234 081-1236-4568"} />
+                    <Entry inputIcon="email" text={"hello@info.com.ng"} />
+                  </div>
+                  <div className="line">
+                    <p></p>
+                  </div>
+                  <div className="right">
+                    {windowDimensions.innerWidth <
+                    theme.breakpoints.values.sm ? (
+                      <h1
+                        style={{
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Loopers:
+                      </h1>
+                    ) : (
+                      <h1>Loopers</h1>
+                    )}
+
+                    {Object.values(formsProps[loopersFormIndex].formState).map(
+                      (input, i) => {
+                        return (
+                          input.type === "email" && (
+                            <Entry
+                              key={i}
+                              inputIcon="email"
+                              text={input.value}
+                            />
+                          )
+                        );
+                      }
+                    )}
+                  </div>
+                </div>
+                <div className="bottom">
+                  <Button
+                    color="secondary"
+                    labelColor="white"
+                    onClick={handleSubmit}
+                  >
+                    Generate Loopreceipt
+                  </Button>
+                  <Image src="/icons/form/man.svg" width={300} height={300} />
+                </div>
+              </div>
+            )}
+          </>
+        </Box>
+      </div>
+    </Layout>
   );
 }
 interface EntryProps {

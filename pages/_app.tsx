@@ -2,15 +2,12 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import Navbar from "@components/Navbar/Navbar";
-import {
-  createTheme,
-  ThemeProvider,
-  CssBaseline,
-  makeStyles,
-} from "@material-ui/core";
+
+import { createTheme, ThemeProvider, CssBaseline } from "@material-ui/core";
 import { Provider } from "react-redux";
 import store from "@store/store";
+
+import { useEffect } from "react";
 const theme = createTheme({
   palette: {
     primary: {
@@ -25,33 +22,23 @@ const theme = createTheme({
   },
 });
 function MyApp({ Component, pageProps }: AppProps) {
-  const styles = useStyles();
   const router = useRouter();
   let path = router.asPath;
+  useEffect(() => {
+    // Remove the server-side injected CSS.
+    const jssStyles = document.querySelector("#jss-server-side");
+    if (jssStyles) {
+      // console.log(jssStyles);
+      jssStyles.parentElement?.removeChild(jssStyles);
+    }
+  }, []);
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <Head>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
-        </Head>
-        <Navbar />
-        <div className={styles.content}>
-          <Component {...pageProps} path={path} />
-        </div>
         <CssBaseline />
-        {/* this sets up the base styles for the app
-      like fontFamilty: 'Roboto' * { boxSizing: 'border-box'} */}
+        <Component {...pageProps} path={path} />
       </ThemeProvider>
     </Provider>
   );
 }
 export default MyApp;
-const useStyles = makeStyles((theme) => ({
-  content: {
-    // border: "1px solid blue",
-    marginTop: 70, // 70px is navbar height
-  },
-}));

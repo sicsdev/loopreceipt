@@ -4,12 +4,14 @@ import userReducer from "./slices/userSlice";
 import themeReducer from "./slices/themeSlice";
 import postsReducer from "./slices/postsSlice";
 import loopReceiptReducer from "./slices/loopReceiptSlice";
+import modalReducer from "./slices/modalSlice";
 export const store = configureStore({
   reducer: {
     user: userReducer,
     theme: themeReducer,
     posts: postsReducer,
     loopReceipt: loopReceiptReducer,
+    modal: modalReducer,
   },
 });
 export default store;

@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useState } from "react";
 import ToggleSidebar from "@components/shared/ToggleSidebar";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
+import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
+import { openModal } from "@store/slices/modalSlice";
 interface MobileNavbarProps {}
 const MobileNavbar = ({}: MobileNavbarProps) => {
   const styles = useStyles();
@@ -32,7 +34,9 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
           </div>
           <div className={styles.links}>
             <MyLink>Dashboard</MyLink>
-            <MyLink>Create Loopreceipt</MyLink>
+            {ListenClickAtParentElement(openModal, (childClick) => (
+              <MyLink onClick={childClick}>Create Loopreceipt</MyLink>
+            ))}
             <MyLink>Packages</MyLink>
             <MyLink>Recepients</MyLink>
             <MyLink>Analytics</MyLink>
@@ -68,9 +72,14 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
 };
 interface MyLinkProps {
   children: JSX.Element | string;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
-function MyLink({ children }: MyLinkProps) {
-  return <div className="link">{children}</div>;
+function MyLink({ children, onClick }: MyLinkProps) {
+  return (
+    <div className="link" onClick={onClick}>
+      {children}
+    </div>
+  );
 }
 export default MobileNavbar;
 const useStyles = makeStyles((theme) => ({

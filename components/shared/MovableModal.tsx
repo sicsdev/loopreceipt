@@ -1,44 +1,39 @@
 import { runSequentiallyAfterDelay } from "@helpers/utils";
 import { makeStyles } from "@material-ui/core";
+import { ModalOptionsType, SliceModalType } from "@store/slices/modalSlice";
 import React, { useEffect, useRef, useState } from "react";
 
-interface MovableModalProps {
+export interface MovableModalProps {
   children: JSX.Element | string;
-  mouseEvent?: React.MouseEvent<any, MouseEvent>;
-  translations?: {
-    x: number;
-    y: number;
-  };
-  translationsFrom?: "cursor" | "element";
-  positionWRTPoint?: {
-    top?: boolean;
-    right?: boolean;
-    bottom?: boolean;
-    left?: boolean;
-  };
+  mouseEvent?: SliceModalType["mouseEvent"];
+  translations: NonNullable<ModalOptionsType["translations"]>; // this will remove undefined from ModalOptionsType["translations"] type
+  translationsFrom?: ModalOptionsType["translationsFrom"];
+  positionWRTPoint?: ModalOptionsType["positionWRTPoint"];
   showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  closeModal: () => void;
 }
 const MovableModal = ({
   children,
   mouseEvent,
-  translations = {
-    x: 0,
-    y: 0,
-  },
-  translationsFrom = "cursor",
+  translations,
+  translationsFrom = "element",
   positionWRTPoint = {
     top: false,
     right: false,
-    bottom: false,
+    bottom: true,
     left: false,
   },
   showModal,
-  setShowModal,
+  closeModal,
 }: MovableModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const styles = useStyles();
   const [position, setPosition] = useState<{ top?: string; left?: string }>({});
+  // when we give only x then y will default to 0 not undefined and vice-versa
+  translations = {
+    x: translations?.x ?? 0,
+    y: translations?.y ?? 0,
+  };
   useEffect(() => {
     runSequentiallyAfterDelay(
       [
@@ -77,7 +72,7 @@ const MovableModal = ({
               break;
             }
             case "element": {
-              const elementClicked: any = mouseEvent?.target;
+              const elementClicked = mouseEvent?.target;
               // console.dir(elementClicked);
 
               if (elementClicked) {
@@ -133,12 +128,9 @@ const MovableModal = ({
     );
   }, [mouseEvent]);
   useEffect(() => {
-    const closeDialog = () => {
-      setShowModal(false);
-    };
-    window.addEventListener("click", closeDialog);
+    window.addEventListener("click", closeModal);
     return () => {
-      window.removeEventListener("click", closeDialog);
+      window.removeEventListener("click", closeModal);
     };
   }, []);
 
@@ -166,6 +158,6 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     top: 0,
     left: 0,
-    zIndex: 10,
+    zIndex: 100,
   },
 }));

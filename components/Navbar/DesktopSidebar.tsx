@@ -2,6 +2,8 @@ import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import Link from "next/link";
 import classNames from "classnames";
+import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
+import { openModal } from "@store/slices/modalSlice";
 interface DesktopSideBarProps {
   path: string;
 }
@@ -27,12 +29,25 @@ const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
         link="/analytics"
         active={path == "/analytics"}
       />
-      <SidebarItem
-        iconSrc="/icons/sidebar/add.png"
-        text="Create Loopreceipt"
-        link="/create"
-        active={path == "/create"}
-      />
+      {ListenClickAtParentElement(
+        (e) => {
+          openModal(e, {
+            translationsFrom: "cursor",
+            translations: {
+              x: 20,
+              y: 20,
+            },
+          });
+        },
+        (childClick) => (
+          <SidebarItem
+            iconSrc="/icons/sidebar/add.png"
+            text="Create Loopreceipt"
+            onClick={childClick}
+          />
+        )
+      )}
+
       <SidebarItem
         iconSrc="/icons/sidebar/recepients.png"
         text="Recipients"
@@ -53,20 +68,33 @@ interface SidebarItemProps {
   iconSrc: string;
   text: string;
   active?: boolean;
-  link: string;
+  link?: string;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
-const SidebarItem = ({ iconSrc, text, active, link }: SidebarItemProps) => {
+const SidebarItem = ({
+  iconSrc,
+  text,
+  active,
+  link,
+  onClick,
+}: SidebarItemProps) => {
   const styles = useStyles();
-  return (
-    <div className={classNames(styles.item, { active: active })}>
-      <Link href={link}>
-        <a href={link} className={classNames(styles.item) + " sidebar-links"}>
-          <Image src={iconSrc} width={18} height={18} />
-          <span>{text}</span>
-          <span className="dot"></span>
-        </a>
-      </Link>
+  const component = (
+    <div
+      className={classNames(styles.item, { active: active })}
+      onClick={onClick}
+    >
+      <Image src={iconSrc} width={18} height={18} />
+      <span>{text}</span>
+      <span className="dot"></span>
     </div>
+  );
+  return link ? (
+    <Link href={link}>
+      <a className={styles.link}>{component}</a>
+    </Link>
+  ) : (
+    component
   );
 };
 
@@ -82,31 +110,22 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     height: "100vh",
   },
+  link: {
+    textDecoration: "none",
+    // border: "1px solid red",
+  },
   item: {
     // border: "1px solid red",
-
+    cursor: "pointer",
     display: "flex",
     alignItems: "center",
+    justifyContent: "flex-start",
     gap: 10,
     padding: "0 1rem",
     height: 50,
-    "& img": {},
-    "& .dot": {
-      marginLeft: "auto",
-      width: 11,
-      height: 11,
-      backgroundColor: theme.palette.primary.main,
-      borderRadius: "50%",
-      display: "none",
-    },
-    "& .sidebar-links": {
-      textDecoration: "none",
-      color: "inherit",
-      width: "100%",
-      padding: "0px",
-      "&:hover": {
-        color: "#000",
-      },
+    color: "gray",
+    "&:hover": {
+      color: "#222222",
     },
     "&.active": {
       background:
@@ -116,6 +135,15 @@ const useStyles = makeStyles((theme) => ({
       "& .dot": {
         display: "inline",
       },
+    },
+    "& img": {},
+    "& .dot": {
+      marginLeft: "auto",
+      width: 11,
+      height: 11,
+      backgroundColor: theme.palette.primary.main,
+      borderRadius: "50%",
+      display: "none",
     },
   },
 }));

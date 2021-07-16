@@ -26,7 +26,7 @@ function InputBox({ input, onChange, onBlur }: InputBoxProps) {
 
 export default InputBox;
 const useStyles = makeStyles((theme) => {
-  console.log(theme.breakpoints.values);
+  // console.log(theme.breakpoints.values);
   return {
     inputBox: {
       "& .label": {

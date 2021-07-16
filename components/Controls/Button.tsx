@@ -9,6 +9,7 @@ interface AdditionalButtonProps {
   expand?: boolean;
   labelColor?: "black" | "white" | "gray";
   labelWeight?: "bold" | "normal";
+  borderColor?: string;
 }
 
 function Button({
@@ -21,8 +22,9 @@ function Button({
   expand = false,
   labelColor = "black",
   labelWeight = "normal",
+  borderColor,
 }: ButtonProps & AdditionalButtonProps) {
-  const styles = useStyles({ labelColor, labelWeight });
+  const styles = useStyles({ labelColor, labelWeight, borderColor });
   return (
     <MuiButton
       className={classNames(styles.button, { shrink, expand })}
@@ -41,8 +43,9 @@ function Button({
 
 export default Button;
 const useStyles = makeStyles((theme) => ({
-  button: {
+  button: (props: AdditionalButtonProps) => ({
     borderRadius: 8,
+    borderColor: props.borderColor,
     margin: 0,
     "&.shrink": {
       paddingTop: 2,
@@ -52,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
       paddingLeft: "2.5rem",
       paddingRight: "2.5rem",
     },
-  },
+  }),
   label: (props: AdditionalButtonProps) => ({
     textTransform: "none",
     fontWeight: props.labelWeight,

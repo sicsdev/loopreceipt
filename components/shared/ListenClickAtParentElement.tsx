@@ -8,6 +8,18 @@ const ListenClickAtParentElement = (
     e.target = parentRef.current as EventTarget;
     onClick(e);
   };
-  return <div ref={parentRef}>{func(childClick)}</div>;
+  return (
+    <span
+      ref={parentRef}
+      style={
+        {
+          // border: "2px solid red",
+          // enable border check where this is used in the page
+        }
+      }
+    >
+      {func(childClick)}
+    </span>
+  );
 };
 export default ListenClickAtParentElement;
