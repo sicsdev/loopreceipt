@@ -134,7 +134,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: "100%",
     left: 0,
-    zIndex: 10,
+    zIndex: 50,
     transform: "translateY(1rem)",
   },
   item: {

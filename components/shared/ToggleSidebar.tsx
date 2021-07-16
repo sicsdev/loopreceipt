@@ -50,7 +50,7 @@ export default ToggleSidebar;
 
 const useStyles = makeStyles((theme) => ({
   bar: {
-    zIndex: 20,
+    zIndex: 100,
     position: "fixed",
     top: 0,
     left: 0,
@@ -58,13 +58,14 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
   },
   nav: {
-    zIndex: 20,
+    zIndex: 100,
     position: "absolute",
     backgroundColor: "white",
     height: "100vh",
     width: "80vw",
   },
   bg: {
+    zIndex: 99,
     position: "absolute",
     backgroundColor: "rgba(0, 0, 0, 0.336)",
     width: "100vw",

@@ -18,7 +18,7 @@ export default Navbar;
 
 const useStyles = makeStyles((theme) => ({
   Navbar: {
-    zIndex: 100,
+    zIndex: 10,
     position: "fixed",
     top: 0,
     width: "100%",

@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import DialogItemType from "@interfaces/DialogItemType";
-import { useAppSelector, useAppDispatch } from "@store/hooks";
+import { useAppSelector } from "@store/hooks";
 import Image from "next/image";
 
 import ToggleBottombar from "@components/shared/ToggleBottombar";
@@ -31,6 +31,7 @@ const MobileModal = ({ dialogItems }: MobileModalProps) => {
             labelColor="gray"
             labelWeight="bold"
             borderColor="#999999"
+            onClick={closeModal}
           >
             Close
           </Button>

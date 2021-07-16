@@ -66,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
   },
   bg: {
+    zIndex: 99,
     position: "absolute",
     backgroundColor: "rgba(0, 0, 0, 0.336)",
     width: "100vw",
