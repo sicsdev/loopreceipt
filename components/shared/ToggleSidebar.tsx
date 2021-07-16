@@ -2,14 +2,24 @@ import { makeStyles } from "@material-ui/core";
 import { useDelayed } from "@hooks/useDelayed";
 
 import { CSSTransition } from "react-transition-group";
+
 interface ToggleSidebarProps {
   show: boolean;
   close: React.MouseEventHandler<any>;
   children: JSX.Element | string;
+  delay?: number;
 }
-const ToggleSidebar = ({ show, close, children }: ToggleSidebarProps) => {
-  const showDelayedCopy = useDelayed(show, 500);
+let localDelay = 0;
+const ToggleSidebar = ({
+  show,
+  close,
+  children,
+  delay = 500,
+}: ToggleSidebarProps) => {
+  const showDelayedCopy = useDelayed(show, delay);
+  localDelay = delay;
   const styles = useStyles();
+
   return (
     <div
       className={styles.bar}
@@ -19,7 +29,7 @@ const ToggleSidebar = ({ show, close, children }: ToggleSidebarProps) => {
     >
       <CSSTransition
         in={show}
-        timeout={500}
+        timeout={delay}
         classNames={`mobsidebar`}
         unmountOnExit
       >
@@ -27,7 +37,7 @@ const ToggleSidebar = ({ show, close, children }: ToggleSidebarProps) => {
       </CSSTransition>
       <CSSTransition
         in={show}
-        timeout={500}
+        timeout={delay}
         classNames={`mobsidebarbg`}
         unmountOnExit
       >
@@ -67,22 +77,22 @@ const useStyles = makeStyles((theme) => ({
     },
     ".mobsidebar-enter-active": {
       transform: "translateX(0%)",
-      transition: `all 500ms ease`,
+      transition: `all ${localDelay}ms ease`,
     },
     ".mobsidebar-exit-active": {
       transform: "translateX(-100%)",
-      transition: `all 500ms ease-in`,
+      transition: `all ${localDelay}ms ease-in`,
     },
     ".mobsidebarbg-enter": {
       opacity: 0,
     },
     ".mobsidebarbg-enter-active": {
       opacity: 1,
-      transition: `all 500ms ease`,
+      transition: `all ${localDelay}ms ease`,
     },
     ".mobsidebarbg-exit-active": {
       opacity: 0,
-      transition: `all 500ms ease-in`,
+      transition: `all ${localDelay}ms ease-in`,
     },
   },
 }));

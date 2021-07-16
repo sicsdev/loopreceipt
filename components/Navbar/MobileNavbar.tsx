@@ -3,16 +3,25 @@ import { makeStyles, useTheme } from "@material-ui/core";
 import Image from "next/image";
 import { useState } from "react";
 import ToggleSidebar from "@components/shared/ToggleSidebar";
+import { useWindowDimensions } from "@hooks/useWindowDimensions";
 interface MobileNavbarProps {}
 const MobileNavbar = ({}: MobileNavbarProps) => {
   const styles = useStyles();
   const theme = useTheme();
+  const { windowDimensions } = useWindowDimensions();
   const [showSidebar, setShowSidebar] = useState(false);
   return (
     <div className={styles.MobileNavbar}>
-      <ToggleSidebar show={showSidebar} close={() => setShowSidebar(false)}>
+      <ToggleSidebar
+        show={showSidebar}
+        close={() => setShowSidebar(false)}
+        delay={300}
+      >
         <div
           className={styles.mobileSidebar}
+          style={{
+            height: windowDimensions.innerHeight + "px",
+          }}
           onScroll={(e) => {
             e.stopPropagation();
           }}
@@ -85,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
   mobileSidebar: {
     height: "100vh",
     overflow: "auto",
-    paddingBottom: "4rem",
+    paddingBottom: "2rem",
   },
   profile: {
     padding: "1rem",

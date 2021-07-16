@@ -238,6 +238,31 @@ function Create() {
       {React.cloneElement(backButton, { style: { visibility: "hidden" } })}
     </div>
   );
+  const addLooper = () => {
+    formsProps[activeFormIndex].setFormState((prevFormState: FormStateType) => {
+      const keys = Object.keys(prevFormState);
+      // console.log(keys);
+      const lastKey = keys[keys.length - 1];
+      const lastKeyId = +getLastChar(lastKey);
+      // console.log(lastKeyId);
+
+      const newLooperEntry: any = {};
+      for (let [key, value] of Object.entries(
+        forms[activeFormIndex].initialState
+      )) {
+        const newKey = setLastChar(key, `${lastKeyId + 1}`);
+        newLooperEntry[newKey] = {
+          ...value,
+          name: newKey,
+        };
+      }
+      const updatedFormState = {
+        ...prevFormState,
+        ...newLooperEntry,
+      };
+      return updatedFormState;
+    });
+  };
   return (
     <div>
       <UpperBar>
@@ -278,36 +303,7 @@ function Create() {
                     <Button
                       color="secondary"
                       labelColor="white"
-                      onClick={() => {
-                        formsProps[activeFormIndex].setFormState(
-                          (prevFormState: FormStateType) => {
-                            const keys = Object.keys(prevFormState);
-                            // console.log(keys);
-                            const lastKey = keys[keys.length - 1];
-                            const lastKeyId = +getLastChar(lastKey);
-                            // console.log(lastKeyId);
-
-                            const newLooperEntry: any = {};
-                            for (let [key, value] of Object.entries(
-                              forms[activeFormIndex].initialState
-                            )) {
-                              const newKey = setLastChar(
-                                key,
-                                `${lastKeyId + 1}`
-                              );
-                              newLooperEntry[newKey] = {
-                                ...value,
-                                name: newKey,
-                              };
-                            }
-                            const updatedFormState = {
-                              ...prevFormState,
-                              ...newLooperEntry,
-                            };
-                            return updatedFormState;
-                          }
-                        );
-                      }}
+                      onClick={addLooper}
                     >
                       + Add more
                     </Button>
