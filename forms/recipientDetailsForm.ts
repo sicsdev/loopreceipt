@@ -6,7 +6,7 @@ const recipientDetailsForm: FormType = {
   formHeading: "Add Recipient Details",
 
   methods: {
-    getCompleteAddress: (formState) => {
+    getCompleteAddress: ({ formState }) => {
       let ans = `${formState.province.value},
        ${formState.city.value},
         ${formState.country.value},

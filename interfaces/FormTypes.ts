@@ -11,7 +11,13 @@ export interface FormType {
     | "loopersDetailsForm";
   formHeading?: string;
   methods?: {
-    [key: string]: (formState: FormStateType) => string;
+    [key: string]: ({
+      formState,
+      args,
+    }: {
+      formState: FormStateType;
+      args?: any;
+    }) => any;
   };
 }
 export interface useFormReturnType {

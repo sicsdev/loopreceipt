@@ -21,6 +21,8 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import SearchBar from "@components/Create/SearchBar";
 import Summary from "./Summary";
 import AddOrEditFields from "./AddOrEditFields";
+import { getLastChar } from "@helpers/utils";
+import { FormStateType } from "@interfaces/FormTypes";
 interface OneByOneProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -56,14 +58,36 @@ function OneByOne({ setOption }: OneByOneProps) {
     },
   });
   const [summaryPageActive, setSummaryPageActive] = useState(false);
-
+  const entityCompletelyEmpty = (formState: FormStateType, id: number) => {
+    const entityFields = Object.keys(formState).filter((key) =>
+      key.endsWith(String(id))
+    );
+    for (let field of entityFields) {
+      if (formState[field].value) {
+        return false;
+      }
+    }
+    return true; // return the validation as true
+  };
   const validateFieldsOfForm = (formIndex: number) => {
     let allFieldsValid = true;
+    let entityIdsToRemove = new Set<number>();
     const updatedFormState = { ...formsProps[formIndex].formState };
     for (const name in updatedFormState) {
       const input = { ...updatedFormState[name] };
       if (input.validate) {
-        const valid = input.validate();
+        let valid = input.validate();
+        if (forms[formIndex].formName === "loopersDetailsForm") {
+          const feildPartOfEmptyEntity = entityCompletelyEmpty(
+            formsProps[formIndex].formState,
+            +getLastChar(name)
+          );
+          if (!valid && feildPartOfEmptyEntity) {
+            entityIdsToRemove.add(+getLastChar(name));
+          }
+          valid = valid || feildPartOfEmptyEntity;
+        }
+
         // console.log(valid);
         if (!valid) {
           input.error = input.errorText;
@@ -76,6 +100,24 @@ function OneByOne({ setOption }: OneByOneProps) {
       }
     }
     formsProps[activeFormIndex].setFormState(updatedFormState);
+    if (entityIdsToRemove.size > 0) {
+      formsProps[formIndex].setFormState((prevFormState) => {
+        const updatedFormState: typeof prevFormState = {};
+        for (let key in prevFormState) {
+          let includeKey = true;
+          for (let id of Array.from(entityIdsToRemove)) {
+            if (key.endsWith(String(id))) {
+              includeKey = false;
+              break;
+            }
+          }
+          if (includeKey) {
+            updatedFormState[key] = prevFormState[key];
+          }
+        }
+        return updatedFormState;
+      });
+    }
     return allFieldsValid;
   };
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
@@ -186,6 +228,7 @@ function OneByOne({ setOption }: OneByOneProps) {
                   <AddOrEditFields
                     formProps={formsProps[activeFormIndex]}
                     form={forms[activeFormIndex]}
+                    fieldNamesToDisplay={["looperName", "looperEmail"]}
                   />
                 ) : (
                   <Form

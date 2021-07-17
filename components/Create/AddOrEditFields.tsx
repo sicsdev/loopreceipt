@@ -1,46 +1,176 @@
-import { makeStyles } from "@material-ui/core";
+import { formatMs, makeStyles } from "@material-ui/core";
 import Button from "@components/Controls/Button";
 import Form from "@components/shared/Form";
+import Image from "next/image";
+
 import {
   FormStateType,
   FormType,
   useFormReturnType,
 } from "@interfaces/FormTypes";
-import { getLastChar, setLastChar } from "@helpers/utils";
+import { getLastChar } from "@helpers/utils";
+import { useState, useEffect } from "react";
 interface AddOrEditFieldsProps {
   formProps: useFormReturnType;
   form: FormType;
+  fieldNamesToDisplay: string[];
 }
-const AddOrEditFields = ({ formProps, form }: AddOrEditFieldsProps) => {
+const AddOrEditFields = ({
+  formProps,
+  form,
+  fieldNamesToDisplay,
+}: AddOrEditFieldsProps) => {
   const styles = useStyles();
-  const addField = () => {
-    formProps.setFormState((prevFormState: FormStateType) => {
-      const keys = Object.keys(prevFormState);
-      // console.log(keys);
-      const lastKey = keys[keys.length - 1];
-      const lastKeyId = +getLastChar(lastKey);
-      // console.log(lastKeyId);
-
-      const newLooperEntry: any = {};
-      for (let [key, value] of Object.entries(form.initialState)) {
-        const newKey = setLastChar(key, `${lastKeyId + 1}`);
-        newLooperEntry[newKey] = {
-          ...value,
-          name: newKey,
-        };
+  const [hiddenEntityids, setHiddenEntityIds] = useState<Set<number>>(
+    new Set()
+  );
+  const updateHiddenEntityIds = () => {
+    setHiddenEntityIds(() => {
+      const set = new Set<number>();
+      const keys = Object.keys(formProps.formState);
+      const ids = new Set(keys.map((key) => +getLastChar(key)));
+      for (let id of Array.from(ids)) {
+        let allValid = true;
+        for (let field of fieldNamesToDisplay) {
+          const input = formProps.formState[field + id];
+          if (!input.value) {
+            allValid = false;
+            break;
+          }
+          if (input.validate) {
+            if (!input.validate()) {
+              allValid = false;
+              break;
+            }
+          }
+        }
+        if (allValid) {
+          set.add(id);
+        }
       }
-      const updatedFormState = {
-        ...prevFormState,
-        ...newLooperEntry,
-      };
-      return updatedFormState;
+
+      return set;
     });
+  };
+  useEffect(() => {
+    updateHiddenEntityIds();
+  }, []);
+  const addEntity = () => {
+    setTimeout(() => {
+      formProps.setFormState((prevFormState: FormStateType) => {
+        const keys = Object.keys(prevFormState);
+        const ids = new Set(keys.map((key) => +getLastChar(key)));
+        let lastKeyId = -1;
+        for (let id of Array.from(ids)) {
+          if (id > lastKeyId) {
+            lastKeyId = id;
+          }
+        }
+
+        const newLooperEntry: FormStateType = {};
+        for (let key of fieldNamesToDisplay) {
+          const newId = lastKeyId + 1;
+          const name = key + newId;
+          newLooperEntry[name] = {
+            ...prevFormState[key + lastKeyId],
+            name,
+            value: "",
+          };
+        }
+        const updatedFormState = {
+          ...prevFormState,
+          ...newLooperEntry,
+        };
+        return updatedFormState;
+      });
+    }, 100);
+    updateHiddenEntityIds();
+  };
+  // useEffect(() => {
+  //   console.log(formProps.formState);
+  //   console.log(hiddenEntityids);
+  // }, [hiddenEntityids]);
+  const confirmedEntities = () => {
+    const entities: {
+      value: string;
+      id: number;
+    }[] = [];
+    for (let id of Array.from(hiddenEntityids)) {
+      let value = "";
+      for (let field of fieldNamesToDisplay) {
+        value += formProps.formState[field + id].value + " - ";
+      }
+      value = value
+        .split("")
+        .slice(0, value.length - 3)
+        .join("");
+      entities.push({ value, id });
+    }
+    return entities;
   };
   return (
     <div className={styles.AddOrEditFields}>
-      <Form {...formProps} validateOnBlur={true} autoComplete="off" />
+      {confirmedEntities().map((entity, i) => {
+        return (
+          <div key={entity.id} className={styles.confirmedField}>
+            <div className="details">{entity.value}</div>
+            <div className="buttons">
+              <div
+                onClick={() => {
+                  setHiddenEntityIds((prev) => {
+                    const updated = new Set(prev);
+                    updated.delete(entity.id);
+                    return updated;
+                  });
+                }}
+              >
+                <Image src="/icons/create/edit.svg" width={20} height={20} />
+              </div>
+              <div className="divider"></div>
+              <div
+                onClick={() => {
+                  setHiddenEntityIds((prev) => {
+                    const updated = new Set(prev);
+                    updated.delete(entity.id);
+                    return updated;
+                  });
+                  formProps.setFormState((prevFormState) => {
+                    const updatedFormState: typeof prevFormState = {};
+                    for (let key in prevFormState) {
+                      if (!key.endsWith(String(entity.id))) {
+                        updatedFormState[key] = prevFormState[key];
+                      }
+                    }
+                    return updatedFormState;
+                  });
+                }}
+              >
+                <Image src="/icons/create/trash.svg" width={20} height={20} />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+      <Form
+        {...formProps}
+        validateOnBlur={true}
+        autoComplete="off"
+        hiddenFields={Object.keys(formProps.formState).filter((key) => {
+          for (let id of Array.from(hiddenEntityids)) {
+            if (key.endsWith(String(id))) return true;
+          }
+          return false;
+        })}
+      />
       <div className="button">
-        <Button color="secondary" labelColor="white" onClick={addField}>
+        <Button
+          color="secondary"
+          labelColor="white"
+          onClick={() => {
+            // console.log("click");
+            addEntity();
+          }}
+        >
           + Add more
         </Button>
       </div>
@@ -52,6 +182,24 @@ const useStyles = makeStyles((theme) => ({
   AddOrEditFields: {
     "& .button": {
       marginTop: "4rem",
+    },
+  },
+  confirmedField: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "4px 0",
+    "& .details": {},
+    "& .buttons": {
+      display: "flex",
+      gap: 10,
+      "& .divider": {
+        width: "2px",
+        backgroundColor: "#c4c4c4",
+      },
+      "& img": {
+        cursor: "pointer",
+      },
     },
   },
 }));

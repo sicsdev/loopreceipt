@@ -15,6 +15,8 @@ interface FormProps {
   resetForm: () => void;
   validateOnBlur: boolean;
   autoComplete?: string;
+  hiddenFields?: string[];
+  methodOnBlur?: () => void;
 }
 const Form = ({
   formState,
@@ -23,6 +25,8 @@ const Form = ({
   resetForm,
   validateOnBlur = true,
   autoComplete,
+  hiddenFields,
+  methodOnBlur,
 }: FormProps) => {
   const styles = useStyles();
 
@@ -52,7 +56,7 @@ const Form = ({
       {Object.keys(formState).map((inputName, i) => {
         // console.log(inputName);
         const input = formState[inputName];
-        return (
+        return !hiddenFields?.includes(input.name) ? (
           <InputBox
             key={i}
             input={input}
@@ -61,9 +65,12 @@ const Form = ({
               if (validateOnBlur) {
                 validateField(inputName);
               }
+              if (methodOnBlur) {
+                methodOnBlur();
+              }
             }}
           />
-        );
+        ) : null;
       })}
     </form>
   );

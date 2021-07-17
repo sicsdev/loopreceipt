@@ -13,6 +13,7 @@ interface SummaryProps {
   formsProps: useFormReturnType[];
 }
 const Summary = ({ forms, formsProps }: SummaryProps) => {
+  console.log(formsProps);
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const theme = useTheme();
@@ -113,9 +114,9 @@ const Summary = ({ forms, formsProps }: SummaryProps) => {
           <Entry
             inputIcon="location"
             text={
-              forms[recipientFormIdx].methods?.getCompleteAddress(
-                formsProps[recipientFormIdx].formState
-              )!
+              forms[recipientFormIdx].methods?.getCompleteAddress({
+                formState: formsProps[recipientFormIdx].formState,
+              })!
             }
           />
           <Entry inputIcon="phone" text={"+234 081-1236-4568"} />
