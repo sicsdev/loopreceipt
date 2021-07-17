@@ -31,7 +31,14 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
           <div className={styles.links}>
             <MyLink link="/dashboard">Dashboard</MyLink>
             {ListenClickAtParentElement(openModal, (childClick) => (
-              <MyLink onClick={childClick}>Create Loopreceipt</MyLink>
+              <MyLink
+                onClick={(e) => {
+                  childClick(e);
+                  setShowSidebar(false);
+                }}
+              >
+                Create Loopreceipt
+              </MyLink>
             ))}
             <MyLink>Packages</MyLink>
             <MyLink>Recepients</MyLink>

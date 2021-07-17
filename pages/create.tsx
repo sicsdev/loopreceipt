@@ -12,7 +12,7 @@ const Create = () => {
     <Layout>
       <div className={styles.Create}>
         {option === "onebyone" ? (
-          <OneByOne />
+          <OneByOne setOption={setOption} />
         ) : option === "group" ? (
           <Group />
         ) : (

@@ -2,7 +2,7 @@ import Button from "@components/Controls/Button";
 
 import { makeStyles, useTheme } from "@material-ui/core";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ConfirmDialog from "@components/Create/ConfirmDialog";
 import Image from "next/image";
 import { useForm } from "@hooks/useForm";
@@ -15,14 +15,18 @@ import Box from "@components/Create/Box";
 import UpperBar from "@components/shared/UpperBar";
 
 import loopersDetailsForm from "forms/loopersDetailsForm";
-import { FormStateType } from "@interfaces/FormTypes";
-import { getLastChar, setLastChar } from "@helpers/utils";
 import { useAppSelector } from "@store/hooks";
 
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import SearchBar from "@components/Create/SearchBar";
 import Summary from "./Summary";
-function OneByOne() {
+import AddOrEditFields from "./AddOrEditFields";
+interface OneByOneProps {
+  setOption: React.Dispatch<
+    React.SetStateAction<"onebyone" | "group" | undefined>
+  >;
+}
+function OneByOne({ setOption }: OneByOneProps) {
   const styles = useStyles();
   const theme = useTheme();
   const { windowDimensions } = useWindowDimensions();
@@ -77,6 +81,7 @@ function OneByOne() {
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
     if (summaryPageActive) setSummaryPageActive(false);
     else if (activeFormIndex > 0) setActiveFormIndex(activeFormIndex - 1);
+    else setOption(undefined);
   };
   const backButton = (
     <div className={styles.backButton} onClick={handleBackButtonClick}>
@@ -146,31 +151,7 @@ function OneByOne() {
       {React.cloneElement(backButton, { style: { visibility: "hidden" } })}
     </div>
   );
-  const addLooper = () => {
-    formsProps[activeFormIndex].setFormState((prevFormState: FormStateType) => {
-      const keys = Object.keys(prevFormState);
-      // console.log(keys);
-      const lastKey = keys[keys.length - 1];
-      const lastKeyId = +getLastChar(lastKey);
-      // console.log(lastKeyId);
 
-      const newLooperEntry: any = {};
-      for (let [key, value] of Object.entries(
-        forms[activeFormIndex].initialState
-      )) {
-        const newKey = setLastChar(key, `${lastKeyId + 1}`);
-        newLooperEntry[newKey] = {
-          ...value,
-          name: newKey,
-        };
-      }
-      const updatedFormState = {
-        ...prevFormState,
-        ...newLooperEntry,
-      };
-      return updatedFormState;
-    });
-  };
   return (
     <div>
       <UpperBar>
@@ -201,21 +182,17 @@ function OneByOne() {
                   nextCancelButtons}
               </div>
               <div className={styles.rest}>
-                <Form
-                  {...formsProps[activeFormIndex]}
-                  validateOnBlur={true}
-                  autoComplete="off"
-                />
-                {forms[activeFormIndex].formName === "loopersDetailsForm" && (
-                  <div className="button">
-                    <Button
-                      color="secondary"
-                      labelColor="white"
-                      onClick={addLooper}
-                    >
-                      + Add more
-                    </Button>
-                  </div>
+                {forms[activeFormIndex].formName === "loopersDetailsForm" ? (
+                  <AddOrEditFields
+                    formProps={formsProps[activeFormIndex]}
+                    form={forms[activeFormIndex]}
+                  />
+                ) : (
+                  <Form
+                    {...formsProps[activeFormIndex]}
+                    validateOnBlur={true}
+                    autoComplete="off"
+                  />
                 )}
                 {windowDimensions.innerWidth < theme.breakpoints.values.sm && (
                   <>
@@ -290,7 +267,6 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: "column",
       gap: "1.5rem",
     },
-    "& .button": {},
   },
   nextCancelButtons: {
     display: "flex",
