@@ -17,7 +17,7 @@ const OptionCard = ({ iconSrc, text, onClick }: OptionCardProps) => {
 export default OptionCard;
 const useStyles = makeStyles((theme) => ({
   optionCard: {
-    width: 280,
+    minWidth: 280,
     height: 182,
     display: "flex",
     flexDirection: "column",
@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 20,
     cursor: "pointer",
     userSelect: "none",
+    [theme.breakpoints.down("sm")]: {
+      justifyContent: "center",
+    },
     "& .text": {
       textDecoration: "underline",
       fontWeight: "bold",

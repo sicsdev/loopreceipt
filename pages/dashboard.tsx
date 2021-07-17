@@ -1,32 +1,33 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core";
 import Sidebar from "@components/Navbar/DesktopSidebar";
 import Links from "@components/Dashboard/Links";
-import UpperBar from "@components/Create/UpperBar";
+import UpperBar from "@components/shared/UpperBar";
 import Button from "@components/Controls/Button";
 import Layout from "@components/Layout";
 import OptionCard from "@components/Dashboard/OptionCard";
 import Typography from "@material-ui/core/Typography";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
+import { useWindowDimensions } from "@hooks/useWindowDimensions";
 
 interface DashboardProps {
   path: string;
 }
 const Dashboard = ({ path }: DashboardProps) => {
   const styles = useStyles();
-
+  const { windowDimensions } = useWindowDimensions();
+  const theme = useTheme();
   return (
     <Layout>
       <div className={styles.dashboard}>
-        <Sidebar path={path} />
+        {windowDimensions.innerWidth >= theme.breakpoints.values.md && (
+          <Sidebar path={path} />
+        )}
         <div className={styles.right}>
-          <Links links={["outgoing", "received", "drafts"]} />
-          <UpperBar>
-            <div className={styles.bar}>
-              <div className="profile">
-                <p className="icon">G</p>
-                <p>Gari Boetang</p>
-              </div>
+          {windowDimensions.innerWidth < theme.breakpoints.values.md && (
+            <div className="top">
+              <p className="head">My Loops</p>
+
               {ListenClickAtParentElement(
                 (e) => {
                   openModal(e, {
@@ -40,32 +41,60 @@ const Dashboard = ({ path }: DashboardProps) => {
                   });
                 },
                 (childClick) => (
-                  <Button onClick={childClick}>+ New Loopreceipt</Button>
+                  <Button labelWeight="bold" shrink onClick={childClick}>
+                    + New
+                  </Button>
                 )
               )}
             </div>
+          )}
+          <Links links={["outgoing", "received", "drafts"]} />
+          <UpperBar>
+            <div className={styles.bar}>
+              <div className="profile">
+                <p className="icon">G</p>
+                <p>Gari Boetang</p>
+              </div>
+              {windowDimensions.innerWidth >= theme.breakpoints.values.md &&
+                ListenClickAtParentElement(
+                  (e) => {
+                    openModal(e, {
+                      translationsFrom: "element",
+                      positionWRTPoint: {
+                        bottom: true,
+                        left: true,
+                      },
+                      translations: {
+                        y: 20,
+                        x: (e.target as any).offsetWidth,
+                      },
+                    });
+                  },
+                  (childClick) => (
+                    <Button onClick={childClick}>+ New Loopreceipt</Button>
+                  )
+                )}
+            </div>
           </UpperBar>
           <div className={styles.rest}>
-            <div
+            <Typography
+              variant="body1"
+              gutterBottom
               style={{
-                marginTop: "1rem",
-                fontSize: "16px",
-                lineHeight: "19px",
+                fontWeight: "bold",
+                color: "#4F5257",
               }}
             >
-              <Typography
-                variant="body1"
-                gutterBottom
-                style={{
-                  fontWeight: "bold",
-                }}
-              >
-                You dont have any Loopreceipts yet.
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                You’ll want to add recipients to create Loops with you.
-              </Typography>
-            </div>
+              You dont have any Loopreceipts yet.
+            </Typography>
+            <Typography
+              variant="body2"
+              style={{
+                color: "#4F5257",
+              }}
+            >
+              You’ll want to add recipients to create Loops with you.
+            </Typography>
             <div className="cards">
               {ListenClickAtParentElement(
                 (e) => {
@@ -103,11 +132,26 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 250,
     padding: "3rem 4rem",
     // border: "2px solid blue",
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 0,
+      padding: "0",
+    },
+    "& .top": {
+      display: "flex",
+      justifyContent: "space-between",
+      padding: "1.5rem 4%",
+      "& .head": {
+        fontSize: "1.3rem",
+        fontWeight: "500",
+      },
+    },
   },
   bar: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    padding: "0 4%",
+    paddingTop: "1.5rem",
     "& .profile": {
       display: "flex",
       alignItems: "center",
@@ -126,11 +170,17 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   rest: {
+    padding: "1.5rem 4%",
     "& .cards": {
       display: "flex",
       justifyContent: "center",
+      alignItems: "stretch",
       gap: 30,
       marginTop: "5rem",
+      [theme.breakpoints.down("xs")]: {
+        flexDirection: "column",
+        marginTop: "2rem",
+      },
     },
   },
 }));

@@ -2,6 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import { useDelayed } from "@hooks/useDelayed";
 
 import { CSSTransition } from "react-transition-group";
+import { useWindowDimensions } from "@hooks/useWindowDimensions";
 
 interface ToggleBottombarProps {
   show: boolean;
@@ -19,12 +20,13 @@ const ToggleBottombar = ({
   const showDelayedCopy = useDelayed(show, delay);
   localDelay = delay;
   const styles = useStyles();
-
+  const { windowDimensions } = useWindowDimensions();
   return (
     <div
       className={styles.bar}
       style={{
         display: show || showDelayedCopy ? "block" : "none",
+        height: windowDimensions.innerHeight,
       }}
     >
       <CSSTransition
@@ -54,19 +56,17 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     top: 0,
     left: 0,
-    width: "100vw",
-    height: "100vh",
   },
   nav: {
     zIndex: 100,
     position: "absolute",
     bottom: 0,
     width: "100vw",
-
     backgroundColor: "white",
   },
   bg: {
     zIndex: 99,
+    bottom: 0,
     position: "absolute",
     backgroundColor: "rgba(0, 0, 0, 0.336)",
     width: "100vw",

@@ -1,16 +1,15 @@
 import RoundButton from "@components/Controls/RoundButton";
-import { makeStyles, useTheme } from "@material-ui/core";
+import { makeStyles, StylesProvider, useTheme } from "@material-ui/core";
 import Image from "next/image";
 import { useState } from "react";
 import ToggleSidebar from "@components/shared/ToggleSidebar";
-import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
+import Link from "next/link";
 interface MobileNavbarProps {}
 const MobileNavbar = ({}: MobileNavbarProps) => {
   const styles = useStyles();
   const theme = useTheme();
-  const { windowDimensions } = useWindowDimensions();
   const [showSidebar, setShowSidebar] = useState(false);
   return (
     <div className={styles.MobileNavbar}>
@@ -21,9 +20,6 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
       >
         <div
           className={styles.mobileSidebar}
-          style={{
-            height: windowDimensions.innerHeight + "px",
-          }}
           onScroll={(e) => {
             e.stopPropagation();
           }}
@@ -33,7 +29,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
             <p className="name">Maria Junior</p>
           </div>
           <div className={styles.links}>
-            <MyLink>Dashboard</MyLink>
+            <MyLink link="/dashboard">Dashboard</MyLink>
             {ListenClickAtParentElement(openModal, (childClick) => (
               <MyLink onClick={childClick}>Create Loopreceipt</MyLink>
             ))}
@@ -73,12 +69,20 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
 interface MyLinkProps {
   children: JSX.Element | string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
+  link?: string;
 }
-function MyLink({ children, onClick }: MyLinkProps) {
-  return (
+function MyLink({ children, onClick, link }: MyLinkProps) {
+  const component = (
     <div className="link" onClick={onClick}>
       {children}
     </div>
+  );
+  return link ? (
+    <Link href={link}>
+      <a>{component}</a>
+    </Link>
+  ) : (
+    component
   );
 }
 export default MobileNavbar;
@@ -101,8 +105,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mobileSidebar: {
-    height: "100vh",
-    overflow: "auto",
     paddingBottom: "2rem",
   },
   profile: {

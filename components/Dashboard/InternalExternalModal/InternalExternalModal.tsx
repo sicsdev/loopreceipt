@@ -5,6 +5,7 @@ import { useAppDispatch } from "@store/hooks";
 import { setType } from "@store/slices/loopReceiptSlice";
 import { useRouter } from "next/router";
 import DialogItemType from "@interfaces/DialogItemType";
+import { closeModal } from "@store/slices/modalSlice";
 interface InternalExternalModalProps {}
 const InternalExternalModal = ({}: InternalExternalModalProps) => {
   const router = useRouter();
@@ -16,6 +17,8 @@ const InternalExternalModal = ({}: InternalExternalModalProps) => {
       src: "/icons/create/internal.svg",
       click: () => {
         dispatch(setType({ type: "internal" }));
+        closeModal();
+
         router.push("/create");
       },
     },
@@ -25,6 +28,7 @@ const InternalExternalModal = ({}: InternalExternalModalProps) => {
       src: "/icons/create/external.svg",
       click: () => {
         dispatch(setType({ type: "external" }));
+        closeModal();
         router.push("/create");
       },
     },

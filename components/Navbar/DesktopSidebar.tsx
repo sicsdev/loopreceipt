@@ -91,7 +91,7 @@ const SidebarItem = ({
   );
   return link ? (
     <Link href={link}>
-      <a className={styles.link}>{component}</a>
+      <a>{component}</a>
     </Link>
   ) : (
     component
@@ -110,10 +110,7 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     height: "100vh",
   },
-  link: {
-    textDecoration: "none",
-    // border: "1px solid red",
-  },
+
   item: {
     // border: "1px solid red",
     cursor: "pointer",

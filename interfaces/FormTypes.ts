@@ -14,3 +14,15 @@ export interface FormType {
     [key: string]: (formState: FormStateType) => string;
   };
 }
+export interface useFormReturnType {
+  formState: {
+    [key: string]: InputType;
+  };
+  setFormState: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: InputType;
+    }>
+  >;
+  handleInputChange: React.ChangeEventHandler<HTMLInputElement>;
+  resetForm: () => void;
+}

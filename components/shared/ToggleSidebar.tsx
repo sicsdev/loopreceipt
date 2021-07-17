@@ -2,6 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import { useDelayed } from "@hooks/useDelayed";
 
 import { CSSTransition } from "react-transition-group";
+import { useWindowDimensions } from "@hooks/useWindowDimensions";
 
 interface ToggleSidebarProps {
   show: boolean;
@@ -19,7 +20,7 @@ const ToggleSidebar = ({
   const showDelayedCopy = useDelayed(show, delay);
   localDelay = delay;
   const styles = useStyles();
-
+  const { windowDimensions } = useWindowDimensions();
   return (
     <div
       className={styles.bar}
@@ -33,7 +34,14 @@ const ToggleSidebar = ({
         classNames={`mobsidebar`}
         unmountOnExit
       >
-        <div className={styles.nav}>{children}</div>
+        <div
+          className={styles.nav}
+          style={{
+            height: windowDimensions.innerHeight,
+          }}
+        >
+          {children}
+        </div>
       </CSSTransition>
       <CSSTransition
         in={show}
@@ -54,15 +62,13 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     top: 0,
     left: 0,
-    width: "100vw",
-    height: "100vh",
   },
   nav: {
     zIndex: 100,
     position: "absolute",
     backgroundColor: "white",
-    height: "100vh",
     width: "80vw",
+    overflow: "auto",
   },
   bg: {
     zIndex: 99,
