@@ -19,6 +19,9 @@ const theme = createTheme({
     text: {
       primary: "#0F001A",
     },
+    background: {
+      default: "#fff",
+    },
   },
 });
 function MyApp({ Component, pageProps }: AppProps) {

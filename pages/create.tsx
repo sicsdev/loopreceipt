@@ -5,16 +5,93 @@ import { makeStyles } from "@material-ui/core";
 import Layout from "@components/Layout";
 
 import { useState } from "react";
+import {
+  FormStateType,
+  FormType,
+  useFormReturnType,
+} from "@interfaces/FormTypes";
+import { getLastChar } from "@helpers/utils";
 const Create = () => {
   const styles = useStyles();
   const [option, setOption] = useState<"onebyone" | "group">();
+  const entityCompletelyEmpty = (formState: FormStateType, id: number) => {
+    const entityFields = Object.keys(formState).filter((key) =>
+      key.endsWith(String(id))
+    );
+    for (let field of entityFields) {
+      if (formState[field].value) {
+        return false;
+      }
+    }
+    return true; // return the validation as true
+  };
+  const validateFieldsOfForm = (
+    formProps: useFormReturnType,
+    form: FormType
+  ) => {
+    let allFieldsValid = true;
+    let entityIdsToRemove = new Set<number>();
+    const updatedFormState = { ...formProps.formState };
+    for (const name in updatedFormState) {
+      const input = { ...updatedFormState[name] };
+      if (input.validate) {
+        let valid = input.validate();
+        if (form.entity) {
+          const feildPartOfEmptyEntity = entityCompletelyEmpty(
+            formProps.formState,
+            +getLastChar(name)
+          );
+          if (!valid && feildPartOfEmptyEntity) {
+            entityIdsToRemove.add(+getLastChar(name));
+          }
+          valid = valid || feildPartOfEmptyEntity;
+        }
+
+        // console.log(valid);
+        if (!valid) {
+          input.error = input.errorText;
+          allFieldsValid = false;
+        } else {
+          input.error = "";
+        }
+        // console.log(input);
+        updatedFormState[name] = input;
+      }
+    }
+    formProps.setFormState(updatedFormState);
+    if (entityIdsToRemove.size > 0) {
+      formProps.setFormState((prevFormState) => {
+        const updatedFormState: typeof prevFormState = {};
+        for (let key in prevFormState) {
+          let includeKey = true;
+          for (let id of Array.from(entityIdsToRemove)) {
+            if (key.endsWith(String(id))) {
+              includeKey = false;
+              break;
+            }
+          }
+          if (includeKey) {
+            updatedFormState[key] = prevFormState[key];
+          }
+        }
+        return updatedFormState;
+      });
+    }
+    return allFieldsValid;
+  };
   return (
     <Layout>
       <div className={styles.Create}>
         {option === "onebyone" ? (
-          <OneByOne setOption={setOption} />
+          <OneByOne
+            setOption={setOption}
+            validateFieldsOfForm={validateFieldsOfForm}
+          />
         ) : option === "group" ? (
-          <Group />
+          <Group
+            setOption={setOption}
+            validateFieldsOfForm={validateFieldsOfForm}
+          />
         ) : (
           <SelectOption setOption={setOption} />
         )}

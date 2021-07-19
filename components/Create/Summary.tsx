@@ -106,20 +106,22 @@ const Summary = ({ forms, formsProps }: SummaryProps) => {
 
       <div className="content">
         <div className="left">
-          <Entry
-            inputIcon="location"
-            text={
-              formsProps[recipientFormIdx].formState.receivingCompanyName.value
-            }
-          />
-          <Entry
-            inputIcon="location"
-            text={
-              forms[recipientFormIdx].methods?.getCompleteAddress({
-                formState: formsProps[recipientFormIdx].formState,
-              })!
-            }
-          />
+          {recipientFormIdx != -1 && (
+            <>
+              <Entry
+                inputIcon="location"
+                text={`To: ${formsProps[recipientFormIdx].formState.receivingCompanyName.value}`}
+              />
+              <Entry
+                inputIcon="location"
+                text={
+                  forms[recipientFormIdx].methods?.getCompleteAddress({
+                    formState: formsProps[recipientFormIdx].formState,
+                  })!
+                }
+              />
+            </>
+          )}
           <Entry inputIcon="phone" text={"+234 081-1236-4568"} />
           <Entry inputIcon="email" text={"hello@info.com.ng"} />
         </div>

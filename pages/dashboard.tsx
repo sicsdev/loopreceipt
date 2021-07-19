@@ -95,7 +95,7 @@ const Dashboard = ({ path }: DashboardProps) => {
             >
               You’ll want to add recipients to create Loops with you.
             </Typography>
-            <div className="cards">
+            <div className="optionCards">
               {ListenClickAtParentElement(
                 (e) => {
                   openModal(e, {
@@ -171,7 +171,7 @@ const useStyles = makeStyles((theme) => ({
   },
   rest: {
     padding: "1.5rem 4%",
-    "& .cards": {
+    "& .optionCards": {
       display: "flex",
       justifyContent: "center",
       alignItems: "stretch",

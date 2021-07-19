@@ -1,10 +1,246 @@
-import { makeStyles } from "@material-ui/core";
-interface GroupProps {}
-const Group = ({}: GroupProps) => {
+import { makeStyles, Paper, useTheme } from "@material-ui/core";
+import Switch from "@components/Controls/Switch";
+import React, { useEffect, useState } from "react";
+
+import { useForm } from "@hooks/useForm";
+
+import ConfirmDialogType from "@interfaces/ConfirmDialogType";
+
+import companyDetailsForm from "forms/companyDetailsForm";
+import Box from "@components/Create/Box";
+import Image from "next/image";
+import loopersDetailsForm from "forms/loopersDetailsForm";
+import { useAppSelector } from "@store/hooks";
+import { FormType, useFormReturnType } from "@interfaces/FormTypes";
+import { useWindowDimensions } from "@hooks/useWindowDimensions";
+import Summary from "./Summary";
+
+import FormUpperBar from "./FormUpperBar";
+import BoxContent from "./BoxContent";
+import Forms from "./Forms";
+import ProfileIcons from "@components/shared/ProfileIcons";
+import { randomColor } from "@helpers/utils";
+interface GroupProps {
+  setOption: React.Dispatch<
+    React.SetStateAction<"onebyone" | "group" | undefined>
+  >;
+  validateFieldsOfForm: (
+    formProps: useFormReturnType,
+    form: FormType
+  ) => boolean;
+}
+function Group({ setOption, validateFieldsOfForm }: GroupProps) {
   const styles = useStyles();
-  return <div className={styles.Group}>Group</div>;
-};
+  const theme = useTheme();
+
+  const { windowDimensions } = useWindowDimensions();
+  const [saveAsDefault, setSaveAsDefault] = useState(true);
+  const [activeFormIndex, setActiveFormIndex] = useState(0);
+  const formType = useAppSelector((state) => state.loopReceipt.type);
+  const getForm = () => {
+    switch (formType) {
+      case "internal":
+        return [loopersDetailsForm];
+      case "external":
+        return [companyDetailsForm, loopersDetailsForm];
+    }
+  };
+  const [forms, setForms] = useState(getForm);
+
+  const formsProps = forms.map((form) => useForm(form.initialState, true));
+
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
+    isOpen: false,
+    title: "Save Changes?",
+    subTitle: "",
+    confirmText: "Save Changes",
+    cancelText: "Cancel",
+    onConfirm: () => {
+      console.log("confirmed");
+    },
+  });
+  const [summaryPageActive, setSummaryPageActive] = useState(false);
+  const [saveGroupPageActive, setSaveGroupPageActive] = useState(false);
+  const handleBackButtonClick: React.MouseEventHandler<any> = () => {
+    if (summaryPageActive) setSummaryPageActive(false);
+    else if (saveGroupPageActive) setSaveGroupPageActive(false);
+    else if (activeFormIndex > 0) setActiveFormIndex(activeFormIndex - 1);
+    else setOption(undefined);
+  };
+  const handleCancelClick = () => {
+    setConfirmDialog({
+      ...confirmDialog,
+      isOpen: true,
+    });
+  };
+  const handleNextClick = () => {
+    // handleSubmit();
+    if (
+      validateFieldsOfForm(formsProps[activeFormIndex], forms[activeFormIndex])
+    ) {
+      // if current form is valid only then navigate to next
+      if (activeFormIndex < forms.length - 1) {
+        setActiveFormIndex(activeFormIndex + 1);
+      } else {
+        if (!saveGroupPageActive) {
+          setSaveGroupPageActive(true);
+        } else {
+          setSummaryPageActive(true);
+        }
+      }
+    }
+  };
+  // useEffect(() => {
+  //   console.log(saveAsDefault);
+  // }, [saveAsDefault]);
+  const upperBarContent = (
+    <>
+      <p style={{ fontWeight: 500 }}>
+        Step {summaryPageActive ? forms.length + 1 : activeFormIndex + 1} of{" "}
+        {forms.length + 1}
+      </p>
+      <p style={{ fontWeight: "bold" }}>
+        {summaryPageActive ? "Summary" : forms[activeFormIndex].formHeading}
+      </p>
+    </>
+  );
+
+  return (
+    <div>
+      <FormUpperBar
+        handleBackButtonClick={handleBackButtonClick}
+        upperBarText={upperBarContent}
+      />
+      <Box>
+        <>
+          {windowDimensions.innerWidth < theme.breakpoints.values.sm && (
+            <div className={styles.head}>{upperBarContent}</div>
+          )}
+          {!summaryPageActive ? (
+            <BoxContent
+              confirmDialog={confirmDialog}
+              setConfirmDialog={setConfirmDialog}
+              handleCancelClick={handleCancelClick}
+              handleNextClick={handleNextClick}
+            >
+              {saveGroupPageActive ? (
+                <div className={styles.group}>
+                  <div className="heading">
+                    <div>
+                      <Image
+                        src="/icons/create/group/group.svg"
+                        width={20}
+                        height={20}
+                      />
+                    </div>
+                    <h2>Group Name</h2>
+                  </div>
+                  <div className={"details"}>
+                    <div className="column">
+                      <div className="head">Group Members</div>
+                      <div className="content">
+                        <ProfileIcons
+                          firstAlphabets={["R", "M"]}
+                          colorStrings={[randomColor(), randomColor()]}
+                        />
+                      </div>
+                    </div>
+                    <div className="line"></div>
+                    <div className="column">
+                      <div className="head">Loopers</div>
+                      <div className="content">
+                        <ProfileIcons
+                          firstAlphabets={["R", "M"]}
+                          colorStrings={[randomColor(), randomColor()]}
+                        />
+                      </div>
+                    </div>
+                    <div className="line"></div>
+                    <div className="column">
+                      <div className="head">Group created for</div>
+                      <div className="content">
+                        <p>Dropsile Inc.</p>
+                      </div>
+                    </div>
+                    <div className="line"></div>
+                    <div className="column">
+                      <div className="head">Save as default</div>
+                      <div className="content">
+                        <Switch
+                          checked={saveAsDefault}
+                          onChange={(e, checked) => setSaveAsDefault(checked)}
+                          name="saveAsDefault"
+                          inputProps={{ "aria-label": "saveAsDefault" }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Forms
+                  forms={forms}
+                  formsProps={formsProps}
+                  activeFormIndex={activeFormIndex}
+                />
+              )}
+            </BoxContent>
+          ) : (
+            <Summary formsProps={formsProps} forms={forms} />
+          )}
+        </>
+      </Box>
+    </div>
+  );
+}
+
 export default Group;
 const useStyles = makeStyles((theme) => ({
-  Group: {},
+  head: {
+    margin: "1rem",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 5,
+  },
+  group: {
+    boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
+    borderRadius: 8,
+    padding: "1rem",
+    "& .heading": {
+      display: "flex",
+      gap: "2rem",
+
+      "& h2": {
+        transform: "translateY(-3px)",
+        fontWeight: "500",
+        fontSize: 20,
+      },
+    },
+    "& .details": {
+      margin: "1rem 2.5rem",
+      display: "flex",
+      justifyContent: "space-between",
+      "& .line": {
+        border: "1px solid #ebebeb",
+      },
+      "& .column": {
+        backgroundColor: "white",
+        "& .head": {
+          fontSize: 18,
+          marginBottom: "1rem",
+        },
+        "& .content": {},
+      },
+    },
+  },
+  personadd: {
+    border: "1px solid #B8B9BC",
+    borderStyle: "dashed",
+    borderRadius: "50%",
+    width: 48,
+    height: 48,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 }));

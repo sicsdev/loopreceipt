@@ -78,3 +78,16 @@ export const runSequentiallyAfterDelay = (
     }, delay * i);
   }
 };
+export const randomBetween = (min: number, max: number) =>
+  min + Math.floor(Math.random() * (max - min + 1));
+export const randomColor = (
+  min: number = 0,
+  max: number = 255,
+  opacity: number = 1
+) => {
+  const r = randomBetween(min, max);
+  const g = randomBetween(min, max);
+  const b = randomBetween(min, max);
+  const rgba = `rgba(${r},${g},${b}, ${opacity})`;
+  return rgba;
+};
