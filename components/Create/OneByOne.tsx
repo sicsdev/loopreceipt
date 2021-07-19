@@ -20,7 +20,7 @@ import { useAppSelector } from "@store/hooks";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import SearchBar from "@components/Create/SearchBar";
 import Summary from "./Summary";
-import AddOrEditFields from "./AddOrEditFields";
+import EntityForm from "./EntityForm";
 import { getLastChar } from "@helpers/utils";
 import { FormStateType } from "@interfaces/FormTypes";
 interface OneByOneProps {
@@ -77,7 +77,7 @@ function OneByOne({ setOption }: OneByOneProps) {
       const input = { ...updatedFormState[name] };
       if (input.validate) {
         let valid = input.validate();
-        if (forms[formIndex].formName === "loopersDetailsForm") {
+        if (forms[formIndex].entity) {
           const feildPartOfEmptyEntity = entityCompletelyEmpty(
             formsProps[formIndex].formState,
             +getLastChar(name)
@@ -224,11 +224,10 @@ function OneByOne({ setOption }: OneByOneProps) {
                   nextCancelButtons}
               </div>
               <div className={styles.rest}>
-                {forms[activeFormIndex].formName === "loopersDetailsForm" ? (
-                  <AddOrEditFields
+                {forms[activeFormIndex].entity ? (
+                  <EntityForm
                     formProps={formsProps[activeFormIndex]}
                     form={forms[activeFormIndex]}
-                    fieldNamesToDisplay={["looperName", "looperEmail"]}
                   />
                 ) : (
                   <Form
@@ -262,7 +261,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     width: "80%",
     margin: "auto",
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("xs")]: {
       justifyContent: "center",
       width: "100%",
       marginTop: "1.5rem",
@@ -276,7 +275,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   backButton: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("xs")]: {
       display: "none",
     },
   },

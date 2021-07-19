@@ -10,20 +10,29 @@ import {
 } from "@interfaces/FormTypes";
 import { getLastChar } from "@helpers/utils";
 import { useState, useEffect } from "react";
-interface AddOrEditFieldsProps {
+interface EntityFormProps {
   formProps: useFormReturnType;
   form: FormType;
-  fieldNamesToDisplay: string[];
 }
-const AddOrEditFields = ({
-  formProps,
-  form,
-  fieldNamesToDisplay,
-}: AddOrEditFieldsProps) => {
+const EntityForm = ({ formProps, form }: EntityFormProps) => {
   const styles = useStyles();
   const [hiddenEntityids, setHiddenEntityIds] = useState<Set<number>>(
     new Set()
   );
+  const fieldNamesForEntity = Object.keys(form.entity!);
+  useEffect(() => {
+    if (Object.keys(formProps.formState).length === 0) {
+      // we need to populate the form with at least 1 entity
+      formProps.setFormState(() => {
+        const entity = form.entity!;
+        const createdEntity: FormStateType = {};
+        for (let key in entity) {
+          createdEntity[key + "1"] = { ...entity[key], name: key + "1" };
+        }
+        return createdEntity;
+      });
+    }
+  }, []);
   const updateHiddenEntityIds = () => {
     setHiddenEntityIds(() => {
       const set = new Set<number>();
@@ -31,7 +40,7 @@ const AddOrEditFields = ({
       const ids = new Set(keys.map((key) => +getLastChar(key)));
       for (let id of Array.from(ids)) {
         let allValid = true;
-        for (let field of fieldNamesToDisplay) {
+        for (let field of fieldNamesForEntity) {
           const input = formProps.formState[field + id];
           if (!input.value) {
             allValid = false;
@@ -68,7 +77,7 @@ const AddOrEditFields = ({
         }
 
         const newLooperEntry: FormStateType = {};
-        for (let key of fieldNamesToDisplay) {
+        for (let key of fieldNamesForEntity) {
           const newId = lastKeyId + 1;
           const name = key + newId;
           newLooperEntry[name] = {
@@ -97,7 +106,7 @@ const AddOrEditFields = ({
     }[] = [];
     for (let id of Array.from(hiddenEntityids)) {
       let value = "";
-      for (let field of fieldNamesToDisplay) {
+      for (let field of fieldNamesForEntity) {
         value += formProps.formState[field + id].value + " - ";
       }
       value = value
@@ -177,7 +186,7 @@ const AddOrEditFields = ({
     </div>
   );
 };
-export default AddOrEditFields;
+export default EntityForm;
 const useStyles = makeStyles((theme) => ({
   AddOrEditFields: {
     "& .button": {

@@ -13,7 +13,8 @@ interface SummaryProps {
   formsProps: useFormReturnType[];
 }
 const Summary = ({ forms, formsProps }: SummaryProps) => {
-  console.log(formsProps);
+  // console.log(formsProps);
+  // log this to check the form state when coming to this page
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const theme = useTheme();
