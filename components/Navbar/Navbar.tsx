@@ -1,3 +1,4 @@
+import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles } from "@material-ui/core";
 import DesktopNavbar from "./DesktopNavbar";
@@ -6,10 +7,10 @@ interface NavbarPropTypes {}
 const Navbar = ({}: NavbarPropTypes) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
-
+  const win = new Win(windowDimensions);
   return (
     <div className={styles.Navbar}>
-      {windowDimensions.innerWidth < 960 ? <MobileNavbar /> : <DesktopNavbar />}
+      {win.down("sm") ? <MobileNavbar /> : <DesktopNavbar />}
     </div>
   );
 };

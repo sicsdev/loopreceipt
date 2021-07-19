@@ -3,7 +3,6 @@ import { useDelayed } from "@hooks/useDelayed";
 
 import { CSSTransition } from "react-transition-group";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
-
 interface ToggleSidebarProps {
   show: boolean;
   close: React.MouseEventHandler<any>;

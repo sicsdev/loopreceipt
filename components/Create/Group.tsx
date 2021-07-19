@@ -1,4 +1,4 @@
-import { makeStyles, Paper, useTheme } from "@material-ui/core";
+import { makeStyles, Paper } from "@material-ui/core";
 import Switch from "@components/Controls/Switch";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -20,7 +20,7 @@ import BoxContent from "./BoxContent";
 import Forms from "./Forms";
 import ProfileIcons from "@components/shared/ProfileIcons";
 import { randomColor } from "@helpers/utils";
-import win from "@helpers/win";
+import Win from "@helpers/Win";
 interface GroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -32,9 +32,9 @@ interface GroupProps {
 }
 function Group({ setOption, validateFieldsOfForm }: GroupProps) {
   const styles = useStyles();
-  const theme = useTheme();
 
   const { windowDimensions } = useWindowDimensions();
+  const win = new Win(windowDimensions);
   const [saveAsDefault, setSaveAsDefault] = useState(true);
   const [activeFormIndex, setActiveFormIndex] = useState(0);
   const formType = useAppSelector((state) => state.loopReceipt.type);
@@ -137,7 +137,7 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
       />
       <Box>
         <>
-          {windowDimensions.innerWidth < theme.breakpoints.values.sm && (
+          {win.down("xs") && (
             <div className={styles.head}>{upperBarContent}</div>
           )}
           {!summaryPageActive ? (
@@ -181,8 +181,7 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
                         />
                       </div>
                     </div>
-                    {windowDimensions.innerWidth >=
-                      theme.breakpoints.values["md"] && (
+                    {win.up("md") && (
                       <div className="line">
                         <p></p>
                       </div>

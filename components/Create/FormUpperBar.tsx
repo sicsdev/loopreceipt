@@ -1,9 +1,10 @@
-import { makeStyles, useTheme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Button from "@components/Controls/Button";
 import UpperBar from "@components/shared/UpperBar";
 import React from "react";
 import Image from "next/image";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
+import Win from "@helpers/Win";
 interface FormUpperBarProps {
   handleBackButtonClick: React.MouseEventHandler<any>;
   upperBarText: JSX.Element | string;
@@ -12,8 +13,8 @@ const FormUpperBar = ({
   handleBackButtonClick,
   upperBarText,
 }: FormUpperBarProps) => {
-  const theme = useTheme();
   const { windowDimensions } = useWindowDimensions();
+  const win = new Win(windowDimensions);
   const styles = useStyles();
   const backButton = (
     <div className={styles.backButton} onClick={handleBackButtonClick}>
@@ -30,7 +31,7 @@ const FormUpperBar = ({
 
   return (
     <UpperBar>
-      {windowDimensions.innerWidth >= theme.breakpoints.values.sm ? (
+      {win.up("sm") ? (
         upperBarContent
       ) : (
         <div className={styles.newButton} onClick={handleBackButtonClick}>

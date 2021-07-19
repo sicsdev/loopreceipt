@@ -1,6 +1,7 @@
-import { makeStyles, useTheme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Button from "@components/Controls/Button";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
+import Win from "@helpers/Win";
 interface NextCancelButtonsProps {
   handleCancelClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
   handleNextClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
@@ -11,24 +12,17 @@ const NextCancelButtons = ({
 }: NextCancelButtonsProps) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
-  const theme = useTheme();
+  const win = new Win(windowDimensions);
+
   return (
     <div className={styles.nextCancelButtons}>
       <Button
-        variant={
-          windowDimensions.innerWidth < theme.breakpoints.values.sm
-            ? "outlined"
-            : "text"
-        }
+        variant={win.down("xs") ? "outlined" : "text"}
         size="large"
         color="default"
-        labelColor={
-          windowDimensions.innerWidth < theme.breakpoints.values.sm
-            ? "gray"
-            : "black"
-        }
+        labelColor={win.down("xs") ? "gray" : "black"}
         labelWeight="bold"
-        shrink={windowDimensions.innerWidth >= theme.breakpoints.values.sm}
+        shrink={win.up("sm")}
         onClick={handleCancelClick}
       >
         Cancel
@@ -38,7 +32,7 @@ const NextCancelButtons = ({
         variant="contained"
         size="large"
         labelWeight="bold"
-        shrink={windowDimensions.innerWidth >= theme.breakpoints.values.sm}
+        shrink={win.up("sm")}
         onClick={handleNextClick}
       >
         Next

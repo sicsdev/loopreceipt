@@ -1,9 +1,10 @@
-import { makeStyles, useTheme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import ConfirmDialog from "@components/Create/ConfirmDialog";
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import NextCancelButtons from "./NextCancelButtons";
 import SearchBar from "@components/Create/SearchBar";
+import Win from "@helpers/Win";
 interface BoxContentProps {
   confirmDialog: ConfirmDialogType;
   setConfirmDialog: React.Dispatch<React.SetStateAction<ConfirmDialogType>>;
@@ -19,8 +20,8 @@ const BoxContent = ({
   children,
 }: BoxContentProps) => {
   const styles = useStyles();
-  const theme = useTheme();
   const { windowDimensions } = useWindowDimensions();
+  const win = new Win(windowDimensions);
   return (
     <div className={styles.BoxContent}>
       <ConfirmDialog
@@ -30,7 +31,7 @@ const BoxContent = ({
 
       <div className={styles.top}>
         <SearchBar />
-        {windowDimensions.innerWidth >= theme.breakpoints.values.sm && (
+        {win.up("sm") && (
           <NextCancelButtons
             handleCancelClick={handleCancelClick}
             handleNextClick={handleNextClick}
@@ -39,7 +40,7 @@ const BoxContent = ({
       </div>
       <div className={styles.rest}>
         {children}
-        {windowDimensions.innerWidth < theme.breakpoints.values.sm && (
+        {win.down("xs") && (
           <>
             <div style={{ flex: 2 }}></div>
             <NextCancelButtons

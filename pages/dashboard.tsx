@@ -1,4 +1,4 @@
-import { makeStyles, useTheme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Sidebar from "@components/Navbar/DesktopSidebar";
 import Links from "@components/Dashboard/Links";
 import UpperBar from "@components/shared/UpperBar";
@@ -8,8 +8,9 @@ import OptionCard from "@components/Dashboard/OptionCard";
 import Typography from "@material-ui/core/Typography";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
-import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import LoopCard from "@components/Dashboard/LoopCard";
+import Win from "@helpers/Win";
+import { useWindowDimensions } from "@hooks/useWindowDimensions";
 
 interface DashboardProps {
   path: string;
@@ -17,15 +18,14 @@ interface DashboardProps {
 const Dashboard = ({ path }: DashboardProps) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
-  const theme = useTheme();
+  const win = new Win(windowDimensions);
+  // console.log(win.up("md"));
   return (
     <Layout>
       <div className={styles.dashboard}>
-        {windowDimensions.innerWidth >= theme.breakpoints.values.md && (
-          <Sidebar path={path} />
-        )}
+        {win.up("md") && <Sidebar path={path} />}
         <div className={styles.right}>
-          {windowDimensions.innerWidth < theme.breakpoints.values.md && (
+          {win.down("sm") && (
             <div className="top">
               <p className="head">My Loops</p>
 
@@ -56,7 +56,7 @@ const Dashboard = ({ path }: DashboardProps) => {
                 <p className="icon">G</p>
                 <p>Gari Boetang</p>
               </div>
-              {windowDimensions.innerWidth >= theme.breakpoints.values.md &&
+              {win.up("md") &&
                 ListenClickAtParentElement(
                   (e) => {
                     openModal(e, {

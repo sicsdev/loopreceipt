@@ -1,4 +1,4 @@
-import { makeStyles, useTheme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import BoxContent from "./BoxContent";
 
 import React, { useState } from "react";
@@ -18,7 +18,7 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Summary from "./Summary";
 import Forms from "./Forms";
 import FormUpperBar from "./FormUpperBar";
-
+import Win from "@helpers/Win";
 interface OneByOneProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -30,9 +30,8 @@ interface OneByOneProps {
 }
 function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
   const styles = useStyles();
-  const theme = useTheme();
   const { windowDimensions } = useWindowDimensions();
-
+  const win = new Win(windowDimensions);
   const [activeFormIndex, setActiveFormIndex] = useState(0);
   const formType = useAppSelector((state) => state.loopReceipt.type);
   const getForm = () => {
@@ -104,7 +103,7 @@ function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
       />
       <Box>
         <>
-          {windowDimensions.innerWidth < theme.breakpoints.values.sm && (
+          {win.down("xs") && (
             <div className={styles.head}>{upperBarContent}</div>
           )}
           {!summaryPageActive ? (

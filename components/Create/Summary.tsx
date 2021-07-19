@@ -1,5 +1,5 @@
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
-import { makeStyles, useTheme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import Button from "@components/Controls/Button";
 import { InputIconType } from "@interfaces/InputTypes";
@@ -8,6 +8,7 @@ import inputIconMap from "forms/inputIconMap";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { EntityLoop, EntityLooper, EntityRecipient } from "@apiClient/types";
 import loopApi from "@apiClient/loopApi";
+import Win from "@helpers/Win";
 interface SummaryProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
@@ -17,7 +18,7 @@ const Summary = ({ forms, formsProps }: SummaryProps) => {
   // log this to check the form state when coming to this page
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
-  const theme = useTheme();
+  const win = new Win(windowDimensions);
   const formType = useAppSelector((state) => state.loopReceipt.type);
   const recipientFormIdx = forms.findIndex(
     (form) => form.formName === "recipientDetailsForm"
@@ -98,7 +99,7 @@ const Summary = ({ forms, formsProps }: SummaryProps) => {
   };
   return (
     <div className={styles.Summary}>
-      {windowDimensions.innerWidth >= theme.breakpoints.values.sm && (
+      {win.up("sm") && (
         <div className="top">
           <h1 className="head">Summary</h1>
         </div>
@@ -129,7 +130,7 @@ const Summary = ({ forms, formsProps }: SummaryProps) => {
           <p></p>
         </div>
         <div className="right">
-          {windowDimensions.innerWidth < theme.breakpoints.values.sm ? (
+          {win.down("xs") ? (
             <h1
               style={{
                 fontWeight: "bold",
