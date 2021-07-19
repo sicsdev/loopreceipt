@@ -18,6 +18,7 @@ const ProfileIcons = ({ firstAlphabets, colorStrings }: ProfileIconsProps) => {
             zIndex: 10 - i,
             transform: `translateX(-${8 * i}px)`,
           }}
+          key={i}
         >
           {alpha}
         </div>

@@ -1,6 +1,6 @@
 import { makeStyles, Paper, useTheme } from "@material-ui/core";
 import Switch from "@components/Controls/Switch";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useForm } from "@hooks/useForm";
 
@@ -20,6 +20,7 @@ import BoxContent from "./BoxContent";
 import Forms from "./Forms";
 import ProfileIcons from "@components/shared/ProfileIcons";
 import { randomColor } from "@helpers/utils";
+import win from "@helpers/win";
 interface GroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -61,12 +62,35 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
   });
   const [summaryPageActive, setSummaryPageActive] = useState(false);
   const [saveGroupPageActive, setSaveGroupPageActive] = useState(false);
+  const detailsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (saveGroupPageActive && detailsRef.current) {
+      const contentDivs: any =
+        detailsRef.current.getElementsByClassName("content");
+      // console.log(theme.breakpoints.values);
+      // console.log(win.values);
+      if (win.only("sm")) {
+        let maxHeight = contentDivs[0].offsetHeight;
+        for (let i = 1; i < contentDivs.length; i++) {
+          maxHeight = Math.max(maxHeight, contentDivs[i].offsetHeight);
+        }
+        for (let div of contentDivs) {
+          div.style.minHeight = maxHeight + "px";
+        }
+      } else {
+        for (let div of contentDivs) {
+          div.style.minHeight = 0 + "px";
+        }
+      }
+    }
+  }, [saveGroupPageActive, windowDimensions]);
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
     if (summaryPageActive) setSummaryPageActive(false);
     else if (saveGroupPageActive) setSaveGroupPageActive(false);
     else if (activeFormIndex > 0) setActiveFormIndex(activeFormIndex - 1);
     else setOption(undefined);
   };
+
   const handleCancelClick = () => {
     setConfirmDialog({
       ...confirmDialog,
@@ -135,7 +159,7 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
                     </div>
                     <h2>Group Name</h2>
                   </div>
-                  <div className={"details"}>
+                  <div className={"details"} ref={detailsRef}>
                     <div className="column">
                       <div className="head">Group Members</div>
                       <div className="content">
@@ -145,7 +169,9 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
                         />
                       </div>
                     </div>
-                    <div className="line"></div>
+                    <div className="line">
+                      <p></p>
+                    </div>
                     <div className="column">
                       <div className="head">Loopers</div>
                       <div className="content">
@@ -155,14 +181,21 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
                         />
                       </div>
                     </div>
-                    <div className="line"></div>
+                    {windowDimensions.innerWidth >=
+                      theme.breakpoints.values["md"] && (
+                      <div className="line">
+                        <p></p>
+                      </div>
+                    )}
                     <div className="column">
                       <div className="head">Group created for</div>
                       <div className="content">
                         <p>Dropsile Inc.</p>
                       </div>
                     </div>
-                    <div className="line"></div>
+                    <div className="line">
+                      <p></p>
+                    </div>
                     <div className="column">
                       <div className="head">Save as default</div>
                       <div className="content">
@@ -218,13 +251,32 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .details": {
       margin: "1rem 2.5rem",
-      display: "flex",
-      justifyContent: "space-between",
+      display: "grid",
+      gridTemplateColumns: "2fr 1fr 2fr 1fr 2fr 1fr 2fr",
+      [theme.breakpoints.down("sm")]: {
+        gridTemplateColumns: "2fr 1fr 2fr",
+        rowGap: "2rem",
+      },
+      [theme.breakpoints.down("xs")]: {
+        gridTemplateColumns: "1fr",
+        rowGap: ".5rem",
+      },
       "& .line": {
-        border: "1px solid #ebebeb",
+        "& p": {
+          width: 1,
+          height: "100%",
+          margin: "auto",
+          backgroundColor: "#dbdbdb",
+        },
       },
       "& .column": {
         backgroundColor: "white",
+        [theme.breakpoints.down("xs")]: {
+          "&:not(:last-child)": {
+            borderBottom: "1px solid #dbdbdb",
+            paddingBottom: "1rem",
+          },
+        },
         "& .head": {
           fontSize: 18,
           marginBottom: "1rem",

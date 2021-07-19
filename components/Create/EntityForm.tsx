@@ -65,34 +65,32 @@ const EntityForm = ({ formProps, form }: EntityFormProps) => {
     updateHiddenEntityIds();
   }, []);
   const addEntity = () => {
-    setTimeout(() => {
-      formProps.setFormState((prevFormState: FormStateType) => {
-        const keys = Object.keys(prevFormState);
-        const ids = new Set(keys.map((key) => +getLastChar(key)));
-        let lastKeyId = -1;
-        for (let id of Array.from(ids)) {
-          if (id > lastKeyId) {
-            lastKeyId = id;
-          }
+    formProps.setFormState((prevFormState: FormStateType) => {
+      const keys = Object.keys(prevFormState);
+      const ids = new Set(keys.map((key) => +getLastChar(key)));
+      let lastKeyId = -1;
+      for (let id of Array.from(ids)) {
+        if (id > lastKeyId) {
+          lastKeyId = id;
         }
+      }
 
-        const newLooperEntry: FormStateType = {};
-        for (let key of fieldNamesForEntity) {
-          const newId = lastKeyId + 1;
-          const name = key + newId;
-          newLooperEntry[name] = {
-            ...prevFormState[key + lastKeyId],
-            name,
-            value: "",
-          };
-        }
-        const updatedFormState = {
-          ...prevFormState,
-          ...newLooperEntry,
+      const newLooperEntry: FormStateType = {};
+      for (let key of fieldNamesForEntity) {
+        const newId = lastKeyId + 1;
+        const name = key + newId;
+        newLooperEntry[name] = {
+          ...prevFormState[key + lastKeyId],
+          name,
+          value: "",
         };
-        return updatedFormState;
-      });
-    }, 100);
+      }
+      const updatedFormState = {
+        ...prevFormState,
+        ...newLooperEntry,
+      };
+      return updatedFormState;
+    });
     updateHiddenEntityIds();
   };
   // useEffect(() => {

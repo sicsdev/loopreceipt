@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
+import LoopCard from "@components/Dashboard/LoopCard";
 
 interface DashboardProps {
   path: string;
@@ -95,6 +96,9 @@ const Dashboard = ({ path }: DashboardProps) => {
             >
               You’ll want to add recipients to create Loops with you.
             </Typography>
+            <div className="loopCards">
+              <LoopCard />
+            </div>
             <div className="optionCards">
               {ListenClickAtParentElement(
                 (e) => {
@@ -171,6 +175,10 @@ const useStyles = makeStyles((theme) => ({
   },
   rest: {
     padding: "1.5rem 4%",
+    "& .loopCards": {
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+    },
     "& .optionCards": {
       display: "flex",
       justifyContent: "center",
