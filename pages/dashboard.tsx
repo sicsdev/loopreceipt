@@ -98,6 +98,13 @@ const Dashboard = ({ path }: DashboardProps) => {
             </Typography>
             <div className="loopCards">
               <LoopCard />
+              <LoopCard />
+              <LoopCard />
+              <LoopCard />
+              <LoopCard />
+              <LoopCard />
+              <LoopCard />
+              <LoopCard />
             </div>
             <div className="optionCards">
               {ListenClickAtParentElement(
@@ -176,8 +183,20 @@ const useStyles = makeStyles((theme) => ({
   rest: {
     padding: "1.5rem 4%",
     "& .loopCards": {
+      margin: "3rem 0",
       display: "grid",
       gridTemplateColumns: "repeat(3, 1fr)",
+      // border: "1px solid red",
+      justifyItems: "center",
+      rowGap: 61,
+      colGap: 72,
+      [theme.breakpoints.down("md")]: {
+        gridTemplateColumns: "repeat(2, 1fr)",
+      },
+      [theme.breakpoints.down("xs")]: {
+        gridTemplateColumns: "repeat(1, 1fr)",
+        rowGap: 20,
+      },
     },
     "& .optionCards": {
       display: "flex",
