@@ -1,7 +1,4 @@
-const getTranslations = (transform) => {
-  // 'translate(20px, 20px)'
-  const matches = [...transform.matchAll(/\d+/g)];
-  return matches.map((e) => e[0]);
+const capitalize = (value) => {
+  return value[0].toUpperCase() + value.slice(1);
 };
-const transform = "translate(20px, 20px)";
-getTranslations(transform);
+console.log(capitalize("rahul"));

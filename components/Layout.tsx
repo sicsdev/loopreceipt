@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import Navbar from "@components/Navbar/Navbar";
 import InternalExternalModal from "@components/Dashboard/InternalExternalModal/InternalExternalModal";
+
 interface LayoutProps {
   children: JSX.Element | JSX.Element[];
 }
@@ -10,10 +11,8 @@ const Layout = ({ children }: LayoutProps) => {
     <div className={styles.Layout}>
       <Navbar />
 
-      <div className={styles.content}>
-        <InternalExternalModal />
-        {children}
-      </div>
+      <InternalExternalModal />
+      <div className={styles.content}>{children}</div>
     </div>
   );
 };

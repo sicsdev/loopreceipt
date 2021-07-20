@@ -26,6 +26,7 @@ const MovableModal = ({
   showModal,
   closeModal,
 }: MovableModalProps) => {
+  // console.log(mouseEvent);
   const modalRef = useRef<HTMLDivElement>(null);
   const styles = useStyles();
   const [position, setPosition] = useState<{ top?: string; left?: string }>({});
@@ -159,5 +160,15 @@ const useStyles = makeStyles((theme) => ({
     top: 0,
     left: 0,
     zIndex: 100,
+
+    animation: "$show 200ms ease",
+  },
+  "@keyframes show": {
+    from: {
+      opacity: 0,
+    },
+    to: {
+      opacity: 1,
+    },
   },
 }));

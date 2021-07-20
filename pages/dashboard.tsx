@@ -6,26 +6,43 @@ import Button from "@components/Controls/Button";
 import Layout from "@components/Layout";
 import OptionCard from "@components/Dashboard/OptionCard";
 import Typography from "@material-ui/core/Typography";
+import Image from "next/image";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import LoopCard from "@components/Dashboard/LoopCard";
 import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
-
+import { useRef, useState } from "react";
+import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
+import OptionCards from "@components/Dashboard/OptionCards";
+import DetectSwipe from "@components/shared/DetectSwipe";
+import Dropdown from "@components/Controls/Dropdown";
+import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
 interface DashboardProps {
   path: string;
 }
+const links: LoopType[] = ["outgoing", "received", "drafts"];
 const Dashboard = ({ path }: DashboardProps) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [loopSource, setLoopSource] = useState<LoopSource>("all");
+  const [dateRange, setDateRange] = useState<DateRange>({
+    start: new Date(),
+    end: new Date(),
+  });
   // console.log(win.up("md"));
   return (
     <Layout>
       <div className={styles.dashboard}>
         {win.up("md") && <Sidebar path={path} />}
         <div className={styles.right}>
-          {win.down("sm") && (
+          <div
+            style={{
+              display: win.down("sm") ? "block" : "none",
+            }}
+          >
             <div className="top">
               <p className="head">My Loops</p>
 
@@ -48,9 +65,23 @@ const Dashboard = ({ path }: DashboardProps) => {
                 )
               )}
             </div>
-          )}
-          <Links links={["outgoing", "received", "drafts"]} />
-          <UpperBar>
+          </div>
+
+          <Links
+            links={links}
+            activeIndex={activeIndex}
+            setActiveIndex={setActiveIndex}
+          />
+          <div className="dropdowns">
+            <FilterDropdowns
+              loopSource={loopSource}
+              setLoopSource={setLoopSource}
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+            />
+          </div>
+
+          {/* <UpperBar>
             <div className={styles.bar}>
               <div className="profile">
                 <p className="icon">G</p>
@@ -76,9 +107,9 @@ const Dashboard = ({ path }: DashboardProps) => {
                   )
                 )}
             </div>
-          </UpperBar>
+          </UpperBar> */}
           <div className={styles.rest}>
-            <Typography
+            {/* <Typography
               variant="body1"
               gutterBottom
               style={{
@@ -95,41 +126,31 @@ const Dashboard = ({ path }: DashboardProps) => {
               }}
             >
               You’ll want to add recipients to create Loops with you.
-            </Typography>
-            <div className="loopCards">
-              <LoopCard />
-              <LoopCard />
-              <LoopCard />
-              <LoopCard />
-              <LoopCard />
-              <LoopCard />
-              <LoopCard />
-              <LoopCard />
-            </div>
-            <div className="optionCards">
-              {ListenClickAtParentElement(
-                (e) => {
-                  openModal(e, {
-                    translationsFrom: "element",
-                    positionWRTPoint: {
-                      right: true,
-                    },
-                  });
-                },
-                (childClick) => (
-                  <OptionCard
-                    iconSrc="/icons/create/delivery-notification.svg"
-                    text="Create a delivery notification"
-                    onClick={childClick}
-                  />
-                )
-              )}
-
-              <OptionCard
-                iconSrc="/icons/create/add-user.svg"
-                text="Invite your team"
-              />
-            </div>
+            </Typography> */}
+            <DetectSwipe
+              onSwipedLeft={() => {
+                // console.log("swipe left");
+                if (activeIndex + 1 < links.length) {
+                  setActiveIndex(activeIndex + 1);
+                }
+              }}
+              onSwipedRight={() => {
+                // console.log("swipe right");
+                if (activeIndex - 1 >= 0) {
+                  setActiveIndex(activeIndex - 1);
+                }
+              }}
+            >
+              <div className="loopCards">
+                <LoopCard type={links[activeIndex]} />
+                <LoopCard type={links[activeIndex]} />
+                <LoopCard type={links[activeIndex]} />
+                <LoopCard type={links[activeIndex]} />
+                <LoopCard type={links[activeIndex]} />
+                <LoopCard type={links[activeIndex]} />
+              </div>
+            </DetectSwipe>
+            {/* <OptionCards /> */}
           </div>
         </div>
       </div>
@@ -137,8 +158,10 @@ const Dashboard = ({ path }: DashboardProps) => {
   );
 };
 export default Dashboard;
+
 const useStyles = makeStyles((theme) => ({
   dashboard: {},
+
   right: {
     marginLeft: 250,
     padding: "3rem 4rem",
@@ -146,6 +169,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0,
       padding: "0",
+    },
+    "& .dropdowns": {
+      padding: "1.5rem 4%",
     },
     "& .top": {
       display: "flex",
@@ -181,32 +207,15 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   rest: {
-    padding: "1.5rem 4%",
+    // padding: "1.5rem 4%",
     "& .loopCards": {
       margin: "3rem 0",
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)",
-      // border: "1px solid red",
-      justifyItems: "center",
-      rowGap: 61,
-      colGap: 72,
-      [theme.breakpoints.down("md")]: {
-        gridTemplateColumns: "repeat(2, 1fr)",
-      },
-      [theme.breakpoints.down("xs")]: {
-        gridTemplateColumns: "repeat(1, 1fr)",
-        rowGap: 20,
-      },
-    },
-    "& .optionCards": {
       display: "flex",
-      justifyContent: "center",
-      alignItems: "stretch",
-      gap: 30,
-      marginTop: "5rem",
-      [theme.breakpoints.down("xs")]: {
-        flexDirection: "column",
-        marginTop: "2rem",
+      justifyContent: "space-between",
+      flexWrap: "wrap",
+      gap: 63,
+      [theme.breakpoints.down("lg")]: {
+        justifyContent: "space-around",
       },
     },
   },

@@ -78,6 +78,13 @@ export const runSequentiallyAfterDelay = (
     }, delay * i);
   }
 };
+export const range = (min: number, max: number) => {
+  const arr: number[] = [];
+  for (let i = min; i <= max; i++) {
+    arr.push(i);
+  }
+  return arr;
+};
 export const randomBetween = (min: number, max: number) =>
   min + Math.floor(Math.random() * (max - min + 1));
 export const randomColor = (
@@ -90,4 +97,7 @@ export const randomColor = (
   const b = randomBetween(min, max);
   const rgba = `rgba(${r},${g},${b}, ${opacity})`;
   return rgba;
+};
+export const capitalize = (value: string) => {
+  return value[0].toUpperCase() + value.slice(1);
 };

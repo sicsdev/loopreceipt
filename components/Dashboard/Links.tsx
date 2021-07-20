@@ -3,10 +3,11 @@ import classNames from "classnames";
 import { useState } from "react";
 interface LinksProps {
   links: string[];
+  activeIndex: number;
+  setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
 }
-const Links = ({ links }: LinksProps) => {
+const Links = ({ links, activeIndex, setActiveIndex }: LinksProps) => {
   const styles = useStyles();
-  const [activeIndex, setActiveIndex] = useState(0);
   return (
     <div className={styles.links}>
       {links.map((link, i) => (

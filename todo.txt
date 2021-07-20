@@ -1,6 +1,1 @@
-for those forms which have some fields together forms entity
-we want to declare default state for them
-so that even if we remove the first entity by clicking next
-when going back we can recreate it
-
-also add prop type="entity" to identify such forms better
+fix movable modal to use box instead of offsetTop etc

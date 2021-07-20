@@ -6,10 +6,15 @@ import { setType } from "@store/slices/loopReceiptSlice";
 import { useRouter } from "next/router";
 import DialogItemType from "@interfaces/DialogItemType";
 import { closeModal } from "@store/slices/modalSlice";
+import { useEffect, useState } from "react";
 interface InternalExternalModalProps {}
 const InternalExternalModal = ({}: InternalExternalModalProps) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [mobileDevice, setMobileDevice] = useState(false);
+  useEffect(() => {
+    setMobileDevice(isMobile);
+  }, []);
   const dialogItems: DialogItemType[] = [
     {
       title: "Internal Loopreceipts",
@@ -33,7 +38,7 @@ const InternalExternalModal = ({}: InternalExternalModalProps) => {
       },
     },
   ];
-  return isMobile ? (
+  return mobileDevice ? (
     <MobileModal dialogItems={dialogItems} />
   ) : (
     <DesktopModal dialogItems={dialogItems} />
