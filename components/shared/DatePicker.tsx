@@ -1,11 +1,19 @@
-import { days } from "@helpers/date";
+import { days, months } from "@helpers/date";
 import { range } from "@helpers/utils";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, MenuItem, Menu } from "@material-ui/core";
 import classNames from "classnames";
 import Image from "next/image";
-import { useState } from "react";
-interface DatePickerProps {}
-const DatePicker = ({}: DatePickerProps) => {
+import { useRef, useState } from "react";
+export interface DatePickerProps {
+  monthSelectorType: "dropdown" | "table";
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
+}
+const DatePicker = ({
+  monthSelectorType,
+  selectedDate,
+  setSelectedDate,
+}: DatePickerProps) => {
   const [dates, setDates] = useState(() => {
     const prevMonthDates = range(27, 31).map((d) => {
       return {
@@ -33,14 +41,49 @@ const DatePicker = ({}: DatePickerProps) => {
     return [...prevMonthDates, ...curMonthDates];
   });
   const styles = useStyles();
+  const monthHeadRef = useRef<HTMLDivElement>(null);
+  const [selectingMonth, setSelectingMonth] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(
+    months[selectedDate.getMonth()]
+  );
   return (
     <div className={styles.DatePicker}>
       <div className="month">
         <Image src="/icons/dashboard/prev.svg" width={9} height={9} />
-        <p className="text">
-          March 2021{" "}
-          <Image src="/icons/arrow-down.svg" width={15} height={15} />
-        </p>
+        <div
+          className="text"
+          ref={monthHeadRef}
+          aria-controls="select-month"
+          aria-haspopup="true"
+          onClick={() => setSelectingMonth(true)}
+        >
+          {selectedMonth + " " + selectedDate.getFullYear()}
+          {/* pending */}
+          {/* {monthSelectorType === "dropdown" && (
+            <Image src="/icons/arrow-down.svg" width={15} height={15} />
+          )} */}
+        </div>
+        <Menu
+          open={selectingMonth}
+          id="select-month"
+          anchorEl={monthHeadRef.current}
+          onClose={() => {
+            setSelectingMonth(false);
+          }}
+        >
+          {months.map((month, i) => (
+            <MenuItem
+              key={i}
+              onClick={() => {
+                setSelectedMonth(month);
+                setSelectingMonth(false);
+              }}
+              selected={selectedMonth === month}
+            >
+              {month}
+            </MenuItem>
+          ))}
+        </Menu>
         <Image src="/icons/dashboard/next.svg" width={9} height={9} />
       </div>
       <div className="days">
@@ -61,10 +104,16 @@ const DatePicker = ({}: DatePickerProps) => {
 export default DatePicker;
 const useStyles = makeStyles((theme) => ({
   DatePicker: {
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
     "& .month": {
       padding: "0 2rem",
       display: "flex",
       justifyContent: "space-between",
+      [theme.breakpoints.up("md")]: {
+        padding: "0 1rem",
+      },
       "& .text": {
         fontWeight: "bold",
         fontSize: 18,
@@ -81,6 +130,10 @@ const useStyles = makeStyles((theme) => ({
         textAlign: "center",
         // border: "1px solid blue",
         fontSize: 14,
+        [theme.breakpoints.up("md")]: {
+          fontWeight: 600,
+          color: theme.palette.secondary.main,
+        },
       },
       "& .date": {
         padding: "6px 0",

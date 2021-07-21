@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import { formatMs, makeStyles } from "@material-ui/core";
 import BoxContent from "./BoxContent";
 
 import React, { useState } from "react";
@@ -19,6 +19,8 @@ import Summary from "./Summary";
 import Forms from "./Forms";
 import FormUpperBar from "./FormUpperBar";
 import Win from "@helpers/Win";
+import UpperBarMobile from "./UpperBarMobile";
+import LoopReceipt from "./LoopReceipt";
 interface OneByOneProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -32,7 +34,7 @@ function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
-  const [activeFormIndex, setActiveFormIndex] = useState(0);
+  const [index, setIndex] = useState(0);
   const formType = useAppSelector((state) => state.loopReceipt.type);
   const getForm = () => {
     switch (formType) {
@@ -56,11 +58,9 @@ function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
       console.log("confirmed");
     },
   });
-  const [summaryPageActive, setSummaryPageActive] = useState(false);
 
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
-    if (summaryPageActive) setSummaryPageActive(false);
-    else if (activeFormIndex > 0) setActiveFormIndex(activeFormIndex - 1);
+    if (index > 0) setIndex(index - 1);
     else setOption(undefined);
   };
   const handleCancelClick = () => {
@@ -71,26 +71,30 @@ function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
   };
   const handleNextClick = () => {
     // handleSubmit();
-    if (
-      validateFieldsOfForm(formsProps[activeFormIndex], forms[activeFormIndex])
-    ) {
-      // if current form is valid only then navigate to next
-      if (activeFormIndex < forms.length - 1) {
-        setActiveFormIndex(activeFormIndex + 1);
-      } else {
-        setSummaryPageActive(true);
+    if (index < forms.length) {
+      if (validateFieldsOfForm(formsProps[index], forms[index])) {
+        // if current form is valid only then navigate to next
+        setIndex(index + 1);
       }
+    } else {
+      setIndex(index + 1);
     }
   };
 
   const upperBarContent = (
     <>
-      <p style={{ fontWeight: 500 }}>
-        Step {summaryPageActive ? forms.length + 1 : activeFormIndex + 1} of{" "}
-        {forms.length + 1}
-      </p>
-      <p style={{ fontWeight: "bold" }}>
-        {summaryPageActive ? "Summary" : forms[activeFormIndex].formHeading}
+      {index !== forms.length + 1 && (
+        <p style={{ fontWeight: 500 }}>
+          Step {index + 1} of {forms.length + 1}
+        </p>
+      )}
+
+      <p>
+        {index === forms.length + 1
+          ? "Loopreceipt"
+          : index === forms.length
+          ? "Summary"
+          : forms[index].formHeading}
       </p>
     </>
   );
@@ -103,10 +107,22 @@ function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
       />
       <Box>
         <>
-          {win.down("xs") && (
-            <div className={styles.head}>{upperBarContent}</div>
-          )}
-          {!summaryPageActive ? (
+          <UpperBarMobile
+            show={win.down("xs") && index !== forms.length + 1}
+            upperBarContent={upperBarContent}
+          />
+          {index === forms.length + 1 ? (
+            <LoopReceipt />
+          ) : index === forms.length ? (
+            <Summary
+              formsProps={formsProps}
+              forms={forms}
+              generatedLoopReceipt={() => {
+                // move on to next page
+                setIndex(index + 1);
+              }}
+            />
+          ) : (
             <BoxContent
               confirmDialog={confirmDialog}
               setConfirmDialog={setConfirmDialog}
@@ -116,11 +132,9 @@ function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
               <Forms
                 forms={forms}
                 formsProps={formsProps}
-                activeFormIndex={activeFormIndex}
+                activeFormIndex={index}
               />
             </BoxContent>
-          ) : (
-            <Summary formsProps={formsProps} forms={forms} />
           )}
         </>
       </Box>
@@ -129,12 +143,4 @@ function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
 }
 
 export default OneByOne;
-const useStyles = makeStyles((theme) => ({
-  head: {
-    margin: "1rem",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 5,
-  },
-}));
+const useStyles = makeStyles((theme) => ({}));

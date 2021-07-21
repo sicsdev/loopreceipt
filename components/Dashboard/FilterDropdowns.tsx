@@ -8,11 +8,12 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Win from "@helpers/Win";
 import { capitalize } from "@helpers/utils";
 import Image from "next/image";
-import DatePicker from "@components/shared/DatePicker";
+import DatePicker, { DatePickerProps } from "@components/shared/DatePicker";
 import Button from "@components/Controls/Button";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 import MovableModal from "@components/shared/MovableModal";
 import { SliceModalType } from "@store/slices/modalSlice";
+import { months, twoDateString } from "@helpers/date";
 const loopSources: LoopSource[] = ["all", "internal", "external"];
 interface FilterDropdownsProps {
   loopSource: LoopSource;
@@ -34,6 +35,28 @@ const FilterDropdowns = ({
   const [selectingLoopSource, setSelectingLoopSource] = useState(false);
   const [mouseEvent, setMouseEvent] = useState<SliceModalType["mouseEvent"]>();
   const [selectingDateRange, setSelectingDateRange] = useState(false);
+  const pickers = (monthSelectorType: DatePickerProps["monthSelectorType"]) => [
+    <DatePicker
+      monthSelectorType={monthSelectorType}
+      selectedDate={dateRange.start}
+      setSelectedDate={(date: Date) => {
+        setDateRange({
+          ...dateRange,
+          start: date,
+        });
+      }}
+    />,
+    <DatePicker
+      monthSelectorType={monthSelectorType}
+      selectedDate={dateRange.end}
+      setSelectedDate={(date: Date) => {
+        setDateRange({
+          ...dateRange,
+          end: date,
+        });
+      }}
+    />,
+  ];
   return (
     <>
       <div className={styles.FilterDropdowns}>
@@ -44,9 +67,7 @@ const FilterDropdowns = ({
           }}
         >
           <Image src="/icons/dashboard/calender.svg" width={18} height={16} />{" "}
-          {/* 22 - 26 Mar, 2020 */}
-          {/* 22 Mar - 26 Mar, 2020 */}1 Jan, 2020 - 2 Feb, 2021
-          {/* these are three formats for date */}
+          {twoDateString(new Date("7/23/2019"), new Date())}
         </div>
         <div ref={loopSelectRef} className="dd">
           <Dropdown
@@ -89,8 +110,14 @@ const FilterDropdowns = ({
 
             const target = e.target as HTMLElement;
             const box = target.getBoundingClientRect();
+            // console.log(box);
             setMouseEvent({
-              anchorBox: box,
+              anchorBox: {
+                top: box.top,
+                left: box.left,
+                width: box.width,
+                height: box.height,
+              },
             });
             setSelectingDateRange(true);
           },
@@ -135,8 +162,8 @@ const FilterDropdowns = ({
                 <p>Clear</p>
               </div>
               <div className="picker">
-                <DatePicker />
-                <DatePicker />
+                {pickers("table")[0]}
+                {pickers("table")[1]}
               </div>
               <div className="end">
                 <Button>Save</Button>
@@ -160,12 +187,12 @@ const FilterDropdowns = ({
               <div className={styles.desktopDatePicker}>
                 <div className="picker">
                   <p className="head">Start Date</p>
-                  <DatePicker />
+                  {pickers("dropdown")[0]}
                 </div>
                 <div className="divider" />
                 <div className="picker">
                   <p className="head">End Date</p>
-                  <DatePicker />
+                  {pickers("dropdown")[1]}
                 </div>
               </div>
             </MovableModal>

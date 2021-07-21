@@ -6,6 +6,7 @@ import {
   largestCommonSubsequence,
   largestCommonSubstring,
 } from "@helpers/utils";
+import { useAppSelector } from "@store/hooks";
 interface SearchCardProps {
   searchString?: string;
 }
@@ -40,7 +41,7 @@ const initialUsers: {
 const SearchCard = ({ searchString }: SearchCardProps) => {
   const styles = useStyles();
   const [users, setUsers] = useState(initialUsers);
-
+  const formType = useAppSelector((state) => state.loopReceipt.type);
   useEffect(() => {
     if (searchString) {
       const usersWithRank = [];
@@ -95,10 +96,12 @@ const SearchCard = ({ searchString }: SearchCardProps) => {
       ))}
 
       <div className={styles.addManuallyButton}>+ Add manually</div>
-      <div className={styles.bottomText}>
-        <Image src="/icons/exclaimation.svg" width={15} height={15} />
-        &nbsp; You are searching contacts with dropisle.com
-      </div>
+      {formType === "internal" && (
+        <div className={styles.bottomText}>
+          <Image src="/icons/exclaimation.svg" width={15} height={15} />
+          &nbsp; You are searching contacts with dropisle.com
+        </div>
+      )}
     </div>
   );
 };

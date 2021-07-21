@@ -73,14 +73,14 @@ const recipientDetailsForm: FormType = {
     },
     province: {
       name: "province",
-      label: "Province",
+      label: "State / Province",
       placeholder: "Your full name",
       value: "",
       type: "text",
     },
     zipCode: {
       name: "zipCode",
-      label: "Zip Code",
+      label: "Zip / Postal Code",
       placeholder: "Your full name",
       value: "",
       type: "number",

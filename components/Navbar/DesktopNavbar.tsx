@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/core";
+import Link from "next/link";
 import Button from "@components/Controls/Button";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 
@@ -10,9 +11,12 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
 
   return (
     <div className={styles.DesktopNavbar}>
-      <div className="logo">
-        <Image src="/icons/logo.png" width="189" height="58" />
-      </div>
+      <Link href="/dashboard">
+        <a className="logo">
+          <Image src="/icons/logo.png" width="189" height="58" />
+        </a>
+      </Link>
+
       <div className="items">
         <div className="item">
           {ListenClickAtParentElement(

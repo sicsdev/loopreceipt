@@ -61,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
     "& .head": {
       fontWeight: "bold",
       textAlign: "center",
+      fontSize: 18,
     },
   },
   options: {

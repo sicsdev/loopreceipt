@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "4px",
     border: "1px solid #A09E9E",
     width: "80%",
+    minHeight: "70vh",
     margin: "2rem auto",
     [theme.breakpoints.down("sm")]: {
       width: "95%",

@@ -7,7 +7,7 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Win from "@helpers/Win";
 interface FormUpperBarProps {
   handleBackButtonClick: React.MouseEventHandler<any>;
-  upperBarText: JSX.Element | string;
+  upperBarText?: JSX.Element | string;
 }
 const FormUpperBar = ({
   handleBackButtonClick,
@@ -66,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
       gap: 10,
       "& p": {
         fontWeight: "bold",
+        fontSize: 18,
       },
     },
   },

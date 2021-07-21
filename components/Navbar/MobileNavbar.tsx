@@ -81,6 +81,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
     return link ? (
       <Link href={link}>
         <a>{component}</a>
+        {/* giving anchor is important for seo */}
       </Link>
     ) : (
       component

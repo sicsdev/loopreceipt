@@ -12,8 +12,9 @@ import Win from "@helpers/Win";
 interface SummaryProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
+  generatedLoopReceipt: () => void;
 }
-const Summary = ({ forms, formsProps }: SummaryProps) => {
+const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
   // console.log(formsProps);
   // log this to check the form state when coming to this page
   const styles = useStyles();
@@ -96,6 +97,7 @@ const Summary = ({ forms, formsProps }: SummaryProps) => {
     }
     //   setActiveFormIndex(0);
     //   setSummaryPageActive(false);
+    generatedLoopReceipt();
   };
   return (
     <div className={styles.Summary}>

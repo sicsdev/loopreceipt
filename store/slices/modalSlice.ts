@@ -18,7 +18,12 @@ export interface SliceModalType {
   mouseEvent?: {
     clientX?: number;
     clientY?: number;
-    anchorBox?: DOMRect;
+    anchorBox?: {
+      top: number;
+      left: number;
+      height: number;
+      width: number;
+    };
   };
   options?: ModalOptionsType;
 }
@@ -48,19 +53,25 @@ export const modalStateSlice = createSlice({
 });
 export const { setShow, setMouseEvent, setOptions } = modalStateSlice.actions;
 export const openModal = (
-  e: React.MouseEvent<any, MouseEvent> | undefined,
+  e: React.MouseEvent<any, MouseEvent>,
   options?: ModalOptionsType
 ) => {
   // console.log(e);
   if (e) {
     e.stopPropagation();
-    const target: any = e.target;
+    const target = e.target as HTMLElement;
+    const box = target.getBoundingClientRect();
     store.dispatch(
       setMouseEvent({
         mouseEvent: {
           clientX: e.clientX,
           clientY: e.clientY,
-          anchorBox: target.getBoundingClientRect(),
+          anchorBox: {
+            top: box.top,
+            left: box.left,
+            height: box.height,
+            width: box.width,
+          },
         },
       })
     );

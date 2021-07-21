@@ -22,6 +22,8 @@ import ProfileIcons from "@components/shared/ProfileIcons";
 import { randomColor } from "@helpers/utils";
 import Win from "@helpers/Win";
 import recipientDetailsForm from "forms/recipientDetailsForm";
+import UpperBarMobile from "./UpperBarMobile";
+import LoopReceipt from "./LoopReceipt";
 interface GroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -37,7 +39,7 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [saveAsDefault, setSaveAsDefault] = useState(true);
-  const [activeFormIndex, setActiveFormIndex] = useState(0);
+  const [index, setIndex] = useState(0);
   const formType = useAppSelector((state) => state.loopReceipt.type);
   const getForm = () => {
     switch (formType) {
@@ -61,11 +63,9 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
       console.log("confirmed");
     },
   });
-  const [summaryPageActive, setSummaryPageActive] = useState(false);
-  const [saveGroupPageActive, setSaveGroupPageActive] = useState(false);
   const detailsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (saveGroupPageActive && detailsRef.current) {
+    if (detailsRef.current) {
       const contentDivs: any =
         detailsRef.current.getElementsByClassName("content");
       // console.log(theme.breakpoints.values);
@@ -84,11 +84,9 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
         }
       }
     }
-  }, [saveGroupPageActive, windowDimensions]);
+  }, [index, windowDimensions]);
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
-    if (summaryPageActive) setSummaryPageActive(false);
-    else if (saveGroupPageActive) setSaveGroupPageActive(false);
-    else if (activeFormIndex > 0) setActiveFormIndex(activeFormIndex - 1);
+    if (index > 0) setIndex(index - 1);
     else setOption(undefined);
   };
 
@@ -100,19 +98,14 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
   };
   const handleNextClick = () => {
     // handleSubmit();
-    if (
-      validateFieldsOfForm(formsProps[activeFormIndex], forms[activeFormIndex])
-    ) {
-      // if current form is valid only then navigate to next
-      if (activeFormIndex < forms.length - 1) {
-        setActiveFormIndex(activeFormIndex + 1);
-      } else {
-        if (!saveGroupPageActive) {
-          setSaveGroupPageActive(true);
-        } else {
-          setSummaryPageActive(true);
-        }
+    if (index < forms.length - 1) {
+      if (validateFieldsOfForm(formsProps[index], forms[index])) {
+        // if current form is valid only then navigate to next
+
+        setIndex(index + 1);
       }
+    } else {
+      setIndex(index + 1);
     }
   };
   // useEffect(() => {
@@ -120,12 +113,19 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
   // }, [saveAsDefault]);
   const upperBarContent = (
     <>
-      <p style={{ fontWeight: 500 }}>
-        Step {summaryPageActive ? forms.length + 1 : activeFormIndex + 1} of{" "}
-        {forms.length + 1}
-      </p>
-      <p style={{ fontWeight: "bold" }}>
-        {summaryPageActive ? "Summary" : forms[activeFormIndex].formHeading}
+      {index !== forms.length + 2 && (
+        <p style={{ fontWeight: 500 }}>
+          Step {index < forms.length ? index + 1 : index} of {forms.length + 1}
+        </p>
+      )}
+      <p>
+        {index === forms.length + 2
+          ? "Loopreceipt"
+          : index === forms.length + 1
+          ? "Summary"
+          : index === forms.length
+          ? "Create Group"
+          : forms[index].formHeading}
       </p>
     </>
   );
@@ -138,17 +138,28 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
       />
       <Box>
         <>
-          {win.down("xs") && (
-            <div className={styles.head}>{upperBarContent}</div>
-          )}
-          {!summaryPageActive ? (
+          <UpperBarMobile
+            show={win.down("xs") && index !== forms.length + 2}
+            upperBarContent={upperBarContent}
+          />
+          {index === forms.length + 2 ? (
+            <LoopReceipt />
+          ) : index === forms.length + 1 ? (
+            <Summary
+              formsProps={formsProps}
+              forms={forms}
+              generatedLoopReceipt={() => {
+                setIndex(index + 1);
+              }}
+            />
+          ) : (
             <BoxContent
               confirmDialog={confirmDialog}
               setConfirmDialog={setConfirmDialog}
               handleCancelClick={handleCancelClick}
               handleNextClick={handleNextClick}
             >
-              {saveGroupPageActive ? (
+              {index === forms.length ? (
                 <div className={styles.group}>
                   <div className="heading">
                     <div>
@@ -213,12 +224,10 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
                 <Forms
                   forms={forms}
                   formsProps={formsProps}
-                  activeFormIndex={activeFormIndex}
+                  activeFormIndex={index}
                 />
               )}
             </BoxContent>
-          ) : (
-            <Summary formsProps={formsProps} forms={forms} />
           )}
         </>
       </Box>
@@ -228,13 +237,6 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
 
 export default Group;
 const useStyles = makeStyles((theme) => ({
-  head: {
-    margin: "1rem",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 5,
-  },
   group: {
     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
     borderRadius: 8,
