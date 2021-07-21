@@ -16,14 +16,9 @@ export interface ModalOptionsType {
 export interface SliceModalType {
   show: boolean;
   mouseEvent?: {
-    clientX: number;
-    clientY: number;
-    target?: {
-      offsetTop: number;
-      offsetLeft: number;
-      offsetHeight: number;
-      offsetWidth: number;
-    };
+    clientX?: number;
+    clientY?: number;
+    anchorBox?: DOMRect;
   };
   options?: ModalOptionsType;
 }
@@ -65,12 +60,7 @@ export const openModal = (
         mouseEvent: {
           clientX: e.clientX,
           clientY: e.clientY,
-          target: {
-            offsetTop: target.offsetTop,
-            offsetLeft: target.offsetLeft,
-            offsetHeight: target.offsetHeight,
-            offsetWidth: target.offsetWidth,
-          },
+          anchorBox: target.getBoundingClientRect(),
         },
       })
     );

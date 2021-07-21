@@ -52,7 +52,7 @@ const MovableModal = ({
             case "cursor": {
               // in case of cursor position bottom right is default
               // so in that case we don't need to do anything
-              if (mouseEvent) {
+              if (mouseEvent && mouseEvent.clientX && mouseEvent.clientY) {
                 let pos = {
                   top: mouseEvent.clientY,
                   left: mouseEvent.clientX,
@@ -73,22 +73,22 @@ const MovableModal = ({
               break;
             }
             case "element": {
-              const elementClicked = mouseEvent?.target;
+              const anchorBox = mouseEvent?.anchorBox;
               // console.dir(elementClicked);
 
-              if (elementClicked) {
+              if (anchorBox) {
                 let pos = {
-                  top: elementClicked.offsetTop,
-                  left: elementClicked.offsetLeft,
+                  top: anchorBox.top,
+                  left: anchorBox.left,
                 };
                 if (positionWRTPoint.top) {
                   pos.top -= modalBox.height;
                 }
                 if (positionWRTPoint.right) {
-                  pos.left += elementClicked.offsetWidth;
+                  pos.left += anchorBox.width;
                 }
                 if (positionWRTPoint.bottom) {
-                  pos.top += elementClicked.offsetHeight;
+                  pos.top += anchorBox.height;
                 }
                 if (positionWRTPoint.left) {
                   pos.left -= modalBox.width;

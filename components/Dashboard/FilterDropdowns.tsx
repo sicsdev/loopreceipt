@@ -30,11 +30,10 @@ const FilterDropdowns = ({
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const styles = useStyles();
-  const loopSelectRef = useRef(null);
+  const loopSelectRef = useRef<HTMLDivElement>(null);
   const [selectingLoopSource, setSelectingLoopSource] = useState(false);
   const [mouseEvent, setMouseEvent] = useState<SliceModalType["mouseEvent"]>();
   const [selectingDateRange, setSelectingDateRange] = useState(false);
-
   return (
     <>
       <div className={styles.FilterDropdowns}>
@@ -84,18 +83,14 @@ const FilterDropdowns = ({
             // console.log(e.target);
             // element.getBoundingClientRect().top + document.documentElement.scrollTop
             e.stopPropagation();
+            // so that when we click on dropdown
+            // while it is active
+            // we don't close because of click listener on window
 
             const target = e.target as HTMLElement;
             const box = target.getBoundingClientRect();
             setMouseEvent({
-              clientX: e.clientX,
-              clientY: e.clientY,
-              target: {
-                offsetHeight: box.height,
-                offsetWidth: box.width,
-                offsetTop: box.top,
-                offsetLeft: box.left,
-              },
+              anchorBox: box,
             });
             setSelectingDateRange(true);
           },

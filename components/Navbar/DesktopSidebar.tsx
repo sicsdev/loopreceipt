@@ -32,10 +32,8 @@ const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
       {ListenClickAtParentElement(
         (e) => {
           openModal(e, {
-            translationsFrom: "cursor",
-            translations: {
-              x: 20,
-              y: 20,
+            positionWRTPoint: {
+              right: true,
             },
           });
         },
