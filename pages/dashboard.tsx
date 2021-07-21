@@ -220,7 +220,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   rest: {
-    // padding: "1.5rem 4%",
+    [theme.breakpoints.down("sm")]: {
+      padding: "1.5rem 4%",
+    },
     "& .loopCards": {
       margin: "3rem 0",
       display: "flex",

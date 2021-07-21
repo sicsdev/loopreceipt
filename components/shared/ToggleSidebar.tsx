@@ -16,17 +16,11 @@ const ToggleSidebar = ({
   children,
   delay = 500,
 }: ToggleSidebarProps) => {
-  const showDelayedCopy = useDelayed(show, delay);
   localDelay = delay;
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   return (
-    <div
-      className={styles.bar}
-      style={{
-        display: show || showDelayedCopy ? "block" : "none",
-      }}
-    >
+    <div className={styles.bar}>
       <CSSTransition
         in={show}
         timeout={delay}

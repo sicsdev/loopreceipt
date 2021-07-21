@@ -1,3 +1,5 @@
+import Win from "@helpers/Win";
+import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles, Menu, MenuItem } from "@material-ui/core";
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
@@ -17,6 +19,8 @@ const Pagination = ({
   page,
   setPage,
 }: PaginationProps) => {
+  const { windowDimensions } = useWindowDimensions();
+  const win = new Win(windowDimensions);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const styles = useStyles();
   const [selectingItemsPerPage, setSelectingItemsPerPage] = useState(false);
@@ -30,6 +34,30 @@ const Pagination = ({
     setPage(newPage);
     setItemsPerPageCopy(itemsPerPage);
   }, [itemsPerPage]);
+  const prevArrow = (
+    <div
+      className="image"
+      onClick={() => {
+        if (page > 1) {
+          setPage(page - 1);
+        }
+      }}
+    >
+      <Image src="/icons/dashboard/prev-gray.svg" width={11} height={11} />
+    </div>
+  );
+  const nextArrow = (
+    <div
+      className="image"
+      onClick={() => {
+        if (page < totalPages) {
+          setPage(page + 1);
+        }
+      }}
+    >
+      <Image src="/icons/dashboard/next-gray.svg" width={11} height={11} />
+    </div>
+  );
   return (
     <div className={styles.Pagination}>
       <div className="first">
@@ -70,40 +98,18 @@ const Pagination = ({
         </Menu>
       </div>
       <div className="second">
+        {win.down("xs") && prevArrow}
         <div className="text">
           {itemsPerPage * (page - 1) + 1}-
           {Math.min(itemsPerPage * page, totalItems)} of {totalItems} items
         </div>
-        <div className="arrows">
-          <div
-            className="image"
-            onClick={() => {
-              if (page > 1) {
-                setPage(page - 1);
-              }
-            }}
-          >
-            <Image
-              src="/icons/dashboard/prev-gray.svg"
-              width={11}
-              height={11}
-            />
+        {win.down("xs") && nextArrow}
+        {win.up("sm") && (
+          <div className="arrows">
+            {prevArrow}
+            {nextArrow}
           </div>
-          <div
-            className="image"
-            onClick={() => {
-              if (page < totalPages) {
-                setPage(page + 1);
-              }
-            }}
-          >
-            <Image
-              src="/icons/dashboard/next-gray.svg"
-              width={11}
-              height={11}
-            />
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -113,12 +119,17 @@ const useStyles = makeStyles((theme) => ({
   Pagination: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     color: "rgba(0, 0, 0, 0.5)",
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column-reverse",
+      gap: 10,
+    },
     "& .first": {
       display: "flex",
       gap: 7,
-      paddingBottom: 100,
+      //   paddingBottom: 100,
+
       "& .text": {
         fontSize: 14,
       },
@@ -137,19 +148,31 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .second": {
       display: "flex",
+      alignItems: "center",
       gap: 40,
+
+      [theme.breakpoints.down("xs")]: {
+        gap: 10,
+      },
       "& .text": {
-        paddingTop: 4,
         fontSize: 14,
       },
       "& .arrows": {
         display: "flex",
         gap: 20,
-        "& .image": {
-          cursor: "pointer",
-          borderRadius: "50%",
-          padding: "4px 8px",
-
+      },
+      "& .image": {
+        userSelect: "none",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 30,
+        height: 30,
+        cursor: "pointer",
+        borderRadius: "50%",
+        backgroundColor: "#eeeeee7d",
+        [theme.breakpoints.up("sm")]: {
+          backgroundColor: "white",
           "&:hover": {
             backgroundColor: "#eeeeee7d",
           },
@@ -167,6 +190,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuItem: {
     padding: "5px 0",
+    minHeight: 0,
     width: "2rem",
     // same as option width
     display: "flex",

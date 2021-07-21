@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
     gap: "1rem",
     cursor: "pointer",
     alignItems: "center",
+    [theme.breakpoints.down("xs")]: {
+      gap: 5,
+    },
     "& .name": {
       color: "#4F4F4F",
     },

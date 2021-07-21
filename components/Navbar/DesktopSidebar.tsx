@@ -20,8 +20,8 @@ const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
       <SidebarItem
         iconSrc="/icons/sidebar/package.png"
         text="Packages"
-        link="/package"
-        active={path == "/package"}
+        link="/packages"
+        active={path == "/packages"}
       />
       <SidebarItem
         iconSrc="/icons/sidebar/analytics.png"

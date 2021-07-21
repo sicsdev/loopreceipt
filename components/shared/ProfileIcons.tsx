@@ -15,7 +15,7 @@ const ProfileIcons = ({ firstAlphabets, colorStrings }: ProfileIconsProps) => {
           className="profile"
           style={{
             backgroundColor: colorStrings[i],
-            zIndex: 10 - i,
+            zIndex: 7 - i,
             transform: `translateX(-${8 * i}px)`,
           }}
           key={i}

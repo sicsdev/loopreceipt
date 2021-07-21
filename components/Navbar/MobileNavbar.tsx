@@ -18,12 +18,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
         close={() => setShowSidebar(false)}
         delay={300}
       >
-        <div
-          className={styles.mobileSidebar}
-          onScroll={(e) => {
-            e.stopPropagation();
-          }}
-        >
+        <div className={styles.mobileSidebar}>
           <div className={styles.profile}>
             <Image src="/icons/sidebar/profilehq.png" width="74" height="74" />
             <p className="name">Maria Junior</p>
@@ -34,18 +29,17 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
               <MyLink
                 onClick={(e) => {
                   childClick(e);
-                  setShowSidebar(false);
                 }}
               >
                 Create Loopreceipt
               </MyLink>
             ))}
-            <MyLink>Packages</MyLink>
-            <MyLink>Recepients</MyLink>
-            <MyLink>Analytics</MyLink>
-            <MyLink>Integration</MyLink>
-            <MyLink>Pricing</MyLink>
-            <MyLink>My Account</MyLink>
+            <MyLink link="/packages">Packages</MyLink>
+            <MyLink link="/recipients">Recepients</MyLink>
+            <MyLink link="/analytics">Analytics</MyLink>
+            <MyLink link="/integration">Integration</MyLink>
+            <MyLink link="/pricing">Pricing</MyLink>
+            <MyLink link="/account">My Account</MyLink>
           </div>
           <div
             style={{
@@ -72,26 +66,33 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
       </div>
     </div>
   );
+  function MyLink({ children, onClick, link }: MyLinkProps) {
+    const component = (
+      <div
+        className="link"
+        onClick={(e) => {
+          if (onClick) onClick(e);
+          setShowSidebar(false);
+        }}
+      >
+        {children}
+      </div>
+    );
+    return link ? (
+      <Link href={link}>
+        <a>{component}</a>
+      </Link>
+    ) : (
+      component
+    );
+  }
 };
 interface MyLinkProps {
   children: JSX.Element | string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   link?: string;
 }
-function MyLink({ children, onClick, link }: MyLinkProps) {
-  const component = (
-    <div className="link" onClick={onClick}>
-      {children}
-    </div>
-  );
-  return link ? (
-    <Link href={link}>
-      <a>{component}</a>
-    </Link>
-  ) : (
-    component
-  );
-}
+
 export default MobileNavbar;
 const useStyles = makeStyles((theme) => ({
   MobileNavbar: {

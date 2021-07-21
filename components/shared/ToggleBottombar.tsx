@@ -17,7 +17,6 @@ const ToggleBottombar = ({
   children,
   delay = 500,
 }: ToggleBottombarProps) => {
-  const showDelayedCopy = useDelayed(show, delay);
   localDelay = delay;
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
@@ -25,23 +24,22 @@ const ToggleBottombar = ({
     <div
       className={styles.bar}
       style={{
-        display: show || showDelayedCopy ? "block" : "none",
         height: windowDimensions.innerHeight,
       }}
     >
       <CSSTransition
         in={show}
         timeout={delay}
-        classNames={`mobbottombar`}
         unmountOnExit
+        classNames={`mobbottombar`}
       >
         <div className={styles.nav}>{children}</div>
       </CSSTransition>
       <CSSTransition
         in={show}
         timeout={delay}
-        classNames={`mobbottombarbg`}
         unmountOnExit
+        classNames={`mobbottombarbg`}
       >
         <div className={styles.bg} onClick={close}></div>
       </CSSTransition>

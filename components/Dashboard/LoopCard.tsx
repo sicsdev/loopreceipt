@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.16)",
     borderRadius: 8,
     position: "relative",
-    width: 323,
+    width: 320,
     padding: "1rem",
     "& .line": {
       height: 4,

@@ -45,7 +45,9 @@ const FilterDropdowns = ({
           }}
         >
           <Image src="/icons/dashboard/calender.svg" width={18} height={16} />{" "}
-          Custom: 22 Mar- 26 Mar ,2020
+          {/* 22 - 26 Mar, 2020 */}
+          {/* 22 Mar - 26 Mar, 2020 */}1 Jan, 2020 - 2 Feb, 2021
+          {/* these are three formats for date */}
         </div>
         <div ref={loopSelectRef} className="dd">
           <Dropdown
@@ -118,7 +120,12 @@ const FilterDropdowns = ({
       {selectingDateRange && (
         <div>
           {win.down("sm") ? (
-            <div className={styles.mobileDatePicker}>
+            <div
+              className={styles.mobileDatePicker}
+              style={{
+                height: windowDimensions.innerHeight + "px",
+              }}
+            >
               <div className="top">
                 <div
                   className="back"
@@ -126,7 +133,7 @@ const FilterDropdowns = ({
                 >
                   <Image
                     src="/icons/dashboard/back.svg"
-                    width={20}
+                    width={15}
                     height={20}
                   />
                 </div>
@@ -136,11 +143,7 @@ const FilterDropdowns = ({
                 <DatePicker />
                 <DatePicker />
               </div>
-              <div
-                style={{
-                  textAlign: "right",
-                }}
-              >
+              <div className="end">
                 <Button>Save</Button>
               </div>
             </div>
@@ -186,9 +189,10 @@ const useStyles = makeStyles((theme) => ({
     gap: "2rem",
     position: "relative",
     [theme.breakpoints.down("sm")]: {
-      justifyContent: "space-between",
+      gap: 0,
     },
     "& .dateRange": {
+      marginRight: "auto",
       border: "1px solid #CECECE",
       color: "#828282",
       fontSize: 14,
@@ -209,18 +213,27 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mobileDatePicker: {
-    padding: "0 4%",
+    // padding: "0 4%",
+    paddingBottom: "2rem",
     zIndex: 10000,
     position: "fixed",
     top: 0,
     left: 0,
-    height: "100vh",
     width: "100vw",
+    overflow: "auto",
     backgroundColor: "white",
     "& .top": {
+      // border: "1px solid blue",
+      zIndex: 20,
+      position: "fixed",
+      width: "100%",
       display: "flex",
       justifyContent: "space-between",
+      alignItems: "center",
+      backgroundColor: "white",
       "& .back": {
+        // border: "1px solid blue",
+        display: "flex",
         cursor: "pointer",
       },
       "& p": {
@@ -229,7 +242,13 @@ const useStyles = makeStyles((theme) => ({
         textDecoration: "underline",
       },
     },
-    "& .picker": {},
+    "& .picker": {
+      marginTop: "5rem",
+    },
+    "& .end": {
+      padding: "0 4%",
+      textAlign: "right",
+    },
   },
   desktopDatePicker: {
     boxShadow: "0px 0px 4px 0px #00000040",
