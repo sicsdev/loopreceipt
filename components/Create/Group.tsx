@@ -21,6 +21,7 @@ import Forms from "./Forms";
 import ProfileIcons from "@components/shared/ProfileIcons";
 import { randomColor } from "@helpers/utils";
 import Win from "@helpers/Win";
+import recipientDetailsForm from "forms/recipientDetailsForm";
 interface GroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -41,9 +42,9 @@ function Group({ setOption, validateFieldsOfForm }: GroupProps) {
   const getForm = () => {
     switch (formType) {
       case "internal":
-        return [loopersDetailsForm];
+        return [recipientDetailsForm, loopersDetailsForm];
       case "external":
-        return [companyDetailsForm, loopersDetailsForm];
+        return [recipientDetailsForm, companyDetailsForm, loopersDetailsForm];
     }
   };
   const [forms, setForms] = useState(getForm);

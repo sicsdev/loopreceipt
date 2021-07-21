@@ -14,14 +14,14 @@ import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { useRef, useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
-import OptionCards from "@components/Dashboard/OptionCards";
 import DetectSwipe from "@components/shared/DetectSwipe";
-import Dropdown from "@components/Controls/Dropdown";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
+import Pagination from "@components/Dashboard/Pagination";
 interface DashboardProps {
   path: string;
 }
 const links: LoopType[] = ["outgoing", "received", "drafts"];
+const itemsPerPageOptions = [5, 10, 15];
 const Dashboard = ({ path }: DashboardProps) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
@@ -32,6 +32,9 @@ const Dashboard = ({ path }: DashboardProps) => {
     start: new Date(),
     end: new Date(),
   });
+
+  const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[1]);
+  const [page, setPage] = useState(1);
   // console.log(win.up("md"));
   return (
     <Layout>
@@ -151,6 +154,16 @@ const Dashboard = ({ path }: DashboardProps) => {
               </div>
             </DetectSwipe>
             {/* <OptionCards /> */}
+            <div className="pagination">
+              <Pagination
+                totalItems={100}
+                itemsPerPageOptions={itemsPerPageOptions}
+                itemsPerPage={itemsPerPage}
+                setItemsPerPage={setItemsPerPage}
+                page={page}
+                setPage={setPage}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -218,5 +231,6 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "space-around",
       },
     },
+    "& .pagination": {},
   },
 }));
