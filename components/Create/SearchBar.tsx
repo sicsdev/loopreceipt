@@ -17,7 +17,9 @@ const SearchBar = ({}: SearchBarProps) => {
       <div className="image">
         <Image src="/icons/search-gray.svg" width={19} height={19} />
       </div>
-      {searchInput && <SearchCard searchString={searchInput} />}
+      {searchInput && (
+        <SearchCard searchInput={searchInput} setSearchInput={setSearchInput} />
+      )}
     </div>
   );
 };

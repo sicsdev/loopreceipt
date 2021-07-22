@@ -2,20 +2,21 @@ import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import {
-  largestCommonSubsequence,
-  largestCommonSubstring,
-} from "@helpers/utils";
+import { largestCommonSubstring } from "@helpers/utils";
 import { useAppSelector } from "@store/hooks";
 interface SearchCardProps {
-  searchString?: string;
+  searchInput: string;
+  setSearchInput: React.Dispatch<React.SetStateAction<string>>;
 }
-const initialUsers: {
+interface UserType {
   name: string;
   email: string;
-  rank?: number;
-  active?: boolean;
-}[] = [
+  matchLength?: number | undefined;
+  matchStartIndex?: number | undefined;
+  active?: boolean | undefined;
+}
+
+const initialUsers: UserType[] = [
   {
     name: "Rahul Gupta",
     email: "guptarahul@gmail.com",
@@ -38,40 +39,58 @@ const initialUsers: {
     email: "aman@gmail.com",
   },
 ];
-const SearchCard = ({ searchString }: SearchCardProps) => {
+
+const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
   const styles = useStyles();
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState<UserType[]>(initialUsers);
   const formType = useAppSelector((state) => state.loopReceipt.type);
   useEffect(() => {
-    if (searchString) {
-      const usersWithRank = [];
+    if (searchInput) {
+      const userDetails = [];
       for (let user of users) {
-        usersWithRank.push({
+        const matchDetails = largestCommonSubstring(user.name, searchInput);
+        // user.name must be first argument
+        // since we return matchStartIndex of first string
+        userDetails.push({
           ...user,
-          rank:
-            largestCommonSubsequence(searchString, user.name) +
-            largestCommonSubstring(searchString, user.name) * 2,
+          ...matchDetails,
         });
       }
       setUsers(
-        usersWithRank.sort((u1, u2) => {
-          // we have to check for undefined
-          // because otherwise when rank is 0 we skip
-          if (u1.rank !== undefined && u2.rank !== undefined) {
-            return u2.rank - u1.rank;
-          } else {
-            return 0;
-          }
+        userDetails.sort((u1, u2) => {
+          return u2.matchLength - u1.matchLength;
         })
       );
     }
-  }, [searchString]);
+  }, [searchInput]);
+  const getName = (user: UserType) => {
+    // console.log(user);
+    if (user.matchLength && user.matchLength > 0) {
+      const start = user.name.slice(0, user.matchStartIndex);
+      const matched = user.name.slice(
+        user.matchStartIndex!,
+        user.matchStartIndex! + user.matchLength
+      );
+      const end = user.name.slice(
+        user.matchStartIndex! + user.matchLength,
+        user.name.length
+      );
+      return (
+        <p>
+          {start}
+          <strong>{matched}</strong>
+          {end}
+        </p>
+      );
+    }
+    return <p>{user.name}</p>;
+  };
   return (
     <div className={styles.searchCard}>
       {users.map((user, i) => (
         <SearchItem
           key={i}
-          name={user.name}
+          name={getName(user)}
           email={user.email}
           active={user.active}
           onClick={() => {
@@ -91,6 +110,7 @@ const SearchCard = ({ searchString }: SearchCardProps) => {
               });
             });
             // now we can close the search bar
+            setSearchInput("");
           }}
         />
       ))}
@@ -107,7 +127,7 @@ const SearchCard = ({ searchString }: SearchCardProps) => {
 };
 export default SearchCard;
 interface SearchItemProps {
-  name: string;
+  name: JSX.Element | string;
   email: string;
   active?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
