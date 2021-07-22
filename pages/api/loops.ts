@@ -9,7 +9,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       break;
     }
     case "POST": {
-      console.log("/loops-POST");
       try {
         const response = await axios.post(
           `${process.env.API_URL}/api/loops`,
@@ -23,8 +22,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         console.log(response);
         res.json(response.data);
       } catch (err) {
-        console.log("Error!!!!!!!!!!!!!!!!!");
+        console.log("Error!!!!!!!!!");
         console.log(err);
+        // console.log("Error: " + (err?.response?.data?.message || err));
         res.json({
           error: true,
         });
