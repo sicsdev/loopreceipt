@@ -41,7 +41,7 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
       postalCode: recipientState.zipCode.value,
       address: recipientState.shippingAddress.value,
       city: recipientState.city.value,
-      company: recipientState.receivingCompanyName.value,
+      company: recipientState.receivingCompanyName?.value || "default dummy",
       country: recipientState.country.value,
     };
     // console.log(recipient);
@@ -113,7 +113,8 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
             <>
               <Entry
                 inputIcon="location"
-                text={`To: ${formsProps[recipientFormIdx].formState.receivingCompanyName.value}`}
+                text={`To: ${formsProps[recipientFormIdx].formState.receivingCompanyName?.value}`}
+                // since receivingCompanyName is optional field
               />
               <Entry
                 inputIcon="location"

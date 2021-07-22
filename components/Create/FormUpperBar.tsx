@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import Button from "@components/Controls/Button";
-import UpperBar from "@components/shared/UpperBar";
+import UpperBar from "@components/Shared/UpperBar";
 import React from "react";
 import Image from "next/image";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";

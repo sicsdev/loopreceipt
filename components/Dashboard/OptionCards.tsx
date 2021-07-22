@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import OptionCard from "@components/Dashboard/OptionCard";
 import { openModal } from "@store/slices/modalSlice";
-import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
+import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 interface OptionCardsProps {}
 const OptionCards = ({}: OptionCardsProps) => {
   const styles = useStyles();

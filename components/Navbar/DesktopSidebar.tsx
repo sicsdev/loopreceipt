@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import Link from "next/link";
 import classNames from "classnames";
-import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
+import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 interface DesktopSideBarProps {
   path: string;

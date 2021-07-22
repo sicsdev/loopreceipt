@@ -2,7 +2,7 @@ import DesktopModal from "./DesktopModal";
 import { isMobile } from "react-device-detect";
 import MobileModal from "./MobileModal";
 import { useAppDispatch } from "@store/hooks";
-import { setType } from "@store/slices/loopReceiptSlice";
+import { setLoopReceiptType } from "@store/slices/loopReceiptSlice";
 import { useRouter } from "next/router";
 import DialogItemType from "@interfaces/DialogItemType";
 import { closeModal } from "@store/slices/modalSlice";
@@ -21,7 +21,7 @@ const InternalExternalModal = ({}: InternalExternalModalProps) => {
       description: "Create loops within the members of your organization.",
       src: "/icons/create/internal.svg",
       click: () => {
-        dispatch(setType({ type: "internal" }));
+        dispatch(setLoopReceiptType({ type: "internal" }));
         closeModal();
 
         router.push("/create");
@@ -32,7 +32,7 @@ const InternalExternalModal = ({}: InternalExternalModalProps) => {
       description: "Create loops with partners outside of your organization.",
       src: "/icons/create/external.svg",
       click: () => {
-        dispatch(setType({ type: "external" }));
+        dispatch(setLoopReceiptType({ type: "external" }));
         closeModal();
         router.push("/create");
       },

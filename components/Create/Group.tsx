@@ -14,7 +14,7 @@ import Summary from "./Summary";
 import FormUpperBar from "./FormUpperBar";
 import BoxContent from "./BoxContent";
 import Forms from "./Forms";
-import ProfileIcons from "@components/shared/ProfileIcons";
+import ProfileIcons from "@components/Shared/ProfileIcons";
 import { randomColor } from "@helpers/utils";
 import Win from "@helpers/Win";
 import UpperBarMobile from "./UpperBarMobile";

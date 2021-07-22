@@ -1,12 +1,12 @@
 import { makeStyles } from "@material-ui/core";
 import Link from "next/link";
 import Button from "@components/Controls/Button";
-import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
+import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 
 import Image from "next/image";
 import { openModal } from "@store/slices/modalSlice";
 import { useAppDispatch } from "@store/hooks";
-import { setShowNotificationsBox } from "@store/slices/notifications";
+import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
 interface DesktopNavbarPropTypes {}
 const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
   const styles = useStyles();

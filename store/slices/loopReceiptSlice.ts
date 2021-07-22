@@ -1,4 +1,4 @@
-import { createSlice, Draft, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 interface SliceLoopReceiptType {
   type: "internal" | "external";
@@ -31,6 +31,7 @@ export const loopReceiptSlice = createSlice({
 });
 
 // Reducers and actions
-export const { setType, setAddRecepientManually } = loopReceiptSlice.actions;
+export const { setType: setLoopReceiptType, setAddRecepientManually } =
+  loopReceiptSlice.actions;
 
 export default loopReceiptSlice.reducer;

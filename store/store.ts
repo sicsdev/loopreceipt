@@ -5,7 +5,8 @@ import themeReducer from "./slices/themeSlice";
 import postsReducer from "./slices/postsSlice";
 import loopReceiptReducer from "./slices/loopReceiptSlice";
 import modalReducer from "./slices/modalSlice";
-import notificationsReducer from "./slices/notifications";
+import notificationsReducer from "./slices/notificationsSlice";
+import genericReducer from "./slices/genericSlice";
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -14,6 +15,7 @@ export const store = configureStore({
     loopReceipt: loopReceiptReducer,
     modal: modalReducer,
     notifications: notificationsReducer,
+    generic: genericReducer,
   },
 });
 export default store;

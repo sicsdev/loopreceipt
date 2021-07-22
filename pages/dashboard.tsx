@@ -4,16 +4,17 @@ import Links from "@components/Dashboard/Links";
 
 import Button from "@components/Controls/Button";
 import Layout from "@components/Layout";
-import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
+import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import LoopCard from "@components/Dashboard/LoopCard";
 import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
-import DetectSwipe from "@components/shared/DetectSwipe";
+import DetectSwipe from "@components/Shared/DetectSwipe";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
 import Pagination from "@components/Dashboard/Pagination";
+import Image from "next/image";
 interface DashboardProps {
   path: string;
 }
@@ -163,6 +164,15 @@ const Dashboard = ({ path }: DashboardProps) => {
             </div>
           </div>
         </div>
+        <div className={styles.iconGettingStarted}>
+          {win.down("xs") ? (
+            <div className="icon">
+              <Image src="/icons/dashboard/menu.svg" width={30} height={30} />
+            </div>
+          ) : (
+            <Button labelColor="white">Getting Started</Button>
+          )}
+        </div>
       </div>
     </Layout>
   );
@@ -231,5 +241,25 @@ const useStyles = makeStyles((theme) => ({
       },
     },
     "& .pagination": {},
+  },
+  iconGettingStarted: {
+    position: "fixed",
+    bottom: 40,
+    right: 50,
+    userSelect: "none",
+    cursor: "pointer",
+    "& .icon": {
+      width: 61,
+      height: 61,
+
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: "50%",
+      backgroundColor: "#363F4D",
+    },
+    "& .MuiButtonBase-root": {
+      backgroundColor: "#363F4D",
+    },
   },
 }));

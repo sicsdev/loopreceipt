@@ -51,7 +51,11 @@ export const modalStateSlice = createSlice({
     },
   },
 });
-export const { setShow, setMouseEvent, setOptions } = modalStateSlice.actions;
+export const {
+  setShow: setShowModal,
+  setMouseEvent,
+  setOptions: setModalOptions,
+} = modalStateSlice.actions;
 export const openModal = (
   e: React.MouseEvent<any, MouseEvent>,
   options?: ModalOptionsType
@@ -76,12 +80,12 @@ export const openModal = (
       })
     );
   }
-  store.dispatch(setOptions({ options }));
-  store.dispatch(setShow({ show: true }));
+  store.dispatch(setModalOptions({ options }));
+  store.dispatch(setShowModal({ show: true }));
   // store.getState().notifications.showNotificationsBox,
   // we can get the state like this
 };
 export const closeModal = () => {
-  store.dispatch(setShow({ show: false }));
+  store.dispatch(setShowModal({ show: false }));
 };
 export default modalStateSlice.reducer;

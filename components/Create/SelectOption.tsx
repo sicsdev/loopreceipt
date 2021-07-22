@@ -1,5 +1,5 @@
 import Button from "@components/Controls/Button";
-import UpperBar from "@components/shared/UpperBar";
+import UpperBar from "@components/Shared/UpperBar";
 import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
 interface SelectOptionProps {

@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import EntityForm from "./EntityForm";
-import Form from "@components/shared/Form";
+import Form from "@components/Shared/Form";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 interface FormsProps {
   forms: FormType[];

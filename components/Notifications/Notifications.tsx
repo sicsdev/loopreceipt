@@ -2,7 +2,7 @@ import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { Dialog, DialogContent, makeStyles } from "@material-ui/core";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { setShowNotificationsBox } from "@store/slices/notifications";
+import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
 import Image from "next/image";
 import Notification from "./Notification";
 interface NotificationsProps {}

@@ -1,6 +1,6 @@
 import { formatMs, makeStyles } from "@material-ui/core";
 import Button from "@components/Controls/Button";
-import Form from "@components/shared/Form";
+import Form from "@components/Shared/Form";
 import Image from "next/image";
 
 import {

@@ -3,7 +3,7 @@ import DialogItemType from "@interfaces/DialogItemType";
 import { useAppSelector } from "@store/hooks";
 import Image from "next/image";
 
-import ToggleBottombar from "@components/shared/ToggleBottombar";
+import ToggleBottombar from "@components/Shared/ToggleBottombar";
 import { closeModal } from "@store/slices/modalSlice";
 import Button from "@components/Controls/Button";
 interface MobileModalProps {

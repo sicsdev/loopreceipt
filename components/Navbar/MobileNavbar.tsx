@@ -2,8 +2,8 @@ import RoundButton from "@components/Controls/RoundButton";
 import { makeStyles, StylesProvider, useTheme } from "@material-ui/core";
 import Image from "next/image";
 import { useState } from "react";
-import ToggleSidebar from "@components/shared/ToggleSidebar";
-import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
+import ToggleSidebar from "@components/Shared/ToggleSidebar";
+import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import Link from "next/link";
 interface MobileNavbarProps {}

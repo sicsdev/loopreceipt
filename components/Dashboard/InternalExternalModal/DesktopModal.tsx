@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import { useAppSelector } from "@store/hooks";
 import { closeModal } from "@store/slices/modalSlice";
-import MovableModal from "@components/shared/MovableModal";
+import MovableModal from "@components/Shared/MovableModal";
 import Image from "next/image";
 import DialogItemType from "@interfaces/DialogItemType";
 interface DesktopModalProps {

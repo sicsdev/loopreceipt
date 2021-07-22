@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import Image from "next/image";
 import SearchCard from "@components/Create/SearchCard";
-import UnmountOnWindowClickWrapper from "@components/shared/UnmountOnWindowClickWrapper";
+import UnmountOnWindowClickWrapper from "@components/Shared/UnmountOnWindowClickWrapper";
 export interface UserType {
   name: string;
   email: string;
