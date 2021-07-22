@@ -2,9 +2,42 @@ import { makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import Image from "next/image";
 import SearchCard from "@components/Create/SearchCard";
+import UnmountOnWindowClickWrapper from "@components/shared/UnmountOnWindowClickWrapper";
+export interface UserType {
+  name: string;
+  email: string;
+  matchLength?: number | undefined;
+  matchStartIndex?: number | undefined;
+  active?: boolean | undefined;
+}
+
+const initialUsers: UserType[] = [
+  {
+    name: "Rahul Gupta",
+    email: "guptarahul@gmail.com",
+    active: true,
+  },
+  {
+    name: "Neha",
+    email: "neha@gmail.com",
+  },
+  {
+    name: "Simran",
+    email: "simran@gmail.com",
+  },
+  {
+    name: "Mehak Sharma",
+    email: "mehak@gmail.com",
+  },
+  {
+    name: "Aman Aggarwal",
+    email: "aman@gmail.com",
+  },
+];
 interface SearchBarProps {}
 const SearchBar = ({}: SearchBarProps) => {
   const [searchInput, setSearchInput] = useState("");
+  const [users, setUsers] = useState<UserType[]>(initialUsers);
   const styles = useStyles();
   return (
     <div className={styles.SearchBar}>
@@ -18,7 +51,19 @@ const SearchBar = ({}: SearchBarProps) => {
         <Image src="/icons/search-gray.svg" width={19} height={19} />
       </div>
       {searchInput && (
-        <SearchCard searchInput={searchInput} setSearchInput={setSearchInput} />
+        <UnmountOnWindowClickWrapper
+          close={() => {
+            // console.log("close called");
+            setSearchInput("");
+          }}
+        >
+          <SearchCard
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            users={users}
+            setUsers={setUsers}
+          />
+        </UnmountOnWindowClickWrapper>
       )}
     </div>
   );

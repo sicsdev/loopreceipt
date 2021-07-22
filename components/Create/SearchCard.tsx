@@ -4,45 +4,22 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { largestCommonSubstring } from "@helpers/utils";
 import { useAppSelector } from "@store/hooks";
+import { UserType } from "./SearchBar";
 interface SearchCardProps {
   searchInput: string;
   setSearchInput: React.Dispatch<React.SetStateAction<string>>;
-}
-interface UserType {
-  name: string;
-  email: string;
-  matchLength?: number | undefined;
-  matchStartIndex?: number | undefined;
-  active?: boolean | undefined;
+  users: UserType[];
+  setUsers: React.Dispatch<React.SetStateAction<UserType[]>>;
 }
 
-const initialUsers: UserType[] = [
-  {
-    name: "Rahul Gupta",
-    email: "guptarahul@gmail.com",
-    active: true,
-  },
-  {
-    name: "Neha",
-    email: "neha@gmail.com",
-  },
-  {
-    name: "Simran",
-    email: "simran@gmail.com",
-  },
-  {
-    name: "Mehak Sharma",
-    email: "mehak@gmail.com",
-  },
-  {
-    name: "Aman Aggarwal",
-    email: "aman@gmail.com",
-  },
-];
-
-const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
+const SearchCard = ({
+  searchInput,
+  setSearchInput,
+  users,
+  setUsers,
+}: SearchCardProps) => {
   const styles = useStyles();
-  const [users, setUsers] = useState<UserType[]>(initialUsers);
+
   const formType = useAppSelector((state) => state.loopReceipt.type);
   useEffect(() => {
     if (searchInput) {
@@ -165,6 +142,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     padding: "2px 0",
+    cursor: "pointer",
     "& .tick": {
       width: "2.5rem",
       height: "2.5rem",
