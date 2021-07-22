@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function (req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case "GET": {
       res.json({
@@ -9,6 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       break;
     }
     case "POST": {
+      console.log("/loops-POST");
       try {
         const response = await axios.post(
           `${process.env.API_URL}/api/loops`,
@@ -19,11 +20,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             },
           }
         );
-        // console.log(response);
+        console.log(response);
         res.json(response.data);
       } catch (err) {
-        console.log("/loops-POST");
-        console.log("Error: " + err.response.data.message);
+        console.log("Error!!!!!!!!!!!!!!!!!");
+        console.log(err);
         res.json({
           error: true,
         });
@@ -31,4 +32,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       break;
     }
   }
-};
+}

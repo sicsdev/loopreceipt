@@ -13,7 +13,7 @@ export default function Landing() {
   console.log(posts);
   useEffect(() => {
     dispatch(fetchPosts());
-  }, []);
+  }, [dispatch]);
 
   React.useEffect(() => {
     setTimeout(() => {
