@@ -37,6 +37,7 @@ const FilterDropdowns = ({
   const [selectingDateRange, setSelectingDateRange] = useState(false);
   const pickers = (monthSelectorType: DatePickerProps["monthSelectorType"]) => [
     <DatePicker
+      key={0}
       monthSelectorType={monthSelectorType}
       selectedDate={dateRange.start}
       setSelectedDate={(date: Date) => {
@@ -47,6 +48,7 @@ const FilterDropdowns = ({
       }}
     />,
     <DatePicker
+      key={1}
       monthSelectorType={monthSelectorType}
       selectedDate={dateRange.end}
       setSelectedDate={(date: Date) => {

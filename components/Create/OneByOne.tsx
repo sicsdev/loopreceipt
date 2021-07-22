@@ -1,18 +1,12 @@
-import { formatMs, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import BoxContent from "./BoxContent";
 
 import React, { useState } from "react";
 
-import { useForm } from "@hooks/useForm";
-
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 
-import recipientDetailsForm from "forms/recipientDetailsForm";
-import companyDetailsForm from "forms/companyDetailsForm";
 import Box from "@components/Create/Box";
 
-import loopersDetailsForm from "forms/loopersDetailsForm";
-import { useAppSelector } from "@store/hooks";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Summary from "./Summary";
@@ -29,24 +23,19 @@ interface OneByOneProps {
     formProps: useFormReturnType,
     form: FormType
   ) => boolean;
+  forms: FormType[];
+  formsProps: useFormReturnType[];
 }
-function OneByOne({ setOption, validateFieldsOfForm }: OneByOneProps) {
+function OneByOne({
+  setOption,
+  validateFieldsOfForm,
+  forms,
+  formsProps,
+}: OneByOneProps) {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [index, setIndex] = useState(0);
-  const formType = useAppSelector((state) => state.loopReceipt.type);
-  const getForm = () => {
-    switch (formType) {
-      case "internal":
-        return [recipientDetailsForm, loopersDetailsForm];
-      case "external":
-        return [recipientDetailsForm, companyDetailsForm, loopersDetailsForm];
-    }
-  };
-  const [forms, setForms] = useState(getForm);
-
-  const formsProps = forms.map((form) => useForm(form.initialState, true));
 
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,

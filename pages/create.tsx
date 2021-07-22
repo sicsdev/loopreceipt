@@ -3,17 +3,34 @@ import OneByOne from "@components/Create/OneByOne";
 import SelectOption from "@components/Create/SelectOption";
 import { makeStyles } from "@material-ui/core";
 import Layout from "@components/Layout";
-
+import { useAppSelector } from "@store/hooks";
 import { useState } from "react";
+import recipientDetailsForm from "forms/recipientDetailsForm";
+import loopersDetailsForm from "forms/loopersDetailsForm";
+import companyDetailsForm from "forms/companyDetailsForm";
+
 import {
   FormStateType,
   FormType,
   useFormReturnType,
 } from "@interfaces/FormTypes";
 import { getLastChar } from "@helpers/utils";
+import { useForm } from "@hooks/useForm";
 const Create = () => {
   const styles = useStyles();
   const [option, setOption] = useState<"onebyone" | "group">();
+  const formType = useAppSelector((state) => state.loopReceipt.type);
+  let forms: FormType[] = [
+    recipientDetailsForm,
+    companyDetailsForm,
+    loopersDetailsForm,
+  ];
+
+  const formsProps = [
+    useForm(forms[0].initialState),
+    useForm(forms[1].initialState),
+    useForm(forms[2].initialState),
+  ];
   const entityCompletelyEmpty = (formState: FormStateType, id: number) => {
     const entityFields = Object.keys(formState).filter((key) =>
       key.endsWith(String(id))
@@ -79,16 +96,26 @@ const Create = () => {
     }
     return allFieldsValid;
   };
+  let passedForms: FormType[] = forms;
+  let passedFormsProps: useFormReturnType[] = formsProps;
+  if (formType === "internal") {
+    passedForms = [forms[0], forms[2]];
+    passedFormsProps = [formsProps[0], formsProps[2]];
+  }
   return (
     <Layout>
       <div className={styles.Create}>
         {option === "onebyone" ? (
           <OneByOne
+            forms={passedForms}
+            formsProps={passedFormsProps}
             setOption={setOption}
             validateFieldsOfForm={validateFieldsOfForm}
           />
         ) : option === "group" ? (
           <Group
+            forms={passedForms}
+            formsProps={passedFormsProps}
             setOption={setOption}
             validateFieldsOfForm={validateFieldsOfForm}
           />

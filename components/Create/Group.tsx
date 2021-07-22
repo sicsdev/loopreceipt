@@ -2,15 +2,11 @@ import { makeStyles, Paper } from "@material-ui/core";
 import Switch from "@components/Controls/Switch";
 import React, { useEffect, useRef, useState } from "react";
 
-import { useForm } from "@hooks/useForm";
-
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 
-import companyDetailsForm from "forms/companyDetailsForm";
 import Box from "@components/Create/Box";
 import Image from "next/image";
-import loopersDetailsForm from "forms/loopersDetailsForm";
-import { useAppSelector } from "@store/hooks";
+
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Summary from "./Summary";
@@ -21,7 +17,6 @@ import Forms from "./Forms";
 import ProfileIcons from "@components/shared/ProfileIcons";
 import { randomColor } from "@helpers/utils";
 import Win from "@helpers/Win";
-import recipientDetailsForm from "forms/recipientDetailsForm";
 import UpperBarMobile from "./UpperBarMobile";
 import LoopReceipt from "./LoopReceipt";
 interface GroupProps {
@@ -32,26 +27,21 @@ interface GroupProps {
     formProps: useFormReturnType,
     form: FormType
   ) => boolean;
+  forms: FormType[];
+  formsProps: useFormReturnType[];
 }
-function Group({ setOption, validateFieldsOfForm }: GroupProps) {
+function Group({
+  setOption,
+  validateFieldsOfForm,
+  forms,
+  formsProps,
+}: GroupProps) {
   const styles = useStyles();
 
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [saveAsDefault, setSaveAsDefault] = useState(true);
   const [index, setIndex] = useState(0);
-  const formType = useAppSelector((state) => state.loopReceipt.type);
-  const getForm = () => {
-    switch (formType) {
-      case "internal":
-        return [recipientDetailsForm, loopersDetailsForm];
-      case "external":
-        return [recipientDetailsForm, companyDetailsForm, loopersDetailsForm];
-    }
-  };
-  const [forms, setForms] = useState(getForm);
-
-  const formsProps = forms.map((form) => useForm(form.initialState, true));
 
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
