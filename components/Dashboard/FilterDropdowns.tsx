@@ -13,7 +13,7 @@ import Button from "@components/Controls/Button";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 import MovableModal from "@components/shared/MovableModal";
 import { SliceModalType } from "@store/slices/modalSlice";
-import { months, twoDateString } from "@helpers/date";
+import { months, twoDateString } from "@helpers/dateFormats";
 const loopSources: LoopSource[] = ["all", "internal", "external"];
 interface FilterDropdownsProps {
   loopSource: LoopSource;

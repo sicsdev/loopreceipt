@@ -3,8 +3,9 @@ import classNames from "classnames";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { largestCommonSubstring } from "@helpers/utils";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { UserType } from "./SearchBar";
+import { setAddRecepientManually } from "@store/slices/loopReceiptSlice";
 interface SearchCardProps {
   searchInput: string;
   setSearchInput: React.Dispatch<React.SetStateAction<string>>;
@@ -19,7 +20,10 @@ const SearchCard = ({
   setUsers,
 }: SearchCardProps) => {
   const styles = useStyles();
-
+  const dispatch = useAppDispatch();
+  const addRecepientManually = useAppSelector(
+    (state) => state.loopReceipt.addRecepientManually
+  );
   const formType = useAppSelector((state) => state.loopReceipt.type);
   useEffect(() => {
     if (searchInput) {
@@ -55,13 +59,7 @@ const SearchCard = ({
       return (
         <p>
           {start}
-          <span
-            style={{
-              fontWeight: 500,
-            }}
-          >
-            {matched}
-          </span>
+          <strong>{matched}</strong>
           {end}
         </p>
       );
@@ -105,7 +103,18 @@ const SearchCard = ({
           No recipient found with the name “{searchInput}”
         </p>
       )}
-      <div className={styles.addManuallyButton}>+ Add manually</div>
+      <div
+        className={styles.addManuallyButton}
+        onClick={() => {
+          dispatch(
+            setAddRecepientManually({
+              addRecepientManually: !addRecepientManually,
+            })
+          );
+        }}
+      >
+        + Add manually
+      </div>
       {formType === "internal" && (
         <div className={styles.bottomText}>
           <Image src="/icons/exclaimation.svg" width={15} height={15} />

@@ -1,18 +1,15 @@
 import { makeStyles } from "@material-ui/core";
 import Sidebar from "@components/Navbar/DesktopSidebar";
 import Links from "@components/Dashboard/Links";
-import UpperBar from "@components/shared/UpperBar";
+
 import Button from "@components/Controls/Button";
 import Layout from "@components/Layout";
-import OptionCard from "@components/Dashboard/OptionCard";
-import Typography from "@material-ui/core/Typography";
-import Image from "next/image";
 import ListenClickAtParentElement from "@components/shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import LoopCard from "@components/Dashboard/LoopCard";
 import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
 import DetectSwipe from "@components/shared/DetectSwipe";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
@@ -228,7 +225,7 @@ const useStyles = makeStyles((theme) => ({
       display: "flex",
       justifyContent: "space-between",
       flexWrap: "wrap",
-      gap: 63,
+      gap: 40,
       [theme.breakpoints.down("lg")]: {
         justifyContent: "space-around",
       },

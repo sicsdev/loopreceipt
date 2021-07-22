@@ -19,11 +19,11 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             },
           }
         );
-        console.log(response);
+        console.log(response.data.error);
         res.json(response.data);
       } catch (err) {
         console.log("Error!!!!!!!!!");
-        console.log(err);
+        console.log(err.response?.data?.message);
         // console.log("Error: " + (err?.response?.data?.message || err));
         res.json({
           error: true,

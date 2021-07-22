@@ -5,10 +5,12 @@ import ListenClickAtParentElement from "@components/shared/ListenClickAtParentEl
 
 import Image from "next/image";
 import { openModal } from "@store/slices/modalSlice";
+import { useAppDispatch } from "@store/hooks";
+import { setShowNotificationsBox } from "@store/slices/notifications";
 interface DesktopNavbarPropTypes {}
 const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
   const styles = useStyles();
-
+  const dispatch = useAppDispatch();
   return (
     <div className={styles.DesktopNavbar}>
       <Link href="/dashboard">
@@ -43,7 +45,12 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
         <div className="item">
           <Image src="/icons/search.svg" width="20" height="20" />
         </div>
-        <div className="item">
+        <div
+          className="item"
+          onClick={() => {
+            dispatch(setShowNotificationsBox({ showNotificationsBox: true }));
+          }}
+        >
           <Image src="/icons/bell.svg" width="20" height="20" />
         </div>
         <div className="item">

@@ -15,7 +15,7 @@ const recipientDetailsForm: FormType = {
       return ans;
     },
   },
-  initialState: {
+  optionalFields: {
     receivingCompanyName: {
       name: "receivingCompanyName",
       label: "Receiving Company Name",
@@ -34,7 +34,8 @@ const recipientDetailsForm: FormType = {
       //   );
       // },
     },
-
+  },
+  initialState: {
     shippingAddress: {
       name: "shippingAddress",
       label: "Shipping Address",

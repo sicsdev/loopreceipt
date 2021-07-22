@@ -10,6 +10,7 @@ export interface FormType {
     | "recipientDetailsForm"
     | "companyDetailsForm"
     | "loopersDetailsForm";
+  optionalFields?: FormStateType;
   formHeading?: string;
   methods?: {
     [key: string]: ({

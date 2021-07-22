@@ -1,10 +1,12 @@
 import { createSlice, Draft, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-
-const initialState: {
+interface SliceLoopReceiptType {
   type: "internal" | "external";
-} = {
+  addRecepientManually: boolean;
+}
+const initialState: SliceLoopReceiptType = {
   type: "internal",
+  addRecepientManually: false,
 };
 
 export const loopReceiptSlice = createSlice({
@@ -12,15 +14,23 @@ export const loopReceiptSlice = createSlice({
   initialState,
   reducers: {
     setType: (
-      state: Draft<typeof initialState>,
-      action: PayloadAction<typeof initialState>
+      state,
+      action: PayloadAction<{ type: SliceLoopReceiptType["type"] }>
     ) => {
       state.type = action.payload.type;
+    },
+    setAddRecepientManually: (
+      state,
+      action: PayloadAction<{
+        addRecepientManually: SliceLoopReceiptType["addRecepientManually"];
+      }>
+    ) => {
+      state.addRecepientManually = action.payload.addRecepientManually;
     },
   },
 });
 
 // Reducers and actions
-export const { setType } = loopReceiptSlice.actions;
+export const { setType, setAddRecepientManually } = loopReceiptSlice.actions;
 
 export default loopReceiptSlice.reducer;

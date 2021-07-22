@@ -78,6 +78,8 @@ export const openModal = (
   }
   store.dispatch(setOptions({ options }));
   store.dispatch(setShow({ show: true }));
+  // store.getState().notifications.showNotificationsBox,
+  // we can get the state like this
 };
 export const closeModal = () => {
   store.dispatch(setShow({ show: false }));

@@ -4,7 +4,7 @@ import SelectOption from "@components/Create/SelectOption";
 import { makeStyles } from "@material-ui/core";
 import Layout from "@components/Layout";
 import { useAppSelector } from "@store/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import recipientDetailsForm from "forms/recipientDetailsForm";
 import loopersDetailsForm from "forms/loopersDetailsForm";
 import companyDetailsForm from "forms/companyDetailsForm";
@@ -31,6 +31,39 @@ const Create = () => {
     useForm(forms[1].initialState),
     useForm(forms[2].initialState),
   ];
+  const addRecepientManually = useAppSelector(
+    (state) => state.loopReceipt.addRecepientManually
+  );
+  const recepientFormIdx = forms.findIndex(
+    (form) => form.formName === "recipientDetailsForm"
+  );
+  useEffect(() => {
+    if (addRecepientManually) {
+      let optionalFieldsAdded = true;
+      for (let key in recipientDetailsForm.optionalFields) {
+        if (!formsProps[recepientFormIdx].formState[key]) {
+          optionalFieldsAdded = false;
+          break;
+        }
+      }
+      if (!optionalFieldsAdded) {
+        formsProps[recepientFormIdx].setFormState((prev) => {
+          return {
+            ...recipientDetailsForm.optionalFields,
+            ...prev,
+          };
+        });
+      }
+    } else {
+      formsProps[recepientFormIdx].setFormState((prev) => {
+        const updated = { ...prev };
+        for (let key in recipientDetailsForm.optionalFields) {
+          delete updated[key];
+        }
+        return updated;
+      });
+    }
+  }, [addRecepientManually]);
   const entityCompletelyEmpty = (formState: FormStateType, id: number) => {
     const entityFields = Object.keys(formState).filter((key) =>
       key.endsWith(String(id))

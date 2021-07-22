@@ -1,9 +1,10 @@
-import { days, months } from "@helpers/date";
+import { days, months } from "@helpers/dateFormats";
+import { getNumDaysMonthWise } from "@helpers/dateCalculations";
 import { range } from "@helpers/utils";
 import { makeStyles, MenuItem, Menu } from "@material-ui/core";
 import classNames from "classnames";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 export interface DatePickerProps {
   monthSelectorType: "dropdown" | "table";
   selectedDate: Date;
@@ -14,6 +15,14 @@ const DatePicker = ({
   selectedDate,
   setSelectedDate,
 }: DatePickerProps) => {
+  const [curMonth, setCurMonth] = useState(selectedDate.getMonth());
+  const [curYear, setCurYear] = useState(selectedDate.getFullYear());
+  const [numDaysMonthWise, setNumDaysMonthWise] = useState(
+    getNumDaysMonthWise(curYear)
+  );
+  useEffect(() => {
+    setNumDaysMonthWise(getNumDaysMonthWise(curYear));
+  }, [curYear]);
   const [dates, setDates] = useState(() => {
     const prevMonthDates = range(27, 31).map((d) => {
       return {
@@ -24,7 +33,7 @@ const DatePicker = ({
         rangeEndCapsule: false,
       };
     });
-    const curMonthDates = range(1, 30).map((d) => {
+    const curMonthDates = range(1, numDaysMonthWise[curMonth]).map((d) => {
       return {
         d,
         disabled: false,
