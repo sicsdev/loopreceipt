@@ -42,7 +42,7 @@ const SearchCard = ({
   }, [searchInput]);
   const getName = (user: UserType) => {
     // console.log(user);
-    if (user.matchLength && user.matchLength > 0) {
+    if (user.matchLength) {
       const start = user.name.slice(0, user.matchStartIndex);
       const matched = user.name.slice(
         user.matchStartIndex!,
@@ -55,7 +55,13 @@ const SearchCard = ({
       return (
         <p>
           {start}
-          <strong>{matched}</strong>
+          <span
+            style={{
+              fontWeight: 500,
+            }}
+          >
+            {matched}
+          </span>
           {end}
         </p>
       );
@@ -64,34 +70,41 @@ const SearchCard = ({
   };
   return (
     <div className={styles.searchCard}>
-      {users.map((user, i) => (
-        <SearchItem
-          key={i}
-          name={getName(user)}
-          email={user.email}
-          active={user.active}
-          onClick={() => {
-            setUsers((prevUsers) => {
-              return prevUsers.map((user, idx) => {
-                if (idx === i) {
-                  return {
-                    ...user,
-                    active: true,
-                  };
-                } else {
-                  return {
-                    ...user,
-                    active: false,
-                  };
-                }
+      {users.map((user, i) =>
+        user.matchLength ? (
+          <SearchItem
+            key={i}
+            name={getName(user)}
+            email={user.email}
+            active={user.active}
+            onClick={() => {
+              setUsers((prevUsers) => {
+                return prevUsers.map((user, idx) => {
+                  if (idx === i) {
+                    return {
+                      ...user,
+                      active: true,
+                    };
+                  } else {
+                    return {
+                      ...user,
+                      active: false,
+                    };
+                  }
+                });
               });
-            });
-            // now we can close the search bar
-            setSearchInput("");
-          }}
-        />
-      ))}
-
+              // now we can close the search bar
+              setSearchInput("");
+            }}
+          />
+        ) : null
+      )}
+      {users.every((user) => !user.matchLength) && (
+        <p className={styles.nomatch}>
+          <Image src="/icons/create/exclamation.svg" width={15} height={15} />{" "}
+          No recipient found with the name “{searchInput}”
+        </p>
+      )}
       <div className={styles.addManuallyButton}>+ Add manually</div>
       {formType === "internal" && (
         <div className={styles.bottomText}>
@@ -162,6 +175,14 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#E4FFF6",
     },
   },
+  nomatch: {
+    padding: "1rem 2rem",
+    color: "#828282",
+    display: "flex",
+    alignItems: "center",
+    fontWeight: 500,
+    gap: 10,
+  },
   addManuallyButton: {
     padding: "0 2rem",
     fontSize: 17,
@@ -169,6 +190,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     marginBottom: "1rem",
   },
+
   bottomText: {
     padding: "0 2rem",
     background: "rgba(242, 242, 242, 0.5)",
