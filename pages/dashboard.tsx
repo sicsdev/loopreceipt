@@ -3,7 +3,7 @@ import Sidebar from "@components/Navbar/DesktopSidebar";
 import Links from "@components/Dashboard/Links";
 
 import Button from "@components/Controls/Button";
-import Layout from "@components/Layout";
+import Layout from "@components/Global/Layout";
 import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import LoopCard from "@components/Dashboard/LoopCard";
@@ -15,6 +15,8 @@ import DetectSwipe from "@components/Shared/DetectSwipe";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
 import Pagination from "@components/Dashboard/Pagination";
 import Image from "next/image";
+import { useAppDispatch } from "@store/hooks";
+import { openGettingStartedGuide } from "@store/slices/genericSlice";
 interface DashboardProps {
   path: string;
 }
@@ -23,6 +25,7 @@ const itemsPerPageOptions = [5, 10, 15];
 const Dashboard = ({ path }: DashboardProps) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
+
   const win = new Win(windowDimensions);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
@@ -166,11 +169,13 @@ const Dashboard = ({ path }: DashboardProps) => {
         </div>
         <div className={styles.iconGettingStarted}>
           {win.down("xs") ? (
-            <div className="icon">
+            <div className="icon" onClick={openGettingStartedGuide}>
               <Image src="/icons/dashboard/menu.svg" width={30} height={30} />
             </div>
           ) : (
-            <Button labelColor="white">Getting Started</Button>
+            <Button labelColor="white" onClick={openGettingStartedGuide}>
+              Getting Started
+            </Button>
           )}
         </div>
       </div>

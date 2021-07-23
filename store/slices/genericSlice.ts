@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import store from "@store/store";
 interface SliceGenericType {
   showGettingStartedGuide: boolean;
 }
@@ -18,4 +19,13 @@ export const genericSlice = createSlice({
   },
 });
 export const { setShowGettingStartedGuide } = genericSlice.actions;
+export const openGettingStartedGuide = () => {
+  store.dispatch(setShowGettingStartedGuide({ showGettingStartedGuide: true }));
+};
+export const closeGettingStartedGuide = () => {
+  store.dispatch(
+    setShowGettingStartedGuide({ showGettingStartedGuide: false })
+  );
+};
+
 export default genericSlice.reducer;

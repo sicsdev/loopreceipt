@@ -2,7 +2,7 @@ import Group from "@components/Create/Group";
 import OneByOne from "@components/Create/OneByOne";
 import SelectOption from "@components/Create/SelectOption";
 import { makeStyles } from "@material-ui/core";
-import Layout from "@components/Layout";
+import Layout from "@components/Global/Layout";
 import { useAppSelector } from "@store/hooks";
 import { useEffect, useState } from "react";
 import recipientDetailsForm from "forms/recipientDetailsForm";
