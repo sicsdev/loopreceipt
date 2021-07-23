@@ -30,8 +30,8 @@ const Dashboard = ({ path }: DashboardProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
   const [dateRange, setDateRange] = useState<DateRange>({
-    start: new Date(),
-    end: new Date(),
+    start: null,
+    end: null,
   });
 
   const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[1]);
@@ -251,6 +251,9 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     bottom: 40,
     right: 50,
+    [theme.breakpoints.down("xs")]: {
+      right: 20,
+    },
     userSelect: "none",
     cursor: "pointer",
     "& .icon": {

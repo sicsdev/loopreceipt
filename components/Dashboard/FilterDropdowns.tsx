@@ -1,6 +1,6 @@
 import { DateRange, LoopSource } from "@interfaces/LoopTypes";
 import { makeStyles } from "@material-ui/core";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import StyledMenu from "@components/Shared/StyledMenu";
 import { StyledMenuItem } from "@components/Shared/StyledMenu";
 import Dropdown from "@components/Controls/Dropdown";
@@ -8,12 +8,14 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Win from "@helpers/Win";
 import { capitalize } from "@helpers/utils";
 import Image from "next/image";
-import DatePicker, { DatePickerProps } from "@components/Shared/DatePicker";
+import DatePicker, {
+  DatePickerProps,
+} from "@components/Shared/DatePicker/DatePicker";
 import Button from "@components/Controls/Button";
 import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import MovableModal from "@components/Shared/MovableModal";
 import { SliceModalType } from "@store/slices/modalSlice";
-import { months, twoDateString } from "@helpers/dateFormats";
+import { dmy, months, twoDateString } from "@helpers/dateFormats";
 const loopSources: LoopSource[] = ["all", "internal", "external"];
 interface FilterDropdownsProps {
   loopSource: LoopSource;
@@ -35,30 +37,32 @@ const FilterDropdowns = ({
   const [selectingLoopSource, setSelectingLoopSource] = useState(false);
   const [mouseEvent, setMouseEvent] = useState<SliceModalType["mouseEvent"]>();
   const [selectingDateRange, setSelectingDateRange] = useState(false);
+
   const pickers = (monthSelectorType: DatePickerProps["monthSelectorType"]) => [
     <DatePicker
       key={0}
       monthSelectorType={monthSelectorType}
-      selectedDate={dateRange.start}
-      setSelectedDate={(date: Date) => {
-        setDateRange({
-          ...dateRange,
-          start: date,
-        });
-      }}
+      dateRange={dateRange}
+      setDateRange={setDateRange}
+      pickerType="start"
     />,
     <DatePicker
       key={1}
       monthSelectorType={monthSelectorType}
-      selectedDate={dateRange.end}
-      setSelectedDate={(date: Date) => {
-        setDateRange({
-          ...dateRange,
-          end: date,
-        });
-      }}
+      dateRange={dateRange}
+      setDateRange={setDateRange}
+      pickerType="end"
     />,
   ];
+
+  const resetDateRange = () => {
+    setDateRange(() => {
+      return {
+        start: null,
+        end: null,
+      };
+    });
+  };
   return (
     <>
       <div className={styles.FilterDropdowns}>
@@ -132,7 +136,15 @@ const FilterDropdowns = ({
             >
               <Dropdown
                 name="Date Range"
-                option="All"
+                option={
+                  dateRange.start && dateRange.end
+                    ? twoDateString(dateRange.start, dateRange.end)
+                    : dateRange.start
+                    ? dmy(dateRange.start)
+                    : dateRange.end
+                    ? dmy(dateRange.end)
+                    : "All"
+                }
                 aria-controls="select-date-range"
                 aria-haspopup="true"
                 onClick={childClick}
@@ -161,7 +173,14 @@ const FilterDropdowns = ({
                     height={20}
                   />
                 </div>
-                <p>Clear</p>
+                <p
+                  className="clear"
+                  onClick={() => {
+                    resetDateRange();
+                  }}
+                >
+                  Clear
+                </p>
               </div>
               <div className="picker">
                 {pickers("table")[0]}
@@ -187,15 +206,17 @@ const FilterDropdowns = ({
               }}
             >
               <div className={styles.desktopDatePicker}>
-                <div className="picker">
-                  <p className="head">Start Date</p>
-                  {pickers("dropdown")[0]}
-                </div>
+                <div className="picker">{pickers("dropdown")[0]}</div>
                 <div className="divider" />
-                <div className="picker">
-                  <p className="head">End Date</p>
-                  {pickers("dropdown")[1]}
-                </div>
+                <div className="picker">{pickers("dropdown")[1]}</div>
+                <p
+                  className="clear"
+                  onClick={() => {
+                    resetDateRange();
+                  }}
+                >
+                  Clear
+                </p>
               </div>
             </MovableModal>
           )}
@@ -239,7 +260,7 @@ const useStyles = makeStyles((theme) => ({
   mobileDatePicker: {
     // padding: "0 4%",
     paddingBottom: "2rem",
-    zIndex: 10000,
+    zIndex: 100,
     position: "fixed",
     top: 0,
     left: 0,
@@ -260,7 +281,7 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         cursor: "pointer",
       },
-      "& p": {
+      "& .clear": {
         fontWeight: 500,
         fontSize: 18,
         textDecoration: "underline",
@@ -280,12 +301,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     padding: "1rem",
     backgroundColor: "white",
-    "& .head": {
-      fontSize: 18,
-      fontWeight: 500,
-      color: "#BDBDBD",
-      marginBottom: "1rem",
-    },
+    position: "relative",
     "& .picker": {
       width: 275,
       marginBottom: "-1rem",
@@ -294,6 +310,14 @@ const useStyles = makeStyles((theme) => ({
       width: 2,
       backgroundColor: "#dfdfdf",
       margin: "0 2rem",
+    },
+    "& .clear": {
+      position: "absolute",
+      right: "1rem",
+      fontWeight: 500,
+      fontSize: 18,
+      textDecoration: "underline",
+      cursor: "pointer",
     },
   },
 }));

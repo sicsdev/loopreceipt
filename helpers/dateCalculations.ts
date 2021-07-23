@@ -20,3 +20,10 @@ export const getNumDaysMonthWise = (year: number) => {
     31,
   ];
 };
+export const compareOnlyDate = (start: Date, end: Date) => {
+  return (
+    start.getFullYear() - end.getFullYear() ||
+    start.getMonth() - end.getMonth() ||
+    start.getDate() - end.getDate()
+  );
+};

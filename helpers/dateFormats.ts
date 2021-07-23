@@ -16,7 +16,8 @@ export const months = [
 export const shortMonth = (i: number) => {
   return months[i].slice(0, 3);
 };
-export const dmy = (d: Date) => {
+export const dmy = (d?: Date | null) => {
+  if (!d) return "";
   return `${d.getDate()} ${shortMonth(d.getMonth())}, ${d.getFullYear()}`;
 };
 export const dm = (d: Date) => {
@@ -31,11 +32,14 @@ export const twoDateString = (d1: Date, d2: Date) => {
     // year same but month different
     // 22 Jan - 26 Mar, 2020
     return `${dm(d1)} - ${dm(d2)}, ${d1.getFullYear()}`;
-  } else {
+  } else if (d1.getDate() !== d2.getDate()) {
     // year and month same
     // 22 - 26 Mar, 2020
     return `${d1.getDate()} - ${d2.getDate()} ${shortMonth(
       d1.getMonth()
     )}, ${d1.getFullYear()}`;
+  } else {
+    // 26 Mar, 2020
+    return dmy(d1);
   }
 };
