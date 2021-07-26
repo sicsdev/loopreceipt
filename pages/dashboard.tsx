@@ -22,7 +22,7 @@ import { EntityLoop } from "@apiClient/types";
 import { compareOnlyDate } from "@helpers/dateCalculations";
 import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
 export async function getServerSideProps() {
-  const loops = await loopsApi.getLoops();
+  const loops = await loopsApi.getAll();
   return { props: { loops } };
 }
 interface DashboardProps {
@@ -31,7 +31,7 @@ interface DashboardProps {
 }
 const links: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
-const firstTimeUser = true;
+const firstTimeUser = false;
 const Dashboard = ({ path, loops }: DashboardProps) => {
   // console.log(loops);
   const styles = useStyles();

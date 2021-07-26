@@ -23,3 +23,16 @@ export interface EntityLoop {
   loopers: EntityLooper[];
   recipient: EntityRecipient;
 }
+export interface EntityGroup {
+  members: EntityLooper[];
+  creator?: {
+    isVerified: boolean;
+    isFirstTime: boolean;
+    name: string;
+    email: string;
+    userid: string;
+  };
+  createdAt?: string;
+  __v?: string;
+  groupid?: string;
+}

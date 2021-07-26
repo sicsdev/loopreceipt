@@ -4,12 +4,20 @@ interface OptionCardProps {
   iconSrc: string;
   text: string;
   onClick?: React.MouseEventHandler<any>;
+  iconWidth?: number;
+  iconHeight?: number;
 }
-const OptionCard = ({ iconSrc, text, onClick }: OptionCardProps) => {
+const OptionCard = ({
+  iconSrc,
+  text,
+  onClick,
+  iconHeight = 50,
+  iconWidth = 50,
+}: OptionCardProps) => {
   const styles = useStyles();
   return (
     <div className={styles.optionCard} onClick={onClick}>
-      <Image src={iconSrc} width={50} height={50} />
+      <Image src={iconSrc} width={iconWidth} height={iconHeight} />
       <p className="text">{text}</p>
     </div>
   );
@@ -23,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-end",
+    gap: 20,
     paddingBottom: "1.5rem",
     background: "white",
     border: "0.5px solid #21F9AE",
@@ -30,12 +39,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 20,
     cursor: "pointer",
     userSelect: "none",
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "row",
       justifyContent: "center",
     },
     "& .text": {
       textDecoration: "underline",
-      fontWeight: "bold",
+      fontWeight: 500,
     },
   },
 }));

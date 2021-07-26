@@ -1,4 +1,3 @@
-import Group from "@components/Create/Group";
 import OneByOne from "@components/Create/OneByOne";
 import SelectOption from "@components/Create/SelectOption";
 import { makeStyles } from "@material-ui/core";
@@ -16,6 +15,7 @@ import {
 } from "@interfaces/FormTypes";
 import { getLastChar } from "@helpers/utils";
 import { useForm } from "@hooks/useForm";
+import AddByGroup from "@components/Create/AddByGroup/AddByGroup";
 const Create = () => {
   const styles = useStyles();
   const [option, setOption] = useState<"onebyone" | "group">();
@@ -146,7 +146,7 @@ const Create = () => {
             validateFieldsOfForm={validateFieldsOfForm}
           />
         ) : option === "group" ? (
-          <Group
+          <AddByGroup
             forms={passedForms}
             formsProps={passedFormsProps}
             setOption={setOption}

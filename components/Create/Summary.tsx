@@ -8,6 +8,7 @@ import inputIconMap from "forms/inputIconMap";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { EntityLoop, EntityLooper, EntityRecipient } from "@apiClient/types";
 import loopApi from "@apiClient/loopsApi";
+import { v4 as uuidv4 } from "uuid";
 import Win from "@helpers/Win";
 interface SummaryProps {
   forms: FormType[];
@@ -46,26 +47,17 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
       country: recipientState.country.value,
     };
     // console.log(recipient);
-    const loopers: EntityLooper[] = [];
-    const loopersState = formsProps[loopersFormIndex].formState;
-    const loppersStateKeys = Object.keys(loopersState);
-    for (let i = 0; i < loppersStateKeys.length; i += 2) {
-      const name = loopersState[loppersStateKeys[i]].value;
-      const email = loopersState[loppersStateKeys[i + 1]].value;
-      if (name && email) {
-        loopers.push({
-          name,
-          email,
-        });
-      }
-    }
+    const loopers: EntityLooper[] =
+      forms[loopersFormIndex].methods?.getLoopers({
+        formState: formsProps[loopersFormIndex].formState,
+      }) ?? [];
     // console.log(loopers);
 
     let loop: EntityLoop;
     switch (formType) {
       case "internal": {
         loop = {
-          barcode: "ee3432r23fd",
+          barcode: uuidv4(),
           city: recipient.city,
           country: recipient.country,
           postalCode: recipient.postalCode,
@@ -79,7 +71,7 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
       case "external": {
         const companyState = formsProps[companyFormIdx].formState;
         loop = {
-          barcode: "ee3432r23fd",
+          barcode: "ee3432r23fd12321",
           city: companyState.city.value,
           country: companyState.country.value,
           postalCode: companyState.zipCode.value,
@@ -92,7 +84,7 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
       }
     }
     console.log(loop);
-    const createdLoop = await loopApi.createLoop(loop);
+    const createdLoop = await loopApi.create(loop);
     console.log(createdLoop);
     for (let i = 0; i < formsProps.length; i++) {
       formsProps[i].resetForm();

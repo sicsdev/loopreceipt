@@ -1,9 +1,27 @@
+import { EntityLooper } from "@apiClient/types";
 import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 
 const loopersDetailsForm: FormType = {
   formName: "loopersDetailsForm",
   formHeading: "Add Loopers",
+  methods: {
+    getLoopers: ({ formState }) => {
+      const loopers: EntityLooper[] = [];
+      const loppersStateKeys = Object.keys(formState);
+      for (let i = 0; i < loppersStateKeys.length; i += 2) {
+        const name = formState[loppersStateKeys[i]].value;
+        const email = formState[loppersStateKeys[i + 1]].value;
+        if (name && email) {
+          loopers.push({
+            name,
+            email,
+          });
+        }
+      }
+      return loopers;
+    },
+  },
   entity: {
     looperName: {
       name: "looperName",
