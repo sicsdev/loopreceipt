@@ -90,6 +90,7 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
         break;
       }
     }
+    console.log(loop);
     const createdLoop = await loopApi.createLoop(loop);
     console.log(createdLoop);
     for (let i = 0; i < formsProps.length; i++) {

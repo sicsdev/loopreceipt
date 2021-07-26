@@ -362,6 +362,13 @@ const useStyles = makeStyles((theme) => ({
         width: "3rem",
         height: 40,
         cursor: "pointer",
+
+        [theme.breakpoints.up("md")]: {
+          borderRadius: 4,
+          "&:hover": {
+            backgroundColor: "#f1f1f199",
+          },
+        },
       },
     },
     "& .days": {

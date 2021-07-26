@@ -43,25 +43,28 @@ const recipientDetailsForm: FormType = {
       value: "",
       type: "text",
       iconType: "location",
-      // validate: function () {
-      //   return validations.minMaxLength({ max: 5 })(this);
-      //   // default validation message is used
-      // },
+      validate: function () {
+        return (
+          validations.isRequired(this) &&
+          validations.minMaxLength({ max: 5 })(this)
+        );
+        // default validation message is used
+      },
     },
     country: {
       name: "country",
       label: "Country",
       placeholder: "Your full name",
       value: "",
-      type: "text",
+      type: "country",
 
-      // validate: function () {
-      //   return validations.isRequired(this);
-      //   // we pass 'this' so that we can change the errorText according to
-      //   // the validation that is failing
-      // },
-      errorText: "custom error",
-      customError: true,
+      validate: function () {
+        return validations.isRequired(this);
+        // we pass 'this' so that we can change the errorText according to
+        // the validation that is failing
+      },
+      // errorText: "custom error",
+      // customError: true,
       // now custom error message is given to field
       // this message will override all the validation messages
     },
@@ -77,7 +80,12 @@ const recipientDetailsForm: FormType = {
       label: "State / Province",
       placeholder: "Your full name",
       value: "",
-      type: "text",
+      type: "region",
+      validate: function () {
+        return validations.isRequired(this);
+        // we pass 'this' so that we can change the errorText according to
+        // the validation that is failing
+      },
     },
     zipCode: {
       name: "zipCode",

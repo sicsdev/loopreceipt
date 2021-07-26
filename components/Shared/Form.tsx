@@ -61,6 +61,9 @@ const Form = ({
             key={i}
             input={input}
             onChange={handleInputChange}
+            dependency={
+              input.type === "region" ? formState["country"].value : ""
+            }
             onBlur={(e) => {
               if (validateOnBlur) {
                 validateField(inputName);
