@@ -7,7 +7,7 @@ import { useAppSelector } from "@store/hooks";
 import inputIconMap from "forms/inputIconMap";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { EntityLoop, EntityLooper, EntityRecipient } from "@apiClient/types";
-import loopApi from "@apiClient/loopApi";
+import loopApi from "@apiClient/loopsApi";
 import Win from "@helpers/Win";
 interface SummaryProps {
   forms: FormType[];
@@ -35,6 +35,7 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
       // console.log(formsProps[i].formState);
     }
     const recipientState = formsProps[recipientFormIdx].formState;
+    console.log(recipientState.phone.value);
     const recipient: EntityRecipient = {
       email: "hello@info.com.ng",
       name: "alvin",

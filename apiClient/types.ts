@@ -12,6 +12,8 @@ export interface EntityLooper {
   name: string;
 }
 export interface EntityLoop {
+  loopid?: string;
+  timestamp?: string;
   country: string;
   province: string;
   city: string;

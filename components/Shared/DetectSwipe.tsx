@@ -3,12 +3,14 @@ import { useSwipeable } from "react-swipeable";
 interface DetectSwipeProps {
   onSwipedLeft: () => void;
   onSwipedRight: () => void;
+  trackMouse?: boolean;
   children: JSX.Element;
 }
 const DetectSwipe = ({
   onSwipedLeft,
   onSwipedRight,
   children,
+  trackMouse = false,
 }: DetectSwipeProps) => {
   const styles = useStyles();
   const handlers = useSwipeable({
@@ -18,6 +20,7 @@ const DetectSwipe = ({
     onSwipedRight: (e) => {
       onSwipedRight();
     },
+    trackMouse: trackMouse,
   });
   return (
     <div className={styles.DetectSwipe} {...handlers}>

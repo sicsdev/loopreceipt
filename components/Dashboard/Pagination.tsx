@@ -27,6 +27,9 @@ const Pagination = ({
   const [itemsPerPageCopy, setItemsPerPageCopy] = useState(itemsPerPage);
   const itemsPerPageSelectorRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
+    setPage(1);
+  }, [totalItems]);
+  useEffect(() => {
     // console.log('nextrowsperpage', rowsPerPage);
     const topEntryNum = itemsPerPageCopy * (page - 1) + 1;
     let newPage = 1;

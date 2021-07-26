@@ -9,20 +9,31 @@ import { openModal } from "@store/slices/modalSlice";
 import LoopCard from "@components/Dashboard/LoopCard";
 import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
 import DetectSwipe from "@components/Shared/DetectSwipe";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
 import Pagination from "@components/Dashboard/Pagination";
 import Image from "next/image";
-import { useAppDispatch } from "@store/hooks";
 import { openGettingStartedGuide } from "@store/slices/genericSlice";
+import loopsApi from "@apiClient/loopsApi";
+
+import { EntityLoop } from "@apiClient/types";
+import { compareOnlyDate } from "@helpers/dateCalculations";
+import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
+export async function getServerSideProps() {
+  const loops = await loopsApi.getLoops();
+  return { props: { loops } };
+}
 interface DashboardProps {
   path: string;
+  loops: EntityLoop[];
 }
 const links: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
-const Dashboard = ({ path }: DashboardProps) => {
+const firstTimeUser = true;
+const Dashboard = ({ path, loops }: DashboardProps) => {
+  // console.log(loops);
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
 
@@ -33,10 +44,39 @@ const Dashboard = ({ path }: DashboardProps) => {
     start: null,
     end: null,
   });
-
+  const [filteredLoops, setFilteredLoops] = useState([...loops]);
   const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[1]);
   const [page, setPage] = useState(1);
   // console.log(win.up("md"));
+  useEffect(() => {
+    let localLoops = [...loops];
+    if (loopSource !== "all") {
+      localLoops = localLoops.filter((loop) => loop.type === loopSource);
+    }
+    if (dateRange.start && dateRange.end) {
+      localLoops = localLoops.filter(
+        (loop) =>
+          compareOnlyDate(new Date(loop.timestamp!), dateRange.start!) >= 0 &&
+          compareOnlyDate(new Date(loop.timestamp!), dateRange.end!) <= 0
+      );
+    } else if (dateRange.start) {
+      localLoops = localLoops.filter(
+        (loop) =>
+          compareOnlyDate(new Date(loop.timestamp!), dateRange.start!) == 0
+      );
+    } else if (dateRange.end) {
+      localLoops = localLoops.filter(
+        (loop) =>
+          compareOnlyDate(new Date(loop.timestamp!), dateRange.end!) == 0
+      );
+    }
+    setFilteredLoops(localLoops);
+  }, [itemsPerPage, page, loopSource, dateRange]);
+  const paginatedLoops = () => {
+    const startIndex = (page - 1) * itemsPerPage;
+    return filteredLoops.slice(startIndex, startIndex + itemsPerPage);
+  };
+
   return (
     <Layout>
       <div className={styles.dashboard}>
@@ -76,61 +116,21 @@ const Dashboard = ({ path }: DashboardProps) => {
             activeIndex={activeIndex}
             setActiveIndex={setActiveIndex}
           />
-          <div className="dropdowns">
-            <FilterDropdowns
-              loopSource={loopSource}
-              setLoopSource={setLoopSource}
-              dateRange={dateRange}
-              setDateRange={setDateRange}
-            />
-          </div>
-
-          {/* <UpperBar>
-            <div className={styles.bar}>
-              <div className="profile">
-                <p className="icon">G</p>
-                <p>Gari Boetang</p>
-              </div>
-              {win.up("md") &&
-                ListenClickAtParentElement(
-                  (e) => {
-                    openModal(e, {
-                      translationsFrom: "element",
-                      positionWRTPoint: {
-                        bottom: true,
-                        left: true,
-                      },
-                      translations: {
-                        y: 20,
-                        x: (e.target as any).offsetWidth,
-                      },
-                    });
-                  },
-                  (childClick) => (
-                    <Button onClick={childClick}>+ New Loopreceipt</Button>
-                  )
-                )}
+          {!firstTimeUser && (
+            <div className="dropdowns">
+              <FilterDropdowns
+                loopSource={loopSource}
+                setLoopSource={setLoopSource}
+                dateRange={dateRange}
+                setDateRange={setDateRange}
+              />
             </div>
-          </UpperBar> */}
-          <div className={styles.rest}>
-            {/* <Typography
-              variant="body1"
-              gutterBottom
-              style={{
-                fontWeight: "bold",
-                color: "#4F5257",
-              }}
-            >
-              You dont have any Loopreceipts yet.
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{
-                color: "#4F5257",
-              }}
-            >
-              You’ll want to add recipients to create Loops with you.
-            </Typography> */}
+          )}
+          {firstTimeUser && <NoLoopReceipt />}
+          <div
+            className={styles.rest}
+            style={{ display: firstTimeUser ? "none" : "block" }}
+          >
             <DetectSwipe
               onSwipedLeft={() => {
                 // console.log("swipe left");
@@ -146,18 +146,18 @@ const Dashboard = ({ path }: DashboardProps) => {
               }}
             >
               <div className="loopCards">
-                <LoopCard type={links[activeIndex]} />
-                <LoopCard type={links[activeIndex]} />
-                <LoopCard type={links[activeIndex]} />
-                <LoopCard type={links[activeIndex]} />
-                <LoopCard type={links[activeIndex]} />
-                <LoopCard type={links[activeIndex]} />
+                {paginatedLoops().map((loop) => (
+                  <LoopCard
+                    key={loop.loopid}
+                    type={links[activeIndex]}
+                    loop={loop}
+                  />
+                ))}
               </div>
             </DetectSwipe>
-            {/* <OptionCards /> */}
             <div className="pagination">
               <Pagination
-                totalItems={100}
+                totalItems={filteredLoops.length}
                 itemsPerPageOptions={itemsPerPageOptions}
                 itemsPerPage={itemsPerPage}
                 setItemsPerPage={setItemsPerPage}
@@ -208,29 +208,7 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
-  bar: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "0 4%",
-    paddingTop: "1.5rem",
-    "& .profile": {
-      display: "flex",
-      alignItems: "center",
-      gap: 16,
-      "& .icon": {
-        width: 47,
-        height: 47,
-        backgroundColor: "#C5C5C5",
-        borderRadius: "50%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontWeight: "500",
-        fontSize: "1.2rem",
-      },
-    },
-  },
+
   rest: {
     [theme.breakpoints.down("sm")]: {
       padding: "1.5rem 4%",

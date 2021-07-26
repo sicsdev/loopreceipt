@@ -63,6 +63,14 @@ const FilterDropdowns = ({
       };
     });
   };
+  const dateRangeString =
+    dateRange.start && dateRange.end
+      ? twoDateString(dateRange.start, dateRange.end)
+      : dateRange.start
+      ? dmy(dateRange.start)
+      : dateRange.end
+      ? dmy(dateRange.end)
+      : "All";
   return (
     <>
       <div className={styles.FilterDropdowns}>
@@ -73,7 +81,7 @@ const FilterDropdowns = ({
           }}
         >
           <Image src="/icons/dashboard/calender.svg" width={18} height={16} />{" "}
-          {twoDateString(new Date("7/23/2019"), new Date())}
+          {dateRangeString}
         </div>
         <div ref={loopSelectRef} className="dd">
           <Dropdown
@@ -136,15 +144,7 @@ const FilterDropdowns = ({
             >
               <Dropdown
                 name="Date Range"
-                option={
-                  dateRange.start && dateRange.end
-                    ? twoDateString(dateRange.start, dateRange.end)
-                    : dateRange.start
-                    ? dmy(dateRange.start)
-                    : dateRange.end
-                    ? dmy(dateRange.end)
-                    : "All"
-                }
+                option={dateRangeString}
                 aria-controls="select-date-range"
                 aria-haspopup="true"
                 onClick={childClick}

@@ -87,6 +87,18 @@ const recipientDetailsForm: FormType = {
         // the validation that is failing
       },
     },
+    phone: {
+      name: "phone",
+      label: "Phone / Mobile",
+      placeholder: "Your full name",
+      value: "",
+      type: "phone",
+      validate: function () {
+        return validations.isRequired(this);
+        // we pass 'this' so that we can change the errorText according to
+        // the validation that is failing
+      },
+    },
     zipCode: {
       name: "zipCode",
       label: "Zip / Postal Code",

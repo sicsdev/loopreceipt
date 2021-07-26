@@ -9,6 +9,7 @@ import classNames from "classnames";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { DateRange } from "@interfaces/LoopTypes";
+import DetectSwipe from "../DetectSwipe";
 
 type DateType = {
   date: Date;
@@ -147,6 +148,12 @@ const DatePicker = ({
 
     setDates([...prevMonthDates, ...curMonthDates, ...nextMonthDates]);
   }, [curMonth, curYear, dateRange]);
+  const prevMonth = () => {
+    setCurMonth(curMonth - 1);
+  };
+  const nextMonth = () => {
+    setCurMonth(curMonth + 1);
+  };
   return (
     <div className={styles.DatePicker}>
       <div
@@ -169,13 +176,7 @@ const DatePicker = ({
         {pickerType === "start" ? dmy(dateRange.start) : dmy(dateRange.end)}{" "}
       </div>
       <div className="month">
-        <div
-          className="image"
-          onClick={() => {
-            // console.log("next");
-            setCurMonth(curMonth - 1);
-          }}
-        >
+        <div className="image" onClick={prevMonth}>
           <Image src="/icons/dashboard/prev.svg" width={9} height={9} />
         </div>
         <div className="text">
@@ -249,66 +250,62 @@ const DatePicker = ({
           </Menu>
         )}
 
-        <div
-          className="image"
-          onClick={() => {
-            // console.log("next");
-            setCurMonth(curMonth + 1);
-          }}
-        >
+        <div className="image" onClick={nextMonth}>
           <Image src="/icons/dashboard/next.svg" width={9} height={9} />
         </div>
       </div>
-      <div className="days">
-        {days.map((day, i) => (
-          <p className="dayname" key={i}>
-            {day}
-          </p>
-        ))}
-        {dates.map((date, i) => (
-          <p
-            key={i}
-            className={classNames("date", date)}
-            onClick={() => {
-              // console.log(date.date);
+      <DetectSwipe onSwipedLeft={nextMonth} onSwipedRight={prevMonth}>
+        <div className="days">
+          {days.map((day, i) => (
+            <p className="dayname" key={i}>
+              {day}
+            </p>
+          ))}
+          {dates.map((date, i) => (
+            <p
+              key={i}
+              className={classNames("date", date)}
+              onClick={() => {
+                // console.log(date.date);
 
-              if (pickerType === "start") {
-                if (
-                  dateRange.end &&
-                  compareOnlyDate(date.date, dateRange.end) > 0
-                ) {
-                  setDateRange((prev) => ({
-                    start: prev.end,
-                    end: date.date,
-                  }));
-                } else {
-                  setDateRange((prev) => ({
-                    ...prev,
-                    start: date.date,
-                  }));
+                if (pickerType === "start") {
+                  if (
+                    dateRange.end &&
+                    compareOnlyDate(date.date, dateRange.end) > 0
+                  ) {
+                    setDateRange((prev) => ({
+                      start: prev.end,
+                      end: date.date,
+                    }));
+                  } else {
+                    setDateRange((prev) => ({
+                      ...prev,
+                      start: date.date,
+                    }));
+                  }
+                } else if (pickerType === "end") {
+                  if (
+                    dateRange.start &&
+                    compareOnlyDate(date.date, dateRange.start) < 0
+                  ) {
+                    setDateRange((prev) => ({
+                      start: date.date,
+                      end: prev.start,
+                    }));
+                  } else {
+                    setDateRange((prev) => ({
+                      ...prev,
+                      end: date.date,
+                    }));
+                  }
                 }
-              } else if (pickerType === "end") {
-                if (
-                  dateRange.start &&
-                  compareOnlyDate(date.date, dateRange.start) < 0
-                ) {
-                  setDateRange((prev) => ({
-                    start: date.date,
-                    end: prev.start,
-                  }));
-                } else {
-                  setDateRange((prev) => ({
-                    ...prev,
-                    end: date.date,
-                  }));
-                }
-              }
-            }}
-          >
-            {date.date.getDate()}
-          </p>
-        ))}
-      </div>
+              }}
+            >
+              {date.date.getDate()}
+            </p>
+          ))}
+        </div>
+      </DetectSwipe>
     </div>
   );
 };

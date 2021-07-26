@@ -36,4 +36,16 @@ export default {
       console.log(error.response.data.message);
     }
   },
+  getLoops: async () => {
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_API_URL + `/api/loops`
+      );
+
+      // console.log(response.data);
+      return response.data.loops as EntityLoop[];
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  },
 };

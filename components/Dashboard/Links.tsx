@@ -40,11 +40,15 @@ const useStyles = makeStyles((theme) => ({
       textAlign: "center",
       textTransform: "capitalize",
       fontSize: "22px",
+
       cursor: "pointer",
       fontWeight: "normal",
       lineHeight: "28px",
       [theme.breakpoints.down("sm")]: {
         flex: 1,
+      },
+      [theme.breakpoints.down("xs")]: {
+        fontSize: "20px",
       },
       "&.active": {
         color: "black",

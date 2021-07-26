@@ -1,40 +1,50 @@
+import React from "react";
+import { EntityLoop } from "@apiClient/types";
 import { LoopType } from "@interfaces/LoopTypes";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
+import dayjs from "dayjs";
 interface LoopCardProps {
   type: LoopType;
+  loop: EntityLoop;
 }
-const LoopCard = ({ type }: LoopCardProps) => {
+const LoopCard = ({ type, loop }: LoopCardProps) => {
+  // console.log(loop);
   const styles = useStyles();
-  const emails = ["guptahuffman@gmail.com", "codepur@gmail.com"];
   return (
     <div className={styles.LoopCard}>
       <p className={classNames("line", type)}></p>
       <p className="head">
-        {type === "received" ? "From" : "To"}: Gari Boetang
+        {type === "received" ? "From" : "To"}: {loop.recipient.company}
       </p>
-      <p className="barcode">Barcode:#123456789</p>
+      <p className="barcode">Barcode:#{loop.barcode}</p>
       <p className="divider"></p>
       <div className="bottom">
         <p className="loopers">Loopers:</p>
-        {emails.map((email, i) => (
+        {loop.loopers.map(({ email }, i) => (
           <p key={i} className="email">
             {email}
           </p>
         ))}
       </div>
-      <p className="date">3/8/2020</p>
+      <p className="date">{dayjs(loop.timestamp).format("D/M/YYYY")}</p>
     </div>
   );
 };
-export default LoopCard;
+export default React.memo(LoopCard);
 const useStyles = makeStyles((theme) => ({
   LoopCard: {
     // border: "2px solid blue",
     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.16)",
     borderRadius: 8,
     position: "relative",
-    width: 300,
+    width: "30%",
+    [theme.breakpoints.down("md")]: {
+      width: "40%",
+    },
+    [theme.breakpoints.down("xs")]: {
+      width: "80%",
+    },
     padding: "1rem",
     "& .line": {
       height: 4,
