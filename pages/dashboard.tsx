@@ -29,24 +29,15 @@ interface DashboardProps {
 }
 const links: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
-const firstTimeUser = false;
 const Dashboard = ({ path }: DashboardProps) => {
   // console.log(loops);
   const [loops, setLoops] = useState<EntityLoop[]>([]);
   useEffect(() => {
     (async () => {
-      const response = await authApi.login(
-        "rahulguptacs1@gmail.com",
-        "Gupta@703"
-      );
-      if (response) {
-        Cookies.set("token", response.token);
-        Cookies.set("isFirstTime", String(response.isFirstTime));
-      }
       // console.log(Cookies.get("token"));
-      const fetchedLoops = await loopsApi.getAll();
+      const response = await loopsApi.getAll();
       // console.log(fetchedLoops);
-      setLoops(fetchedLoops);
+      setLoops(response?.loops ?? []);
     })();
   }, []);
   const styles = useStyles();
@@ -131,7 +122,7 @@ const Dashboard = ({ path }: DashboardProps) => {
             activeIndex={activeIndex}
             setActiveIndex={setActiveIndex}
           />
-          {!firstTimeUser && (
+          {loops.length > 0 && (
             <div className="dropdowns">
               <FilterDropdowns
                 loopSource={loopSource}
@@ -141,10 +132,10 @@ const Dashboard = ({ path }: DashboardProps) => {
               />
             </div>
           )}
-          {firstTimeUser && <NoLoopReceipt />}
+          {loops.length === 0 && <NoLoopReceipt />}
           <div
             className={styles.rest}
-            style={{ display: firstTimeUser ? "none" : "block" }}
+            style={{ display: loops.length === 0 ? "none" : "block" }}
           >
             <DetectSwipe
               onSwipedLeft={() => {

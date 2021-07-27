@@ -2,26 +2,31 @@ import axios from "./axios";
 import { EntityGroup } from "./types";
 
 export default {
-  create: async (group: EntityGroup) => {
+  create: async (
+    group: EntityGroup
+  ): Promise<
+    | {
+        group: EntityGroup;
+      }
+    | undefined
+  > => {
     try {
       const response = await axios.post(`groups`, group);
 
       // console.log(response.data);
-      return response.data.group as EntityGroup;
+      return response.data;
     } catch (error) {
       console.log(error.response.data.message);
-      return null;
     }
   },
-  getAll: async () => {
+  getAll: async (): Promise<{ groups: EntityGroup[] } | undefined> => {
     try {
       const response = await axios.get(`groups`);
 
       //   console.log(response.data);
-      return response.data.groups as EntityGroup[];
+      return response.data;
     } catch (error) {
       console.log(error.response.data.message);
-      return [];
     }
   },
 };

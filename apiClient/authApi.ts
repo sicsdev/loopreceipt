@@ -1,12 +1,18 @@
 import axios from "./axios";
 export default {
-  login: async (
-    email: string,
-    password: string
-  ): Promise<{
-    token: string;
-    isFirstTime: boolean;
-  } | null> => {
+  login: async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<
+    | {
+        token: string;
+        isFirstTime: boolean;
+      }
+    | undefined
+  > => {
     try {
       const response = await axios.post(`auth`, { email, password });
 
@@ -14,7 +20,6 @@ export default {
       return response.data;
     } catch (error) {
       console.log(error.response.data.message);
-      return null;
     }
   },
 };

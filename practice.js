@@ -1,39 +1,28 @@
-const largestCommonSubstring = (s1, s2) => {
-  // string to array
-  s1 = s1.toLowerCase();
-  // console.log(s1);
-  s2 = s2.toLowerCase();
-  const arr1 = [];
-  const arr2 = [];
-  for (let e of s1) {
-    arr1.push(e);
-  }
-  for (let e of s2) {
-    arr2.push(e);
-  }
-
-  // define n x m sized array filled with 0's
-  let matrix = [...Array(arr1.length + 1)].map((e) =>
-    Array(arr2.length + 1).fill(0)
-  );
-
-  // fill the matrix
-  let len = 0;
-  for (let i = 1; i <= arr1.length; i++) {
-    for (let j = 1; j <= arr2.length; j++) {
-      if (arr1[i - 1] === arr2[j - 1]) {
-        matrix[i][j] = matrix[i - 1][j - 1] + 1;
-        len = Math.max(matrix[i][j], len);
-      }
-    }
-  }
-  for (let i = 1; i <= arr1.length; i++) {
-    for (let j = 1; j <= arr2.length; j++) {
-      if (matrix[i][j] === len) {
-        let matchedString = s1.slice(i - len, i);
-        return matchedString;
-      }
-    }
-  }
+"use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
 };
-console.log(largestCommonSubstring("321", "mehakguta"));
+exports.__esModule = true;
+exports.deferrer = function (func) {
+    var prevargs = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        prevargs[_i - 1] = arguments[_i];
+    }
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        return func.apply(void 0, __spreadArrays(prevargs, args));
+    };
+};
+console.log("practice");
+function add(a, b) {
+    return a + b;
+}
+var d = exports.deferrer(add, 1, 2);
+console.log(d());

@@ -8,7 +8,7 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Win from "@helpers/Win";
 import { EntityGroup } from "@apiClient/types";
 interface GroupProps {
-  group: EntityGroup | null;
+  group?: EntityGroup;
 }
 const Group = ({ group }: GroupProps) => {
   const [saveAsDefault, setSaveAsDefault] = useState(false);
@@ -24,9 +24,8 @@ const Group = ({ group }: GroupProps) => {
       inputProps={{ "aria-label": "saveAsDefault" }}
     />
   );
-  return (
-    group &&
-    (win.up("sm") ? (
+  return group ? (
+    win.up("sm") ? (
       <div className={styles.desktopGroup}>
         <div className="heading">
           <div>
@@ -99,8 +98,8 @@ const Group = ({ group }: GroupProps) => {
           <div className="switch"> {switchButton}</div>
         </div>
       </div>
-    ))
-  );
+    )
+  ) : null;
 };
 export default Group;
 const useStyles = makeStyles((theme) => ({
