@@ -2,11 +2,11 @@ import "../styles/globals.css";
 import "react-phone-number-input/style.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-
+import { SWRConfig } from "swr";
 import { createTheme, ThemeProvider, CssBaseline } from "@material-ui/core";
 import { Provider } from "react-redux";
 import store from "@store/store";
-
+import axiosInstance from "apiClient/axios";
 import { useEffect } from "react";
 
 const theme = createTheme({
@@ -25,7 +25,6 @@ const theme = createTheme({
     },
   },
 });
-
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   let path = router.asPath;
@@ -42,7 +41,14 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Component {...pageProps} path={path} />
+        <SWRConfig
+          value={{
+            fetcher: (...args: [any]) =>
+              axiosInstance(...args).then((res) => res.data),
+          }}
+        >
+          <Component {...pageProps} path={path} />
+        </SWRConfig>
       </ThemeProvider>
     </Provider>
   );

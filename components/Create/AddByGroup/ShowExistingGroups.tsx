@@ -1,17 +1,19 @@
-import groupsApi from "@apiClient/groupsApi";
 import { EntityGroup } from "@apiClient/types";
 import OptionCard from "@components/Dashboard/OptionCard";
-import { useFetch } from "@hooks/useFetch";
 import { makeStyles } from "@material-ui/core";
-import { useEffect, useState } from "react";
 import Group from "./Group";
 
-interface ShowExistingGroupsProps {}
-const ShowExistingGroups = ({}: ShowExistingGroupsProps) => {
+interface ShowExistingGroupsProps {
+  data:
+    | {
+        groups: EntityGroup[];
+      }
+    | undefined;
+  loading: boolean;
+}
+const ShowExistingGroups = ({ data, loading }: ShowExistingGroupsProps) => {
   const styles = useStyles();
-  const { data, loading } = useFetch<{ groups: EntityGroup[] }>(
-    groupsApi.getAll
-  );
+
   if (loading) {
     return <div>Loading...</div>;
   } else if (!data) {

@@ -14,7 +14,7 @@ export default {
     | undefined
   > => {
     try {
-      const response = await axios.post(`auth`, { email, password });
+      const response = await axios.post(`/auth`, { email, password });
 
       //   console.log(response.data);
       return response.data;

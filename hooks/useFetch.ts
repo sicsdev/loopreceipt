@@ -12,7 +12,7 @@ export const useFetch = <T>(
     retryMethodOnError = () => {},
     methodOnError = () => {},
   }: {
-    deferred?: boolean;
+    deferred?: boolean; // useful for post requests
     numRetriesOnError?: number;
     retryMethodOnError?: Function;
     methodOnError?: Function;

@@ -19,30 +19,23 @@ import { openGettingStartedGuide } from "@store/slices/genericSlice";
 import loopsApi from "@apiClient/loopsApi";
 import authApi from "@apiClient/authApi";
 import Cookies from "js-cookie";
+import useSWR from "swr";
 import { EntityLoop } from "@apiClient/types";
 import { compareOnlyDate } from "@helpers/dateCalculations";
 import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
+import { baseURL } from "@apiClient/axios";
 
 interface DashboardProps {
   path: string;
-  loops: EntityLoop[];
 }
 const links: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
 const Dashboard = ({ path }: DashboardProps) => {
   // console.log(loops);
-  const [loops, setLoops] = useState<EntityLoop[]>([]);
-  useEffect(() => {
-    (async () => {
-      // console.log(Cookies.get("token"));
-      const response = await loopsApi.getAll();
-      // console.log(fetchedLoops);
-      setLoops(response?.loops ?? []);
-    })();
-  }, []);
+  const { data, error } = useSWR(baseURL + "/loops");
+
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
-
   const win = new Win(windowDimensions);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
@@ -50,12 +43,14 @@ const Dashboard = ({ path }: DashboardProps) => {
     start: null,
     end: null,
   });
-  const [filteredLoops, setFilteredLoops] = useState([...loops]);
+  const [filteredLoops, setFilteredLoops] = useState<EntityLoop[]>([]);
   const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[1]);
   const [page, setPage] = useState(1);
   // console.log(win.up("md"));
+
   useEffect(() => {
-    let localLoops = [...loops];
+    if (!data || !data.loops) return;
+    let localLoops = [...data.loops];
     if (loopSource !== "all") {
       localLoops = localLoops.filter((loop) => loop.type === loopSource);
     }
@@ -77,11 +72,32 @@ const Dashboard = ({ path }: DashboardProps) => {
       );
     }
     setFilteredLoops(localLoops);
-  }, [loops, itemsPerPage, page, loopSource, dateRange]);
+  }, [data, itemsPerPage, page, loopSource, dateRange]);
   const paginatedLoops = () => {
     const startIndex = (page - 1) * itemsPerPage;
     return filteredLoops.slice(startIndex, startIndex + itemsPerPage);
   };
+  // this should be defined before return statements
+  const mobileNewButton = ListenClickAtParentElement(
+    (e) => {
+      openModal(e, {
+        translationsFrom: "element",
+        positionWRTPoint: {
+          bottom: true,
+        },
+        translations: {
+          y: 20,
+        },
+      });
+    },
+    (childClick) => (
+      <Button labelWeight="bold" shrink onClick={childClick}>
+        + New
+      </Button>
+    )
+  );
+  if (error) return <h1>Something went wrong!</h1>;
+  if (!data || !data.loops) return <h1>Loading...</h1>;
 
   return (
     <Layout>
@@ -95,25 +111,7 @@ const Dashboard = ({ path }: DashboardProps) => {
           >
             <div className="top">
               <p className="head">My Loops</p>
-
-              {ListenClickAtParentElement(
-                (e) => {
-                  openModal(e, {
-                    translationsFrom: "element",
-                    positionWRTPoint: {
-                      bottom: true,
-                    },
-                    translations: {
-                      y: 20,
-                    },
-                  });
-                },
-                (childClick) => (
-                  <Button labelWeight="bold" shrink onClick={childClick}>
-                    + New
-                  </Button>
-                )
-              )}
+              {mobileNewButton}
             </div>
           </div>
 
@@ -122,7 +120,7 @@ const Dashboard = ({ path }: DashboardProps) => {
             activeIndex={activeIndex}
             setActiveIndex={setActiveIndex}
           />
-          {loops.length > 0 && (
+          {data.loops.length > 0 && (
             <div className="dropdowns">
               <FilterDropdowns
                 loopSource={loopSource}
@@ -132,10 +130,10 @@ const Dashboard = ({ path }: DashboardProps) => {
               />
             </div>
           )}
-          {loops.length === 0 && <NoLoopReceipt />}
+          {data.loops.length === 0 && <NoLoopReceipt />}
           <div
             className={styles.rest}
-            style={{ display: loops.length === 0 ? "none" : "block" }}
+            style={{ display: data.loops.length === 0 ? "none" : "block" }}
           >
             <DetectSwipe
               onSwipedLeft={() => {

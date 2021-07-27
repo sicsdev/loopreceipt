@@ -11,7 +11,7 @@ export default {
     | undefined
   > => {
     try {
-      const response = await axios.post(`groups`, group);
+      const response = await axios.post(`/groups`, group);
 
       // console.log(response.data);
       return response.data;

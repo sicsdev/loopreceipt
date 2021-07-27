@@ -2,9 +2,10 @@ import { makeStyles, Paper } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
-
+import groupsApi from "@apiClient/groupsApi";
+import { EntityGroup } from "@apiClient/types";
 import Box from "@components/Create/Box";
-
+import { useFetch } from "@hooks/useFetch";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Summary from "../Summary";
@@ -52,6 +53,9 @@ function AddByGroup({
     },
   });
   const detailsRef = useRef<HTMLDivElement>(null);
+  const { data, loading } = useFetch<{ groups: EntityGroup[] }>(
+    groupsApi.getAll
+  );
   useEffect(() => {
     if (detailsRef.current) {
       const contentDivs: any =
@@ -125,7 +129,9 @@ function AddByGroup({
           : index === forms.length
           ? "Save Group"
           : showExistingGroups
-          ? "Select Group"
+          ? data && data.groups && data.groups.length > 0
+            ? "Select Group"
+            : "Create Group"
           : forms[index].formHeading}
       </p>
     </>
@@ -163,7 +169,7 @@ function AddByGroup({
               handleNextClick={handleNextClick}
             >
               {showExistingGroups ? (
-                <ShowExistingGroups />
+                <ShowExistingGroups data={data} loading={loading} />
               ) : index === forms.length ? (
                 <SaveCreatedGroup
                   loopers={

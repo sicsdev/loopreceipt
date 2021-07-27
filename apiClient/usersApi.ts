@@ -13,7 +13,7 @@ export default {
     // console.log(process.env.NEXT_PUBLIC_API_URL);
 
     try {
-      const response = await axios.get(`users/me`);
+      const response = await axios.get(`/users/me`);
 
       // console.log(response.data);
       return response.data;
@@ -38,7 +38,7 @@ export default {
     try {
       // console.log("get all");
       // console.log(Cookies.get("token"));
-      const response = await axios.post(`users`, user);
+      const response = await axios.post(`/users`, user);
 
       // console.log(response.data);
       return response.data;
@@ -48,7 +48,7 @@ export default {
   },
   verify: async ({ email }: { email: string }): Promise<string | undefined> => {
     try {
-      const response = await axios.post("users/me/verify", { email });
+      const response = await axios.post("/users/me/verify", { email });
       return response.data;
     } catch (error) {
       console.log(error.response.data.message);
