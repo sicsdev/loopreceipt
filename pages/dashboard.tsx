@@ -17,14 +17,12 @@ import Pagination from "@components/Dashboard/Pagination";
 import Image from "next/image";
 import { openGettingStartedGuide } from "@store/slices/genericSlice";
 import loopsApi from "@apiClient/loopsApi";
-
+import authApi from "@apiClient/authApi";
+import Cookies from "js-cookie";
 import { EntityLoop } from "@apiClient/types";
 import { compareOnlyDate } from "@helpers/dateCalculations";
 import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
-export async function getServerSideProps() {
-  const loops = await loopsApi.getAll();
-  return { props: { loops } };
-}
+
 interface DashboardProps {
   path: string;
   loops: EntityLoop[];
@@ -32,8 +30,25 @@ interface DashboardProps {
 const links: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
 const firstTimeUser = false;
-const Dashboard = ({ path, loops }: DashboardProps) => {
+const Dashboard = ({ path }: DashboardProps) => {
   // console.log(loops);
+  const [loops, setLoops] = useState<EntityLoop[]>([]);
+  useEffect(() => {
+    (async () => {
+      const response = await authApi.login(
+        "rahulguptacs1@gmail.com",
+        "Gupta@703"
+      );
+      if (response) {
+        Cookies.set("token", response.token);
+        Cookies.set("isFirstTime", String(response.isFirstTime));
+      }
+      // console.log(Cookies.get("token"));
+      const fetchedLoops = await loopsApi.getAll();
+      // console.log(fetchedLoops);
+      setLoops(fetchedLoops);
+    })();
+  }, []);
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
 
@@ -71,7 +86,7 @@ const Dashboard = ({ path, loops }: DashboardProps) => {
       );
     }
     setFilteredLoops(localLoops);
-  }, [itemsPerPage, page, loopSource, dateRange]);
+  }, [loops, itemsPerPage, page, loopSource, dateRange]);
   const paginatedLoops = () => {
     const startIndex = (page - 1) * itemsPerPage;
     return filteredLoops.slice(startIndex, startIndex + itemsPerPage);

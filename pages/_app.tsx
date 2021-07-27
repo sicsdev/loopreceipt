@@ -2,13 +2,13 @@ import "../styles/globals.css";
 import "react-phone-number-input/style.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import Head from "next/head";
 
 import { createTheme, ThemeProvider, CssBaseline } from "@material-ui/core";
 import { Provider } from "react-redux";
 import store from "@store/store";
 
 import { useEffect } from "react";
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -25,6 +25,7 @@ const theme = createTheme({
     },
   },
 });
+
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   let path = router.asPath;
@@ -36,6 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       jssStyles.parentElement?.removeChild(jssStyles);
     }
   }, []);
+
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>

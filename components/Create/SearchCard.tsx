@@ -98,10 +98,10 @@ const SearchCard = ({
         ) : null
       )}
       {users.every((user) => !user.matchLength) && (
-        <p className={styles.nomatch}>
+        <div className={styles.nomatch}>
           <Image src="/icons/create/exclamation.svg" width={15} height={15} />{" "}
           No recipient found with the name “{searchInput}”
-        </p>
+        </div>
       )}
       <div
         className={styles.addManuallyButton}
