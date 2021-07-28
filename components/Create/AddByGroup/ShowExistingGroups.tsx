@@ -1,6 +1,7 @@
 import { EntityGroup } from "@apiClient/types";
 import OptionCard from "@components/Dashboard/OptionCard";
 import { makeStyles } from "@material-ui/core";
+
 import Group from "./Group";
 
 interface ShowExistingGroupsProps {

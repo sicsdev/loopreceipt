@@ -1,5 +1,14 @@
+import loopsApi from "@apiClient/loopsApi";
+import { EntityRecipient } from "@apiClient/types";
 import validations from "@helpers/validations";
-import { FormType } from "@interfaces/FormTypes";
+import {
+  FormStateType,
+  FormType,
+  useFormReturnType,
+} from "@interfaces/FormTypes";
+import { SearchItemType } from "@interfaces/SearchItemType";
+import { setSearchItems } from "@store/slices/searchBarSlice";
+import store from "@store/store";
 
 const recipientDetailsForm: FormType = {
   formName: "recipientDetailsForm",
@@ -106,6 +115,48 @@ const recipientDetailsForm: FormType = {
       value: "",
       type: "number",
     },
+  },
+  populateSearchItems: async function () {
+    const response = await loopsApi.getAll();
+    if (response) {
+      const loops = response.loops;
+      const searchItems: SearchItemType<EntityRecipient>[] = [];
+      for (let loop of loops) {
+        searchItems.push({
+          primary: loop.recipient.name,
+          secondary: loop.recipient.email,
+          entity: loop.recipient,
+        });
+      }
+      // console.log(searchItems);
+      store.dispatch(setSearchItems({ searchItems }));
+    }
+  },
+  searchItemClicked: function ({
+    setFormState,
+    entity: recipient,
+  }: {
+    setFormState: useFormReturnType["setFormState"];
+    entity: EntityRecipient;
+  }) {
+    if (recipient) {
+      const modifiedRecipient: { [key: string]: string } = {
+        zipCode: recipient.postalCode,
+        shippingAddress: recipient.address,
+        city: recipient.city,
+        receivingCompanyName: recipient.company,
+        country: recipient.country,
+      };
+
+      const updatedForm: FormStateType = {};
+      for (let key in this.initialState) {
+        updatedForm[key] = {
+          ...this.initialState[key],
+          value: modifiedRecipient[key],
+        };
+      }
+      setFormState(updatedForm);
+    }
   },
 };
 export default recipientDetailsForm;

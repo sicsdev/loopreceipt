@@ -7,6 +7,7 @@ import loopReceiptReducer from "./slices/loopReceiptSlice";
 import modalReducer from "./slices/modalSlice";
 import notificationsReducer from "./slices/notificationsSlice";
 import genericReducer from "./slices/genericSlice";
+import searchBarReducer from "./slices/searchBarSlice";
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -16,6 +17,7 @@ export const store = configureStore({
     modal: modalReducer,
     notifications: notificationsReducer,
     generic: genericReducer,
+    searchBar: searchBarReducer,
   },
 });
 export default store;

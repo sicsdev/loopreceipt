@@ -1,6 +1,7 @@
 import InputBox from "@components/Controls/InputBox";
 import { makeStyles } from "@material-ui/core";
 import { InputType } from "@interfaces/InputTypes";
+import { FormType } from "@interfaces/FormTypes";
 
 interface FormProps {
   formState: {
@@ -17,15 +18,16 @@ interface FormProps {
   autoComplete?: string;
   hiddenFields?: string[];
   methodOnBlur?: () => void;
+  form: FormType;
 }
 const Form = ({
+  form,
   formState,
   setFormState,
   handleInputChange,
   resetForm,
   validateOnBlur = true,
   autoComplete,
-  hiddenFields,
   methodOnBlur,
 }: FormProps) => {
   const styles = useStyles();
@@ -56,7 +58,7 @@ const Form = ({
       {Object.keys(formState).map((inputName, i) => {
         // console.log(inputName);
         const input = formState[inputName];
-        return !hiddenFields?.includes(input.name) ? (
+        return (
           <InputBox
             key={i}
             input={input}
@@ -75,7 +77,7 @@ const Form = ({
               }
             }}
           />
-        ) : null;
+        );
       })}
     </form>
   );

@@ -3,41 +3,11 @@ import React, { useState } from "react";
 import Image from "next/image";
 import SearchCard from "@components/Create/SearchCard";
 import UnmountOnWindowClickWrapper from "@components/Shared/UnmountOnWindowClickWrapper";
-export interface UserType {
-  name: string;
-  email: string;
-  matchLength?: number | undefined;
-  matchStartIndex?: number | undefined;
-  active?: boolean | undefined;
-}
+import { SearchItemType } from "@interfaces/SearchItemType";
 
-const initialUsers: UserType[] = [
-  {
-    name: "Rahul Gupta",
-    email: "guptarahul@gmail.com",
-    active: true,
-  },
-  {
-    name: "Neha",
-    email: "neha@gmail.com",
-  },
-  {
-    name: "Simran",
-    email: "simran@gmail.com",
-  },
-  {
-    name: "Mehak Sharma",
-    email: "mehak@gmail.com",
-  },
-  {
-    name: "Aman Aggarwal",
-    email: "aman@gmail.com",
-  },
-];
 interface SearchBarProps {}
 const SearchBar = ({}: SearchBarProps) => {
   const [searchInput, setSearchInput] = useState("");
-  const [users, setUsers] = useState<UserType[]>(initialUsers);
   const styles = useStyles();
   return (
     <div className={styles.SearchBar}>
@@ -60,8 +30,6 @@ const SearchBar = ({}: SearchBarProps) => {
           <SearchCard
             searchInput={searchInput}
             setSearchInput={setSearchInput}
-            users={users}
-            setUsers={setUsers}
           />
         </UnmountOnWindowClickWrapper>
       )}

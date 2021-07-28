@@ -21,6 +21,9 @@ export interface FormType {
       args?: any;
     }) => any;
   };
+
+  populateSearchItems?: (args?: any) => void;
+  searchItemClicked?: (args?: any) => void;
 }
 export interface useFormReturnType {
   formState: {

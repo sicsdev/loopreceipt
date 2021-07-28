@@ -10,6 +10,7 @@ import { EntityLoop, EntityLooper, EntityRecipient } from "@apiClient/types";
 import loopApi from "@apiClient/loopsApi";
 import { v4 as uuidv4 } from "uuid";
 import Win from "@helpers/Win";
+import faker from "faker";
 interface SummaryProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
@@ -38,19 +39,24 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
     const recipientState = formsProps[recipientFormIdx].formState;
     console.log(recipientState.phone.value);
     const recipient: EntityRecipient = {
-      email: "hello@info.com.ng",
-      name: "alvin",
+      email: faker.internet.email(),
+      name: faker.name.findName(),
       postalCode: recipientState.zipCode.value,
       address: recipientState.shippingAddress.value,
       city: recipientState.city.value,
-      company: recipientState.receivingCompanyName?.value || "default dummy",
+      company:
+        recipientState.receivingCompanyName?.value ||
+        faker.company.companyName(),
       country: recipientState.country.value,
     };
     // console.log(recipient);
-    const loopers: EntityLooper[] =
-      forms[loopersFormIndex].methods?.getLoopers({
-        formState: formsProps[loopersFormIndex].formState,
-      }) ?? [];
+    const looperState = formsProps[loopersFormIndex].formState;
+    const loopers: EntityLooper[] = [
+      {
+        email: looperState.looperEmail.value,
+        name: looperState.looperName.value,
+      },
+    ];
     // console.log(loopers);
 
     let loop: EntityLoop;

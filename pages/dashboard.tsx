@@ -50,6 +50,7 @@ const Dashboard = ({ path }: DashboardProps) => {
 
   useEffect(() => {
     if (!data || !data.loops) return;
+    // console.log(data.loops);
     let localLoops = [...data.loops];
     if (loopSource !== "all") {
       localLoops = localLoops.filter((loop) => loop.type === loopSource);

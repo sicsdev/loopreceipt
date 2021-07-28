@@ -1,60 +1,61 @@
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { largestCommonSubstring } from "@helpers/utils";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { UserType } from "./SearchBar";
 import { setAddRecepientManually } from "@store/slices/loopReceiptSlice";
+import { SearchItemType } from "@interfaces/SearchItemType";
+import {
+  detectSearchItemClick,
+  setSearchItems,
+} from "@store/slices/searchBarSlice";
 interface SearchCardProps {
   searchInput: string;
   setSearchInput: React.Dispatch<React.SetStateAction<string>>;
-  users: UserType[];
-  setUsers: React.Dispatch<React.SetStateAction<UserType[]>>;
 }
 
-const SearchCard = ({
-  searchInput,
-  setSearchInput,
-  users,
-  setUsers,
-}: SearchCardProps) => {
+const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
   const styles = useStyles();
   const dispatch = useAppDispatch();
+  const searchItems = useAppSelector((state) => state.searchBar.searchItems);
+
   const addRecepientManually = useAppSelector(
     (state) => state.loopReceipt.addRecepientManually
   );
   const formType = useAppSelector((state) => state.loopReceipt.type);
   useEffect(() => {
     if (searchInput) {
-      const userDetails = [];
-      for (let user of users) {
-        const matchDetails = largestCommonSubstring(user.name, searchInput);
+      const itemDetails = [];
+      for (let item of searchItems) {
+        const matchDetails = largestCommonSubstring(item.primary, searchInput);
         // user.name must be first argument
         // since we return matchStartIndex of first string
-        userDetails.push({
-          ...user,
+        itemDetails.push({
+          ...item,
           ...matchDetails,
         });
       }
-      setUsers(
-        userDetails.sort((u1, u2) => {
-          return u2.matchLength - u1.matchLength;
+      dispatch(
+        setSearchItems({
+          searchItems: itemDetails.sort((u1, u2) => {
+            return u2.matchLength - u1.matchLength;
+          }),
         })
       );
     }
   }, [searchInput]);
-  const getName = (user: UserType) => {
+  const getBolded = (item: SearchItemType<any>) => {
     // console.log(user);
-    if (user.matchLength) {
-      const start = user.name.slice(0, user.matchStartIndex);
-      const matched = user.name.slice(
-        user.matchStartIndex!,
-        user.matchStartIndex! + user.matchLength
+    if (item.matchLength) {
+      const start = item.primary.slice(0, item.matchStartIndex);
+      const matched = item.primary.slice(
+        item.matchStartIndex!,
+        item.matchStartIndex! + item.matchLength
       );
-      const end = user.name.slice(
-        user.matchStartIndex! + user.matchLength,
-        user.name.length
+      const end = item.primary.slice(
+        item.matchStartIndex! + item.matchLength,
+        item.primary.length
       );
       return (
         <p>
@@ -64,40 +65,45 @@ const SearchCard = ({
         </p>
       );
     }
-    return <p>{user.name}</p>;
+    return <p>{item.primary}</p>;
   };
   return (
     <div className={styles.searchCard}>
-      {users.map((user, i) =>
-        user.matchLength ? (
+      {searchItems.map((item, i) =>
+        item.matchLength ? (
           <SearchItem
             key={i}
-            name={getName(user)}
-            email={user.email}
-            active={user.active}
+            primary={getBolded(item)}
+            secondary={item.secondary}
+            active={item.active}
             onClick={() => {
-              setUsers((prevUsers) => {
-                return prevUsers.map((user, idx) => {
-                  if (idx === i) {
-                    return {
-                      ...user,
-                      active: true,
-                    };
-                  } else {
-                    return {
-                      ...user,
-                      active: false,
-                    };
-                  }
-                });
+              const updatedSearchItems = searchItems.map((item, idx) => {
+                if (idx === i) {
+                  return {
+                    ...item,
+                    active: true,
+                  };
+                } else {
+                  return {
+                    ...item,
+                    active: false,
+                  };
+                }
               });
+              dispatch(
+                setSearchItems({
+                  searchItems: updatedSearchItems,
+                })
+              );
+              dispatch(detectSearchItemClick({}));
+
               // now we can close the search bar
               setSearchInput("");
             }}
           />
         ) : null
       )}
-      {users.every((user) => !user.matchLength) && (
+      {searchItems.every((item) => !item.matchLength) && (
         <div className={styles.nomatch}>
           <Image src="/icons/create/exclamation.svg" width={15} height={15} />{" "}
           No recipient found with the name “{searchInput}”
@@ -126,12 +132,17 @@ const SearchCard = ({
 };
 export default SearchCard;
 interface SearchItemProps {
-  name: JSX.Element | string;
-  email: string;
+  primary: JSX.Element | string;
+  secondary: string;
   active?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
-function SearchItem({ name, email, active = false, onClick }: SearchItemProps) {
+function SearchItem({
+  primary,
+  secondary,
+  active = false,
+  onClick,
+}: SearchItemProps) {
   const styles = useStyles();
 
   return (
@@ -140,8 +151,8 @@ function SearchItem({ name, email, active = false, onClick }: SearchItemProps) {
         {active && <Image src="/icons/check.svg" width="16" height="12" />}
       </div>
       <div>
-        <div className={"name"}>{name}</div>
-        <div className={"email"}>{email}</div>
+        <div className={"primary"}>{primary}</div>
+        <div className={"secondary"}>{secondary}</div>
       </div>
     </div>
   );
@@ -173,11 +184,11 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: "center",
       alignItems: "center",
     },
-    "& .name": {
+    "& .primary": {
       fontSize: 17,
       marginBottom: 3,
     },
-    "& .email": {
+    "& .secondary": {
       color: "gray",
     },
     "&.active": {
