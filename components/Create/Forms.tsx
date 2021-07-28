@@ -1,8 +1,10 @@
 import { makeStyles } from "@material-ui/core";
 import Form from "@components/Create/Form";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
-import { useEffect } from "react";
-import { useAppSelector } from "@store/hooks";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setSearchItemClickDetector } from "@store/slices/searchBarSlice";
+
 interface FormsProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
@@ -10,16 +12,19 @@ interface FormsProps {
 }
 const Forms = ({ forms, formsProps, activeFormIndex }: FormsProps) => {
   const styles = useStyles();
-  const { searchItems, searchItemClickDetector } = useAppSelector(
-    (state) => state.searchBar
-  );
 
+  const { searchItems, searchItemClickDetector, confirmedLoopers } =
+    useAppSelector((state) => state.searchBar);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     // for entity forms we run itemClickDetector in useEffect defined in Entityform
-    forms[activeFormIndex].searchItemClicked?.({
-      setFormState: formsProps[activeFormIndex].setFormState,
-      entity: searchItems.find((item) => item.active)?.entity,
-    });
+    if (searchItemClickDetector) {
+      forms[activeFormIndex].searchItemClicked?.({
+        setFormState: formsProps[activeFormIndex].setFormState,
+        entity: searchItems.find((item) => item.active)?.entity,
+      });
+      dispatch(setSearchItemClickDetector(false));
+    }
   }, [searchItemClickDetector]);
   useEffect(() => {
     forms[activeFormIndex].populateSearchItems?.();
@@ -37,11 +42,5 @@ const Forms = ({ forms, formsProps, activeFormIndex }: FormsProps) => {
 };
 export default Forms;
 const useStyles = makeStyles((theme) => ({
-  Forms: {
-    "& form": {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1.5rem",
-    },
-  },
+  Forms: {},
 }));

@@ -2,12 +2,15 @@ import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import Image from "next/image";
 import { useEffect } from "react";
-import { largestCommonSubstring } from "@helpers/utils";
+import {
+  largestCommonSubstring,
+  runSequentiallyAfterDelay,
+} from "@helpers/utils";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setAddRecepientManually } from "@store/slices/loopReceiptSlice";
 import { SearchItemType } from "@interfaces/SearchItemType";
 import {
-  detectSearchItemClick,
+  setSearchItemClickDetector,
   setSearchItems,
 } from "@store/slices/searchBarSlice";
 interface SearchCardProps {
@@ -37,11 +40,11 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
         });
       }
       dispatch(
-        setSearchItems({
-          searchItems: itemDetails.sort((u1, u2) => {
+        setSearchItems(
+          itemDetails.sort((u1, u2) => {
             return u2.matchLength - u1.matchLength;
-          }),
-        })
+          })
+        )
       );
     }
   }, [searchInput]);
@@ -90,12 +93,13 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
                   };
                 }
               });
-              dispatch(
-                setSearchItems({
-                  searchItems: updatedSearchItems,
-                })
+              runSequentiallyAfterDelay(
+                [
+                  () => dispatch(setSearchItems(updatedSearchItems)),
+                  () => dispatch(setSearchItemClickDetector(true)),
+                ],
+                1
               );
-              dispatch(detectSearchItemClick({}));
 
               // now we can close the search bar
               setSearchInput("");

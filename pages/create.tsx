@@ -64,38 +64,20 @@ const Create = () => {
       });
     }
   }, [addRecepientManually]);
-  const entityCompletelyEmpty = (formState: FormStateType, id: number) => {
-    const entityFields = Object.keys(formState).filter((key) =>
-      key.endsWith(String(id))
-    );
-    for (let field of entityFields) {
-      if (formState[field].value) {
-        return false;
-      }
-    }
-    return true; // return the validation as true
-  };
+
   const validateFieldsOfForm = (
     formProps: useFormReturnType,
     form: FormType
   ) => {
+    if (form.formName === "loopersDetailsForm") {
+      return true;
+    }
     let allFieldsValid = true;
-    let entityIdsToRemove = new Set<number>();
     const updatedFormState = { ...formProps.formState };
     for (const name in updatedFormState) {
       const input = { ...updatedFormState[name] };
       if (input.validate) {
         let valid = input.validate();
-        if (form.entity) {
-          const feildPartOfEmptyEntity = entityCompletelyEmpty(
-            formProps.formState,
-            +getLastChar(name)
-          );
-          if (!valid && feildPartOfEmptyEntity) {
-            entityIdsToRemove.add(+getLastChar(name));
-          }
-          valid = valid || feildPartOfEmptyEntity;
-        }
 
         // console.log(valid);
         if (!valid) {
@@ -109,24 +91,7 @@ const Create = () => {
       }
     }
     formProps.setFormState(updatedFormState);
-    if (entityIdsToRemove.size > 0) {
-      formProps.setFormState((prevFormState) => {
-        const updatedFormState: typeof prevFormState = {};
-        for (let key in prevFormState) {
-          let includeKey = true;
-          for (let id of Array.from(entityIdsToRemove)) {
-            if (key.endsWith(String(id))) {
-              includeKey = false;
-              break;
-            }
-          }
-          if (includeKey) {
-            updatedFormState[key] = prevFormState[key];
-          }
-        }
-        return updatedFormState;
-      });
-    }
+
     return allFieldsValid;
   };
   let passedForms: FormType[] = forms;

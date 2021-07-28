@@ -55,7 +55,7 @@ const recipientDetailsForm: FormType = {
       validate: function () {
         return (
           validations.isRequired(this) &&
-          validations.minMaxLength({ max: 5 })(this)
+          validations.minMaxLength({ max: 20 })(this)
         );
         // default validation message is used
       },
@@ -120,16 +120,16 @@ const recipientDetailsForm: FormType = {
     const response = await loopsApi.getAll();
     if (response) {
       const loops = response.loops;
-      const searchItems: SearchItemType<EntityRecipient>[] = [];
+      const newSearchItems: SearchItemType<EntityRecipient>[] = [];
       for (let loop of loops) {
-        searchItems.push({
+        newSearchItems.push({
           primary: loop.recipient.name,
           secondary: loop.recipient.email,
           entity: loop.recipient,
         });
       }
       // console.log(searchItems);
-      store.dispatch(setSearchItems({ searchItems }));
+      store.dispatch(setSearchItems(newSearchItems));
     }
   },
   searchItemClicked: function ({

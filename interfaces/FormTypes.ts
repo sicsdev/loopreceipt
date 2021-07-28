@@ -5,7 +5,6 @@ export interface FormStateType {
 }
 export interface FormType {
   initialState: FormStateType;
-  entity?: FormStateType;
   formName:
     | "recipientDetailsForm"
     | "companyDetailsForm"

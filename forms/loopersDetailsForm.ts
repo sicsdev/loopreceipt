@@ -1,20 +1,14 @@
 import loopsApi from "@apiClient/loopsApi";
 import { EntityLooper } from "@apiClient/types";
-import { getLastChar } from "@helpers/utils";
 import validations from "@helpers/validations";
-import {
-  FormStateType,
-  FormType,
-  useFormReturnType,
-} from "@interfaces/FormTypes";
+import { FormType } from "@interfaces/FormTypes";
 import { SearchItemType } from "@interfaces/SearchItemType";
-import { setSearchItems } from "@store/slices/searchBarSlice";
+import { confirmLooper, setSearchItems } from "@store/slices/searchBarSlice";
 import store from "@store/store";
 
 const loopersDetailsForm: FormType = {
   formName: "loopersDetailsForm",
   formHeading: "Add Loopers",
-
   initialState: {
     looperName: {
       name: "looperName",
@@ -53,29 +47,12 @@ const loopersDetailsForm: FormType = {
         }
       }
       // console.log(searchItems);
-      store.dispatch(setSearchItems({ searchItems }));
+      store.dispatch(setSearchItems(searchItems));
     }
   },
-  searchItemClicked: function ({
-    setFormState,
-    entity: looper,
-  }: {
-    setFormState: useFormReturnType["setFormState"];
-    entity: EntityLooper;
-  }) {
+  searchItemClicked: function ({ entity: looper }: { entity: EntityLooper }) {
     if (looper) {
-      const modifiedLooper: { [key: string]: string } = {
-        looperName: looper.name,
-        looperEmail: looper.email,
-      };
-      const updatedForm: FormStateType = {};
-      for (let key in this.initialState) {
-        updatedForm[key] = {
-          ...this.initialState[key],
-          value: modifiedLooper[key],
-        };
-      }
-      setFormState(updatedForm);
+      store.dispatch(confirmLooper({ looper }));
     }
   },
 };

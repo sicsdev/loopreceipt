@@ -19,6 +19,9 @@ interface SummaryProps {
 const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
   // console.log(formsProps);
   // log this to check the form state when coming to this page
+  const confirmedLoopers = useAppSelector(
+    (state) => state.searchBar.confirmedLoopers
+  );
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
@@ -51,12 +54,21 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
     };
     // console.log(recipient);
     const looperState = formsProps[loopersFormIndex].formState;
-    const loopers: EntityLooper[] = [
-      {
+    const loopers: EntityLooper[] = [];
+    if (
+      looperState.looperEmail.validate?.() &&
+      looperState.looperName.validate?.()
+    ) {
+      loopers.push({
         email: looperState.looperEmail.value,
         name: looperState.looperName.value,
-      },
-    ];
+      });
+    }
+    for (let looper of confirmedLoopers) {
+      const { email, name } = looper;
+      loopers.push({ email, name });
+    }
+
     // console.log(loopers);
 
     let loop: EntityLoop;
@@ -148,12 +160,16 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
           {Object.values(formsProps[loopersFormIndex].formState).map(
             (input, i) => {
               return (
-                input.type === "email" && (
+                input.type === "email" &&
+                input.validate?.() && (
                   <Entry key={i} inputIcon="email" text={input.value} />
                 )
               );
             }
           )}
+          {confirmedLoopers.map((looper) => (
+            <Entry key={looper.id} inputIcon="email" text={looper.email} />
+          ))}
         </div>
       </div>
       <div className="bottom">

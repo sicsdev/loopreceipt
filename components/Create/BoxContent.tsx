@@ -67,7 +67,6 @@ const useStyles = makeStyles((theme) => ({
     gap: 10,
   },
   rest: {
-    padding: "2rem",
     minHeight: "80vh",
     display: "flex",
     flexDirection: "column",
