@@ -20,6 +20,7 @@ import SaveCreatedGroup from "./SaveCreatedGroup";
 import ShowExistingGroups from "./ShowExistingGroups";
 import { useAppSelector } from "@store/hooks";
 import { getLoopers, validateAllFieldsOfForm } from "forms/formUtils";
+import { useRouter } from "next/router";
 interface AddByGroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -35,7 +36,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   const win = new Win(windowDimensions);
 
   const [index, setIndex] = useState(0);
-
+  const router = useRouter();
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
     title: "Save Changes?",
@@ -48,7 +49,12 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   });
   const detailsRef = useRef<HTMLDivElement>(null);
   const { data, loading } = useFetch<{ groups: EntityGroup[] }>(
-    groupsApi.getAll
+    groupsApi.getAll,
+    {
+      methodOnError: () => {
+        router.push("/");
+      },
+    }
   );
   const confirmedLoopers = useAppSelector(
     (state) => state.searchBar.confirmedLoopers

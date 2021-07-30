@@ -8,7 +8,7 @@ interface AdditionalButtonProps {
   shrink?: boolean;
   expand?: boolean;
   labelColor?: "black" | "white" | "gray";
-  labelWeight?: "bold" | "normal";
+  labelWeight?: string; // "normal" | "bold" | "500"
   borderColor?: string;
 }
 
@@ -44,9 +44,13 @@ function Button({
 export default Button;
 const useStyles = makeStyles((theme) => ({
   button: (props: AdditionalButtonProps) => ({
+    boxShadow: "none",
     borderRadius: 8,
     borderColor: props.borderColor,
     margin: 0,
+    "&:hover": {
+      boxShadow: "none",
+    },
     "&.shrink": {
       paddingTop: 2,
       paddingBottom: 2,
@@ -58,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   }),
   label: (props: AdditionalButtonProps) => ({
     textTransform: "none",
-    fontWeight: props.labelWeight,
+    fontWeight: props.labelWeight as any,
     color: props.labelColor,
     whiteSpace: "nowrap",
   }),

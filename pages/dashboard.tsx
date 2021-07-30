@@ -22,13 +22,14 @@ import { EntityLoop } from "apiHelpers/types";
 import { compareOnlyDate } from "@helpers/dateCalculations";
 import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
 import { baseURL } from "@apiHelpers/axios";
-
+import { useRouter } from "next/router";
 interface DashboardProps {
   path: string;
 }
 const links: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
 const Dashboard = ({ path }: DashboardProps) => {
+  const router = useRouter();
   // console.log(loops);
   const { data, error } = useSWR(baseURL + "/loops");
 
@@ -95,7 +96,10 @@ const Dashboard = ({ path }: DashboardProps) => {
       </Button>
     )
   );
-  if (error) return <h1>Something went wrong!</h1>;
+  if (error) {
+    router.push("/");
+    return <h1>Error occurred</h1>;
+  }
   if (!data || !data.loops) return <h1>Loading...</h1>;
 
   return (

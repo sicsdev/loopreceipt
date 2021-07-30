@@ -10,4 +10,5 @@ export interface InputType {
   errorText?: string;
   customError?: boolean;
   iconType?: InputIconType;
+  constraints?: string[];
 }

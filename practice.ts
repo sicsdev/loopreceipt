@@ -1,11 +1,12 @@
-export const deferrer = (func: Function, ...prevargs: any) => {
-  return (...args: any) => {
-    return func(...prevargs, ...args);
-  };
+export const revertObject = (object: { [key: string]: string }) => {
+  const revertedObject: typeof object = {};
+  for (let [key, value] of Object.entries(object)) {
+    revertedObject[value] = key;
+  }
+  return revertedObject;
 };
-console.log("practice");
-function add(a: number, b: number) {
-  return a + b;
-}
-const d = deferrer(add, 1, 2);
-console.log(d());
+const obj = {
+  name: "Rahul",
+  age: 20,
+};
+console.log(revertObject(obj));

@@ -1,6 +1,8 @@
 import { InputType } from "@interfaces/InputTypes";
 import { makeStyles, Theme } from "@material-ui/core";
 import PhoneInput from "react-phone-number-input";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import {
   CountryDropdown,
   RegionDropdown,
@@ -8,6 +10,7 @@ import {
 } from "react-country-region-selector";
 import { useEffect, useRef } from "react";
 import { usePreviousValue } from "@hooks/usePreviousValue";
+import InputConstraints from "@components/Controls/InputConstraints";
 // console.log(CountryRegionData);
 interface InputBoxProps {
   input: InputType;
@@ -32,7 +35,12 @@ function InputBox({
   }, [dependency]);
   return (
     <div className={styles.inputBox}>
-      <label className="label">{input.label}</label>
+      <label className="label">
+        <p className="text">{input.label}</p>
+        {input.constraints && (
+          <InputConstraints constraints={input.constraints} />
+        )}
+      </label>
       {input.type === "country" ? (
         <CountryDropdown
           classes={styles.input}
@@ -81,15 +89,19 @@ function InputBox({
           />
         </div>
       ) : (
-        <input
-          className={styles.input}
-          type={input.type}
-          name={input.name}
-          value={input.value}
-          onChange={onChange}
-          placeholder={input.placeholder}
-          onBlur={onBlur}
-        ></input>
+        <div className={styles.inputContainer}>
+          <input
+            className={styles.input}
+            type={input.type}
+            name={input.name}
+            value={input.value}
+            onChange={onChange}
+            placeholder={input.placeholder}
+            onBlur={onBlur}
+            autoComplete="on"
+          ></input>
+          <div className="passwordToogler">{/* <VisibilityIcon /> */}</div>
+        </div>
       )}
       <p className="error">{input.error}</p>
     </div>
@@ -114,10 +126,13 @@ const useStyles = makeStyles((theme) => {
   return {
     inputBox: {
       "& .label": {
-        display: "block",
-        fontWeight: "bold",
+        display: "flex",
         marginBottom: ".5rem",
-        fontSize: "1.1rem",
+        gap: 10,
+        "& .text": {
+          fontWeight: "bold",
+          fontSize: "1.1rem",
+        },
       },
       "& .error": {
         color: "red",
@@ -126,6 +141,9 @@ const useStyles = makeStyles((theme) => {
     input: inputCommon(theme),
     phoneInput: {
       "& input": inputCommon(theme),
+    },
+    inputContainer: {
+      "& .passwordToogler": {},
     },
   };
 });

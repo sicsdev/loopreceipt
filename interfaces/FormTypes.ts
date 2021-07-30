@@ -9,7 +9,8 @@ export interface FormType {
     | "recipientDetailsForm"
     | "companyDetailsForm"
     | "loopersDetailsForm"
-    | "editLooperDetailsForm";
+    | "editLooperDetailsForm"
+    | "signupForm";
   optionalFields?: FormStateType;
   formHeading?: string;
   methods?: {

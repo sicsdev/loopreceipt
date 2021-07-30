@@ -79,3 +79,27 @@ export const randomColor = (
 export const capitalize = (value: string) => {
   return value[0].toUpperCase() + value.slice(1);
 };
+export class Debounce {
+  callback;
+  delay;
+  timeOut: NodeJS.Timeout = setTimeout(() => {}, 0);
+  constructor(callback: Function, delay: number) {
+    this.callback = callback;
+    this.delay = delay;
+  }
+  callAfterDelay(...args: any[]) {
+    clearTimeout(this.timeOut);
+    this.timeOut = setTimeout(() => this.callback(...args), this.delay);
+  }
+  callImmediately(...args: any[]) {
+    clearTimeout(this.timeOut);
+    this.callback(...args);
+  }
+}
+export const revertObject = (object: { [key: string]: string }) => {
+  const revertedObject: typeof object = {};
+  for (let [key, value] of Object.entries(object)) {
+    revertedObject[value] = key;
+  }
+  return revertedObject;
+};

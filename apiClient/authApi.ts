@@ -1,4 +1,5 @@
 import axios from "@apiHelpers/axios";
+import { axiosErrorHandler } from "@apiHelpers/utils";
 export default {
   login: async ({
     email,
@@ -19,7 +20,7 @@ export default {
       //   console.log(response.data);
       return response.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      axiosErrorHandler(error);
     }
   },
 };

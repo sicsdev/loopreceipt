@@ -1,5 +1,6 @@
 import axios from "@apiHelpers/axios";
 import { EntityLoop } from "@apiHelpers/types";
+import { axiosErrorHandler } from "@apiHelpers/utils";
 export default {
   getMe: async (): Promise<
     | {
@@ -18,7 +19,7 @@ export default {
       // console.log(response.data);
       return response.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      axiosErrorHandler(error);
     }
   },
   create: async (user: {
@@ -43,7 +44,7 @@ export default {
       // console.log(response.data);
       return response.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      axiosErrorHandler(error);
     }
   },
   verify: async ({ email }: { email: string }): Promise<string | undefined> => {
@@ -51,7 +52,7 @@ export default {
       const response = await axios.post("/users/me/verify", { email });
       return response.data;
     } catch (error) {
-      console.log(error.response.data.message);
+      axiosErrorHandler(error);
     }
   },
 };

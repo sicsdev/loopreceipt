@@ -23,18 +23,19 @@ export const useFetch = <T>(
   const [loading, setLoading] = useState<boolean>(!deferred);
   const remainingTriesOnError = useRef(numRetriesOnError);
 
-  const sendRequest = async (...args: any) => {
+  const sendRequest = async (...args: any): Promise<T | undefined> => {
     setRequestSent(true);
     setLoading(true);
     const res = await fetcher(...args);
     if (res) {
       setData(res);
       setLoading(false);
+      return res;
     } else {
       if (remainingTriesOnError.current > 0) {
         remainingTriesOnError.current--;
         await retryMethodOnError();
-        sendRequest();
+        return sendRequest(...args);
       } else {
         setLoading(false);
         await methodOnError();

@@ -1,4 +1,5 @@
 import { InputType } from "@interfaces/InputTypes";
+import { capitalize } from "@material-ui/core";
 
 const validations = {
   isRequired: (
@@ -36,6 +37,42 @@ const validations = {
     if (!input.customError) input.errorText = errorMessage;
 
     return re.test(input.value.trim().toLowerCase());
+  },
+  atLeastOneUpperCaseCharacter: (
+    input: InputType,
+    errorMessage: string = capitalize(input.name) +
+      " should contain at least one upper-case character"
+  ) => {
+    const re = /[A-Z]/;
+    if (!input.customError) input.errorText = errorMessage;
+    return re.test(input.value);
+  },
+  atLeastOneLowerCaseCharacter: (
+    input: InputType,
+    errorMessage: string = capitalize(input.name) +
+      " should contain at least one lower-case character"
+  ) => {
+    const re = /[a-z]/;
+    if (!input.customError) input.errorText = errorMessage;
+    return re.test(input.value);
+  },
+  atLeastOneDigit: (
+    input: InputType,
+    errorMessage: string = capitalize(input.name) +
+      " should contain at least one digit"
+  ) => {
+    const re = /\d/;
+    if (!input.customError) input.errorText = errorMessage;
+    return re.test(input.value);
+  },
+  atLeastOneSpecialCharacter: (
+    input: InputType,
+    errorMessage: string = capitalize(input.name) +
+      " should contain at least one special character"
+  ) => {
+    const re = /[^A-Za-z0-9 ]/; // [^A-Za-z0-9 ]
+    if (!input.customError) input.errorText = errorMessage;
+    return re.test(input.value);
   },
 };
 export default validations;
