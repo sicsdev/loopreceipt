@@ -1,5 +1,5 @@
 import React from "react";
-import { EntityLoop } from "@apiClient/types";
+import { EntityLoop } from "apiHelpers/types";
 import { LoopType } from "@interfaces/LoopTypes";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";

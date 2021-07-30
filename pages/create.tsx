@@ -8,14 +8,10 @@ import recipientDetailsForm from "forms/recipientDetailsForm";
 import loopersDetailsForm from "forms/loopersDetailsForm";
 import companyDetailsForm from "forms/companyDetailsForm";
 
-import {
-  FormStateType,
-  FormType,
-  useFormReturnType,
-} from "@interfaces/FormTypes";
-import { getLastChar } from "@helpers/utils";
+import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useForm } from "@hooks/useForm";
 import AddByGroup from "@components/Create/AddByGroup/AddByGroup";
+import { validateAllFieldsOfForm } from "forms/formUtils";
 const Create = () => {
   const styles = useStyles();
   const [option, setOption] = useState<"onebyone" | "group">();
@@ -31,6 +27,7 @@ const Create = () => {
     useForm(forms[1].initialState),
     useForm(forms[2].initialState),
   ];
+
   const addRecepientManually = useAppSelector(
     (state) => state.loopReceipt.addRecepientManually
   );
@@ -65,35 +62,6 @@ const Create = () => {
     }
   }, [addRecepientManually]);
 
-  const validateFieldsOfForm = (
-    formProps: useFormReturnType,
-    form: FormType
-  ) => {
-    if (form.formName === "loopersDetailsForm") {
-      return true;
-    }
-    let allFieldsValid = true;
-    const updatedFormState = { ...formProps.formState };
-    for (const name in updatedFormState) {
-      const input = { ...updatedFormState[name] };
-      if (input.validate) {
-        let valid = input.validate();
-
-        // console.log(valid);
-        if (!valid) {
-          input.error = input.errorText;
-          allFieldsValid = false;
-        } else {
-          input.error = "";
-        }
-        // console.log(input);
-        updatedFormState[name] = input;
-      }
-    }
-    formProps.setFormState(updatedFormState);
-
-    return allFieldsValid;
-  };
   let passedForms: FormType[] = forms;
   let passedFormsProps: useFormReturnType[] = formsProps;
   if (formType === "internal") {
@@ -108,14 +76,12 @@ const Create = () => {
             forms={passedForms}
             formsProps={passedFormsProps}
             setOption={setOption}
-            validateFieldsOfForm={validateFieldsOfForm}
           />
         ) : option === "group" ? (
           <AddByGroup
             forms={passedForms}
             formsProps={passedFormsProps}
             setOption={setOption}
-            validateFieldsOfForm={validateFieldsOfForm}
           />
         ) : (
           <SelectOption setOption={setOption} />

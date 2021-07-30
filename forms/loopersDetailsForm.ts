@@ -1,5 +1,5 @@
 import loopsApi from "@apiClient/loopsApi";
-import { EntityLooper } from "@apiClient/types";
+import { EntityLooper } from "apiHelpers/types";
 import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 import { SearchItemType } from "@interfaces/SearchItemType";

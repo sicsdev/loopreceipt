@@ -6,7 +6,7 @@ import { SWRConfig } from "swr";
 import { createTheme, ThemeProvider, CssBaseline } from "@material-ui/core";
 import { Provider } from "react-redux";
 import store from "@store/store";
-import axiosInstance from "apiClient/axios";
+import axiosInstance from "@apiHelpers/axios";
 import { useEffect } from "react";
 
 const theme = createTheme({

@@ -1,5 +1,5 @@
 import loopsApi from "@apiClient/loopsApi";
-import { EntityRecipient } from "@apiClient/types";
+import { EntityRecipient } from "apiHelpers/types";
 import validations from "@helpers/validations";
 import {
   FormStateType,

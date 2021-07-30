@@ -1,13 +1,15 @@
-import { EntityGroup, EntityLooper } from "@apiClient/types";
+import { EntityGroup, EntityLooper } from "apiHelpers/types";
 import groupsApi from "@apiClient/groupsApi";
 import Group from "./Group";
 import { deferrer, useFetch } from "@hooks/useFetch";
 import Button from "@components/Controls/Button";
 import { useRouter } from "next/router";
+import { makeStyles, StylesProvider } from "@material-ui/core";
 interface SaveCreatedGroupProps {
   loopers: EntityLooper[];
 }
 const SaveCreatedGroup = ({ loopers }: SaveCreatedGroupProps) => {
+  const styles = useStyles();
   const router = useRouter();
   const {
     data,
@@ -30,11 +32,13 @@ const SaveCreatedGroup = ({ loopers }: SaveCreatedGroupProps) => {
       },
     }
   );
+  let child;
   if (!requestSent) {
-    return (
+    child = (
       <div>
         <p>Please save the group </p>
         <Group group={{ members: loopers }} />
+        <div style={{ height: "2rem" }}></div>
         <Button
           onClick={() => {
             saveCreatedGroup();
@@ -49,14 +53,17 @@ const SaveCreatedGroup = ({ loopers }: SaveCreatedGroupProps) => {
       </div>
     );
   } else if (loading) {
-    return <div>Saving Group Please wait</div>;
+    child = <div>Saving Group Please wait</div>;
   } else if (!data) {
-    return <div>Failed to save group</div>;
+    child = <div>Failed to save group</div>;
+  } else {
+    child = <Group group={data.group} />;
   }
-  return (
-    <div>
-      <Group group={data.group} />
-    </div>
-  );
+  return <div className={styles.SaveCreatedGroup}>{child}</div>;
 };
 export default SaveCreatedGroup;
+const useStyles = makeStyles((theme) => ({
+  SaveCreatedGroup: {
+    padding: "2rem",
+  },
+}));

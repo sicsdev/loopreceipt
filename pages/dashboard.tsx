@@ -16,14 +16,12 @@ import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
 import Pagination from "@components/Dashboard/Pagination";
 import Image from "next/image";
 import { openGettingStartedGuide } from "@store/slices/genericSlice";
-import loopsApi from "@apiClient/loopsApi";
-import authApi from "@apiClient/authApi";
-import Cookies from "js-cookie";
+
 import useSWR from "swr";
-import { EntityLoop } from "@apiClient/types";
+import { EntityLoop } from "apiHelpers/types";
 import { compareOnlyDate } from "@helpers/dateCalculations";
 import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
-import { baseURL } from "@apiClient/axios";
+import { baseURL } from "@apiHelpers/axios";
 
 interface DashboardProps {
   path: string;

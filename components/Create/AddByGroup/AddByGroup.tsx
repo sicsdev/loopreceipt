@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 import groupsApi from "@apiClient/groupsApi";
-import { EntityGroup } from "@apiClient/types";
+import { EntityGroup, EntityLooper } from "apiHelpers/types";
 import Box from "@components/Create/Box";
 import { useFetch } from "@hooks/useFetch";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
@@ -18,23 +18,17 @@ import UpperBarMobile from "../UpperBarMobile";
 import LoopReceipt from "../LoopReceipt";
 import SaveCreatedGroup from "./SaveCreatedGroup";
 import ShowExistingGroups from "./ShowExistingGroups";
+import { useAppSelector } from "@store/hooks";
+import { getLoopers, validateAllFieldsOfForm } from "forms/formUtils";
 interface AddByGroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
   >;
-  validateFieldsOfForm: (
-    formProps: useFormReturnType,
-    form: FormType
-  ) => boolean;
+
   forms: FormType[];
   formsProps: useFormReturnType[];
 }
-function AddByGroup({
-  setOption,
-  validateFieldsOfForm,
-  forms,
-  formsProps,
-}: AddByGroupProps) {
+function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   const styles = useStyles();
   const [showExistingGroups, setShowExistingGroups] = useState(true);
   const { windowDimensions } = useWindowDimensions();
@@ -55,6 +49,9 @@ function AddByGroup({
   const detailsRef = useRef<HTMLDivElement>(null);
   const { data, loading } = useFetch<{ groups: EntityGroup[] }>(
     groupsApi.getAll
+  );
+  const confirmedLoopers = useAppSelector(
+    (state) => state.searchBar.confirmedLoopers
   );
   useEffect(() => {
     if (detailsRef.current) {
@@ -102,7 +99,12 @@ function AddByGroup({
     }
     // handleSubmit();
     if (index < forms.length) {
-      if (validateFieldsOfForm(formsProps[index], forms[index])) {
+      if (
+        validateAllFieldsOfForm(
+          formsProps[index],
+          forms[index].formName === "loopersDetailsForm"
+        )
+      ) {
         // if current form is valid only then navigate to next
 
         setIndex(index + 1);
@@ -139,6 +141,7 @@ function AddByGroup({
   const loopersFormIndex = forms.findIndex(
     (form) => form.formName === "loopersDetailsForm"
   );
+
   return (
     <div>
       <FormUpperBar
@@ -160,6 +163,7 @@ function AddByGroup({
               generatedLoopReceipt={() => {
                 setIndex(index + 1);
               }}
+              loopers={getLoopers(formsProps[loopersFormIndex].formState)}
             />
           ) : (
             <BoxContent
@@ -172,11 +176,7 @@ function AddByGroup({
                 <ShowExistingGroups data={data} loading={loading} />
               ) : index === forms.length ? (
                 <SaveCreatedGroup
-                  loopers={
-                    forms[loopersFormIndex].methods?.getLoopers({
-                      formState: formsProps[loopersFormIndex].formState,
-                    }) ?? []
-                  }
+                  loopers={getLoopers(formsProps[loopersFormIndex].formState)}
                 />
               ) : (
                 <Forms

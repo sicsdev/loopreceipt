@@ -15,23 +15,16 @@ import FormUpperBar from "./FormUpperBar";
 import Win from "@helpers/Win";
 import UpperBarMobile from "./UpperBarMobile";
 import LoopReceipt from "./LoopReceipt";
+import { getLoopers, validateAllFieldsOfForm } from "forms/formUtils";
 interface OneByOneProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
   >;
-  validateFieldsOfForm: (
-    formProps: useFormReturnType,
-    form: FormType
-  ) => boolean;
+
   forms: FormType[];
   formsProps: useFormReturnType[];
 }
-function OneByOne({
-  setOption,
-  validateFieldsOfForm,
-  forms,
-  formsProps,
-}: OneByOneProps) {
+function OneByOne({ setOption, forms, formsProps }: OneByOneProps) {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
@@ -61,7 +54,12 @@ function OneByOne({
   const handleNextClick = () => {
     // handleSubmit();
     if (index < forms.length) {
-      if (validateFieldsOfForm(formsProps[index], forms[index])) {
+      if (
+        validateAllFieldsOfForm(
+          formsProps[index],
+          forms[index].formName === "loopersDetailsForm"
+        )
+      ) {
         // if current form is valid only then navigate to next
         setIndex(index + 1);
       }
@@ -69,7 +67,9 @@ function OneByOne({
       setIndex(index + 1);
     }
   };
-
+  const loopersFormIndex = forms.findIndex(
+    (form) => form.formName === "loopersDetailsForm"
+  );
   const upperBarContent = (
     <>
       {index !== forms.length + 1 && (
@@ -104,6 +104,7 @@ function OneByOne({
             <LoopReceipt />
           ) : index === forms.length ? (
             <Summary
+              loopers={getLoopers(formsProps[loopersFormIndex].formState)}
               formsProps={formsProps}
               forms={forms}
               generatedLoopReceipt={() => {

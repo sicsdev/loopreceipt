@@ -1,12 +1,12 @@
 import { makeStyles } from "@material-ui/core";
 import ProfileIcons from "@components/Shared/ProfileIcons";
 import Switch from "@components/Controls/Switch";
-import { randomColor } from "@helpers/utils";
+import { randomColor, range } from "@helpers/utils";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Win from "@helpers/Win";
-import { EntityGroup } from "@apiClient/types";
+import { EntityGroup } from "apiHelpers/types";
 interface GroupProps {
   group?: EntityGroup;
 }
@@ -35,11 +35,11 @@ const Group = ({ group }: GroupProps) => {
         </div>
         <div className={"details"} ref={detailsRef}>
           <div className="column">
-            <div className="head">Group Members</div>
+            <div className="head">Recipient</div>
             <div className="content">
               <ProfileIcons
-                firstAlphabets={["R", "M"]}
-                colorStrings={[randomColor(), randomColor()]}
+                firstAlphabets={["M"]}
+                colorStrings={[randomColor()]}
               />
             </div>
           </div>
@@ -53,7 +53,9 @@ const Group = ({ group }: GroupProps) => {
                 firstAlphabets={group.members.map(({ name }) =>
                   name[0].toUpperCase()
                 )}
-                colorStrings={[randomColor(), randomColor()]}
+                colorStrings={range(1, group.members.length).map(() =>
+                  randomColor()
+                )}
               />
             </div>
           </div>

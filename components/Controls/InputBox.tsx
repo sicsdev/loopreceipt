@@ -1,20 +1,35 @@
 import { InputType } from "@interfaces/InputTypes";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Theme } from "@material-ui/core";
 import PhoneInput from "react-phone-number-input";
 import {
   CountryDropdown,
   RegionDropdown,
   CountryRegionData,
 } from "react-country-region-selector";
+import { useEffect, useRef } from "react";
+import { usePreviousValue } from "@hooks/usePreviousValue";
 // console.log(CountryRegionData);
 interface InputBoxProps {
   input: InputType;
   onChange: React.ChangeEventHandler<Element>;
   onBlur: React.FocusEventHandler<Element>;
   dependency?: string;
+  resetValue?: () => void;
 }
-function InputBox({ input, onChange, onBlur, dependency }: InputBoxProps) {
+function InputBox({
+  input,
+  onChange,
+  onBlur,
+  dependency,
+  resetValue,
+}: InputBoxProps) {
   const styles = useStyles();
+  const previousDependency = usePreviousValue(dependency);
+  useEffect(() => {
+    if (input.type === "phone" && previousDependency) {
+      resetValue?.();
+    }
+  }, [dependency]);
   return (
     <div className={styles.inputBox}>
       <label className="label">{input.label}</label>
@@ -60,6 +75,9 @@ function InputBox({ input, onChange, onBlur, dependency }: InputBoxProps) {
               };
               onChange(e as any);
             }}
+            onBlur={(e) => {
+              onBlur(e as any);
+            }}
           />
         </div>
       ) : (
@@ -79,6 +97,18 @@ function InputBox({ input, onChange, onBlur, dependency }: InputBoxProps) {
 }
 
 export default InputBox;
+const inputCommon = (theme: Theme) => ({
+  width: "80%",
+
+  padding: ".7rem",
+  borderRadius: "4px",
+  border: "1px solid #DDDDDD",
+  backgroundColor: "white",
+  outline: "none",
+  [theme.breakpoints.down("md")]: {
+    width: "100%",
+  },
+});
 const useStyles = makeStyles((theme) => {
   // console.log(theme.breakpoints.values);
   return {
@@ -93,18 +123,9 @@ const useStyles = makeStyles((theme) => {
         color: "red",
       },
     },
-    input: {
-      width: "80%",
-
-      padding: ".7rem",
-      borderRadius: "4px",
-      border: "1px solid #DDDDDD",
-      backgroundColor: "white",
-      outline: "none",
-      [theme.breakpoints.down("md")]: {
-        width: "100%",
-      },
+    input: inputCommon(theme),
+    phoneInput: {
+      "& input": inputCommon(theme),
     },
-    phoneInput: {},
   };
 });

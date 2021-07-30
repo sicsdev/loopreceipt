@@ -1,4 +1,4 @@
-import axios from "./axios";
+import axios from "@apiHelpers/axios";
 export default {
   login: async ({
     email,

@@ -1,4 +1,4 @@
-import { EntityLooper } from "@apiClient/types";
+import { EntityLooper } from "apiHelpers/types";
 import { SearchItemType } from "@interfaces/SearchItemType";
 
 import { createSlice, Draft, PayloadAction } from "@reduxjs/toolkit";
@@ -33,7 +33,8 @@ export const searchBarSlice = createSlice({
       const index = state.confirmedLoopers.findIndex(
         (looper) => looper.id === action.payload.looper.id
       );
-      if (index > 0) {
+      // console.log(index);
+      if (index >= 0) {
         state.confirmedLoopers[index] = action.payload.looper;
       }
     },

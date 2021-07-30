@@ -1,4 +1,4 @@
-import { EntityLooper } from "@apiClient/types";
+import { EntityLooper } from "apiHelpers/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 interface SliceLoopReceiptType {

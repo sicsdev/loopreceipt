@@ -1,5 +1,5 @@
-import axios from "./axios";
-import { EntityLoop } from "./types";
+import axios from "@apiHelpers/axios";
+import { EntityLoop } from "@apiHelpers/types";
 import Cookies from "js-cookie";
 export default {
   create: async (

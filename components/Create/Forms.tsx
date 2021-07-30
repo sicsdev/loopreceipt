@@ -13,8 +13,9 @@ interface FormsProps {
 const Forms = ({ forms, formsProps, activeFormIndex }: FormsProps) => {
   const styles = useStyles();
 
-  const { searchItems, searchItemClickDetector, confirmedLoopers } =
-    useAppSelector((state) => state.searchBar);
+  const { searchItems, searchItemClickDetector } = useAppSelector(
+    (state) => state.searchBar
+  );
   const dispatch = useAppDispatch();
   useEffect(() => {
     // for entity forms we run itemClickDetector in useEffect defined in Entityform
@@ -33,7 +34,7 @@ const Forms = ({ forms, formsProps, activeFormIndex }: FormsProps) => {
     <div className={styles.Forms}>
       <Form
         form={forms[activeFormIndex]}
-        {...formsProps[activeFormIndex]}
+        formProps={formsProps[activeFormIndex]}
         validateOnBlur={true}
         autoComplete="off"
       />

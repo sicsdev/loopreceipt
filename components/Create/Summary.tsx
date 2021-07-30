@@ -6,7 +6,7 @@ import { InputIconType } from "@interfaces/InputTypes";
 import { useAppSelector } from "@store/hooks";
 import inputIconMap from "forms/inputIconMap";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
-import { EntityLoop, EntityLooper, EntityRecipient } from "@apiClient/types";
+import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
 import loopApi from "@apiClient/loopsApi";
 import { v4 as uuidv4 } from "uuid";
 import Win from "@helpers/Win";
@@ -15,13 +15,17 @@ interface SummaryProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
   generatedLoopReceipt: () => void;
+  loopers: EntityLooper[];
 }
-const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
+const Summary = ({
+  loopers,
+  forms,
+  formsProps,
+  generatedLoopReceipt,
+}: SummaryProps) => {
   // console.log(formsProps);
   // log this to check the form state when coming to this page
-  const confirmedLoopers = useAppSelector(
-    (state) => state.searchBar.confirmedLoopers
-  );
+
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
@@ -53,21 +57,6 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
       country: recipientState.country.value,
     };
     // console.log(recipient);
-    const looperState = formsProps[loopersFormIndex].formState;
-    const loopers: EntityLooper[] = [];
-    if (
-      looperState.looperEmail.validate?.() &&
-      looperState.looperName.validate?.()
-    ) {
-      loopers.push({
-        email: looperState.looperEmail.value,
-        name: looperState.looperName.value,
-      });
-    }
-    for (let looper of confirmedLoopers) {
-      const { email, name } = looper;
-      loopers.push({ email, name });
-    }
 
     // console.log(loopers);
 
@@ -157,18 +146,8 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
             <h1>Loopers</h1>
           )}
 
-          {Object.values(formsProps[loopersFormIndex].formState).map(
-            (input, i) => {
-              return (
-                input.type === "email" &&
-                input.validate?.() && (
-                  <Entry key={i} inputIcon="email" text={input.value} />
-                )
-              );
-            }
-          )}
-          {confirmedLoopers.map((looper) => (
-            <Entry key={looper.id} inputIcon="email" text={looper.email} />
+          {loopers.map((looper, i) => (
+            <Entry key={i} inputIcon="email" text={looper.email} />
           ))}
         </div>
       </div>

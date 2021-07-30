@@ -1,5 +1,5 @@
 import { InputType } from "@interfaces/InputTypes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export function useForm(
   initalFormState: {
     [key: string]: InputType;
@@ -7,6 +7,9 @@ export function useForm(
   validateOnChange = false
 ) {
   const [formState, setFormState] = useState(initalFormState);
+  // useEffect(() => {
+  //   console.log(formState);
+  // }, [formState]);
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const { name, value } = e.target;
     // console.log(name);

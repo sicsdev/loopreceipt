@@ -1,5 +1,5 @@
-import axios from "./axios";
-import { EntityGroup } from "./types";
+import axios from "@apiHelpers/axios";
+import { EntityGroup } from "@apiHelpers/types";
 
 export default {
   create: async (

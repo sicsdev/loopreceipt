@@ -1,70 +1,64 @@
 import InputBox from "@components/Controls/InputBox";
 import { makeStyles } from "@material-ui/core";
 import { InputType } from "@interfaces/InputTypes";
-import { FormType } from "@interfaces/FormTypes";
-import Button from "@components/Controls/Button";
 import {
-  confirmLooper,
-  deleteConfirmedLooper,
-} from "@store/slices/searchBarSlice";
-import { useAppDispatch, useAppSelector } from "@store/hooks";
-import Image from "next/image";
+  FormStateType,
+  FormType,
+  useFormReturnType,
+} from "@interfaces/FormTypes";
+
+import ConfirmedEntities from "./ConfirmedEntities";
+import { useEffect, useRef } from "react";
+import {
+  validateAllFieldsOfForm,
+  validateSingleFieldOfForm,
+} from "forms/formUtils";
+import { runSequentiallyAfterDelay } from "@helpers/utils";
 interface FormProps {
-  formState: {
-    [key: string]: InputType;
-  };
-  setFormState: React.Dispatch<
-    React.SetStateAction<{
-      [key: string]: InputType;
-    }>
-  >;
-  handleInputChange: React.ChangeEventHandler<HTMLInputElement>;
-  resetForm: () => void;
-  validateOnBlur: boolean;
-  autoComplete?: string;
-  hiddenFields?: string[];
-  methodOnBlur?: () => void;
   form: FormType;
+  formProps: useFormReturnType;
+  validateOnBlur?: boolean;
+  autoComplete?: string;
+  methodOnBlur?: () => void;
+  padForm?: boolean;
+  defaultValues?: { [key: string]: string };
 }
 const Form = ({
   form,
-  formState,
-  setFormState,
-  handleInputChange,
-  resetForm,
+  formProps,
   validateOnBlur = true,
   autoComplete,
   methodOnBlur,
+  padForm = true,
+  defaultValues,
 }: FormProps) => {
   const styles = useStyles();
-  const dispatch = useAppDispatch();
-  const confirmedLoopers = useAppSelector(
-    (state) => state.searchBar.confirmedLoopers
-  );
-  const validateField = (fieldName: string) => {
-    let valid = true;
-    const updatedFormState = { ...formState };
-
-    const input = { ...updatedFormState[fieldName] };
-    if (input.validate) {
-      valid = input.validate();
-      // console.log(valid);
-      if (!valid) {
-        input.error = input.errorText;
-      } else {
-        input.error = "";
+  const { formState, setFormState, handleInputChange, resetForm } = formProps;
+  useEffect(() => {
+    // console.log(defaultValues);
+    if (defaultValues) {
+      const updatedFormState = { ...formState };
+      for (let fieldName in defaultValues) {
+        const input = { ...updatedFormState[fieldName] };
+        updatedFormState[fieldName] = {
+          ...input,
+          value: defaultValues[fieldName],
+          error: "", // no error
+        };
       }
-      // console.log(input);
-      updatedFormState[fieldName] = input;
+      setFormState(updatedFormState);
     }
-
-    setFormState(updatedFormState);
-    return valid;
-  };
+  }, []);
 
   return (
     <div>
-      <form autoComplete={autoComplete} className={styles.form}>
+      <form
+        autoComplete={autoComplete}
+        className={styles.form}
+        style={{
+          padding: padForm ? "2rem" : 0,
+        }}
+      >
         {Object.keys(formState).map((inputName, i) => {
           // console.log(inputName);
           const input = formState[inputName];
@@ -80,75 +74,25 @@ const Form = ({
               }
               onBlur={(e) => {
                 if (validateOnBlur) {
-                  validateField(inputName);
+                  validateSingleFieldOfForm(inputName, formProps);
                 }
                 methodOnBlur?.();
+              }}
+              resetValue={() => {
+                // console.log("resetting func called");
+                setFormState((prev) => {
+                  return {
+                    ...prev,
+                    [inputName]: { ...prev[inputName], value: "" },
+                  };
+                });
               }}
             />
           );
         })}
       </form>
       {form.formName === "loopersDetailsForm" && (
-        <div className={styles.entities}>
-          <div className="addbutton">
-            <Button
-              color="secondary"
-              labelColor="white"
-              onClick={() => {
-                // console.log("click");
-
-                let allValid = true;
-                for (let fieldName in formState) {
-                  allValid = validateField(fieldName) && allValid;
-                }
-                if (allValid) {
-                  dispatch(
-                    confirmLooper({
-                      looper: {
-                        name: formState["looperName"].value,
-                        email: formState["looperEmail"].value,
-                      },
-                    })
-                  );
-                  setFormState(form.initialState);
-                }
-              }}
-            >
-              + Add more
-            </Button>
-          </div>
-          <div className="confirmedItems">
-            {confirmedLoopers.map((looper) => (
-              <div key={looper.id} className="confirmedItem">
-                <div>
-                  {looper.name} - {looper.email}
-                </div>
-                <div className="buttons">
-                  <div className="image">
-                    <Image
-                      src="/icons/create/edit.svg"
-                      width={20}
-                      height={20}
-                    />
-                  </div>
-                  <div className="divider"></div>
-                  <div
-                    className="image"
-                    onClick={() => {
-                      dispatch(deleteConfirmedLooper({ id: looper.id }));
-                    }}
-                  >
-                    <Image
-                      src="/icons/create/trash.svg"
-                      width={20}
-                      height={20}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ConfirmedEntities form={form} formProps={formProps} />
       )}
     </div>
   );
@@ -156,39 +100,9 @@ const Form = ({
 export default Form;
 const useStyles = makeStyles((theme) => ({
   form: {
-    padding: "2rem",
+    // border: "1px solid pink",
     display: "flex",
     flexDirection: "column",
     gap: "1.5rem",
-  },
-  entities: {
-    "& .addbutton": {
-      padding: "0 2rem",
-    },
-    "& .confirmedItems": {
-      marginTop: "2rem",
-      padding: "0 2rem",
-      borderTop: "2px solid #DDDDDD",
-      "& .confirmedItem": {
-        margin: 10,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        "& .details": {},
-        "& .buttons": {
-          display: "flex",
-          gap: 10,
-          "& .divider": {
-            width: "2px",
-            backgroundColor: "#c4c4c4",
-          },
-          "& .image": {
-            // border: "1px solid red",
-            cursor: "pointer",
-            display: "flex",
-          },
-        },
-      },
-    },
   },
 }));

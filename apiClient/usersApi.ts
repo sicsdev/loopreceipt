@@ -1,5 +1,5 @@
-import axios from "./axios";
-import { EntityLoop } from "./types";
+import axios from "@apiHelpers/axios";
+import { EntityLoop } from "@apiHelpers/types";
 export default {
   getMe: async (): Promise<
     | {
