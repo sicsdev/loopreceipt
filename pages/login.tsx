@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState } from "react";
+import Layout from "@components/Global/Layout";
 interface LoginProps {}
 const Login = ({}: LoginProps) => {
   const styles = loginStyles();
@@ -49,7 +50,9 @@ const Login = ({}: LoginProps) => {
       if (response) {
         Cookies.set("token", response.token);
         Cookies.set("isFirstTime", String(response.isFirstTime));
-        // router.push("/dashboard");
+        router.push("/dashboard");
+      } else {
+        alert("Please verify your email to continue");
       }
     }
   };
@@ -63,63 +66,66 @@ const Login = ({}: LoginProps) => {
   );
 
   return (
-    <div className={styles.Login}>
-      <h1 className="heading">{loginForm.formHeading}</h1>
-      <div className="form">
-        <Form form={loginForm} formProps={loginFormProps} padForm={false} />
+    <Layout>
+      <div className={styles.Login}>
+        <h1 className="heading">{loginForm.formHeading}</h1>
+        <div className="form">
+          <Form form={loginForm} formProps={loginFormProps} padForm={false} />
 
-        <div className="row">
-          <div className="rememberMe">
-            <Radio
-              color="primary"
-              checked={rememberMe}
-              onClick={() => {
-                setRememberMe(!rememberMe);
-              }}
-              name="rememberMe"
-              inputProps={{ "aria-label": "Remember Me?" }}
-            />
-            <div
-              style={{
-                paddingTop: 2,
-              }}
-            >
-              Remember Me
+          <div className="row">
+            <div className="rememberMe">
+              <Radio
+                color="primary"
+                checked={rememberMe}
+                onClick={() => {
+                  setRememberMe(!rememberMe);
+                }}
+                name="rememberMe"
+                inputProps={{ "aria-label": "Remember Me?" }}
+              />
+              <div
+                style={{
+                  paddingTop: 2,
+                }}
+              >
+                Remember Me
+              </div>
             </div>
+            <PrimaryLink>Forgot Password?</PrimaryLink>
           </div>
-          <PrimaryLink>Forgot Password?</PrimaryLink>
-        </div>
-        {loading ? (
-          <Button labelWeight="bold" color="default" labelColor="gray">
-            Loading...
-          </Button>
-        ) : (
-          <Button labelWeight="bold" onClick={login}>
-            Log In
-          </Button>
-        )}
+          {loading ? (
+            <Button labelWeight="bold" color="default" labelColor="gray">
+              Loading...
+            </Button>
+          ) : (
+            <Button labelWeight="bold" onClick={login}>
+              Log In
+            </Button>
+          )}
 
-        <div className="noAccount">
-          Don't have an account?{" "}
-          <Link href="/signup">
-            <a>
-              <PrimaryLink>Join free today</PrimaryLink>
-            </a>
-          </Link>
+          <div className="noAccount">
+            Don't have an account?{" "}
+            <Link href="/signup">
+              <a>
+                <PrimaryLink>Join free today</PrimaryLink>
+              </a>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 export default Login;
 export const loginStyles = makeStyles((theme) => ({
   Login: {
+    padding: "4rem 0",
     "& .heading": {
       fontWeight: 500,
       fontSize: 36,
       color: theme.palette.secondary.main,
       textAlign: "center",
-      margin: "2rem 0",
+      marginBottom: "2rem",
     },
     "& .subheading": {
       textAlign: "center",

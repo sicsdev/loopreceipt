@@ -10,6 +10,8 @@ import usersApi from "@apiClient/usersApi";
 import Link from "next/link";
 import { validateAllFieldsOfForm } from "forms/formUtils";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
+import router from "next/router";
+import Layout from "@components/Global/Layout";
 interface SignupProps {}
 const Signup = ({}: SignupProps) => {
   const styles = loginStyles();
@@ -46,6 +48,10 @@ const Signup = ({}: SignupProps) => {
           email: response.user.email,
         });
         console.log(verifyUser);
+        if (verifyUser) {
+          alert("Please check your inbox for confirmation email.");
+          router.push("/login");
+        }
       }
     }
   };
@@ -53,37 +59,39 @@ const Signup = ({}: SignupProps) => {
     Enter: signup,
   });
   return (
-    <div className={styles.Login}>
-      <h1 className="heading">{signupForm.formHeading}</h1>
-      <h4 className="subheading">
-        Already have a Loopreceipt account?{" "}
-        <Link href="/login">
-          <a>
-            <PrimaryLink>Sign in</PrimaryLink>
-          </a>
-        </Link>
-      </h4>
-      <div className="form">
-        <Form form={signupForm} formProps={signupFormProps} padForm={false} />
-        <PasswordStrengthBar
-          password={signupFormProps.formState.password.value}
-        />
-        {loading ? (
-          <Button labelWeight="bold" color="default" labelColor="gray">
-            Loading...
-          </Button>
-        ) : (
-          <Button labelWeight="bold" onClick={signup}>
-            Sign Up
-          </Button>
-        )}
-        <div className="noAccount">
-          By clicking “Sign Up” you agree to{" "}
-          <PrimaryLink>Loopreceipt Terms</PrimaryLink> and{" "}
-          <PrimaryLink>Privacy Policy</PrimaryLink>.
+    <Layout>
+      <div className={styles.Login}>
+        <h1 className="heading">{signupForm.formHeading}</h1>
+        <h4 className="subheading">
+          Already have a Loopreceipt account?{" "}
+          <Link href="/login">
+            <a>
+              <PrimaryLink>Sign in</PrimaryLink>
+            </a>
+          </Link>
+        </h4>
+        <div className="form">
+          <Form form={signupForm} formProps={signupFormProps} padForm={false} />
+          <PasswordStrengthBar
+            password={signupFormProps.formState.password.value}
+          />
+          {loading ? (
+            <Button labelWeight="bold" color="default" labelColor="gray">
+              Loading...
+            </Button>
+          ) : (
+            <Button labelWeight="bold" onClick={signup}>
+              Sign Up
+            </Button>
+          )}
+          <div className="noAccount">
+            By clicking “Sign Up” you agree to{" "}
+            <PrimaryLink>Loopreceipt Terms</PrimaryLink> and{" "}
+            <PrimaryLink>Privacy Policy</PrimaryLink>.
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 export default Signup;

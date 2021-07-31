@@ -11,6 +11,7 @@ import {
 import { useEffect, useRef } from "react";
 import { usePreviousValue } from "@hooks/usePreviousValue";
 import InputConstraints from "@components/Controls/InputConstraints";
+import { useState } from "react";
 // console.log(CountryRegionData);
 interface InputBoxProps {
   input: InputType;
@@ -28,6 +29,7 @@ function InputBox({
 }: InputBoxProps) {
   const styles = useStyles();
   const previousDependency = usePreviousValue(dependency);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   useEffect(() => {
     if (input.type === "phone" && previousDependency) {
       resetValue?.();
@@ -92,7 +94,13 @@ function InputBox({
         <div className={styles.inputContainer}>
           <input
             className={styles.input}
-            type={input.type}
+            type={
+              input.type !== "password"
+                ? input.type
+                : passwordVisible
+                ? "text"
+                : "password"
+            }
             name={input.name}
             value={input.value}
             onChange={onChange}
@@ -100,7 +108,14 @@ function InputBox({
             onBlur={onBlur}
             autoComplete="on"
           ></input>
-          <div className="passwordToogler">{/* <VisibilityIcon /> */}</div>
+          {input.type === "password" && (
+            <div
+              className="passwordToogler"
+              onClick={() => setPasswordVisible(!passwordVisible)}
+            >
+              {passwordVisible ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            </div>
+          )}
         </div>
       )}
       <p className="error">{input.error}</p>
@@ -112,7 +127,7 @@ export default InputBox;
 const inputCommon = (theme: Theme) => ({
   width: "80%",
 
-  padding: ".7rem",
+  padding: 12,
   borderRadius: "4px",
   border: "1px solid #DDDDDD",
   backgroundColor: "white",
@@ -136,6 +151,7 @@ const useStyles = makeStyles((theme) => {
       },
       "& .error": {
         color: "red",
+        fontSize: 14,
       },
     },
     input: inputCommon(theme),
@@ -143,7 +159,12 @@ const useStyles = makeStyles((theme) => {
       "& input": inputCommon(theme),
     },
     inputContainer: {
-      "& .passwordToogler": {},
+      position: "relative",
+      "& .passwordToogler": {
+        position: "absolute",
+        right: 10,
+        top: 10,
+      },
     },
   };
 });

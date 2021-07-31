@@ -97,7 +97,7 @@ const Dashboard = ({ path }: DashboardProps) => {
     )
   );
   if (error) {
-    router.push("/");
+    router.push("/login");
     return <h1>Error occurred</h1>;
   }
   if (!data || !data.loops) return <h1>Loading...</h1>;
