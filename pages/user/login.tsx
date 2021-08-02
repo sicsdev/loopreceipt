@@ -1,5 +1,6 @@
 import authApi from "@apiClient/authApi";
 import Button from "@components/Controls/Button";
+import { makeStyles } from "@material-ui/core";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
 import { useFetch, deferrer } from "@hooks/useFetch";
@@ -7,13 +8,12 @@ import { useForm } from "@hooks/useForm";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
 import { Radio } from "@material-ui/core";
 import { validateAllFieldsOfForm } from "@forms/formUtils";
-import loginForm from "@forms/auth/loginForm";
+import loginForm from "@forms/user/loginForm";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Layout from "@components/Global/Layout";
 import Message from "@components/Shared/Message";
-import commonUserFormStyles from "./commonUserFormStyles";
 interface LoginProps {}
 const Login = ({}: LoginProps) => {
   const styles = commonUserFormStyles();
@@ -93,7 +93,9 @@ const Login = ({}: LoginProps) => {
                 Remember Me
               </div>
             </div>
-            <PrimaryLink href="/forgotpassword">Forgot Password?</PrimaryLink>
+            <PrimaryLink href="/user/forgotpassword">
+              Forgot Password?
+            </PrimaryLink>
           </div>
           {loading ? (
             <Button labelWeight="bold" color="default" labelColor="gray">
@@ -106,8 +108,8 @@ const Login = ({}: LoginProps) => {
           )}
 
           <div className="bottomText">
-            Don't have an account?{" "}
-            <PrimaryLink href="/signup">Join free today</PrimaryLink>
+            Don&apos;t have an account?&nbsp;
+            <PrimaryLink href="/user/signup">Join free today</PrimaryLink>
           </div>
         </div>
       </div>
@@ -115,3 +117,45 @@ const Login = ({}: LoginProps) => {
   );
 };
 export default Login;
+export const commonUserFormStyles = makeStyles((theme) => ({
+  UserForm: {
+    // border: "1px solid red",
+    padding: "4rem 1rem",
+    "& .heading": {
+      fontWeight: 500,
+      fontSize: 36,
+      color: theme.palette.secondary.main,
+      textAlign: "center",
+      marginBottom: "2rem",
+    },
+    "& .subheading": {
+      textAlign: "center",
+      fontSize: 18,
+    },
+    "& .form": {
+      marginTop: "4rem",
+      maxWidth: 600,
+      margin: "auto",
+      display: "flex",
+      flexDirection: "column",
+      gap: "2rem",
+      "& .MyInputContainer": {
+        width: "100%",
+      },
+      "& .row": {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        "& .rememberMe": {
+          display: "flex",
+          alignItems: "center",
+          gap: 5,
+        },
+      },
+      "& .bottomText": {
+        textAlign: "center",
+        color: "#8F8F8F",
+      },
+    },
+  },
+}));

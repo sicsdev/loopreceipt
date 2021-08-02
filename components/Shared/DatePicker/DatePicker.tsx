@@ -172,8 +172,9 @@ const DatePicker = ({
           }
         }}
       >
-        {capitalize(pickerType)} Date:{" "}
-        {pickerType === "start" ? dmy(dateRange.start) : dmy(dateRange.end)}{" "}
+        {capitalize(pickerType)} Date:&nbsp;
+        {pickerType === "start" ? dmy(dateRange.start) : dmy(dateRange.end)}
+        &nbsp;
       </div>
       <div className="month">
         <div className="image" onClick={prevMonth}>

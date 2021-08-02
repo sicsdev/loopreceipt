@@ -2,14 +2,14 @@ import { useForm } from "@hooks/useForm";
 import Button from "@components/Controls/Button";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
-import updatePasswordForm from "@forms/auth/updatePasswordForm";
+import updatePasswordForm from "@forms/user/updatePasswordForm";
 import { useFetch } from "@hooks/useFetch";
 import usersApi from "@apiClient/usersApi";
 import { validateAllFieldsOfForm } from "forms/formUtils";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
 import Layout from "@components/Global/Layout";
 import Message from "@components/Shared/Message";
-import commonUserFormStyles from "./commonUserFormStyles";
+import { commonUserFormStyles } from "./login";
 import router from "next/router";
 interface UpdatePasswordProps {}
 const UpdatePassword = ({}: UpdatePasswordProps) => {
@@ -64,7 +64,7 @@ const UpdatePassword = ({}: UpdatePasswordProps) => {
           )}
 
           <div className="bottomText">
-            Cancel update go to dashboard?{" "}
+            Cancel update go to dashboard?&nbsp;
             <PrimaryLink href="/dashboard">Dashboard</PrimaryLink>
           </div>
         </div>

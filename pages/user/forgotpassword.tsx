@@ -2,14 +2,14 @@ import { useForm } from "@hooks/useForm";
 import Button from "@components/Controls/Button";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
-import forgotPasswordForm from "@forms/auth/forgotPasswordForm";
+import forgotPasswordForm from "@forms/user/forgotPasswordForm";
 import { useFetch } from "@hooks/useFetch";
 import usersApi from "@apiClient/usersApi";
 import { validateAllFieldsOfForm } from "@forms/formUtils";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
 import Layout from "@components/Global/Layout";
 import Message from "@components/Shared/Message";
-import commonUserFormStyles from "./commonUserFormStyles";
+import { commonUserFormStyles } from "./login";
 interface ForgotPasswordProps {}
 const ForgotPassword = ({}: ForgotPasswordProps) => {
   const styles = commonUserFormStyles();
@@ -55,12 +55,12 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
           )}
 
           <div className="bottomText">
-            Already have a loopreceipt account?{" "}
-            <PrimaryLink href="/login">Log in</PrimaryLink>
+            Already have a loopreceipt account?&nbsp;
+            <PrimaryLink href="/user/login">Log in</PrimaryLink>
           </div>
           <div className="bottomText">
-            Don't have an account?{" "}
-            <PrimaryLink href="/signup">Sign up</PrimaryLink>
+            Don&apos;t have an account?&nbsp;
+            <PrimaryLink href="/user/signup">Sign up</PrimaryLink>
           </div>
         </div>
       </div>

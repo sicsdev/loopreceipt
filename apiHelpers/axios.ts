@@ -25,7 +25,7 @@ instance.interceptors.response.use(
   (error) => {
     // console.log(error.response.data);
     if (error.response.data.message === "Access denied no token provided.") {
-      router.push("/login");
+      router.push("/user/login");
     }
     return Promise.reject(error);
   }

@@ -17,10 +17,23 @@ export function useForm(
     setFormState(() => {
       const updatedFormField = { ...formState[name], value };
       if (updatedFormField.error || validateOnChange) {
-        if (updatedFormField.validate?.()) {
-          updatedFormField.error = "";
-        } else {
-          updatedFormField.error = updatedFormField.errorText;
+        // if errors exist on the field
+        // then we validateOnChange mandatorily
+        if (updatedFormField.validate) {
+          let valid;
+          if (updatedFormField.strictlyMatchDependency) {
+            valid = updatedFormField.validate({
+              dependencyValue:
+                formState[updatedFormField.strictlyMatchDependency].value,
+            });
+          } else {
+            valid = updatedFormField.validate();
+          }
+          if (valid) {
+            updatedFormField.error = "";
+          } else {
+            updatedFormField.error = updatedFormField.errorText;
+          }
         }
       }
       return {

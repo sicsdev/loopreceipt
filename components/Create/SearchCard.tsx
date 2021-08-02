@@ -109,8 +109,8 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
       )}
       {searchItems.every((item) => !item.matchLength) && (
         <div className={styles.nomatch}>
-          <Image src="/icons/create/exclamation.svg" width={15} height={15} />{" "}
-          No recipient found with the name “{searchInput}”
+          <Image src="/icons/create/exclamation.svg" width={15} height={15} />
+          &nbsp; No recipient found with the name “{searchInput}”
         </div>
       )}
       <div

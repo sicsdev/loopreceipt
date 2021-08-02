@@ -6,6 +6,8 @@ import ToggleSidebar from "@components/Shared/ToggleSidebar";
 import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import router from "next/router";
 interface MobileNavbarProps {}
 const MobileNavbar = ({}: MobileNavbarProps) => {
   const styles = useStyles();
@@ -61,7 +63,15 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
         <span className={"text"}>Home</span>
       </div>
       <div className="items">
-        <Image src="/icons/profile.png" width="38" height="38" />
+        <Image
+          src="/icons/profile.png"
+          width="38"
+          height="38"
+          onClick={() => {
+            Cookies.remove("token");
+            router.push("/user/login");
+          }}
+        />
         <Image src="/icons/arrow-down.svg" width="17" height="13" />
       </div>
     </div>

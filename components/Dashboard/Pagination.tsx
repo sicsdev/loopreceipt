@@ -72,7 +72,7 @@ const Pagination = ({
           ref={itemsPerPageSelectorRef}
           className="option"
         >
-          <span>{itemsPerPage}</span>{" "}
+          <span>{itemsPerPage}</span>&nbsp;
           <Image src="/icons/dashboard/down.svg" width={10} height={6} />
         </div>
         <Menu

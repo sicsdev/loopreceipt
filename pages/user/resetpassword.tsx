@@ -2,7 +2,7 @@ import { useForm } from "@hooks/useForm";
 import Button from "@components/Controls/Button";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
-import resetPasswordForm from "@forms/auth/resetPasswordForm";
+import resetPasswordForm from "@forms/user/resetPasswordForm";
 import { useFetch } from "@hooks/useFetch";
 import usersApi from "@apiClient/usersApi";
 import { validateAllFieldsOfForm } from "forms/formUtils";
@@ -10,7 +10,7 @@ import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
 import Layout from "@components/Global/Layout";
 import Message from "@components/Shared/Message";
 import Cookies from "js-cookie";
-import commonUserFormStyles from "./commonUserFormStyles";
+import { commonUserFormStyles } from "./login";
 interface ResetPasswordProps {}
 const ResetPassword = ({}: ResetPasswordProps) => {
   const styles = commonUserFormStyles();
@@ -48,6 +48,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
             form={resetPasswordForm}
             formProps={resetPasswordFormProps}
             padForm={false}
+            validateOnBlur={true}
           />
 
           {error && <Message message={error.message} type="warning" />}
@@ -62,12 +63,12 @@ const ResetPassword = ({}: ResetPasswordProps) => {
           )}
 
           <div className="bottomText">
-            Already have a loopreceipt account?{" "}
-            <PrimaryLink href="/login">Log in</PrimaryLink>
+            Already have a loopreceipt account?&nbsp;
+            <PrimaryLink href="/user/login">Log in</PrimaryLink>
           </div>
           <div className="bottomText">
-            Don't have an account?{" "}
-            <PrimaryLink href="/signup">Sign up</PrimaryLink>
+            Don&apos;t have an account?&nbsp;
+            <PrimaryLink href="/user/signup">Sign up</PrimaryLink>
           </div>
         </div>
       </div>

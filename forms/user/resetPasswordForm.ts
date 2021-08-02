@@ -2,20 +2,10 @@ import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 import signupForm from "./signupForm";
 
-const updatePasswordForm: FormType = {
-  formName: "updatePasswordForm",
+const resetPasswordForm: FormType = {
+  formName: "resetPasswordForm",
   formHeading: "Reset Your Password",
   initialState: {
-    currentPassword: {
-      name: "currentPassword",
-      label: `Current Password *`,
-      placeholder: "Current Password *",
-      value: "",
-      type: "password",
-      validate: function () {
-        return validations.isRequired(this);
-      },
-    },
     newPassword: {
       name: "newPassword",
       label: `New Password *`,
@@ -32,10 +22,13 @@ const updatePasswordForm: FormType = {
       placeholder: "Confirm Password *",
       value: "",
       type: "password",
-      validate: function () {
-        return validations.isRequired(this);
+      strictlyMatchDependency: "newPassword",
+      validate: function (props) {
+        return validations.mustMatch({
+          value: props?.dependencyValue ?? "",
+        })(this, "Passwords should match");
       },
     },
   },
 };
-export default updatePasswordForm;
+export default resetPasswordForm;

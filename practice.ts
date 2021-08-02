@@ -1,12 +1,18 @@
-export const revertObject = (object: { [key: string]: string }) => {
-  const revertedObject: typeof object = {};
-  for (let [key, value] of Object.entries(object)) {
-    revertedObject[value] = key;
+export const splitOnUpperCase = (str: string) => {
+  // str = "MyNameIsKhan"
+  // returns "My Name Is Khan"
+  let ans = "";
+  let cur = "";
+  for (let s of str.split("")) {
+    if (/[A-Z]/.test(s)) {
+      // encountered uppercase character
+      ans += cur + " ";
+      cur = s;
+    } else {
+      cur += s;
+    }
   }
-  return revertedObject;
+  ans += cur;
+  return ans;
 };
-const obj = {
-  name: "Rahul",
-  age: 20,
-};
-console.log(revertObject(obj));
+console.log(splitOnUpperCase("MyNameIsKhan"));

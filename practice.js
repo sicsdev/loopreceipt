@@ -1,15 +1,22 @@
 "use strict";
 exports.__esModule = true;
-exports.revertObject = function (object) {
-    var revertedObject = {};
-    for (var _i = 0, _a = Object.entries(object); _i < _a.length; _i++) {
-        var _b = _a[_i], key = _b[0], value = _b[1];
-        revertedObject[value] = key;
+exports.splitOnUpperCase = function (str) {
+    // str = "MyNameIsKhan"
+    // returns "My Name Is Khan"
+    var ans = "";
+    var cur = "";
+    for (var _i = 0, _a = str.split(""); _i < _a.length; _i++) {
+        var s = _a[_i];
+        if (/[A-Z]/.test(s)) {
+            // encountered uppercase character
+            ans += cur + " ";
+            cur = s;
+        }
+        else {
+            cur += s;
+        }
     }
-    return revertedObject;
+    ans += cur;
+    return ans;
 };
-var obj = {
-    name: "Rahul",
-    age: "20"
-};
-console.log(exports.revertObject(obj));
+console.log(exports.splitOnUpperCase("MyNameIsKhan"));

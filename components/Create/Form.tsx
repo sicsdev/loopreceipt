@@ -60,9 +60,7 @@ const Form = ({
               input={input}
               onChange={handleInputChange}
               dependency={
-                input.type === "region" || input.type === "phone"
-                  ? formState["country"].value
-                  : ""
+                input.dependency ? formState[input.dependency].value : undefined
               }
               onBlur={(e) => {
                 if (validateOnBlur) {

@@ -80,7 +80,8 @@ const FilterDropdowns = ({
             setSelectingDateRange(true);
           }}
         >
-          <Image src="/icons/dashboard/calender.svg" width={18} height={16} />{" "}
+          <Image src="/icons/dashboard/calender.svg" width={18} height={16} />
+          &nbsp;
           {dateRangeString}
         </div>
         <div ref={loopSelectRef} className="dd">

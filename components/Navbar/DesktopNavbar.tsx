@@ -8,12 +8,13 @@ import { useAppDispatch } from "@store/hooks";
 import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 interface DesktopNavbarPropTypes {}
 const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
   const router = useRouter();
   const styles = useStyles();
   const dispatch = useAppDispatch();
-  const isLoggedIn = false;
+  const isLoggedIn = !!Cookies.get("token");
   return (
     <div className={styles.DesktopNavbar}>
       <Link href="/dashboard">
@@ -101,7 +102,15 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
             </div>
             <div className="item">
               <div className="image">
-                <Image src="/icons/profile.png" width="36" height="36" />
+                <Image
+                  src="/icons/profile.png"
+                  width="36"
+                  height="36"
+                  onClick={() => {
+                    Cookies.remove("token");
+                    router.push("/user/login");
+                  }}
+                />
               </div>
               <p className="text">Account</p>
               <Image src="/icons/arrow-down.svg" width="20" height="20" />

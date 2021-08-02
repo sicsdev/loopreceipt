@@ -2,7 +2,7 @@ import { useForm } from "@hooks/useForm";
 import Button from "@components/Controls/Button";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
-import signupForm from "@forms/auth/signupForm";
+import signupForm from "@forms/user/signupForm";
 import { useFetch } from "@hooks/useFetch";
 import usersApi from "@apiClient/usersApi";
 import { validateAllFieldsOfForm } from "forms/formUtils";
@@ -10,7 +10,7 @@ import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
 import router from "next/router";
 import Layout from "@components/Global/Layout";
 import Message from "@components/Shared/Message";
-import commonUserFormStyles from "./commonUserFormStyles";
+import { commonUserFormStyles } from "./login";
 interface SignupProps {}
 const Signup = ({}: SignupProps) => {
   const styles = commonUserFormStyles();
@@ -50,7 +50,7 @@ const Signup = ({}: SignupProps) => {
         console.log(verifyUser);
         if (verifyUser) {
           alert("Please check your inbox for confirmation email.");
-          router.push("/login");
+          router.push("/user/login");
         }
       }
     }
@@ -63,7 +63,7 @@ const Signup = ({}: SignupProps) => {
       <div className={styles.UserForm}>
         <h1 className="heading">{signupForm.formHeading}</h1>
         <h4 className="subheading">
-          Already have a Loopreceipt account?{" "}
+          Already have a Loopreceipt account?&nbsp;
           <PrimaryLink href="/login">Sign in</PrimaryLink>
         </h4>
         <div className="form">
@@ -80,8 +80,8 @@ const Signup = ({}: SignupProps) => {
             </Button>
           )}
           <div className="bottomText">
-            By clicking “Sign Up” you agree to{" "}
-            <PrimaryLink href="/">Loopreceipt Terms</PrimaryLink> and{" "}
+            By clicking &ldquo;Sign Up&rdquo; you agree to&nbsp;
+            <PrimaryLink href="/">Loopreceipt Terms</PrimaryLink> and&nbsp;
             <PrimaryLink href="/">Privacy Policy</PrimaryLink>.
           </div>
         </div>
