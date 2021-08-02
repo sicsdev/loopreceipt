@@ -5,6 +5,7 @@ export default function Index() {
     <Layout>
       <Link href="/create">create</Link>
       <Link href="/dashboard">dashboard</Link>
+      <Link href="/analytics">analytics</Link>
     </Layout>
   );
 }
