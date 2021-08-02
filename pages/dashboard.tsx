@@ -97,7 +97,11 @@ const Dashboard = ({ path }: DashboardProps) => {
     )
   );
   if (error) {
-    router.push("/login");
+    // router.push("/login");
+    // console.log(error);
+    // if (error.message === "Access denied no token provided.") {
+    //   router.push("/login");
+    // }
     return <h1>Error occurred</h1>;
   }
   if (!data || !data.loops) return <h1>Loading...</h1>;

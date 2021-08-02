@@ -17,18 +17,6 @@ const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
         link="/dashboard"
         active={path == "/dashboard"}
       />
-      <SidebarItem
-        iconSrc="/icons/sidebar/package.png"
-        text="Packages"
-        link="/packages"
-        active={path == "/packages"}
-      />
-      <SidebarItem
-        iconSrc="/icons/sidebar/analytics.png"
-        text="Analytics"
-        link="/analytics"
-        active={path == "/analytics"}
-      />
       {ListenClickAtParentElement(
         (e) => {
           openModal(e, {
@@ -45,6 +33,18 @@ const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
           />
         )
       )}
+      <SidebarItem
+        iconSrc="/icons/sidebar/package.png"
+        text="Packages"
+        link="/packages"
+        active={path == "/packages"}
+      />
+      <SidebarItem
+        iconSrc="/icons/sidebar/analytics.png"
+        text="Analytics"
+        link="/analytics"
+        active={path == "/analytics"}
+      />
 
       <SidebarItem
         iconSrc="/icons/sidebar/recepients.png"

@@ -49,12 +49,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   });
   const detailsRef = useRef<HTMLDivElement>(null);
   const { data, loading } = useFetch<{ groups: EntityGroup[] }>(
-    groupsApi.getAll,
-    {
-      methodOnError: () => {
-        router.push("/");
-      },
-    }
+    groupsApi.getAll
   );
   const confirmedLoopers = useAppSelector(
     (state) => state.searchBar.confirmedLoopers

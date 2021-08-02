@@ -10,7 +10,11 @@ export interface FormType {
     | "companyDetailsForm"
     | "loopersDetailsForm"
     | "editLooperDetailsForm"
-    | "signupForm";
+    | "signupForm"
+    | "resetPasswordForm"
+    | "forgotPasswordForm"
+    | "updatePasswordForm"
+    | "loginForm";
   optionalFields?: FormStateType;
   formHeading?: string;
   methods?: {

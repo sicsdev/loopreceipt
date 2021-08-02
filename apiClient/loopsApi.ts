@@ -1,6 +1,6 @@
 import axios from "@apiHelpers/axios";
 import { EntityLoop } from "@apiHelpers/types";
-import { axiosErrorHandler } from "@apiHelpers/utils";
+import { axiosErrorHandler } from "@apiHelpers/apiUtils";
 import Cookies from "js-cookie";
 export default {
   create: async (
@@ -14,7 +14,7 @@ export default {
       // console.log(response.data);
       return response.data;
     } catch (error) {
-      axiosErrorHandler(error);
+      throw axiosErrorHandler(error);
     }
   },
   getAll: async (): Promise<{ loops: EntityLoop[] } | undefined> => {
@@ -26,7 +26,7 @@ export default {
       // console.log(response.data);
       return response.data;
     } catch (error) {
-      axiosErrorHandler(error);
+      throw axiosErrorHandler(error);
     }
   },
 };

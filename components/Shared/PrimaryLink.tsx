@@ -1,10 +1,16 @@
 import { makeStyles } from "@material-ui/core";
+import Link from "next/link";
 interface PrimaryLinkProps {
   children: JSX.Element | string;
+  href: string;
 }
-const PrimaryLink = ({ children }: PrimaryLinkProps) => {
+const PrimaryLink = ({ children, href }: PrimaryLinkProps) => {
   const styles = useStyles();
-  return <span className={styles.PrimaryLink}>{children}</span>;
+  return (
+    <Link href={href}>
+      <a className={styles.PrimaryLink}>{children}</a>
+    </Link>
+  );
 };
 export default PrimaryLink;
 const useStyles = makeStyles((theme) => ({

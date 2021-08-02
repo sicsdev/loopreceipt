@@ -11,4 +11,5 @@ export interface InputType {
   customError?: boolean;
   iconType?: InputIconType;
   constraints?: string[];
+  showPasswordStrengthBar?: boolean;
 }

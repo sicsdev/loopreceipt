@@ -1,22 +1,22 @@
 import authApi from "@apiClient/authApi";
-import usersApi from "@apiClient/usersApi";
 import Button from "@components/Controls/Button";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
 import { useFetch, deferrer } from "@hooks/useFetch";
 import { useForm } from "@hooks/useForm";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
-import { makeStyles, useTheme, Radio } from "@material-ui/core";
-import { validateAllFieldsOfForm } from "forms/formUtils";
-import loginForm from "forms/loginForm";
+import { Radio } from "@material-ui/core";
+import { validateAllFieldsOfForm } from "@forms/formUtils";
+import loginForm from "@forms/auth/loginForm";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useState } from "react";
 import Layout from "@components/Global/Layout";
+import Message from "@components/Shared/Message";
+import commonUserFormStyles from "./commonUserFormStyles";
 interface LoginProps {}
 const Login = ({}: LoginProps) => {
-  const styles = loginStyles();
+  const styles = commonUserFormStyles();
   const router = useRouter();
   const [rememberMe, setRememberMe] = useState(false);
   const loginFormProps = useForm(loginForm.initialState);
@@ -25,6 +25,7 @@ const Login = ({}: LoginProps) => {
     loading,
     sendRequest: sendLoginRequest,
     requestSent,
+    error,
   } = useFetch<{
     token: string;
     isFirstTime: boolean;
@@ -46,13 +47,12 @@ const Login = ({}: LoginProps) => {
       or u can pass just authApi.login to useFetch
       and call sendLoginRequest({ email: loginFormProps.formState.email.value,  password: loginFormProps.formState.password.value,})
       */
-      console.log(response);
+      // console.log(response);
       if (response) {
         Cookies.set("token", response.token);
         Cookies.set("isFirstTime", String(response.isFirstTime));
         router.push("/dashboard");
       } else {
-        alert("Please verify your email to continue");
       }
     }
   };
@@ -67,11 +67,13 @@ const Login = ({}: LoginProps) => {
 
   return (
     <Layout>
-      <div className={styles.Login}>
+      <div className={styles.UserForm}>
         <h1 className="heading">{loginForm.formHeading}</h1>
         <div className="form">
           <Form form={loginForm} formProps={loginFormProps} padForm={false} />
-
+          {error && <Message message={error.message} type="warning" />}
+          {/* Invalid Email or Password. If email is correct use forgot password
+              to get a new password. */}
           <div className="row">
             <div className="rememberMe">
               <Radio
@@ -91,7 +93,7 @@ const Login = ({}: LoginProps) => {
                 Remember Me
               </div>
             </div>
-            <PrimaryLink>Forgot Password?</PrimaryLink>
+            <PrimaryLink href="/forgotpassword">Forgot Password?</PrimaryLink>
           </div>
           {loading ? (
             <Button labelWeight="bold" color="default" labelColor="gray">
@@ -103,13 +105,9 @@ const Login = ({}: LoginProps) => {
             </Button>
           )}
 
-          <div className="noAccount">
+          <div className="bottomText">
             Don't have an account?{" "}
-            <Link href="/signup">
-              <a>
-                <PrimaryLink>Join free today</PrimaryLink>
-              </a>
-            </Link>
+            <PrimaryLink href="/signup">Join free today</PrimaryLink>
           </div>
         </div>
       </div>
@@ -117,41 +115,3 @@ const Login = ({}: LoginProps) => {
   );
 };
 export default Login;
-export const loginStyles = makeStyles((theme) => ({
-  Login: {
-    padding: "4rem 0",
-    "& .heading": {
-      fontWeight: 500,
-      fontSize: 36,
-      color: theme.palette.secondary.main,
-      textAlign: "center",
-      marginBottom: "2rem",
-    },
-    "& .subheading": {
-      textAlign: "center",
-      fontSize: 18,
-    },
-    "& .form": {
-      marginTop: "4rem",
-      maxWidth: 600,
-      margin: "auto",
-      display: "flex",
-      flexDirection: "column",
-      gap: "2rem",
-      "& .row": {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        "& .rememberMe": {
-          display: "flex",
-          alignItems: "center",
-          gap: 5,
-        },
-      },
-      "& .noAccount": {
-        textAlign: "center",
-        color: "#8F8F8F",
-      },
-    },
-  },
-}));

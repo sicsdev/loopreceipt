@@ -42,7 +42,7 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
             </div>
 
             <div className="item">
-              <Link href="/login">
+              <Link href="/user/login">
                 <a>Log In</a>
               </Link>
             </div>
@@ -52,7 +52,7 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
                 labelWeight="500"
                 shrink
                 onClick={() => {
-                  router.push("/signup");
+                  router.push("/user/signup");
                 }}
               >
                 Sign Up

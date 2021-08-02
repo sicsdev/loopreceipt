@@ -2,19 +2,18 @@ import { useForm } from "@hooks/useForm";
 import Button from "@components/Controls/Button";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
-import signupForm from "forms/signupForm";
-import { loginStyles } from "./login";
-import PasswordStrengthBar from "@components/Controls/PasswordStrengthBar";
+import signupForm from "@forms/auth/signupForm";
 import { useFetch } from "@hooks/useFetch";
 import usersApi from "@apiClient/usersApi";
-import Link from "next/link";
 import { validateAllFieldsOfForm } from "forms/formUtils";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
 import router from "next/router";
 import Layout from "@components/Global/Layout";
+import Message from "@components/Shared/Message";
+import commonUserFormStyles from "./commonUserFormStyles";
 interface SignupProps {}
 const Signup = ({}: SignupProps) => {
-  const styles = loginStyles();
+  const styles = commonUserFormStyles();
   const signupFormProps = useForm(signupForm.initialState);
 
   const {
@@ -22,6 +21,7 @@ const Signup = ({}: SignupProps) => {
     loading,
     sendRequest: sendSignupRequest,
     requestSent,
+    error,
   } = useFetch<{
     user: {
       isFirstTime: boolean;
@@ -60,21 +60,16 @@ const Signup = ({}: SignupProps) => {
   });
   return (
     <Layout>
-      <div className={styles.Login}>
+      <div className={styles.UserForm}>
         <h1 className="heading">{signupForm.formHeading}</h1>
         <h4 className="subheading">
           Already have a Loopreceipt account?{" "}
-          <Link href="/login">
-            <a>
-              <PrimaryLink>Sign in</PrimaryLink>
-            </a>
-          </Link>
+          <PrimaryLink href="/login">Sign in</PrimaryLink>
         </h4>
         <div className="form">
           <Form form={signupForm} formProps={signupFormProps} padForm={false} />
-          <PasswordStrengthBar
-            password={signupFormProps.formState.password.value}
-          />
+
+          {error && <Message message={error.message} type="warning" />}
           {loading ? (
             <Button labelWeight="bold" color="default" labelColor="gray">
               Loading...
@@ -84,10 +79,10 @@ const Signup = ({}: SignupProps) => {
               Sign Up
             </Button>
           )}
-          <div className="noAccount">
+          <div className="bottomText">
             By clicking “Sign Up” you agree to{" "}
-            <PrimaryLink>Loopreceipt Terms</PrimaryLink> and{" "}
-            <PrimaryLink>Privacy Policy</PrimaryLink>.
+            <PrimaryLink href="/">Loopreceipt Terms</PrimaryLink> and{" "}
+            <PrimaryLink href="/">Privacy Policy</PrimaryLink>.
           </div>
         </div>
       </div>

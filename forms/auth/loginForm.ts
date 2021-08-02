@@ -2,7 +2,7 @@ import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 
 const loginForm: FormType = {
-  formName: "signupForm",
+  formName: "loginForm",
   formHeading: "Login to Your Account",
   initialState: {
     email: {

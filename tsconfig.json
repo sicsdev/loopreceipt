@@ -21,6 +21,7 @@
       "@helpers/*": ["helpers/*"],
       "@hooks/*": ["hooks/*"],
       "@apiClient/*": ["apiClient/*"],
+      "@forms/*": ["forms/*"],
       "@apiHelpers/*": ["apiHelpers/*"],
       "@interfaces/*": ["interfaces/*"]
     }
