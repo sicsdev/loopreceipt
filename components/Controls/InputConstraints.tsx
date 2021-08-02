@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     "& .constraintsBlock": {
       // border: "1px solid green",
       position: "absolute",
-      left: "50%",
+      left: "53px",
       top: "0px",
       width: "max-content",
       transform: "translate(-50%, -100%)",

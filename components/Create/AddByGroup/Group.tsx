@@ -29,7 +29,12 @@ const Group = ({ group }: GroupProps) => {
       <div className={styles.desktopGroup}>
         <div className="heading">
           <div>
-            <Image src="/icons/create/group/group.svg" width={20} height={20} />
+            <Image
+              alt="icon"
+              src="/icons/create/group/group.svg"
+              width={20}
+              height={20}
+            />
           </div>
           <h2>Group Name</h2>
         </div>

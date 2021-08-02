@@ -23,7 +23,7 @@ const DesktopModal = ({ dialogItems }: DesktopModalProps) => {
       <div className={styles.DesktopModal}>
         {dialogItems.map((item, i) => (
           <div key={i} className="item" onClick={item.click}>
-            <Image src={item.src} width="31" height="31" />
+            <Image alt="icon" src={item.src} width="31" height="31" />
             <div className="content">
               <p className={"title"}>{item.title}</p>
               <p className="description">{item.description}</p>

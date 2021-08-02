@@ -139,7 +139,12 @@ const ConfirmedEntities = ({ formProps, form }: ConfirmedEntitiesProps) => {
                   setEditing(true);
                 }}
               >
-                <Image src="/icons/create/edit.svg" width={20} height={20} />
+                <Image
+                  alt="icon"
+                  src="/icons/create/edit.svg"
+                  width={20}
+                  height={20}
+                />
               </div>
               <div className="divider"></div>
               <div
@@ -148,7 +153,12 @@ const ConfirmedEntities = ({ formProps, form }: ConfirmedEntitiesProps) => {
                   dispatch(deleteConfirmedLooper({ id: looper.id }));
                 }}
               >
-                <Image src="/icons/create/trash.svg" width={20} height={20} />
+                <Image
+                  alt="icon"
+                  src="/icons/create/trash.svg"
+                  width={20}
+                  height={20}
+                />
               </div>
             </div>
           </div>

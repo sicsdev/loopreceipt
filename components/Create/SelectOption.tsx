@@ -41,7 +41,7 @@ function Option({ src, head, text, onClick }: OptionProps) {
   return (
     <div className="option" onClick={onClick}>
       <div className={"icon"}>
-        <Image src={src} width={28} height={28} />
+        <Image alt="icon" src={src} width={28} height={28} />
       </div>
       <div className="content">
         <p className="h">{head}</p>

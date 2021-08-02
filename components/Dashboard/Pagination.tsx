@@ -46,7 +46,12 @@ const Pagination = ({
         }
       }}
     >
-      <Image src="/icons/dashboard/prev-gray.svg" width={11} height={11} />
+      <Image
+        alt="icon"
+        src="/icons/dashboard/prev-gray.svg"
+        width={11}
+        height={11}
+      />
     </div>
   );
   const nextArrow = (
@@ -58,7 +63,12 @@ const Pagination = ({
         }
       }}
     >
-      <Image src="/icons/dashboard/next-gray.svg" width={11} height={11} />
+      <Image
+        alt="icon"
+        src="/icons/dashboard/next-gray.svg"
+        width={11}
+        height={11}
+      />
     </div>
   );
   return (
@@ -73,7 +83,12 @@ const Pagination = ({
           className="option"
         >
           <span>{itemsPerPage}</span>&nbsp;
-          <Image src="/icons/dashboard/down.svg" width={10} height={6} />
+          <Image
+            alt="icon"
+            src="/icons/dashboard/down.svg"
+            width={10}
+            height={6}
+          />
         </div>
         <Menu
           className={styles.menu}

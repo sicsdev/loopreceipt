@@ -178,7 +178,12 @@ const DatePicker = ({
       </div>
       <div className="month">
         <div className="image" onClick={prevMonth}>
-          <Image src="/icons/dashboard/prev.svg" width={9} height={9} />
+          <Image
+            alt="icon"
+            src="/icons/dashboard/prev.svg"
+            width={9}
+            height={9}
+          />
         </div>
         <div className="text">
           <span
@@ -189,7 +194,12 @@ const DatePicker = ({
           >
             {months[curMonth]}
             {monthSelectorType === "dropdown" && (
-              <Image src="/icons/arrow-down.svg" width={15} height={15} />
+              <Image
+                alt="icon"
+                src="/icons/arrow-down.svg"
+                width={15}
+                height={15}
+              />
             )}
           </span>
           <span
@@ -200,7 +210,12 @@ const DatePicker = ({
           >
             {curYear}
             {monthSelectorType === "dropdown" && (
-              <Image src="/icons/arrow-down.svg" width={15} height={15} />
+              <Image
+                alt="icon"
+                src="/icons/arrow-down.svg"
+                width={15}
+                height={15}
+              />
             )}
           </span>
         </div>
@@ -252,7 +267,12 @@ const DatePicker = ({
         )}
 
         <div className="image" onClick={nextMonth}>
-          <Image src="/icons/dashboard/next.svg" width={9} height={9} />
+          <Image
+            alt="icon"
+            src="/icons/dashboard/next.svg"
+            width={9}
+            height={9}
+          />
         </div>
       </div>
       <DetectSwipe onSwipedLeft={nextMonth} onSwipedRight={prevMonth}>

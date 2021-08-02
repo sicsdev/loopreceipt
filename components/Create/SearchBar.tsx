@@ -18,7 +18,7 @@ const SearchBar = ({}: SearchBarProps) => {
         placeholder="Enter name, email or user group"
       />
       <div className="image">
-        <Image src="/icons/search-gray.svg" width={19} height={19} />
+        <Image alt="icon" src="/icons/search-gray.svg" width={19} height={19} />
       </div>
       {searchInput && (
         <UnmountOnWindowClickWrapper

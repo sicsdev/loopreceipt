@@ -11,7 +11,7 @@ const Dropdown = ({ name, option, onClick }: DropdownProps) => {
     <div className={styles.Dropdown} onClick={onClick}>
       <span className="name"> {name}</span>
       <span className="option">{option}</span>
-      <Image src="/icons/arrow-down.svg" width={16} height={16} />
+      <Image alt="icon" src="/icons/arrow-down.svg" width={16} height={16} />
     </div>
   );
 };

@@ -22,7 +22,12 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
       >
         <div className={styles.mobileSidebar}>
           <div className={styles.profile}>
-            <Image src="/icons/sidebar/profilehq.png" width="74" height="74" />
+            <Image
+              alt="icon"
+              src="/icons/sidebar/profilehq.png"
+              width="74"
+              height="74"
+            />
             <p className="name">Maria Junior</p>
           </div>
           <div className={styles.links}>
@@ -59,11 +64,17 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
         </div>
       </ToggleSidebar>
       <div className="items" onClick={() => setShowSidebar(true)}>
-        <Image src="/icons/sidebar/menu.svg" width={20} height={20} />
+        <Image
+          alt="icon"
+          src="/icons/sidebar/menu.svg"
+          width={20}
+          height={20}
+        />
         <span className={"text"}>Home</span>
       </div>
       <div className="items">
         <Image
+          alt="icon"
           src="/icons/profile.png"
           width="38"
           height="38"
@@ -72,7 +83,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
             router.push("/user/login");
           }}
         />
-        <Image src="/icons/arrow-down.svg" width="17" height="13" />
+        <Image alt="icon" src="/icons/arrow-down.svg" width="17" height="13" />
       </div>
     </div>
   );

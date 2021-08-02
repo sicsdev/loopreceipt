@@ -20,7 +20,7 @@ const GettingStartedGuideMobile = ({}: GettingStartedGuideMobileProps) => {
         <div className="first">
           <div className="text">Getting Started Guide</div>
           <div className="cross" onClick={closeGettingStartedGuide}>
-            <Image src="/icons/x-mark.svg" width={23} height={23} />
+            <Image alt="icon" src="/icons/x-mark.svg" width={23} height={23} />
           </div>
         </div>
         <div className="bars">

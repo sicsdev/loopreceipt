@@ -82,7 +82,7 @@ const SidebarItem = ({
       className={classNames(styles.item, { active: active })}
       onClick={onClick}
     >
-      <Image src={iconSrc} width={18} height={18} />
+      <Image alt="icon" src={iconSrc} width={18} height={18} />
       <span>{text}</span>
       <span className="dot"></span>
     </div>

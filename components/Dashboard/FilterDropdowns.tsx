@@ -80,7 +80,12 @@ const FilterDropdowns = ({
             setSelectingDateRange(true);
           }}
         >
-          <Image src="/icons/dashboard/calender.svg" width={18} height={16} />
+          <Image
+            alt="icon"
+            src="/icons/dashboard/calender.svg"
+            width={18}
+            height={16}
+          />
           &nbsp;
           {dateRangeString}
         </div>
@@ -169,6 +174,7 @@ const FilterDropdowns = ({
                   onClick={() => setSelectingDateRange(false)}
                 >
                   <Image
+                    alt="icon"
                     src="/icons/dashboard/back.svg"
                     width={15}
                     height={20}

@@ -27,6 +27,7 @@ const Notifications = ({}: NotificationsProps) => {
         >
           {win.down("xs") && (
             <Image
+              alt="icon"
               src="/icons/notifications/backarrow.svg"
               width={20}
               height={18}

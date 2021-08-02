@@ -19,7 +19,7 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
     <div className={styles.DesktopNavbar}>
       <Link href="/dashboard">
         <a className="logo">
-          <Image src="/icons/logo.png" width="189" height="58" />
+          <Image alt="icon" src="/icons/logo.png" width="189" height="58" />
         </a>
       </Link>
 
@@ -85,7 +85,12 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
               )}
             </div>
             <div className="item">
-              <Image src="/icons/search.svg" width="20" height="20" />
+              <Image
+                alt="icon"
+                src="/icons/search.svg"
+                width="20"
+                height="20"
+              />
             </div>
             <div
               className="item"
@@ -95,14 +100,20 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
                 );
               }}
             >
-              <Image src="/icons/bell.svg" width="20" height="20" />
+              <Image alt="icon" src="/icons/bell.svg" width="20" height="20" />
             </div>
             <div className="item">
-              <Image src="/icons/message.svg" width="20" height="20" />
+              <Image
+                alt="icon"
+                src="/icons/message.svg"
+                width="20"
+                height="20"
+              />
             </div>
             <div className="item">
               <div className="image">
                 <Image
+                  alt="icon"
                   src="/icons/profile.png"
                   width="36"
                   height="36"
@@ -113,7 +124,12 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
                 />
               </div>
               <p className="text">Account</p>
-              <Image src="/icons/arrow-down.svg" width="20" height="20" />
+              <Image
+                alt="icon"
+                src="/icons/arrow-down.svg"
+                width="20"
+                height="20"
+              />
             </div>
           </>
         )}

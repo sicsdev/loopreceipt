@@ -181,7 +181,12 @@ const Dashboard = ({ path }: DashboardProps) => {
         <div className={styles.iconGettingStarted}>
           {win.down("xs") ? (
             <div className="icon" onClick={openGettingStartedGuide}>
-              <Image src="/icons/dashboard/menu.svg" width={30} height={30} />
+              <Image
+                alt="icon"
+                src="/icons/dashboard/menu.svg"
+                width={30}
+                height={30}
+              />
             </div>
           ) : (
             <Button labelColor="white" onClick={openGettingStartedGuide}>
