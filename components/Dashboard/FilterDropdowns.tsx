@@ -244,6 +244,10 @@ const useStyles = makeStyles((theme) => ({
       gap: 0,
     },
     "& .dateRange": {
+      zIndex: 9,
+      // more than sidebarListener
+      // so that we can listen the click on it
+      // but must be more than navbar
       marginRight: "auto",
       border: "1px solid #CECECE",
       color: "#828282",

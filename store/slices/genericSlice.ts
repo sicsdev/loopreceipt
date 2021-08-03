@@ -1,10 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import store from "@store/store";
+import Cookies from "js-cookie";
+import router from "next/router";
 interface SliceGenericType {
   showGettingStartedGuide: boolean;
+  showMobileSideBar: boolean;
 }
 const initialState: SliceGenericType = {
   showGettingStartedGuide: false,
+  showMobileSideBar: false,
 };
 export const genericSlice = createSlice({
   name: "generic",
@@ -16,9 +20,17 @@ export const genericSlice = createSlice({
     ) => {
       state.showGettingStartedGuide = action.payload.showGettingStartedGuide;
     },
+    setShowMobileSideBar: (state, action: PayloadAction<boolean>) => {
+      state.showMobileSideBar = action.payload;
+    },
   },
 });
-export const { setShowGettingStartedGuide } = genericSlice.actions;
+export const logoutUser = () => {
+  Cookies.remove("token");
+  router.push("/user/login");
+};
+export const { setShowGettingStartedGuide, setShowMobileSideBar } =
+  genericSlice.actions;
 export const openGettingStartedGuide = () => {
   store.dispatch(setShowGettingStartedGuide({ showGettingStartedGuide: true }));
 };

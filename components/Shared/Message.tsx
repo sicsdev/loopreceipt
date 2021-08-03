@@ -3,7 +3,7 @@ import InfoIcon from "@material-ui/icons/Info";
 import classNames from "classnames";
 interface MessageProps {
   type: "warning";
-  message: string;
+  message: string | JSX.Element;
 }
 const Message = ({ type, message }: MessageProps) => {
   const styles = useStyles();

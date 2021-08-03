@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
       width: "40%",
     },
     [theme.breakpoints.down("xs")]: {
-      width: "80%",
+      width: "100%",
     },
     padding: "1rem",
     "& .line": {

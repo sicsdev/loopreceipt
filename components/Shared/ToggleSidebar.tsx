@@ -1,5 +1,4 @@
 import { makeStyles } from "@material-ui/core";
-import { useDelayed } from "@hooks/useDelayed";
 
 import { CSSTransition } from "react-transition-group";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
@@ -60,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 100,
     position: "absolute",
     backgroundColor: "white",
-    width: "70vw",
+    width: "80vw",
     overflow: "auto",
   },
   bg: {

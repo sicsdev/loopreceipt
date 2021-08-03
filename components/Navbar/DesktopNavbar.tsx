@@ -9,6 +9,7 @@ import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import { logoutUser } from "@store/slices/genericSlice";
 interface DesktopNavbarPropTypes {}
 const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
     <div className={styles.DesktopNavbar}>
       <Link href="/dashboard">
         <a className="logo">
-          <Image alt="icon" src="/icons/logo.png" width="189" height="58" />
+          <img alt="icon" src="/icons/logo.png" width={189} />
         </a>
       </Link>
 
@@ -118,8 +119,7 @@ const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
                   width="36"
                   height="36"
                   onClick={() => {
-                    Cookies.remove("token");
-                    router.push("/user/login");
+                    logoutUser();
                   }}
                 />
               </div>
@@ -148,10 +148,12 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
 
     "& .logo": {
+      borderRight: "1px solid #979797",
+      // borderRight: ,
       flexBasis: "250px",
       display: "flex",
-      justifyContent: "center",
       alignItems: "center",
+      paddingLeft: 25,
     },
     "& .items": {
       // border: "2px solid red",

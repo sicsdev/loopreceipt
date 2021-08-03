@@ -98,13 +98,13 @@ const SidebarItem = ({
 
 const useStyles = makeStyles((theme) => ({
   sideBar: {
+    // zIndex: 9,
     background: "white",
     width: 250,
     display: "flex",
     flexDirection: "column",
     paddingTop: "2rem",
-    // filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
-    borderRight: "2px solid #E5E5E5",
+    filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
     position: "fixed",
     height: "100vh",
   },

@@ -1,9 +1,12 @@
 import { EntityGroup } from "apiHelpers/types";
 import OptionCard from "@components/Dashboard/OptionCard";
-import { makeStyles } from "@material-ui/core";
-
+import { makeStyles, useTheme } from "@material-ui/core";
+import Loader from "react-loader";
 import Group from "./Group";
-
+import { useWindowScrolledTillEndListener } from "@hooks/useWindowScrolledTillEndListener";
+import { useState } from "react";
+import MyLoader from "@components/Shared/MyLoader";
+import { useEffect } from "react";
 interface ShowExistingGroupsProps {
   data:
     | {
@@ -13,10 +16,34 @@ interface ShowExistingGroupsProps {
   loading: boolean;
 }
 const ShowExistingGroups = ({ data, loading }: ShowExistingGroupsProps) => {
+  const [showLoader, setShowLoader] = useState(false);
+  const [numEntriesFetched, setNumEntriesFetched] = useState(5);
+  const [allEntriesFetched, setAllEntriesFetched] = useState(false);
+
+  const theme = useTheme();
   const styles = useStyles();
+  useEffect(() => {
+    setAllEntriesFetched(numEntriesFetched >= (data?.groups?.length ?? 0));
+  }, [numEntriesFetched, data]);
+  useWindowScrolledTillEndListener(async () => {
+    // console.log("scrolled till end");
+
+    setShowLoader(true);
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(1);
+      }, 1000);
+    });
+    setNumEntriesFetched((prev) => {
+      // console.log({ prev });
+      // console.log({ new: prev + 2 });
+      return prev + 5;
+    });
+    setShowLoader(false);
+  });
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <MyLoader loaded={false} />;
   } else if (!data) {
     return <div>Error while fetching</div>;
   }
@@ -34,11 +61,16 @@ const ShowExistingGroups = ({ data, loading }: ShowExistingGroupsProps) => {
           />
         </>
       ) : (
-        <div className="groups">
-          {data.groups.map((group) => (
-            <Group key={group.groupid} group={group} />
-          ))}
-        </div>
+        <>
+          <div className="groups">
+            {data.groups
+              .slice(0, Math.min(numEntriesFetched, data.groups.length))
+              .map((group, i) => (
+                <Group key={group.groupid} group={group} />
+              ))}
+            <MyLoader loaded={allEntriesFetched || !showLoader} />
+          </div>
+        </>
       )}
     </div>
   );
@@ -50,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+
     "& .normal": {
       color: "#4F5257",
     },

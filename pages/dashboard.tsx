@@ -11,7 +11,6 @@ import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { useEffect, useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
-import DetectSwipe from "@components/Shared/DetectSwipe";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
 import Pagination from "@components/Dashboard/Pagination";
 import Image from "next/image";
@@ -23,6 +22,8 @@ import { compareOnlyDate } from "@helpers/dateCalculations";
 import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
 import { baseURL } from "@apiHelpers/axios";
 import { useRouter } from "next/router";
+import UPadWrapper from "@components/Shared/UPadWrapper";
+import { useSwipeable } from "react-swipeable";
 interface DashboardProps {
   path: string;
 }
@@ -96,6 +97,20 @@ const Dashboard = ({ path }: DashboardProps) => {
       </Button>
     )
   );
+  const loopsSwipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      // console.log("swipe left");
+      if (activeIndex + 1 < links.length) {
+        setActiveIndex(activeIndex + 1);
+      }
+    },
+    onSwipedRight: () => {
+      // console.log("swipe right");
+      if (activeIndex - 1 >= 0) {
+        setActiveIndex(activeIndex - 1);
+      }
+    },
+  });
   if (error) {
     // router.push("/login");
     // console.log(error);
@@ -104,6 +119,7 @@ const Dashboard = ({ path }: DashboardProps) => {
     // }
     return <h1>Error occurred</h1>;
   }
+
   if (!data || !data.loops) return <h1>Loading...</h1>;
 
   return (
@@ -138,25 +154,12 @@ const Dashboard = ({ path }: DashboardProps) => {
             </div>
           )}
           {data.loops.length === 0 && <NoLoopReceipt />}
-          <div
-            className={styles.rest}
-            style={{ display: data.loops.length === 0 ? "none" : "block" }}
-          >
-            <DetectSwipe
-              onSwipedLeft={() => {
-                // console.log("swipe left");
-                if (activeIndex + 1 < links.length) {
-                  setActiveIndex(activeIndex + 1);
-                }
-              }}
-              onSwipedRight={() => {
-                // console.log("swipe right");
-                if (activeIndex - 1 >= 0) {
-                  setActiveIndex(activeIndex - 1);
-                }
-              }}
+          <UPadWrapper>
+            <div
+              className={styles.rest}
+              style={{ display: data.loops.length === 0 ? "none" : "block" }}
             >
-              <div className="loopCards">
+              <div className="loopCards" {...loopsSwipeHandlers}>
                 {paginatedLoops().map((loop) => (
                   <LoopCard
                     key={loop.loopid}
@@ -165,18 +168,19 @@ const Dashboard = ({ path }: DashboardProps) => {
                   />
                 ))}
               </div>
-            </DetectSwipe>
-            <div className="pagination">
-              <Pagination
-                totalItems={filteredLoops.length}
-                itemsPerPageOptions={itemsPerPageOptions}
-                itemsPerPage={itemsPerPage}
-                setItemsPerPage={setItemsPerPage}
-                page={page}
-                setPage={setPage}
-              />
+
+              <div className="pagination">
+                <Pagination
+                  totalItems={filteredLoops.length}
+                  itemsPerPageOptions={itemsPerPageOptions}
+                  itemsPerPage={itemsPerPage}
+                  setItemsPerPage={setItemsPerPage}
+                  page={page}
+                  setPage={setPage}
+                />
+              </div>
             </div>
-          </div>
+          </UPadWrapper>
         </div>
         <div className={styles.iconGettingStarted}>
           {win.down("xs") ? (
@@ -212,7 +216,8 @@ const useStyles = makeStyles((theme) => ({
       padding: "0",
     },
     "& .dropdowns": {
-      padding: "1.5rem 4%",
+      padding: "0 4%",
+      paddingTop: "2rem",
     },
     "& .top": {
       display: "flex",
@@ -226,11 +231,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   rest: {
-    [theme.breakpoints.down("sm")]: {
-      padding: "1.5rem 4%",
-    },
     "& .loopCards": {
-      margin: "3rem 0",
+      padding: "3rem 0",
       display: "flex",
       justifyContent: "space-between",
       flexWrap: "wrap",

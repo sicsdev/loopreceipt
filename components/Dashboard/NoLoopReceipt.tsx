@@ -74,7 +74,9 @@ const NoLoopReceipt = ({}: NoLoopReceiptProps) => {
 };
 export default NoLoopReceipt;
 const useStyles = makeStyles((theme) => ({
-  NoLoopReceipt: {},
+  NoLoopReceipt: {
+    padding: "2rem 1rem",
+  },
   bar: {
     display: "flex",
     justifyContent: "space-between",

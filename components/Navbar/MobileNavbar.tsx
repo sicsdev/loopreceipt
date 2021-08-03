@@ -1,23 +1,27 @@
 import RoundButton from "@components/Controls/RoundButton";
-import { makeStyles, StylesProvider, useTheme } from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core";
 import Image from "next/image";
-import { useState } from "react";
 import ToggleSidebar from "@components/Shared/ToggleSidebar";
 import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import router from "next/router";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { logoutUser, setShowMobileSideBar } from "@store/slices/genericSlice";
 interface MobileNavbarProps {}
 const MobileNavbar = ({}: MobileNavbarProps) => {
   const styles = useStyles();
   const theme = useTheme();
-  const [showSidebar, setShowSidebar] = useState(false);
+  const showMobileSideBar = useAppSelector(
+    (state) => state.generic.showMobileSideBar
+  );
+  const dispatch = useAppDispatch();
   return (
     <div className={styles.MobileNavbar}>
       <ToggleSidebar
-        show={showSidebar}
-        close={() => setShowSidebar(false)}
+        show={showMobileSideBar}
+        close={() => dispatch(setShowMobileSideBar(false))}
         delay={300}
       >
         <div className={styles.mobileSidebar}>
@@ -57,13 +61,22 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
             Version 1.3.0
           </div>
           <div className={styles.button}>
-            <RoundButton color={theme.palette.secondary.main}>
+            <RoundButton
+              color={theme.palette.secondary.main}
+              onClick={() => {
+                logoutUser();
+                dispatch(setShowMobileSideBar(false));
+              }}
+            >
               Logout
             </RoundButton>
           </div>
         </div>
       </ToggleSidebar>
-      <div className="items" onClick={() => setShowSidebar(true)}>
+      <div
+        className="items"
+        onClick={() => dispatch(setShowMobileSideBar(true))}
+      >
         <Image
           alt="icon"
           src="/icons/sidebar/menu.svg"
@@ -93,7 +106,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
         className="link"
         onClick={(e) => {
           if (onClick) onClick(e);
-          setShowSidebar(false);
+          dispatch(setShowMobileSideBar(false));
         }}
       >
         {children}
