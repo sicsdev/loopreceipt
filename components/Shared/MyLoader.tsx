@@ -1,8 +1,10 @@
 import { makeStyles } from "@material-ui/core";
-import Loader, { LoaderProps } from "react-loader";
+// import Loader, { LoaderProps } from "react-loader";
+import Loader from "react-loader";
 // add export in index.ts file to not show error
 // since LoaderProps is not exported by the module
-const MyLoader = (props: LoaderProps) => {
+// to get propTypes use props: LoaderProps
+const MyLoader = (props: any) => {
   const styles = useStyles();
   return (
     <div className={styles.MyLoader}>
