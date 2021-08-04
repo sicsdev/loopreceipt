@@ -17,27 +17,29 @@ import Image from "next/image";
 import { openGettingStartedGuide } from "@store/slices/genericSlice";
 
 import useSWR from "swr";
-import { EntityLoop } from "apiHelpers/types";
+import { EntityLoop, EntityUser } from "apiHelpers/types";
 import { compareOnlyDate } from "@helpers/dateCalculations";
 import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
 import { baseURL } from "@apiHelpers/axios";
 import { useRouter } from "next/router";
 import UPadWrapper from "@components/Shared/UPadWrapper";
 import { useSwipeable } from "react-swipeable";
+import { useFetch } from "@hooks/useFetch";
+import usersApi from "@apiClient/usersApi";
 interface DashboardProps {
   path: string;
 }
-const links: LoopType[] = ["outgoing", "received", "drafts"];
+const tabs: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
 const Dashboard = ({ path }: DashboardProps) => {
   const router = useRouter();
   // console.log(loops);
   const { data, error } = useSWR(baseURL + "/loops");
-
+  const { data: userData } = useFetch<{ user: EntityUser }>(usersApi.getMe);
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
   const [dateRange, setDateRange] = useState<DateRange>({
     start: null,
@@ -100,14 +102,14 @@ const Dashboard = ({ path }: DashboardProps) => {
   const loopsSwipeHandlers = useSwipeable({
     onSwipedLeft: () => {
       // console.log("swipe left");
-      if (activeIndex + 1 < links.length) {
-        setActiveIndex(activeIndex + 1);
+      if (activeTabIndex + 1 < tabs.length) {
+        setActiveTabIndex(activeTabIndex + 1);
       }
     },
     onSwipedRight: () => {
       // console.log("swipe right");
-      if (activeIndex - 1 >= 0) {
-        setActiveIndex(activeIndex - 1);
+      if (activeTabIndex - 1 >= 0) {
+        setActiveTabIndex(activeTabIndex - 1);
       }
     },
   });
@@ -139,9 +141,9 @@ const Dashboard = ({ path }: DashboardProps) => {
           </div>
 
           <Links
-            links={links}
-            activeIndex={activeIndex}
-            setActiveIndex={setActiveIndex}
+            links={tabs}
+            activeIndex={activeTabIndex}
+            setActiveIndex={setActiveTabIndex}
           />
           {data.loops.length > 0 && (
             <div className="dropdowns">
@@ -153,33 +155,41 @@ const Dashboard = ({ path }: DashboardProps) => {
               />
             </div>
           )}
-          {data.loops.length === 0 && <NoLoopReceipt />}
-          <UPadWrapper>
-            <div
-              className={styles.rest}
-              style={{ display: data.loops.length === 0 ? "none" : "block" }}
-            >
-              <div className="loopCards" {...loopsSwipeHandlers}>
-                {paginatedLoops().map((loop) => (
-                  <LoopCard
-                    key={loop.loopid}
-                    type={links[activeIndex]}
-                    loop={loop}
-                  />
-                ))}
-              </div>
 
-              <div className="pagination">
-                <Pagination
-                  totalItems={filteredLoops.length}
-                  itemsPerPageOptions={itemsPerPageOptions}
-                  itemsPerPage={itemsPerPage}
-                  setItemsPerPage={setItemsPerPage}
-                  page={page}
-                  setPage={setPage}
+          <UPadWrapper>
+            <>
+              {data.loops.length === 0 && (
+                <NoLoopReceipt
+                  activeTab={tabs[activeTabIndex]}
+                  user={userData?.user}
                 />
+              )}
+              <div
+                className={styles.rest}
+                style={{ display: data.loops.length === 0 ? "none" : "block" }}
+              >
+                <div className="loopCards" {...loopsSwipeHandlers}>
+                  {paginatedLoops().map((loop) => (
+                    <LoopCard
+                      key={loop.loopid}
+                      type={tabs[activeTabIndex]}
+                      loop={loop}
+                    />
+                  ))}
+                </div>
+
+                <div className="pagination">
+                  <Pagination
+                    totalItems={filteredLoops.length}
+                    itemsPerPageOptions={itemsPerPageOptions}
+                    itemsPerPage={itemsPerPage}
+                    setItemsPerPage={setItemsPerPage}
+                    page={page}
+                    setPage={setPage}
+                  />
+                </div>
               </div>
-            </div>
+            </>
           </UPadWrapper>
         </div>
         <div className={styles.iconGettingStarted}>

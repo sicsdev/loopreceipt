@@ -53,6 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           }}
         >
           <Component {...pageProps} path={path} />
+          {/* // path variable is available to all pages */}
         </SWRConfig>
       </ThemeProvider>
     </Provider>

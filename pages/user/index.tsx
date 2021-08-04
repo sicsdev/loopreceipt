@@ -1,10 +1,10 @@
 import { makeStyles } from "@material-ui/core";
-interface AuthProps {}
-const Auth = ({}: AuthProps) => {
+interface UserProps {}
+const User = ({}: UserProps) => {
   const styles = useStyles();
-  return <div className={styles.Auth}>Auth</div>;
+  return <div className={styles.User}>User</div>;
 };
-export default Auth;
+export default User;
 const useStyles = makeStyles((theme) => ({
-  Auth: {},
+  User: {},
 }));

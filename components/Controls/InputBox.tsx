@@ -177,6 +177,7 @@ const useStyles = makeStyles((theme) => {
       },
       position: "relative",
       "& .passwordToogler": {
+        cursor: "pointer",
         position: "absolute",
         right: 10,
         top: 10,

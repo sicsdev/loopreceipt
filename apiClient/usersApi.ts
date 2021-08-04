@@ -1,13 +1,10 @@
 import axios from "@apiHelpers/axios";
-import { EntityLoop } from "@apiHelpers/types";
+import { EntityLoop, EntityUser } from "@apiHelpers/types";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
 export default {
   getMe: async (): Promise<
     | {
-        error: string;
-        user: {
-          email: string;
-        };
+        user: EntityUser;
       }
     | undefined
   > => {

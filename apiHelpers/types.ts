@@ -1,3 +1,18 @@
+export interface EntityUser {
+  contacts: {
+    google: [];
+    microsoft: [];
+  };
+  pushNotifications: boolean;
+  _id: string;
+  userId: string;
+  email: string;
+  stripeCustomerId: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  name: string;
+}
 export interface EntityRecipient {
   email: string;
   name: string;
