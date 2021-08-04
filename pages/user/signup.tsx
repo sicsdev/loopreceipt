@@ -64,7 +64,7 @@ const Signup = ({}: SignupProps) => {
         <h1 className="heading">{signupForm.formHeading}</h1>
         <h4 className="subheading">
           Already have a Loopreceipt account?&nbsp;
-          <PrimaryLink href="/login">Sign in</PrimaryLink>
+          <PrimaryLink href="/user/login">Sign in</PrimaryLink>
         </h4>
         <div className="form">
           <Form form={signupForm} formProps={signupFormProps} padForm={false} />

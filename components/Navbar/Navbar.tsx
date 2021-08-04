@@ -3,14 +3,18 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles } from "@material-ui/core";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
+import { useRouter } from "next/router";
 interface NavbarPropTypes {}
 const Navbar = ({}: NavbarPropTypes) => {
+  const router = useRouter();
+  const path = router.asPath;
+  const showOnlyLogo = path.includes("/user/");
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   return (
     <div className={styles.Navbar}>
-      {win.down("sm") ? <MobileNavbar /> : <DesktopNavbar />}
+      {win.up("md") || showOnlyLogo ? <DesktopNavbar /> : <MobileNavbar />}
     </div>
   );
 };
