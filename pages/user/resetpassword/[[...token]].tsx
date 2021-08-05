@@ -1,4 +1,5 @@
 import { useForm } from "@hooks/useForm";
+import { makeStyles } from "@material-ui/core";
 import Button from "@components/Controls/Button";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
@@ -14,16 +15,27 @@ import { deviceDetect } from "react-device-detect";
 import axios from "apiHelpers/axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import MessageCard from "@components/Shared/MessageCard";
+import Image from "next/image";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import Fade from "@material-ui/core/Fade";
+import Slide from "@material-ui/core/Slide";
+// change this
 interface ResetPasswordProps {}
 const ResetPassword = ({}: ResetPasswordProps) => {
   const router = useRouter();
-  const styles = commonUserFormStyles();
+  const commonStyles = commonUserFormStyles();
+  const styles = useStyles();
   const resetPasswordFormProps = useForm(resetPasswordForm.initialState);
-  const { token } = router.query;
+  let { token } = router.query;
+  token = token?.[0];
   console.log(token);
   const [browser, setBrowser] = useState("");
   const [osName, setOsName] = useState("");
   const [location, setLocation] = useState("");
+  const [alertMessage, setAlertMessage] = useState<any>("");
+  const [showAlert, setShowAlert] = useState(false);
   const [invalidLink, setInValidLink] = useState(true);
   const fetchDeviceAndLocationDetails = () => {
     let c = deviceDetect();
@@ -73,6 +85,15 @@ const ResetPassword = ({}: ResetPasswordProps) => {
       console.log(payload);
       const response = await sendRequest(payload);
       console.log(response);
+      if (response) {
+        setAlertMessage(
+          <span>
+            Reset Password successful.&nbsp;
+            <PrimaryLink href="/user/login">Login now</PrimaryLink>
+          </span>
+        );
+        setShowAlert(true);
+      }
     }
   };
   useWindowKeyDownListener({
@@ -80,24 +101,40 @@ const ResetPassword = ({}: ResetPasswordProps) => {
   });
   return (
     <Layout>
-      <div className={styles.UserForm}>
-        <h1 className="heading">{resetPasswordForm.formHeading}</h1>
-
-        <div className="form">
+      <Snackbar
+        open={showAlert}
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={(e, reason) => {
+          // reason 'timeout' | 'clickaway';
+          setShowAlert(false);
+        }}
+        // TransitionComponent={Fade}
+        TransitionComponent={(props) => <Slide {...props} direction="down" />}
+      >
+        <Alert
+          onClose={() => {
+            setShowAlert(false);
+          }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+      <div className={commonStyles.UserForm}>
+        <div className="form card">
+          <div className="iconContainer">
+            <Image src="/icons/logo-filled.svg" height={49} width={49} />
+          </div>
+          <h1 className="heading">{resetPasswordForm.formHeading}</h1>
           {invalidLink ? (
-            <Message
-              type="warning"
-              message={
-                <span>
-                  No password reset token found or your password reset link has
-                  now expired. To reset your password, submit the&nbsp;
-                  <PrimaryLink href="/user/forgotpassword">
-                    forgot password
-                  </PrimaryLink>
-                  &nbsp;form.
-                </span>
-              }
-            />
+            <MessageCard type="warning">
+              No password reset token found or your password reset link has now
+              expired. To reset your password, submit the&nbsp;
+              <PrimaryLink href="/user/forgotpassword">
+                forgot password
+              </PrimaryLink>
+              &nbsp;form.
+            </MessageCard>
           ) : (
             <>
               <Form
@@ -119,17 +156,20 @@ const ResetPassword = ({}: ResetPasswordProps) => {
               )}
             </>
           )}
-          <div className="bottomText">
+        </div>
+        <div className="bottomLinks">
+          <p>
             Already have a loopreceipt account?&nbsp;
             <PrimaryLink href="/user/login">Log in</PrimaryLink>
-          </div>
-          <div className="bottomText">
+          </p>
+          <p>
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Sign up</PrimaryLink>
-          </div>
+          </p>
         </div>
       </div>
     </Layout>
   );
 };
 export default ResetPassword;
+const useStyles = makeStyles((theme) => ({}));

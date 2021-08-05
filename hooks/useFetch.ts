@@ -28,6 +28,8 @@ export const useFetch = <T>(
   const sendRequest = async (...args: any): Promise<T | undefined> => {
     setRequestSent(true);
     setLoading(true);
+    setData(undefined);
+    setError(undefined);
     try {
       const res = await fetcher(...args);
       setData(res);

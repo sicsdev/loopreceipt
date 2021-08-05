@@ -44,8 +44,8 @@ const UpdatePassword = ({}: UpdatePasswordProps) => {
   return (
     <Layout>
       <div className={styles.UserForm}>
-        <h1 className="heading">{updatePasswordForm.formHeading}</h1>
         <div className="form">
+          <h1 className="heading">{updatePasswordForm.formHeading}</h1>
           <Form
             form={updatePasswordForm}
             formProps={updatePasswordFormProps}
@@ -62,11 +62,12 @@ const UpdatePassword = ({}: UpdatePasswordProps) => {
               Update Password
             </Button>
           )}
-
-          <div className="bottomText">
+        </div>
+        <div className="bottomLinks">
+          <p>
             Cancel update go to dashboard?&nbsp;
             <PrimaryLink href="/dashboard">Dashboard</PrimaryLink>
-          </div>
+          </p>
         </div>
       </div>
     </Layout>

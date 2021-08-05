@@ -11,11 +11,11 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { logoutUser } from "@store/slices/genericSlice";
 import { useEffect } from "react";
-interface DesktopNavbarPropTypes {}
-const DesktopNavbar = ({}: DesktopNavbarPropTypes) => {
+interface DesktopNavbarPropTypes {
+  showOnlyLogo: boolean;
+}
+const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
   const router = useRouter();
-  const path = router.asPath;
-  const showOnlyLogo = path.includes("/user/");
   const styles = useStyles({ showOnlyLogo });
   const dispatch = useAppDispatch();
   const isLoggedIn = !!Cookies.get("token");

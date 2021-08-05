@@ -4,17 +4,26 @@ import { makeStyles } from "@material-ui/core";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
 import { useRouter } from "next/router";
+import LinedNavbar from "./LinedNavbar";
 interface NavbarPropTypes {}
 const Navbar = ({}: NavbarPropTypes) => {
   const router = useRouter();
   const path = router.asPath;
   const showOnlyLogo = path.includes("/user/");
+
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
+
   return (
     <div className={styles.Navbar}>
-      {win.up("md") || showOnlyLogo ? <DesktopNavbar /> : <MobileNavbar />}
+      {path === "/selectindustry" || path === "/oauthcontacts" ? (
+        <LinedNavbar />
+      ) : win.up("md") || showOnlyLogo ? (
+        <DesktopNavbar showOnlyLogo={showOnlyLogo} />
+      ) : (
+        <MobileNavbar />
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 interface UPadWrapperProps {
-  children: JSX.Element | string;
+  children: any;
 }
 const UPadWrapper = ({ children }: UPadWrapperProps) => {
   const styles = useStyles();

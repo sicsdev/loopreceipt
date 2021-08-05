@@ -8,13 +8,17 @@ import usersApi from "@apiClient/usersApi";
 import { validateAllFieldsOfForm } from "@forms/formUtils";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
 import Layout from "@components/Global/Layout";
-import Message from "@components/Shared/Message";
 import { commonUserFormStyles } from "./login";
+import MessageCard from "@components/Shared/MessageCard";
+import Image from "next/image";
+import { useState } from "react";
+import { makeStyles } from "@material-ui/core";
 interface ForgotPasswordProps {}
 const ForgotPassword = ({}: ForgotPasswordProps) => {
-  const styles = commonUserFormStyles();
+  const commonStyles = commonUserFormStyles();
+  const styles = useStyles();
   const forgotPasswordFormProps = useForm(forgotPasswordForm.initialState);
-
+  const [emailSentSuccessfully, setEmailSentSuccessfully] = useState(false);
   const { data, loading, sendRequest, requestSent, error } = useFetch<string>(
     usersApi.forgot,
     {
@@ -27,7 +31,10 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
       const response = await sendRequest({
         email: forgotPasswordFormProps.formState.email.value,
       });
-      console.log(response);
+      // console.log(response);
+      if (response) {
+        setEmailSentSuccessfully(true);
+      }
     }
   };
   useWindowKeyDownListener({
@@ -35,36 +42,82 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
   });
   return (
     <Layout>
-      <div className={styles.UserForm}>
-        <h1 className="heading">{forgotPasswordForm.formHeading}</h1>
-        <div className="form">
-          <Form
-            form={forgotPasswordForm}
-            formProps={forgotPasswordFormProps}
-            padForm={false}
-          />
-          {error && <Message message={error.message} type="warning" />}
-          {loading ? (
-            <Button labelWeight="bold" color="default" labelColor="gray">
-              Loading...
-            </Button>
-          ) : (
-            <Button labelWeight="bold" onClick={sendEmailLink}>
-              Send Reset Email
-            </Button>
+      <div className={commonStyles.UserForm}>
+        <div className="form card">
+          <div className="iconContainer">
+            <Image src="/icons/logo-filled.svg" height={49} width={49} />
+          </div>
+          <h1 className="heading">{forgotPasswordForm.formHeading}</h1>
+          {error && (
+            <MessageCard type="warning">
+              That user doesn’t exist There is no user with that address. <br />
+              Do you want to{" "}
+              <PrimaryLink href="/user/signup">sign up</PrimaryLink>
+              &nbsp; instead?
+            </MessageCard>
           )}
-
-          <div className="bottomText">
+          {emailSentSuccessfully ? (
+            <div className={styles.emailSentMessage}>
+              <p className="head">Check your email</p>
+              <p className="text1">
+                We just sent you an email containing a temporary link that will
+                allow you to reset your password. Please check your spam folder
+                if the email doesn't appear within a few minutes.
+              </p>
+              <p className="text2">
+                If there any issues <PrimaryLink href="/">email us</PrimaryLink>
+                , and we'll help fix it!
+              </p>
+            </div>
+          ) : (
+            <>
+              <Form
+                form={forgotPasswordForm}
+                formProps={forgotPasswordFormProps}
+                padForm={false}
+              />
+              {loading ? (
+                <Button labelWeight="bold" color="default" labelColor="gray">
+                  Loading...
+                </Button>
+              ) : (
+                <Button labelWeight="bold" onClick={sendEmailLink}>
+                  Send Reset Email
+                </Button>
+              )}
+            </>
+          )}
+        </div>
+        <div className="bottomLinks">
+          <p>
             Already have a loopreceipt account?&nbsp;
             <PrimaryLink href="/user/login">Log in</PrimaryLink>
-          </div>
-          <div className="bottomText">
+          </p>
+          <p>
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Sign up</PrimaryLink>
-          </div>
+          </p>
         </div>
       </div>
     </Layout>
   );
 };
 export default ForgotPassword;
+const useStyles = makeStyles((theme) => ({
+  emailSentMessage: {
+    textAlign: "center",
+    "& .head": {
+      color: theme.palette.secondary.main,
+      fontWeight: 500,
+      fontSize: 24,
+    },
+    "& .text1": {
+      marginTop: "2rem",
+      marginBottom: "3rem",
+      fontSize: 18,
+    },
+    "& .text2": {
+      fontSize: 18,
+    },
+  },
+}));

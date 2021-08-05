@@ -68,8 +68,8 @@ const Login = ({}: LoginProps) => {
   return (
     <Layout>
       <div className={styles.UserForm}>
-        <h1 className="heading">{loginForm.formHeading}</h1>
         <div className="form">
+          <h1 className="heading">{loginForm.formHeading}</h1>
           <Form form={loginForm} formProps={loginFormProps} padForm={false} />
           {error && <Message message={error.message} type="warning" />}
           {/* Invalid Email or Password. If email is correct use forgot password
@@ -106,11 +106,12 @@ const Login = ({}: LoginProps) => {
               Log In
             </Button>
           )}
-
-          <div className="bottomText">
+        </div>
+        <div className="bottomLinks">
+          <p>
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Join free today</PrimaryLink>
-          </div>
+          </p>
         </div>
       </div>
     </Layout>
@@ -121,24 +122,34 @@ export const commonUserFormStyles = makeStyles((theme) => ({
   UserForm: {
     // border: "1px solid red",
     padding: "4rem 16px",
-    "& .heading": {
-      fontWeight: 500,
-      fontSize: 36,
-      color: theme.palette.secondary.main,
-      textAlign: "center",
-      marginBottom: "2rem",
-    },
-    "& .subheading": {
-      textAlign: "center",
-      fontSize: 18,
-    },
+
     "& .form": {
-      marginTop: "4rem",
       maxWidth: 600,
       margin: "auto",
       display: "flex",
       flexDirection: "column",
       gap: "2rem",
+      textAlign: "center",
+      "&.card": {
+        background: "#FFFFFF",
+        boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
+        borderRadius: "8px",
+        padding: "2rem",
+      },
+      "& .iconContainer": {},
+      "& .heading": {
+        fontWeight: 500,
+        fontSize: 36,
+        color: theme.palette.secondary.main,
+        marginBottom: "1rem",
+        [theme.breakpoints.down("xs")]: {
+          fontSize: 32,
+        },
+      },
+      "& .subheading": {
+        fontSize: 18,
+        marginTop: "-2rem",
+      },
       "& .MyInputContainer": {
         width: "100%",
       },
@@ -152,10 +163,15 @@ export const commonUserFormStyles = makeStyles((theme) => ({
           gap: 5,
         },
       },
-      "& .bottomText": {
-        textAlign: "center",
-        color: "#8F8F8F",
-      },
+    },
+    "& .bottomLinks": {
+      margin: "auto",
+      marginTop: "2rem",
+      maxWidth: 600,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 20,
     },
   },
 }));

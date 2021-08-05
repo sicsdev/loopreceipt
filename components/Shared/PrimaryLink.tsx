@@ -19,5 +19,6 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     textDecoration: "underline",
     fontSize: "inherit",
+    fontWeight: "bold",
   },
 }));
