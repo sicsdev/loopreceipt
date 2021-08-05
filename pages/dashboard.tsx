@@ -192,7 +192,7 @@ const Dashboard = ({ path }: DashboardProps) => {
                       user={userData?.user}
                     />
                   )}
-                  {getLoops.data.loops.length == 0 && (
+                  {!loopsIsEmpty && getLoops.data.loops.length == 0 && (
                     <div className="noLoopsMessage">No Loops Found</div>
                   )}
                   <div

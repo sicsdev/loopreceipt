@@ -36,7 +36,6 @@ const SaveCreatedGroup = ({ loopers }: SaveCreatedGroupProps) => {
   if (!requestSent) {
     child = (
       <div>
-        <p>Please save the group </p>
         <Group group={{ members: loopers }} />
         <div style={{ height: "2rem" }}></div>
         <Button

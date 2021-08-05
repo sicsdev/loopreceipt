@@ -78,7 +78,7 @@ const Summary = ({
       case "external": {
         const companyState = formsProps[companyFormIdx].formState;
         loop = {
-          barcode: "ee3432r23fd12321",
+          barcode: uuidv4(),
           city: companyState.city.value,
           country: companyState.country.value,
           postalCode: companyState.zipCode.value,
