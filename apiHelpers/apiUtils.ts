@@ -19,3 +19,4 @@ export const axiosErrorHandler = (error: AxiosError) => {
   }
   console.log(error.config);
 };
+export const cacheMap: { [key: string]: any } = {};

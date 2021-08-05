@@ -49,7 +49,7 @@ const Signup = ({}: SignupProps) => {
   }>(usersApi.create, {
     deferred: true,
   });
-  const postVerify = useFetch<string>(usersApi.verify);
+  const postUsersVerify = useFetch<string>(usersApi.verify);
   const signup = async () => {
     console.log(signupFormProps);
     if (validateAllFieldsOfForm(signupFormProps)) {
@@ -74,7 +74,7 @@ const Signup = ({}: SignupProps) => {
     email: string,
     alert: boolean = true
   ) => {
-    const message = await postVerify.sendRequest({ email });
+    const message = await postUsersVerify.sendRequest({ email });
     console.log(message);
     // u can change the without checking message too
     if (
@@ -89,7 +89,7 @@ const Signup = ({}: SignupProps) => {
     }
   };
   useEffect(() => {
-    if (postVerify.error?.message === "User already verified") {
+    if (postUsersVerify.error?.message === "User already verified") {
       setAlertMessage(
         <span>
           User already verified.&nbsp;
@@ -98,7 +98,7 @@ const Signup = ({}: SignupProps) => {
       );
       setShowAlert(true);
     }
-  }, [postVerify.error]);
+  }, [postUsersVerify.error]);
   useWindowKeyDownListener({
     Enter: signup,
   });
@@ -169,7 +169,7 @@ const Signup = ({}: SignupProps) => {
               <span style={{ fontWeight: 500 }}>{userResponse?.email}</span>
             </p>
             <p>Just click on the link in the email to complete your signup.</p>
-            {postVerify.loading ? (
+            {postUsersVerify.loading ? (
               <Button labelWeight="bold" color="default" labelColor="gray">
                 Loading...
               </Button>

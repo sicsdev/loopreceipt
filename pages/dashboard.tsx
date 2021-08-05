@@ -26,60 +26,96 @@ import UPadWrapper from "@components/Shared/UPadWrapper";
 import { useSwipeable } from "react-swipeable";
 import { useFetch } from "@hooks/useFetch";
 import usersApi from "@apiClient/usersApi";
+import loopsApi from "@apiClient/loopsApi";
+import MyLoader from "@components/Shared/MyLoader";
+import Cookies from "js-cookie";
 interface DashboardProps {
   path: string;
 }
 const tabs: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
 const Dashboard = ({ path }: DashboardProps) => {
+  const [isFirstTime, setIsFirstTime] = useState<boolean>();
+
   const router = useRouter();
   // console.log(loops);
-  const { data, error } = useSWR(baseURL + "/loops");
+
   const { data: userData } = useFetch<{ user: EntityUser }>(usersApi.getMe);
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
+  const [loopsIsEmpty, setLoopsIsEmpty] = useState(true);
   const [dateRange, setDateRange] = useState<DateRange>({
     start: null,
     end: null,
   });
-  const [filteredLoops, setFilteredLoops] = useState<EntityLoop[]>([]);
   const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[1]);
   const [page, setPage] = useState(1);
-  // console.log(win.up("md"));
+  const getLoops = useFetch<{ loops: EntityLoop[]; totalLoops: number }>(
+    loopsApi.getAll,
+    { deferred: true }
+  );
+  useEffect(() => {
+    setIsFirstTime(Cookies.get("isFirstTime") === "true");
+  }, []);
+  const fetchLoopsData = async () => {
+    let loopsResponse:
+      | {
+          loops: EntityLoop[];
+          totalLoops: number;
+        }
+      | undefined;
+    if (loopSource != "all") {
+      loopsResponse = await getLoops.sendRequest(page, { type: loopSource });
+    } else if (dateRange.start || dateRange.end) {
+      // apply date filters
+      const localDateRange = {
+        start: dateRange.start && new Date(dateRange.start),
+        end: dateRange.end && new Date(dateRange.end),
+      };
+      if (localDateRange.end) {
+        localDateRange.end.setDate(localDateRange.end.getDate() + 1);
+      }
+      if (localDateRange.end == null && localDateRange.start) {
+        localDateRange.end = new Date(localDateRange.start);
+        localDateRange.end.setDate(localDateRange.end.getDate() + 1);
+      }
+      if (localDateRange.start == null && localDateRange.end) {
+        localDateRange.start = new Date(localDateRange.end);
+        localDateRange.start.setDate(localDateRange.start.getDate() - 1);
+      }
+      let epochStartDate = (localDateRange.start as any) / 1000;
+
+      let epochEndDate = (localDateRange.end as any) / 1000;
+
+      loopsResponse = await getLoops.sendRequest(page, {
+        from: epochStartDate,
+        to: epochEndDate,
+      });
+    } else {
+      loopsResponse = await getLoops.sendRequest(page);
+    }
+    if (loopsResponse?.loops.length) {
+      setLoopsIsEmpty(false);
+    }
+    return loopsResponse;
+  };
 
   useEffect(() => {
-    if (!data || !data.loops) return;
-    // console.log(data.loops);
-    let localLoops = [...data.loops];
-    if (loopSource !== "all") {
-      localLoops = localLoops.filter((loop) => loop.type === loopSource);
+    fetchLoopsData();
+  }, [page]);
+  useEffect(() => {
+    if (page != 1) {
+      setPage(1);
+      // now on page change we automatically run fetchLoopsData
+    } else {
+      fetchLoopsData();
     }
-    if (dateRange.start && dateRange.end) {
-      localLoops = localLoops.filter(
-        (loop) =>
-          compareOnlyDate(new Date(loop.timestamp!), dateRange.start!) >= 0 &&
-          compareOnlyDate(new Date(loop.timestamp!), dateRange.end!) <= 0
-      );
-    } else if (dateRange.start) {
-      localLoops = localLoops.filter(
-        (loop) =>
-          compareOnlyDate(new Date(loop.timestamp!), dateRange.start!) == 0
-      );
-    } else if (dateRange.end) {
-      localLoops = localLoops.filter(
-        (loop) =>
-          compareOnlyDate(new Date(loop.timestamp!), dateRange.end!) == 0
-      );
-    }
-    setFilteredLoops(localLoops);
-  }, [data, itemsPerPage, page, loopSource, dateRange]);
-  const paginatedLoops = () => {
-    const startIndex = (page - 1) * itemsPerPage;
-    return filteredLoops.slice(startIndex, startIndex + itemsPerPage);
-  };
+  }, [loopSource, dateRange]);
+  // console.log(win.up("md"));
+
   // this should be defined before return statements
   const mobileNewButton = ListenClickAtParentElement(
     (e) => {
@@ -113,16 +149,6 @@ const Dashboard = ({ path }: DashboardProps) => {
       }
     },
   });
-  if (error) {
-    // router.push("/login");
-    // console.log(error);
-    // if (error.message === "Access denied no token provided.") {
-    //   router.push("/login");
-    // }
-    return <h1>Error occurred</h1>;
-  }
-
-  if (!data || !data.loops) return <h1>Loading...</h1>;
 
   return (
     <Layout>
@@ -139,75 +165,88 @@ const Dashboard = ({ path }: DashboardProps) => {
               {mobileNewButton}
             </div>
           </div>
-
           <Links
             links={tabs}
             activeIndex={activeTabIndex}
             setActiveIndex={setActiveTabIndex}
           />
-          {data.loops.length > 0 && (
-            <div className="dropdowns">
-              <FilterDropdowns
-                loopSource={loopSource}
-                setLoopSource={setLoopSource}
-                dateRange={dateRange}
-                setDateRange={setDateRange}
-              />
-            </div>
-          )}
 
-          <UPadWrapper>
+          <div className="dropdowns">
+            <FilterDropdowns
+              loopSource={loopSource}
+              setLoopSource={setLoopSource}
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+            />
+          </div>
+
+          {getLoops.loading ? (
+            <MyLoader />
+          ) : getLoops.data?.loops ? (
             <>
-              {data.loops.length === 0 && (
-                <NoLoopReceipt
-                  activeTab={tabs[activeTabIndex]}
-                  user={userData?.user}
-                />
-              )}
-              <div
-                className={styles.rest}
-                style={{ display: data.loops.length === 0 ? "none" : "block" }}
-              >
-                <div className="loopCards" {...loopsSwipeHandlers}>
-                  {paginatedLoops().map((loop) => (
-                    <LoopCard
-                      key={loop.loopid}
-                      type={tabs[activeTabIndex]}
-                      loop={loop}
+              <UPadWrapper>
+                <>
+                  {loopsIsEmpty && (
+                    <NoLoopReceipt
+                      activeTab={tabs[activeTabIndex]}
+                      user={userData?.user}
                     />
-                  ))}
-                </div>
+                  )}
+                  {getLoops.data.loops.length == 0 && (
+                    <div className="noLoopsMessage">No Loops Found</div>
+                  )}
+                  <div
+                    className={styles.rest}
+                    style={{
+                      display: loopsIsEmpty ? "none" : "block",
+                    }}
+                  >
+                    <div className="loopCards" {...loopsSwipeHandlers}>
+                      {getLoops.data.loops.map((loop) => (
+                        <LoopCard
+                          key={loop.loopid}
+                          type={tabs[activeTabIndex]}
+                          loop={loop}
+                        />
+                      ))}
+                    </div>
 
-                <div className="pagination">
-                  <Pagination
-                    totalItems={filteredLoops.length}
-                    itemsPerPageOptions={itemsPerPageOptions}
-                    itemsPerPage={itemsPerPage}
-                    setItemsPerPage={setItemsPerPage}
-                    page={page}
-                    setPage={setPage}
-                  />
-                </div>
-              </div>
+                    <div className="pagination">
+                      <Pagination
+                        totalItems={getLoops.data.totalLoops}
+                        itemsPerPageOptions={itemsPerPageOptions}
+                        itemsPerPage={itemsPerPage}
+                        setItemsPerPage={setItemsPerPage}
+                        page={page}
+                        setPage={setPage}
+                      />
+                    </div>
+                  </div>
+                </>
+              </UPadWrapper>
             </>
-          </UPadWrapper>
-        </div>
-        <div className={styles.iconGettingStarted}>
-          {win.down("xs") ? (
-            <div className="icon" onClick={openGettingStartedGuide}>
-              <Image
-                alt="icon"
-                src="/icons/dashboard/menu.svg"
-                width={30}
-                height={30}
-              />
-            </div>
           ) : (
-            <Button labelColor="white" onClick={openGettingStartedGuide}>
-              Getting Started
-            </Button>
+            <div>Error</div>
           )}
         </div>
+        {isFirstTime && (
+          <div className={styles.iconGettingStarted}>
+            {win.down("xs") ? (
+              <div className="icon" onClick={openGettingStartedGuide}>
+                <Image
+                  alt="icon"
+                  src="/icons/dashboard/menu.svg"
+                  width={30}
+                  height={30}
+                />
+              </div>
+            ) : (
+              <Button labelColor="white" onClick={openGettingStartedGuide}>
+                Getting Started
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </Layout>
   );
@@ -237,6 +276,11 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "1.3rem",
         fontWeight: "500",
       },
+    },
+    "& .noLoopsMessage": {
+      textAlign: "center",
+      fontSize: 20,
+      marginTop: "4rem",
     },
   },
 
