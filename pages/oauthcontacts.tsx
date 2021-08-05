@@ -55,6 +55,7 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
           // reason 'timeout' | 'clickaway';
           if (reason == "timeout") setShowAlert(false);
           // i don't know why clickaway is not working
+          // it works with Fade though
         }}
         TransitionComponent={(props) => <Slide {...props} direction="down" />}
       >

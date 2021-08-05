@@ -1,27 +1,34 @@
-import { EntityGroup } from "apiHelpers/types";
 import OptionCard from "@components/Dashboard/OptionCard";
 import { makeStyles, useTheme } from "@material-ui/core";
-import Loader from "react-loader";
+import { useFetch } from "@hooks/useFetch";
+import groupsApi from "@apiClient/groupsApi";
+import { EntityGroup } from "apiHelpers/types";
 import Group from "./Group";
 import { useWindowScrolledTillEndListener } from "@hooks/useWindowScrolledTillEndListener";
 import { useState } from "react";
 import MyLoader from "@components/Shared/MyLoader";
 import { useEffect } from "react";
 interface ShowExistingGroupsProps {
-  data:
-    | {
-        groups: EntityGroup[];
-      }
-    | undefined;
-  loading: boolean;
+  groupsIsEmpty: boolean;
+  setGroupsIsEmpty: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const ShowExistingGroups = ({ data, loading }: ShowExistingGroupsProps) => {
-  const [showLoader, setShowLoader] = useState(false);
-  const [numEntriesFetched, setNumEntriesFetched] = useState(5);
-  const [allEntriesFetched, setAllEntriesFetched] = useState(false);
-
+const ShowExistingGroups = ({
+  groupsIsEmpty,
+  setGroupsIsEmpty,
+}: ShowExistingGroupsProps) => {
   const theme = useTheme();
   const styles = useStyles();
+  const [showLoader, setShowLoader] = useState(false);
+  const [numEntriesFetched, setNumEntriesFetched] = useState(2);
+  const [allEntriesFetched, setAllEntriesFetched] = useState(false);
+  const { data, loading } = useFetch<{ groups: EntityGroup[] }>(
+    groupsApi.getAll
+  );
+  useEffect(() => {
+    if (groupsIsEmpty && data?.groups && data.groups.length > 0) {
+      setGroupsIsEmpty(false);
+    }
+  }, [data]);
   useEffect(() => {
     setAllEntriesFetched(numEntriesFetched >= (data?.groups?.length ?? 0));
   }, [numEntriesFetched, data]);
@@ -37,16 +44,17 @@ const ShowExistingGroups = ({ data, loading }: ShowExistingGroupsProps) => {
     setNumEntriesFetched((prev) => {
       // console.log({ prev });
       // console.log({ new: prev + 2 });
-      return prev + 5;
+      return prev + 2;
     });
     setShowLoader(false);
-  });
+  }, 300);
 
   if (loading) {
     return <MyLoader loaded={false} />;
   } else if (!data) {
     return <div>Error while fetching</div>;
   }
+
   return (
     <div className={styles.ShowExistingGroups}>
       {data.groups.length === 0 ? (

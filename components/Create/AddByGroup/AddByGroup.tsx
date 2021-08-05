@@ -2,10 +2,9 @@ import { makeStyles, Paper } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
-import groupsApi from "@apiClient/groupsApi";
-import { EntityGroup, EntityLooper } from "apiHelpers/types";
+
 import Box from "@components/Create/Box";
-import { useFetch } from "@hooks/useFetch";
+
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Summary from "../Summary";
@@ -34,7 +33,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   const [showExistingGroups, setShowExistingGroups] = useState(true);
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
-
+  const [groupsIsEmpty, setGroupsIsEmpty] = useState(true);
   const [index, setIndex] = useState(0);
   const router = useRouter();
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
@@ -48,9 +47,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
     },
   });
   const detailsRef = useRef<HTMLDivElement>(null);
-  const { data, loading } = useFetch<{ groups: EntityGroup[] }>(
-    groupsApi.getAll
-  );
+
   const confirmedLoopers = useAppSelector(
     (state) => state.searchBar.confirmedLoopers
   );
@@ -132,7 +129,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
           : index === forms.length
           ? "Save Group"
           : showExistingGroups
-          ? data && data.groups && data.groups.length > 0
+          ? !groupsIsEmpty
             ? "Select Group"
             : "Create Group"
           : forms[index].formHeading}
@@ -174,7 +171,10 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
               handleNextClick={handleNextClick}
             >
               {showExistingGroups ? (
-                <ShowExistingGroups data={data} loading={loading} />
+                <ShowExistingGroups
+                  groupsIsEmpty={groupsIsEmpty}
+                  setGroupsIsEmpty={setGroupsIsEmpty}
+                />
               ) : index === forms.length ? (
                 <SaveCreatedGroup
                   loopers={getLoopers(formsProps[loopersFormIndex].formState)}
