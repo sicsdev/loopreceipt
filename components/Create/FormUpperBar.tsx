@@ -40,8 +40,8 @@ const FormUpperBar = ({
             src="/icons/create/back.svg"
             width="20"
             height="20"
-          />{" "}
-          New Loopreceipt
+          />
+          &nbsp; New Loopreceipt
         </div>
       )}
     </UpperBar>

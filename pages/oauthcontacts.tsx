@@ -65,7 +65,7 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
             setShowAlert(false);
           }}
         >
-          "Please select directory do you want to integrate with"
+          &qout;Please select directory do you want to integrate with&qout;
         </Alert>
       </Snackbar>
       <UPadWrapper>
@@ -74,8 +74,8 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
             Which contact directory do you want to integrate with?
           </h1>
           <h4 className="subheading">
-            Select a couple of mail platforms to get started. You’ll be able to
-            add or change these choices later
+            Select a couple of mail platforms to get started. You&apos;ll be
+            able to add or change these choices later
           </h4>
           <FormControl component="fieldset">
             <RadioGroup

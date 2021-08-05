@@ -45,13 +45,19 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
       <div className={commonStyles.UserForm}>
         <div className="form card">
           <div className="iconContainer">
-            <Image src="/icons/logo-filled.svg" height={49} width={49} />
+            <Image
+              src="/icons/logo-filled.svg"
+              height={49}
+              width={49}
+              alt="logo"
+            />
           </div>
           <h1 className="heading">{forgotPasswordForm.formHeading}</h1>
           {error && (
             <MessageCard type="warning">
-              That user doesn’t exist There is no user with that address. <br />
-              Do you want to{" "}
+              That user doesn&apos;t exist There is no user with that address.{" "}
+              <br />
+              Do you want to&nbsp;
               <PrimaryLink href="/user/signup">sign up</PrimaryLink>
               &nbsp; instead?
             </MessageCard>
@@ -62,11 +68,11 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
               <p className="text1">
                 We just sent you an email containing a temporary link that will
                 allow you to reset your password. Please check your spam folder
-                if the email doesn't appear within a few minutes.
+                if the email doesn&apos;t appear within a few minutes.
               </p>
               <p className="text2">
                 If there any issues <PrimaryLink href="/">email us</PrimaryLink>
-                , and we'll help fix it!
+                , and we&apos;ll help fix it!
               </p>
             </div>
           ) : (

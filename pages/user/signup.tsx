@@ -161,11 +161,16 @@ const Signup = ({}: SignupProps) => {
         ) : (
           <div className="form card">
             <div className="iconContainer">
-              <Image src="/icons/logo-filled.svg" height={49} width={49} />
+              <Image
+                src="/icons/logo-filled.svg"
+                height={49}
+                width={49}
+                alt="logo"
+              />
             </div>
             <h1 className="heading">Please verify your email</h1>
             <p>
-              You’re almost there! We sent an email to{" "}
+              You’re almost there! We sent an email to&nbsp;
               <span style={{ fontWeight: 500 }}>{userResponse?.email}</span>
             </p>
             <p>Just click on the link in the email to complete your signup.</p>

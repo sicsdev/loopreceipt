@@ -123,7 +123,12 @@ const ResetPassword = ({}: ResetPasswordProps) => {
       <div className={commonStyles.UserForm}>
         <div className="form card">
           <div className="iconContainer">
-            <Image src="/icons/logo-filled.svg" height={49} width={49} />
+            <Image
+              src="/icons/logo-filled.svg"
+              height={49}
+              width={49}
+              alt="logo"
+            />
           </div>
           <h1 className="heading">{resetPasswordForm.formHeading}</h1>
           {invalidLink ? (

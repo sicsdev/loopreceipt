@@ -67,14 +67,14 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
             setShowAlert(false);
           }}
         >
-          "Please select the industry"
+          &quot;Please select the industry&quot;
         </Alert>
       </Snackbar>
 
       <UPadWrapper>
         <div className={styles.SelectIndustry}>
           <h1 className="heading">
-            Welcome to Loopreceipt, Gari! Let’s get you set up.
+            Welcome to Loopreceipt, Gari! Let&apos;s get you set up.
           </h1>
           <h4 className="subheading">
             But first, what industry do you work on?
