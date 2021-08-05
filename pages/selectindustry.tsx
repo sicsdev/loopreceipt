@@ -10,6 +10,10 @@ import {
 } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import UPadWrapper from "@components/Shared/UPadWrapper";
+import { useRouter } from "next/router";
+import Snackbar from "@material-ui/core/Snackbar";
+import Slide from "@material-ui/core/Slide";
+import Alert from "@material-ui/lab/Alert";
 export type IndustryTypes =
   | "automobile"
   | "construction"
@@ -31,15 +35,42 @@ const industries: IndustryTypes[] = [
 ];
 interface SelectIndustryProps {}
 const SelectIndustry = ({}: SelectIndustryProps) => {
+  const router = useRouter();
   const styles = useStyles();
+  const [showAlert, setShowAlert] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState<IndustryTypes | "">(
     ""
   );
+  useEffect(() => {
+    console.log(showAlert);
+  }, [showAlert]);
   // useEffect(() => {
   //   console.log(selectedIndustry);
   // }, [selectedIndustry]);
+
   return (
     <Layout>
+      <Snackbar
+        open={showAlert}
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={(e, reason) => {
+          // reason 'timeout' | 'clickaway';
+          if (reason == "timeout") setShowAlert(false);
+          // i don't know why clickaway is not working
+        }}
+        TransitionComponent={(props) => <Slide {...props} direction="down" />}
+      >
+        <Alert
+          severity="warning"
+          onClose={() => {
+            setShowAlert(false);
+          }}
+        >
+          "Please select the industry"
+        </Alert>
+      </Snackbar>
+
       <UPadWrapper>
         <div className={styles.SelectIndustry}>
           <h1 className="heading">
@@ -64,7 +95,18 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
           </FormControl>
         </div>
       </UPadWrapper>
-      <BottomBar />
+      <BottomBar
+        skipListener={() => {
+          router.push("/dashboard");
+        }}
+        nextListener={() => {
+          if (selectedIndustry) {
+            router.push("/oauthcontacts");
+          } else {
+            setShowAlert(true);
+          }
+        }}
+      />
     </Layout>
   );
   interface IndustryItemProps {
@@ -97,12 +139,29 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
 };
 
 export default SelectIndustry;
-export const BottomBar = () => {
+interface BottomBarProps {
+  skipListener: Function;
+  nextListener: Function;
+}
+export const BottomBar = ({ skipListener, nextListener }: BottomBarProps) => {
   const styles = useStyles();
   return (
     <div className={styles.bottomBar}>
-      <div className="skip">Skip</div>
-      <Button labelWeight="bold" expand>
+      <div
+        className="skip"
+        onClick={() => {
+          skipListener();
+        }}
+      >
+        Skip
+      </div>
+      <Button
+        labelWeight="bold"
+        expand
+        onClick={() => {
+          nextListener();
+        }}
+      >
         Next Step
       </Button>
     </div>
