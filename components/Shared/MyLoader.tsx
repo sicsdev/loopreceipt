@@ -16,6 +16,8 @@ export default MyLoader;
 const useStyles = makeStyles((theme) => ({
   MyLoader: {
     position: "relative",
+    zIndex: 99,
+    // so that it is below movable modal
     // border: "1px solid red",
     height: "4rem",
     "& .loader": {},

@@ -64,17 +64,20 @@ const Signup = ({}: SignupProps) => {
         // so verification mail is sent immediately on signup
         // user can login only on successful verification of email
         setUserResponse(response.user);
-        setAlertMessage("Account created! " + response.user.name);
-        setShowAlert(true);
-        sendVerificationEmail(response.user.email, false);
+
+        sendVerificationEmail(response.user, true);
       }
     }
   };
   const sendVerificationEmail = async (
-    email: string,
-    alert: boolean = true
+    user: {
+      isFirstTime: boolean;
+      name: string;
+      email: string;
+    },
+    accountCreationAlert: boolean = false
   ) => {
-    const message = await postUsersVerify.sendRequest({ email });
+    const message = await postUsersVerify.sendRequest({ email: user.email });
     console.log(message);
     // u can change the without checking message too
     if (
@@ -82,7 +85,10 @@ const Signup = ({}: SignupProps) => {
       "An email has been sent to " + signupFormProps.formState.email.value
     ) {
       setVerificationEmailSent(true);
-      if (alert) {
+      if (accountCreationAlert) {
+        setAlertMessage("Account created! " + user.name);
+        setShowAlert(true);
+      } else {
         setAlertMessage("Email Sent! Successfully");
         setShowAlert(true);
       }
@@ -182,7 +188,7 @@ const Signup = ({}: SignupProps) => {
               <Button
                 labelWeight="bold"
                 onClick={() => {
-                  if (userResponse) sendVerificationEmail(userResponse.email);
+                  if (userResponse) sendVerificationEmail(userResponse);
                 }}
               >
                 Resend Email

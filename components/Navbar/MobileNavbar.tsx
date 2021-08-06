@@ -8,7 +8,10 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import router from "next/router";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { logoutUser, setShowMobileSideBar } from "@store/slices/genericSlice";
+import { setShowMobileSideBar } from "@store/slices/genericSlice";
+import { logoutUser } from "@store/slices/userSlice";
+import DesktopPop from "./DesktopPop";
+import { useRef, useState } from "react";
 interface MobileNavbarProps {}
 const MobileNavbar = ({}: MobileNavbarProps) => {
   const styles = useStyles();
@@ -16,7 +19,10 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
   const showMobileSideBar = useAppSelector(
     (state) => state.generic.showMobileSideBar
   );
+  const user = useAppSelector((state) => state.user.user);
   const dispatch = useAppDispatch();
+  const accountArrowDownRef = useRef<HTMLDivElement>(null);
+  const [showPop, setShowPop] = useState(false);
   return (
     <div className={styles.MobileNavbar}>
       <ToggleSidebar
@@ -32,7 +38,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
               width="74"
               height="74"
             />
-            <p className="name">Maria Junior</p>
+            <p className="name">{user?.name}</p>
           </div>
           <div className={styles.links}>
             <MyLink link="/dashboard">Dashboard</MyLink>
@@ -86,17 +92,26 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
         <span className={"text"}>Home</span>
       </div>
       <div className="items">
-        <Image
-          alt="icon"
-          src="/icons/profile.png"
-          width="38"
-          height="38"
+        <Image alt="icon" src="/icons/profile.png" width="38" height="38" />
+        <div
+          className="arrowDownContainer"
+          ref={accountArrowDownRef}
           onClick={() => {
-            Cookies.remove("token");
-            router.push("/user/login");
+            setShowPop(true);
           }}
+        >
+          <Image
+            alt="icon"
+            src="/icons/arrow-down.svg"
+            width="17"
+            height="13"
+          />
+        </div>
+        <DesktopPop
+          anchorEl={accountArrowDownRef.current}
+          showPop={showPop}
+          setShowPop={setShowPop}
         />
-        <Image alt="icon" src="/icons/arrow-down.svg" width="17" height="13" />
       </div>
     </div>
   );

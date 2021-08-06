@@ -28,21 +28,23 @@ export default {
     try {
       // console.log("get all");
       // console.log(Cookies.get("token"));
-      // Sample queries - /api/loops?page=1&filter=date&from=1609775390&to=1628092190
-      // /api/loops?page=1&filter=type&type=internal
+      // Sample queries - /api/loops?page=1&filter1=date&from=1609775390&to=1628092190
+      // /api/loops?page=1&filter1=type&type=internal
+      // /api/loops?page=1&filter1=type&type=internal&filter2=date&from=1609775390&to=1628092190
       let url = `/loops?page=${page}`;
       if (filters) {
-        if (filters.type) {
-          url = `/loops?page=${page}&filter=type&type=${filters.type}`;
+        if (filters.type && filters.from && filters.to) {
+          url += `&filter1=type&type=${filters.type}&filter2=date&from=${filters.from}&to=${filters.to}`;
         } else if (filters.from && filters.to) {
-          url = `/loops?page=${page}&filter=date&from=${filters.from}&to=${filters.to}`;
+          url += `&filter1=date&from=${filters.from}&to=${filters.to}`;
+        } else if (filters.type) {
+          url += `&filter1=type&type=${filters.type}`;
         }
       }
-      // console.log(url);
+      console.log(url);
       if (cacheMap[url]) {
         return cacheMap[url];
       }
-      // currently we don't have option for adding multiple filters
       const response = await axios.get(url);
       cacheMap[url] = response.data;
       // console.log(response.data);

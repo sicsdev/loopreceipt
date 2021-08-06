@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import store from "@store/store";
-import Cookies from "js-cookie";
-import router from "next/router";
+
 interface SliceGenericType {
   showGettingStartedGuide: boolean;
   showMobileSideBar: boolean;
@@ -25,10 +24,7 @@ export const genericSlice = createSlice({
     },
   },
 });
-export const logoutUser = () => {
-  Cookies.remove("token");
-  router.push("/user/login");
-};
+
 export const { setShowGettingStartedGuide, setShowMobileSideBar } =
   genericSlice.actions;
 export const openGettingStartedGuide = () => {

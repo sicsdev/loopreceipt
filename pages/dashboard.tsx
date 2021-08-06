@@ -29,6 +29,8 @@ import usersApi from "@apiClient/usersApi";
 import loopsApi from "@apiClient/loopsApi";
 import MyLoader from "@components/Shared/MyLoader";
 import Cookies from "js-cookie";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setUser } from "@store/slices/userSlice";
 interface DashboardProps {
   path: string;
 }
@@ -41,6 +43,8 @@ const Dashboard = ({ path }: DashboardProps) => {
   // console.log(loops);
 
   const { data: userData } = useFetch<{ user: EntityUser }>(usersApi.getMe);
+  const dispatch = useAppDispatch();
+
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
@@ -57,6 +61,12 @@ const Dashboard = ({ path }: DashboardProps) => {
     loopsApi.getAll,
     { deferred: true }
   );
+  const user = useAppSelector((state) => state.user.user);
+  useEffect(() => {
+    if (userData?.user) {
+      dispatch(setUser(userData.user));
+    }
+  }, [userData]);
   useEffect(() => {
     setIsFirstTime(Cookies.get("isFirstTime") === "true");
   }, []);
@@ -67,35 +77,42 @@ const Dashboard = ({ path }: DashboardProps) => {
           totalLoops: number;
         }
       | undefined;
-    if (loopSource != "all") {
-      loopsResponse = await getLoops.sendRequest(page, { type: loopSource });
-    } else if (dateRange.start || dateRange.end) {
+    if (dateRange.start || dateRange.end) {
       // apply date filters
       const localDateRange = {
         start: dateRange.start && new Date(dateRange.start),
         end: dateRange.end && new Date(dateRange.end),
       };
+      // console.log(localDateRange);
       if (localDateRange.end) {
         localDateRange.end.setDate(localDateRange.end.getDate() + 1);
+        localDateRange.end.setSeconds(localDateRange.end.getSeconds() - 1);
       }
+      // console.log(localDateRange);
       if (localDateRange.end == null && localDateRange.start) {
         localDateRange.end = new Date(localDateRange.start);
         localDateRange.end.setDate(localDateRange.end.getDate() + 1);
+        localDateRange.end.setSeconds(localDateRange.end.getSeconds() - 1);
       }
       if (localDateRange.start == null && localDateRange.end) {
         localDateRange.start = new Date(localDateRange.end);
         localDateRange.start.setDate(localDateRange.start.getDate() - 1);
+        localDateRange.start.setSeconds(localDateRange.start.getSeconds() + 1);
       }
+      // console.log(localDateRange);
       let epochStartDate = (localDateRange.start as any) / 1000;
 
       let epochEndDate = (localDateRange.end as any) / 1000;
 
       loopsResponse = await getLoops.sendRequest(page, {
+        type: loopSource === "all" ? undefined : loopSource,
         from: epochStartDate,
         to: epochEndDate,
       });
     } else {
-      loopsResponse = await getLoops.sendRequest(page);
+      loopsResponse = await getLoops.sendRequest(page, {
+        type: loopSource === "all" ? undefined : loopSource,
+      });
     }
     if (loopsResponse?.loops.length) {
       setLoopsIsEmpty(false);
@@ -181,7 +198,9 @@ const Dashboard = ({ path }: DashboardProps) => {
           </div>
 
           {getLoops.loading ? (
-            <MyLoader />
+            <div style={{ paddingTop: "3rem" }}>
+              <MyLoader loaded={!getLoops.loading} />
+            </div>
           ) : getLoops.data?.loops ? (
             <>
               <UPadWrapper>
@@ -189,7 +208,7 @@ const Dashboard = ({ path }: DashboardProps) => {
                   {loopsIsEmpty && (
                     <NoLoopReceipt
                       activeTab={tabs[activeTabIndex]}
-                      user={userData?.user}
+                      user={user}
                     />
                   )}
                   {!loopsIsEmpty && getLoops.data.loops.length == 0 && (

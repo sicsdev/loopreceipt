@@ -4,13 +4,17 @@ import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentEl
 
 import Image from "next/image";
 import { openModal } from "@store/slices/modalSlice";
-import { useAppDispatch } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import { logoutUser } from "@store/slices/genericSlice";
-import { useEffect } from "react";
+
+import { useEffect, useRef } from "react";
+import { useState } from "react";
+import DesktopPop from "./DesktopPop";
+import usersApi from "@apiClient/usersApi";
+
 interface DesktopNavbarPropTypes {
   showOnlyLogo: boolean;
 }
@@ -19,6 +23,9 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
   const styles = useStyles({ showOnlyLogo });
   const dispatch = useAppDispatch();
   const isLoggedIn = !!Cookies.get("token");
+  const accountArrowDownRef = useRef<HTMLDivElement>(null);
+  const [showPop, setShowPop] = useState(false);
+  const user = useAppSelector((state) => state.user.user);
   return (
     <div className={styles.DesktopNavbar}>
       <Link href="/dashboard">
@@ -83,7 +90,11 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
                     });
                   },
                   (childClick) => (
-                    <Button size="medium" onClick={childClick}>
+                    <Button
+                      size="medium"
+                      onClick={childClick}
+                      labelWeight="600"
+                    >
                       + New Loopreceipt
                     </Button>
                   )
@@ -127,17 +138,27 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
                     src="/icons/profile.png"
                     width="36"
                     height="36"
-                    onClick={() => {
-                      logoutUser();
-                    }}
                   />
                 </div>
-                <p className="text">Account</p>
-                <Image
-                  alt="icon"
-                  src="/icons/arrow-down.svg"
-                  width="20"
-                  height="20"
+                <p className="text">{user?.name}</p>
+                <div
+                  ref={accountArrowDownRef}
+                  className="arrowDownContainer"
+                  onClick={() => {
+                    setShowPop(true);
+                  }}
+                >
+                  <Image
+                    alt="icon"
+                    src="/icons/arrow-down.svg"
+                    width="20"
+                    height="20"
+                  />
+                </div>
+                <DesktopPop
+                  anchorEl={accountArrowDownRef.current}
+                  showPop={showPop}
+                  setShowPop={setShowPop}
                 />
               </div>
             </>
@@ -186,6 +207,19 @@ const useStyles = makeStyles((theme) => ({
           fontWeight: 500,
         },
         "& .image": {},
+        "& .arrowDownContainer": {
+          // border: "1px solid red",
+
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "50%",
+          padding: ".5rem",
+          "&:hover": {
+            cursor: "pointer",
+            backgroundColor: "#ebebeb",
+          },
+        },
       },
     },
   }),
