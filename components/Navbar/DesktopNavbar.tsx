@@ -26,7 +26,7 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
   const accountArrowDownRef = useRef<HTMLDivElement>(null);
   const [showPop, setShowPop] = useState(false);
   const user = useAppSelector((state) => state.user.user);
-  
+
   return (
     <div className={styles.DesktopNavbar}>
       <Link href="/dashboard">
@@ -166,16 +166,6 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
           )}
         </div>
       )}
-
-      {
-        showOnlyLogo && (
-          <Link href="/dashboard">
-            <a className="logo">
-              <img alt="icon" src="/icons/logo.png" width={189} />
-            </a>
-          </Link>
-        )
-      }
     </div>
   );
 };

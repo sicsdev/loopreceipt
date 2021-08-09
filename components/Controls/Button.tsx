@@ -44,13 +44,10 @@ function Button({
 export default Button;
 const useStyles = makeStyles((theme) => ({
   button: (props: AdditionalButtonProps) => ({
-    boxShadow: "none",
     borderRadius: 8,
     borderColor: props.borderColor,
     margin: 0,
-    "&:hover": {
-      boxShadow: "none",
-    },
+
     "&.shrink": {
       paddingTop: 2,
       paddingBottom: 2,
