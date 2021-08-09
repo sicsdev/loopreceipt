@@ -78,7 +78,7 @@ const Summary = ({
       case "external": {
         const companyState = formsProps[companyFormIdx].formState;
         loop = {
-          barcode: "ee3432r23fd12321",
+          barcode: uuidv4(),
           city: companyState.city.value,
           country: companyState.country.value,
           postalCode: companyState.zipCode.value,
@@ -155,7 +155,7 @@ const Summary = ({
         <Button color="secondary" labelColor="white" onClick={handleSubmit}>
           Generate Loopreceipt
         </Button>
-        <Image src="/icons/form/man.svg" width={300} height={300} />
+        <Image alt="icon" src="/icons/form/man.svg" width={300} height={300} />
       </div>
     </div>
   );
@@ -168,7 +168,7 @@ interface EntryProps {
 function Entry({ inputIcon, text }: EntryProps) {
   return (
     <div className="entry">
-      <Image src={inputIconMap(inputIcon)} width={24} height={24} />
+      <Image alt="icon" src={inputIconMap(inputIcon)} width={24} height={24} />
       <span className="text"> {text}</span>
     </div>
   );

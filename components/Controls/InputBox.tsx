@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react";
 import { usePreviousValue } from "@hooks/usePreviousValue";
 import InputConstraints from "@components/Controls/InputConstraints";
 import { useState } from "react";
+import PasswordStrengthBar from "@components/Controls/PasswordStrengthBar";
 // console.log(CountryRegionData);
 interface InputBoxProps {
   input: InputType;
@@ -44,54 +45,60 @@ function InputBox({
         )}
       </label>
       {input.type === "country" ? (
-        <CountryDropdown
-          classes={styles.input}
-          name={input.name}
-          value={input.value}
-          onChange={(val, e) => {
-            onChange(e as any);
-          }}
-          onBlur={(val, e) => {
-            onBlur(e as any);
-          }}
-        />
-      ) : input.type === "region" ? (
-        <RegionDropdown
-          classes={styles.input}
-          country={dependency!}
-          name={input.name}
-          value={input.value}
-          onChange={(val, e) => {
-            onChange(e as any);
-          }}
-          onBlur={(val, e) => {
-            onBlur(e as any);
-          }}
-        />
-      ) : input.type === "phone" ? (
-        <div className={styles.phoneInput}>
-          <PhoneInput
-            international
-            defaultCountry={
-              CountryRegionData.find((data) => data[0] === dependency)?.[1]
-            }
+        <div className={styles.inputContainer + " MyInputContainer"}>
+          <CountryDropdown
+            classes={styles.input}
+            name={input.name}
             value={input.value}
-            onChange={(value) => {
-              const e = {
-                target: {
-                  name: input.name,
-                  value,
-                },
-              };
+            onChange={(val, e) => {
               onChange(e as any);
             }}
-            onBlur={(e) => {
+            onBlur={(val, e) => {
               onBlur(e as any);
             }}
           />
         </div>
+      ) : input.type === "region" ? (
+        <div className={styles.inputContainer + " MyInputContainer"}>
+          <RegionDropdown
+            classes={styles.input}
+            country={dependency!}
+            name={input.name}
+            value={input.value}
+            onChange={(val, e) => {
+              onChange(e as any);
+            }}
+            onBlur={(val, e) => {
+              onBlur(e as any);
+            }}
+          />
+        </div>
+      ) : input.type === "phone" ? (
+        <div className={styles.phoneInput}>
+          <div className={styles.inputContainer + " MyInputContainer"}>
+            <PhoneInput
+              international
+              defaultCountry={
+                CountryRegionData.find((data) => data[0] === dependency)?.[1]
+              }
+              value={input.value}
+              onChange={(value) => {
+                const e = {
+                  target: {
+                    name: input.name,
+                    value,
+                  },
+                };
+                onChange(e as any);
+              }}
+              onBlur={(e) => {
+                onBlur(e as any);
+              }}
+            />
+          </div>
+        </div>
       ) : (
-        <div className={styles.inputContainer}>
+        <div className={styles.inputContainer + " MyInputContainer"}>
           <input
             className={styles.input}
             type={
@@ -119,22 +126,27 @@ function InputBox({
         </div>
       )}
       <p className="error">{input.error}</p>
+      {input.showPasswordStrengthBar && (
+        <div
+          style={{
+            marginTop: 10,
+          }}
+        >
+          <PasswordStrengthBar password={input.value} />
+        </div>
+      )}
     </div>
   );
 }
 
 export default InputBox;
 const inputCommon = (theme: Theme) => ({
-  width: "80%",
-
+  width: "100%",
   padding: 12,
   borderRadius: "4px",
   border: "1px solid #DDDDDD",
   backgroundColor: "white",
   outline: "none",
-  [theme.breakpoints.down("md")]: {
-    width: "100%",
-  },
 });
 const useStyles = makeStyles((theme) => {
   // console.log(theme.breakpoints.values);
@@ -159,8 +171,13 @@ const useStyles = makeStyles((theme) => {
       "& input": inputCommon(theme),
     },
     inputContainer: {
+      width: "80%",
+      [theme.breakpoints.down("md")]: {
+        width: "100%",
+      },
       position: "relative",
       "& .passwordToogler": {
+        cursor: "pointer",
         position: "absolute",
         right: 10,
         top: 10,

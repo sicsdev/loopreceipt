@@ -1,27 +1,44 @@
 import RoundButton from "@components/Controls/RoundButton";
-import { makeStyles, StylesProvider, useTheme } from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core";
 import Image from "next/image";
-import { useState } from "react";
 import ToggleSidebar from "@components/Shared/ToggleSidebar";
 import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import router from "next/router";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setShowMobileSideBar } from "@store/slices/genericSlice";
+import { logoutUser } from "@store/slices/userSlice";
+import DesktopPop from "./DesktopPop";
+import { useRef, useState } from "react";
 interface MobileNavbarProps {}
 const MobileNavbar = ({}: MobileNavbarProps) => {
   const styles = useStyles();
   const theme = useTheme();
-  const [showSidebar, setShowSidebar] = useState(false);
+  const showMobileSideBar = useAppSelector(
+    (state) => state.generic.showMobileSideBar
+  );
+  const user = useAppSelector((state) => state.user.user);
+  const dispatch = useAppDispatch();
+  const accountArrowDownRef = useRef<HTMLDivElement>(null);
+  const [showPop, setShowPop] = useState(false);
   return (
     <div className={styles.MobileNavbar}>
       <ToggleSidebar
-        show={showSidebar}
-        close={() => setShowSidebar(false)}
+        show={showMobileSideBar}
+        close={() => dispatch(setShowMobileSideBar(false))}
         delay={300}
       >
         <div className={styles.mobileSidebar}>
           <div className={styles.profile}>
-            <Image src="/icons/sidebar/profilehq.png" width="74" height="74" />
-            <p className="name">Maria Junior</p>
+            <Image
+              alt="icon"
+              src="/icons/sidebar/profilehq.png"
+              width="74"
+              height="74"
+            />
+            <p className="name">{user?.name}</p>
           </div>
           <div className={styles.links}>
             <MyLink link="/dashboard">Dashboard</MyLink>
@@ -50,19 +67,51 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
             Version 1.3.0
           </div>
           <div className={styles.button}>
-            <RoundButton color={theme.palette.secondary.main}>
+            <RoundButton
+              color={theme.palette.secondary.main}
+              onClick={() => {
+                logoutUser();
+                dispatch(setShowMobileSideBar(false));
+              }}
+            >
               Logout
             </RoundButton>
           </div>
         </div>
       </ToggleSidebar>
-      <div className="items" onClick={() => setShowSidebar(true)}>
-        <Image src="/icons/sidebar/menu.svg" width={20} height={20} />
+      <div
+        className="items"
+        onClick={() => dispatch(setShowMobileSideBar(true))}
+      >
+        <Image
+          alt="icon"
+          src="/icons/sidebar/menu.svg"
+          width={20}
+          height={20}
+        />
         <span className={"text"}>Home</span>
       </div>
       <div className="items">
-        <Image src="/icons/profile.png" width="38" height="38" />
-        <Image src="/icons/arrow-down.svg" width="17" height="13" />
+        <Image alt="icon" src="/icons/profile.png" width="38" height="38" />
+        <div
+          className="arrowDownContainer"
+          ref={accountArrowDownRef}
+          onClick={() => {
+            setShowPop(true);
+          }}
+        >
+          <Image
+            alt="icon"
+            src="/icons/arrow-down.svg"
+            width="17"
+            height="13"
+          />
+        </div>
+        <DesktopPop
+          anchorEl={accountArrowDownRef.current}
+          showPop={showPop}
+          setShowPop={setShowPop}
+        />
       </div>
     </div>
   );
@@ -72,7 +121,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
         className="link"
         onClick={(e) => {
           if (onClick) onClick(e);
-          setShowSidebar(false);
+          dispatch(setShowMobileSideBar(false));
         }}
       >
         {children}

@@ -41,13 +41,16 @@ const BoxContent = ({
       <div className={styles.rest}>
         {children}
         {win.down("xs") && (
-          <>
-            <div style={{ flex: 2 }}></div>
+          <div
+            style={{
+              marginBottom: "2rem",
+            }}
+          >
             <NextCancelButtons
               handleCancelClick={handleCancelClick}
               handleNextClick={handleNextClick}
             />
-          </>
+          </div>
         )}
       </div>
     </div>

@@ -17,7 +17,7 @@ const OptionCard = ({
   const styles = useStyles();
   return (
     <div className={styles.optionCard} onClick={onClick}>
-      <Image src={iconSrc} width={iconWidth} height={iconHeight} />
+      <Image alt="icon" src={iconSrc} width={iconWidth} height={iconHeight} />
       <p className="text">{text}</p>
     </div>
   );

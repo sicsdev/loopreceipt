@@ -11,72 +11,128 @@ import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { useEffect, useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
-import DetectSwipe from "@components/Shared/DetectSwipe";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
 import Pagination from "@components/Dashboard/Pagination";
 import Image from "next/image";
 import { openGettingStartedGuide } from "@store/slices/genericSlice";
 
 import useSWR from "swr";
-import { EntityLoop } from "apiHelpers/types";
+import { EntityLoop, EntityUser } from "apiHelpers/types";
 import { compareOnlyDate } from "@helpers/dateCalculations";
 import NoLoopReceipt from "@components/Dashboard/NoLoopReceipt";
 import { baseURL } from "@apiHelpers/axios";
 import { useRouter } from "next/router";
+import UPadWrapper from "@components/Shared/UPadWrapper";
+import { useSwipeable } from "react-swipeable";
+import { useFetch } from "@hooks/useFetch";
+import usersApi from "@apiClient/usersApi";
+import loopsApi from "@apiClient/loopsApi";
+import MyLoader from "@components/Shared/MyLoader";
+import Cookies from "js-cookie";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setUser } from "@store/slices/userSlice";
 interface DashboardProps {
   path: string;
 }
-const links: LoopType[] = ["outgoing", "received", "drafts"];
+const tabs: LoopType[] = ["outgoing", "received", "drafts"];
 const itemsPerPageOptions = [5, 10, 15];
 const Dashboard = ({ path }: DashboardProps) => {
+  const [isFirstTime, setIsFirstTime] = useState<boolean>();
+
   const router = useRouter();
   // console.log(loops);
-  const { data, error } = useSWR(baseURL + "/loops");
+
+  const { data: userData } = useFetch<{ user: EntityUser }>(usersApi.getMe);
+  const dispatch = useAppDispatch();
 
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
+  const [loopsIsEmpty, setLoopsIsEmpty] = useState(true);
   const [dateRange, setDateRange] = useState<DateRange>({
     start: null,
     end: null,
   });
-  const [filteredLoops, setFilteredLoops] = useState<EntityLoop[]>([]);
   const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[1]);
   const [page, setPage] = useState(1);
-  // console.log(win.up("md"));
+  const getLoops = useFetch<{ loops: EntityLoop[]; totalLoops: number }>(
+    loopsApi.getAll,
+    { deferred: true }
+  );
+  const user = useAppSelector((state) => state.user.user);
+  useEffect(() => {
+    if (userData?.user) {
+      dispatch(setUser(userData.user));
+    }
+  }, [userData]);
+  useEffect(() => {
+    setIsFirstTime(Cookies.get("isFirstTime") === "true");
+  }, []);
+  const fetchLoopsData = async () => {
+    let loopsResponse:
+      | {
+          loops: EntityLoop[];
+          totalLoops: number;
+        }
+      | undefined;
+    if (dateRange.start || dateRange.end) {
+      // apply date filters
+      const localDateRange = {
+        start: dateRange.start && new Date(dateRange.start),
+        end: dateRange.end && new Date(dateRange.end),
+      };
+      // console.log(localDateRange);
+      if (localDateRange.end) {
+        localDateRange.end.setDate(localDateRange.end.getDate() + 1);
+        localDateRange.end.setSeconds(localDateRange.end.getSeconds() - 1);
+      }
+      // console.log(localDateRange);
+      if (localDateRange.end == null && localDateRange.start) {
+        localDateRange.end = new Date(localDateRange.start);
+        localDateRange.end.setDate(localDateRange.end.getDate() + 1);
+        localDateRange.end.setSeconds(localDateRange.end.getSeconds() - 1);
+      }
+      if (localDateRange.start == null && localDateRange.end) {
+        localDateRange.start = new Date(localDateRange.end);
+        localDateRange.start.setDate(localDateRange.start.getDate() - 1);
+        localDateRange.start.setSeconds(localDateRange.start.getSeconds() + 1);
+      }
+      // console.log(localDateRange);
+      let epochStartDate = (localDateRange.start as any) / 1000;
+
+      let epochEndDate = (localDateRange.end as any) / 1000;
+
+      loopsResponse = await getLoops.sendRequest(page, {
+        type: loopSource === "all" ? undefined : loopSource,
+        from: epochStartDate,
+        to: epochEndDate,
+      });
+    } else {
+      loopsResponse = await getLoops.sendRequest(page, {
+        type: loopSource === "all" ? undefined : loopSource,
+      });
+    }
+    if (loopsResponse?.loops.length) {
+      setLoopsIsEmpty(false);
+    }
+    return loopsResponse;
+  };
 
   useEffect(() => {
-    if (!data || !data.loops) return;
-    // console.log(data.loops);
-    let localLoops = [...data.loops];
-    if (loopSource !== "all") {
-      localLoops = localLoops.filter((loop) => loop.type === loopSource);
+    fetchLoopsData();
+  }, [page]);
+  useEffect(() => {
+    if (page != 1) {
+      setPage(1);
+      // now on page change we automatically run fetchLoopsData
+    } else {
+      fetchLoopsData();
     }
-    if (dateRange.start && dateRange.end) {
-      localLoops = localLoops.filter(
-        (loop) =>
-          compareOnlyDate(new Date(loop.timestamp!), dateRange.start!) >= 0 &&
-          compareOnlyDate(new Date(loop.timestamp!), dateRange.end!) <= 0
-      );
-    } else if (dateRange.start) {
-      localLoops = localLoops.filter(
-        (loop) =>
-          compareOnlyDate(new Date(loop.timestamp!), dateRange.start!) == 0
-      );
-    } else if (dateRange.end) {
-      localLoops = localLoops.filter(
-        (loop) =>
-          compareOnlyDate(new Date(loop.timestamp!), dateRange.end!) == 0
-      );
-    }
-    setFilteredLoops(localLoops);
-  }, [data, itemsPerPage, page, loopSource, dateRange]);
-  const paginatedLoops = () => {
-    const startIndex = (page - 1) * itemsPerPage;
-    return filteredLoops.slice(startIndex, startIndex + itemsPerPage);
-  };
+  }, [loopSource, dateRange]);
+  // console.log(win.up("md"));
+
   // this should be defined before return statements
   const mobileNewButton = ListenClickAtParentElement(
     (e) => {
@@ -96,11 +152,20 @@ const Dashboard = ({ path }: DashboardProps) => {
       </Button>
     )
   );
-  if (error) {
-    router.push("/login");
-    return <h1>Error occurred</h1>;
-  }
-  if (!data || !data.loops) return <h1>Loading...</h1>;
+  const loopsSwipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      // console.log("swipe left");
+      if (activeTabIndex + 1 < tabs.length) {
+        setActiveTabIndex(activeTabIndex + 1);
+      }
+    },
+    onSwipedRight: () => {
+      // console.log("swipe right");
+      if (activeTabIndex - 1 >= 0) {
+        setActiveTabIndex(activeTabIndex - 1);
+      }
+    },
+  });
 
   return (
     <Layout>
@@ -117,74 +182,90 @@ const Dashboard = ({ path }: DashboardProps) => {
               {mobileNewButton}
             </div>
           </div>
-
           <Links
-            links={links}
-            activeIndex={activeIndex}
-            setActiveIndex={setActiveIndex}
+            links={tabs}
+            activeIndex={activeTabIndex}
+            setActiveIndex={setActiveTabIndex}
           />
-          {data.loops.length > 0 && (
-            <div className="dropdowns">
-              <FilterDropdowns
-                loopSource={loopSource}
-                setLoopSource={setLoopSource}
-                dateRange={dateRange}
-                setDateRange={setDateRange}
-              />
-            </div>
-          )}
-          {data.loops.length === 0 && <NoLoopReceipt />}
-          <div
-            className={styles.rest}
-            style={{ display: data.loops.length === 0 ? "none" : "block" }}
-          >
-            <DetectSwipe
-              onSwipedLeft={() => {
-                // console.log("swipe left");
-                if (activeIndex + 1 < links.length) {
-                  setActiveIndex(activeIndex + 1);
-                }
-              }}
-              onSwipedRight={() => {
-                // console.log("swipe right");
-                if (activeIndex - 1 >= 0) {
-                  setActiveIndex(activeIndex - 1);
-                }
-              }}
-            >
-              <div className="loopCards">
-                {paginatedLoops().map((loop) => (
-                  <LoopCard
-                    key={loop.loopid}
-                    type={links[activeIndex]}
-                    loop={loop}
-                  />
-                ))}
-              </div>
-            </DetectSwipe>
-            <div className="pagination">
-              <Pagination
-                totalItems={filteredLoops.length}
-                itemsPerPageOptions={itemsPerPageOptions}
-                itemsPerPage={itemsPerPage}
-                setItemsPerPage={setItemsPerPage}
-                page={page}
-                setPage={setPage}
-              />
-            </div>
+
+          <div className="dropdowns">
+            <FilterDropdowns
+              loopSource={loopSource}
+              setLoopSource={setLoopSource}
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+            />
           </div>
-        </div>
-        <div className={styles.iconGettingStarted}>
-          {win.down("xs") ? (
-            <div className="icon" onClick={openGettingStartedGuide}>
-              <Image src="/icons/dashboard/menu.svg" width={30} height={30} />
+
+          {getLoops.loading ? (
+            <div style={{ paddingTop: "3rem" }}>
+              <MyLoader loaded={!getLoops.loading} />
             </div>
+          ) : getLoops.data?.loops ? (
+            <>
+              <UPadWrapper>
+                <>
+                  {loopsIsEmpty && (
+                    <NoLoopReceipt
+                      activeTab={tabs[activeTabIndex]}
+                      user={user}
+                    />
+                  )}
+                  {!loopsIsEmpty && getLoops.data.loops.length == 0 && (
+                    <div className="noLoopsMessage">No Loops Found</div>
+                  )}
+                  <div
+                    className={styles.rest}
+                    style={{
+                      display: loopsIsEmpty ? "none" : "block",
+                    }}
+                  >
+                    <div className="loopCards" {...loopsSwipeHandlers}>
+                      {getLoops.data.loops.map((loop) => (
+                        <LoopCard
+                          key={loop.loopid}
+                          type={tabs[activeTabIndex]}
+                          loop={loop}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="pagination">
+                      <Pagination
+                        totalItems={getLoops.data.totalLoops}
+                        itemsPerPageOptions={itemsPerPageOptions}
+                        itemsPerPage={itemsPerPage}
+                        setItemsPerPage={setItemsPerPage}
+                        page={page}
+                        setPage={setPage}
+                      />
+                    </div>
+                  </div>
+                </>
+              </UPadWrapper>
+            </>
           ) : (
-            <Button labelColor="white" onClick={openGettingStartedGuide}>
-              Getting Started
-            </Button>
+            <div>Error</div>
           )}
         </div>
+        {isFirstTime && (
+          <div className={styles.iconGettingStarted}>
+            {win.down("xs") ? (
+              <div className="icon" onClick={openGettingStartedGuide}>
+                <Image
+                  alt="icon"
+                  src="/icons/dashboard/menu.svg"
+                  width={30}
+                  height={30}
+                />
+              </div>
+            ) : (
+              <Button labelColor="white" onClick={openGettingStartedGuide}>
+                Getting Started
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </Layout>
   );
@@ -203,7 +284,8 @@ const useStyles = makeStyles((theme) => ({
       padding: "0",
     },
     "& .dropdowns": {
-      padding: "1.5rem 4%",
+      padding: "0 4%",
+      paddingTop: "2rem",
     },
     "& .top": {
       display: "flex",
@@ -214,14 +296,16 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "500",
       },
     },
+    "& .noLoopsMessage": {
+      textAlign: "center",
+      fontSize: 20,
+      marginTop: "4rem",
+    },
   },
 
   rest: {
-    [theme.breakpoints.down("sm")]: {
-      padding: "1.5rem 4%",
-    },
     "& .loopCards": {
-      margin: "3rem 0",
+      padding: "3rem 0",
       display: "flex",
       justifyContent: "space-between",
       flexWrap: "wrap",

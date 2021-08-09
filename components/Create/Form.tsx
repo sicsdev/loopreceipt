@@ -1,19 +1,11 @@
 import InputBox from "@components/Controls/InputBox";
 import { makeStyles } from "@material-ui/core";
-import { InputType } from "@interfaces/InputTypes";
-import {
-  FormStateType,
-  FormType,
-  useFormReturnType,
-} from "@interfaces/FormTypes";
+import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 
 import ConfirmedEntities from "./ConfirmedEntities";
-import { useEffect, useRef } from "react";
-import {
-  validateAllFieldsOfForm,
-  validateSingleFieldOfForm,
-} from "forms/formUtils";
-import { runSequentiallyAfterDelay } from "@helpers/utils";
+import { useEffect } from "react";
+import { validateSingleFieldOfForm } from "forms/formUtils";
+import PasswordStrengthBar from "@components/Controls/PasswordStrengthBar";
 interface FormProps {
   form: FormType;
   formProps: useFormReturnType;
@@ -68,9 +60,7 @@ const Form = ({
               input={input}
               onChange={handleInputChange}
               dependency={
-                input.type === "region" || input.type === "phone"
-                  ? formState["country"].value
-                  : ""
+                input.dependency ? formState[input.dependency].value : undefined
               }
               onBlur={(e) => {
                 if (validateOnBlur) {

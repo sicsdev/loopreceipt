@@ -90,6 +90,7 @@ const recipientDetailsForm: FormType = {
       placeholder: "Your full name",
       value: "",
       type: "region",
+      dependency: "country",
       validate: function () {
         return validations.isRequired(this);
         // we pass 'this' so that we can change the errorText according to
@@ -102,6 +103,7 @@ const recipientDetailsForm: FormType = {
       placeholder: "Your full name",
       value: "",
       type: "phone",
+      dependency: "country",
       validate: function () {
         return validations.isRequired(this);
         // we pass 'this' so that we can change the errorText according to

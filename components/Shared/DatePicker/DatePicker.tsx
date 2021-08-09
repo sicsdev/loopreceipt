@@ -9,7 +9,7 @@ import classNames from "classnames";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { DateRange } from "@interfaces/LoopTypes";
-import DetectSwipe from "../DetectSwipe";
+import { useSwipeable } from "react-swipeable";
 
 type DateType = {
   date: Date;
@@ -172,12 +172,18 @@ const DatePicker = ({
           }
         }}
       >
-        {capitalize(pickerType)} Date:{" "}
-        {pickerType === "start" ? dmy(dateRange.start) : dmy(dateRange.end)}{" "}
+        {capitalize(pickerType)} Date:&nbsp;
+        {pickerType === "start" ? dmy(dateRange.start) : dmy(dateRange.end)}
+        &nbsp;
       </div>
       <div className="month">
         <div className="image" onClick={prevMonth}>
-          <Image src="/icons/dashboard/prev.svg" width={9} height={9} />
+          <Image
+            alt="icon"
+            src="/icons/dashboard/prev.svg"
+            width={9}
+            height={9}
+          />
         </div>
         <div className="text">
           <span
@@ -188,7 +194,12 @@ const DatePicker = ({
           >
             {months[curMonth]}
             {monthSelectorType === "dropdown" && (
-              <Image src="/icons/arrow-down.svg" width={15} height={15} />
+              <Image
+                alt="icon"
+                src="/icons/arrow-down.svg"
+                width={15}
+                height={15}
+              />
             )}
           </span>
           <span
@@ -199,7 +210,12 @@ const DatePicker = ({
           >
             {curYear}
             {monthSelectorType === "dropdown" && (
-              <Image src="/icons/arrow-down.svg" width={15} height={15} />
+              <Image
+                alt="icon"
+                src="/icons/arrow-down.svg"
+                width={15}
+                height={15}
+              />
             )}
           </span>
         </div>
@@ -251,61 +267,71 @@ const DatePicker = ({
         )}
 
         <div className="image" onClick={nextMonth}>
-          <Image src="/icons/dashboard/next.svg" width={9} height={9} />
+          <Image
+            alt="icon"
+            src="/icons/dashboard/next.svg"
+            width={9}
+            height={9}
+          />
         </div>
       </div>
-      <DetectSwipe onSwipedLeft={nextMonth} onSwipedRight={prevMonth}>
-        <div className="days">
-          {days.map((day, i) => (
-            <p className="dayname" key={i}>
-              {day}
-            </p>
-          ))}
-          {dates.map((date, i) => (
-            <p
-              key={i}
-              className={classNames("date", date)}
-              onClick={() => {
-                // console.log(date.date);
 
-                if (pickerType === "start") {
-                  if (
-                    dateRange.end &&
-                    compareOnlyDate(date.date, dateRange.end) > 0
-                  ) {
-                    setDateRange((prev) => ({
-                      start: prev.end,
-                      end: date.date,
-                    }));
-                  } else {
-                    setDateRange((prev) => ({
-                      ...prev,
-                      start: date.date,
-                    }));
-                  }
-                } else if (pickerType === "end") {
-                  if (
-                    dateRange.start &&
-                    compareOnlyDate(date.date, dateRange.start) < 0
-                  ) {
-                    setDateRange((prev) => ({
-                      start: date.date,
-                      end: prev.start,
-                    }));
-                  } else {
-                    setDateRange((prev) => ({
-                      ...prev,
-                      end: date.date,
-                    }));
-                  }
+      <div
+        className="days"
+        {...useSwipeable({
+          onSwipedLeft: nextMonth,
+          onSwipedRight: prevMonth,
+        })}
+      >
+        {days.map((day, i) => (
+          <p className="dayname" key={i}>
+            {day}
+          </p>
+        ))}
+        {dates.map((date, i) => (
+          <p
+            key={i}
+            className={classNames("date", date)}
+            onClick={() => {
+              // console.log(date.date);
+
+              if (pickerType === "start") {
+                if (
+                  dateRange.end &&
+                  compareOnlyDate(date.date, dateRange.end) > 0
+                ) {
+                  setDateRange((prev) => ({
+                    start: prev.end,
+                    end: date.date,
+                  }));
+                } else {
+                  setDateRange((prev) => ({
+                    ...prev,
+                    start: date.date,
+                  }));
                 }
-              }}
-            >
-              {date.date.getDate()}
-            </p>
-          ))}
-        </div>
-      </DetectSwipe>
+              } else if (pickerType === "end") {
+                if (
+                  dateRange.start &&
+                  compareOnlyDate(date.date, dateRange.start) < 0
+                ) {
+                  setDateRange((prev) => ({
+                    start: date.date,
+                    end: prev.start,
+                  }));
+                } else {
+                  setDateRange((prev) => ({
+                    ...prev,
+                    end: date.date,
+                  }));
+                }
+              }
+            }}
+          >
+            {date.date.getDate()}
+          </p>
+        ))}
+      </div>
     </div>
   );
 };

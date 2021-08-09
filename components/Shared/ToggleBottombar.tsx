@@ -3,10 +3,11 @@ import { useDelayed } from "@hooks/useDelayed";
 
 import { CSSTransition } from "react-transition-group";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
+import { useSwipeable } from "react-swipeable";
 
 interface ToggleBottombarProps {
   show: boolean;
-  close: React.MouseEventHandler<any>;
+  close: Function;
   children: JSX.Element | string;
   delay?: number;
 }
@@ -26,6 +27,12 @@ const ToggleBottombar = ({
       style={{
         height: windowDimensions.innerHeight,
       }}
+      {...useSwipeable({
+        onSwipedDown: (e) => {
+          // console.log("swiped down");
+          close();
+        },
+      })}
     >
       <CSSTransition
         in={show}
@@ -41,7 +48,7 @@ const ToggleBottombar = ({
         unmountOnExit
         classNames={`mobbottombarbg`}
       >
-        <div className={styles.bg} onClick={close}></div>
+        <div className={styles.bg} onClick={() => close()}></div>
       </CSSTransition>
     </div>
   );

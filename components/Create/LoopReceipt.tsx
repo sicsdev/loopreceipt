@@ -12,7 +12,12 @@ const LoopReceipt = ({}: LoopReceiptProps) => {
     <div className={styles.LoopReceipt}>
       {win.up("md") && (
         <div className="print">
-          <Image src="/icons/create/print.svg" width={20} height={20} />
+          <Image
+            alt="icon"
+            src="/icons/create/print.svg"
+            width={20}
+            height={20}
+          />
         </div>
       )}
 
@@ -23,7 +28,12 @@ const LoopReceipt = ({}: LoopReceiptProps) => {
         scanning it.
       </p>
       <div className="image">
-        <Image src="/icons/create/barcode.svg" width={812} height={116} />
+        <Image
+          alt="icon"
+          src="/icons/create/barcode.svg"
+          width={812}
+          height={116}
+        />
       </div>
       {win.down("sm") && <Button labelWeight="bold">Print Barcode</Button>}
     </div>

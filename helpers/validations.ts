@@ -1,5 +1,6 @@
 import { InputType } from "@interfaces/InputTypes";
 import { capitalize } from "@material-ui/core";
+import { nToL, splitOnUpperCase } from "./utils";
 
 const validations = {
   isRequired: (
@@ -9,6 +10,20 @@ const validations = {
     if (!input.customError) input.errorText = errorMessage;
     if (input.value) return true;
     return false;
+  },
+  mustMatch: ({ value }: { value: string }) => {
+    return (input: InputType, errorMessage?: string) => {
+      if (!input.customError)
+        input.errorText =
+          errorMessage ||
+          `${nToL(input.name)} must match with ${nToL(
+            input.strictlyMatchDependency ?? ""
+          )}`;
+      if (input.value === value) {
+        return true;
+      }
+      return false;
+    };
   },
   minMaxLength: ({ min, max }: { min?: number; max?: number }) => {
     return (
@@ -40,7 +55,7 @@ const validations = {
   },
   atLeastOneUpperCaseCharacter: (
     input: InputType,
-    errorMessage: string = capitalize(input.name) +
+    errorMessage: string = nToL(input.name) +
       " should contain at least one upper-case character"
   ) => {
     const re = /[A-Z]/;
@@ -49,7 +64,7 @@ const validations = {
   },
   atLeastOneLowerCaseCharacter: (
     input: InputType,
-    errorMessage: string = capitalize(input.name) +
+    errorMessage: string = nToL(input.name) +
       " should contain at least one lower-case character"
   ) => {
     const re = /[a-z]/;
@@ -58,7 +73,7 @@ const validations = {
   },
   atLeastOneDigit: (
     input: InputType,
-    errorMessage: string = capitalize(input.name) +
+    errorMessage: string = nToL(input.name) +
       " should contain at least one digit"
   ) => {
     const re = /\d/;
@@ -67,7 +82,7 @@ const validations = {
   },
   atLeastOneSpecialCharacter: (
     input: InputType,
-    errorMessage: string = capitalize(input.name) +
+    errorMessage: string = nToL(input.name) +
       " should contain at least one special character"
   ) => {
     const re = /[^A-Za-z0-9 ]/; // [^A-Za-z0-9 ]

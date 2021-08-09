@@ -12,22 +12,10 @@ const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
   return (
     <div className={styles.sideBar}>
       <SidebarItem
-        iconSrc="/icons/sidebar/dashboard.png"
+        iconSrc="/icons/sidebar/dashboard.svg"
         text="Dashboard"
         link="/dashboard"
         active={path == "/dashboard"}
-      />
-      <SidebarItem
-        iconSrc="/icons/sidebar/package.png"
-        text="Packages"
-        link="/packages"
-        active={path == "/packages"}
-      />
-      <SidebarItem
-        iconSrc="/icons/sidebar/analytics.png"
-        text="Analytics"
-        link="/analytics"
-        active={path == "/analytics"}
       />
       {ListenClickAtParentElement(
         (e) => {
@@ -39,21 +27,33 @@ const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
         },
         (childClick) => (
           <SidebarItem
-            iconSrc="/icons/sidebar/add.png"
+            iconSrc="/icons/sidebar/create_loopreceipt.svg"
             text="Create Loopreceipt"
             onClick={childClick}
           />
         )
       )}
+      <SidebarItem
+        iconSrc="/icons/sidebar/packages.svg"
+        text="Packages"
+        link="/packages"
+        active={path == "/packages"}
+      />
+      <SidebarItem
+        iconSrc="/icons/sidebar/analytics.svg"
+        text="Analytics"
+        link="/analytics"
+        active={path == "/analytics"}
+      />
 
       <SidebarItem
-        iconSrc="/icons/sidebar/recepients.png"
+        iconSrc="/icons/sidebar/recipients.svg"
         text="Recipients"
         link="/recipients"
         active={path == "/recipients"}
       />
       <SidebarItem
-        iconSrc="/icons/sidebar/integration.png"
+        iconSrc="/icons/sidebar/integration.svg"
         text="Integration"
         link="/integration"
         active={path == "/integration"}
@@ -82,7 +82,7 @@ const SidebarItem = ({
       className={classNames(styles.item, { active: active })}
       onClick={onClick}
     >
-      <Image src={iconSrc} width={18} height={18} />
+      <Image alt="icon" src={iconSrc} width={18} height={18} />
       <span>{text}</span>
       <span className="dot"></span>
     </div>
@@ -98,13 +98,13 @@ const SidebarItem = ({
 
 const useStyles = makeStyles((theme) => ({
   sideBar: {
+    // zIndex: 9,
     background: "white",
     width: 250,
     display: "flex",
     flexDirection: "column",
     paddingTop: "2rem",
-    // filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
-    borderRight: "2px solid #E5E5E5",
+    filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
     position: "fixed",
     height: "100vh",
   },

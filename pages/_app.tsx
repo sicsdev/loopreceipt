@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import store from "@store/store";
 import axiosInstance from "@apiHelpers/axios";
 import { useEffect } from "react";
+import { axiosErrorHandler } from "@apiHelpers/apiUtils";
 
 const theme = createTheme({
   palette: {
@@ -44,10 +45,15 @@ function MyApp({ Component, pageProps }: AppProps) {
         <SWRConfig
           value={{
             fetcher: (...args: [any]) =>
-              axiosInstance(...args).then((res) => res.data),
+              axiosInstance(...args)
+                .then((res) => res.data)
+                .catch((err) => {
+                  throw axiosErrorHandler(err);
+                }),
           }}
         >
           <Component {...pageProps} path={path} />
+          {/* // path variable is available to all pages */}
         </SWRConfig>
       </ThemeProvider>
     </Provider>

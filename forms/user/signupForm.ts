@@ -38,6 +38,7 @@ const signupForm: FormType = {
         "At least one special character",
         "Minimum eight in length",
       ],
+      showPasswordStrengthBar: true,
       validate: function () {
         return (
           validations.isRequired(this) &&

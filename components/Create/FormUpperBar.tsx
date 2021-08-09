@@ -35,8 +35,13 @@ const FormUpperBar = ({
         upperBarContent
       ) : (
         <div className={styles.newButton} onClick={handleBackButtonClick}>
-          <Image src="/icons/create/back.svg" width="20" height="20" /> New
-          Loopreceipt
+          <Image
+            alt="icon"
+            src="/icons/create/back.svg"
+            width="20"
+            height="20"
+          />
+          &nbsp; New Loopreceipt
         </div>
       )}
     </UpperBar>

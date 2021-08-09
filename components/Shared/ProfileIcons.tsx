@@ -29,7 +29,12 @@ const ProfileIcons = ({ firstAlphabets, colorStrings }: ProfileIconsProps) => {
           transform: `translateX(-${8 * firstAlphabets.length}px)`,
         }}
       >
-        <Image src="/icons/create/group/personadd.svg" width={20} height={20} />
+        <Image
+          alt="icon"
+          src="/icons/create/group/personadd.svg"
+          width={20}
+          height={20}
+        />
       </div>
     </div>
   );

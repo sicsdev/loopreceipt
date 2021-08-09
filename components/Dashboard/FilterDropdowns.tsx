@@ -80,7 +80,13 @@ const FilterDropdowns = ({
             setSelectingDateRange(true);
           }}
         >
-          <Image src="/icons/dashboard/calender.svg" width={18} height={16} />{" "}
+          <Image
+            alt="icon"
+            src="/icons/dashboard/calender.svg"
+            width={18}
+            height={16}
+          />
+          &nbsp;
           {dateRangeString}
         </div>
         <div ref={loopSelectRef} className="dd">
@@ -168,6 +174,7 @@ const FilterDropdowns = ({
                   onClick={() => setSelectingDateRange(false)}
                 >
                   <Image
+                    alt="icon"
                     src="/icons/dashboard/back.svg"
                     width={15}
                     height={20}
@@ -237,6 +244,10 @@ const useStyles = makeStyles((theme) => ({
       gap: 0,
     },
     "& .dateRange": {
+      zIndex: 9,
+      // more than sidebarListener
+      // so that we can listen the click on it
+      // but must be more than navbar
       marginRight: "auto",
       border: "1px solid #CECECE",
       color: "#828282",

@@ -1,36 +1,33 @@
 import { createSlice, Draft, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
-
+import store, { RootState } from "../store";
+import Cookies from "js-cookie";
+import router from "next/router";
+import { EntityUser } from "@apiHelpers/types";
 const initialState: {
-  id: number | null;
-  username: string | null;
-} = {
-  id: 1,
-  username: "benja",
-};
+  user?: EntityUser;
+} = {};
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (
-      state: Draft<typeof initialState>,
-      action: PayloadAction<typeof initialState>
-    ) => {
-      state.id = action.payload.id;
-      state.username = action.payload.username;
+    setUser: (state, action: PayloadAction<EntityUser>) => {
+      state.user = action.payload;
     },
-    resetUser: (state: Draft<typeof initialState>) => {
-      state.id = null;
-      state.username = null;
+    deleteUser: (state) => {
+      state.user = undefined;
     },
   },
 });
 
 // Selectors
-export const getUser = (state: RootState) => state.user;
-
+// export const getUser = (state: RootState) => state.user;
+export const logoutUser = () => {
+  store.dispatch(deleteUser());
+  Cookies.remove("token");
+  router.push("/user/login");
+};
 // Reducers and actions
-export const { setUser, resetUser } = userSlice.actions;
+export const { setUser, deleteUser } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -16,10 +16,10 @@ export default function Notification({
   return (
     <div className={styles.item}>
       <div className="image">
-        <Image src={iconSrc} width={25} height={25} />
+        <Image alt="icon" src={iconSrc} width={25} height={25} />
         {active && <div className="dot"></div>}
       </div>
-      <div className="text">“{text}"</div>
+      <div className="text">&ldquo;{text}&rdquo;</div>
       <div className="time">{timeAgo}</div>
     </div>
   );

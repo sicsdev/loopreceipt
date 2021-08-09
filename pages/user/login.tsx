@@ -1,22 +1,22 @@
 import authApi from "@apiClient/authApi";
-import usersApi from "@apiClient/usersApi";
 import Button from "@components/Controls/Button";
+import { makeStyles } from "@material-ui/core";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
 import { useFetch, deferrer } from "@hooks/useFetch";
 import { useForm } from "@hooks/useForm";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
-import { makeStyles, useTheme, Radio } from "@material-ui/core";
-import { validateAllFieldsOfForm } from "forms/formUtils";
-import loginForm from "forms/loginForm";
+import { Radio } from "@material-ui/core";
+import { validateAllFieldsOfForm } from "@forms/formUtils";
+import loginForm from "@forms/user/loginForm";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useState } from "react";
 import Layout from "@components/Global/Layout";
+import Message from "@components/Shared/Message";
 interface LoginProps {}
 const Login = ({}: LoginProps) => {
-  const styles = loginStyles();
+  const styles = commonUserFormStyles();
   const router = useRouter();
   const [rememberMe, setRememberMe] = useState(false);
   const loginFormProps = useForm(loginForm.initialState);
@@ -25,6 +25,7 @@ const Login = ({}: LoginProps) => {
     loading,
     sendRequest: sendLoginRequest,
     requestSent,
+    error,
   } = useFetch<{
     token: string;
     isFirstTime: boolean;
@@ -46,13 +47,12 @@ const Login = ({}: LoginProps) => {
       or u can pass just authApi.login to useFetch
       and call sendLoginRequest({ email: loginFormProps.formState.email.value,  password: loginFormProps.formState.password.value,})
       */
-      console.log(response);
+      // console.log(response);
       if (response) {
         Cookies.set("token", response.token);
         Cookies.set("isFirstTime", String(response.isFirstTime));
         router.push("/dashboard");
       } else {
-        alert("Please verify your email to continue");
       }
     }
   };
@@ -67,11 +67,13 @@ const Login = ({}: LoginProps) => {
 
   return (
     <Layout>
-      <div className={styles.Login}>
-        <h1 className="heading">{loginForm.formHeading}</h1>
+      <div className={styles.UserForm}>
         <div className="form">
+          <h1 className="heading">{loginForm.formHeading}</h1>
           <Form form={loginForm} formProps={loginFormProps} padForm={false} />
-
+          {error && <Message message={error.message} type="warning" />}
+          {/* Invalid Email or Password. If email is correct use forgot password
+              to get a new password. */}
           <div className="row">
             <div className="rememberMe">
               <Radio
@@ -91,7 +93,9 @@ const Login = ({}: LoginProps) => {
                 Remember Me
               </div>
             </div>
-            <PrimaryLink>Forgot Password?</PrimaryLink>
+            <PrimaryLink href="/user/forgotpassword">
+              Forgot Password?
+            </PrimaryLink>
           </div>
           {loading ? (
             <Button labelWeight="bold" color="default" labelColor="gray">
@@ -102,42 +106,53 @@ const Login = ({}: LoginProps) => {
               Log In
             </Button>
           )}
-
-          <div className="noAccount">
-            Don't have an account?{" "}
-            <Link href="/signup">
-              <a>
-                <PrimaryLink>Join free today</PrimaryLink>
-              </a>
-            </Link>
-          </div>
+        </div>
+        <div className="bottomLinks">
+          <p>
+            Don&apos;t have an account?&nbsp;
+            <PrimaryLink href="/user/signup">Join free today</PrimaryLink>
+          </p>
         </div>
       </div>
     </Layout>
   );
 };
 export default Login;
-export const loginStyles = makeStyles((theme) => ({
-  Login: {
-    padding: "4rem 0",
-    "& .heading": {
-      fontWeight: 500,
-      fontSize: 36,
-      color: theme.palette.secondary.main,
-      textAlign: "center",
-      marginBottom: "2rem",
-    },
-    "& .subheading": {
-      textAlign: "center",
-      fontSize: 18,
-    },
+export const commonUserFormStyles = makeStyles((theme) => ({
+  UserForm: {
+    // border: "1px solid red",
+    padding: "4rem 16px",
+
     "& .form": {
-      marginTop: "4rem",
       maxWidth: 600,
       margin: "auto",
       display: "flex",
       flexDirection: "column",
       gap: "2rem",
+      textAlign: "center",
+      "&.card": {
+        background: "#FFFFFF",
+        boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
+        borderRadius: "8px",
+        padding: "2rem",
+      },
+      "& .iconContainer": {},
+      "& .heading": {
+        fontWeight: 500,
+        fontSize: 36,
+        color: theme.palette.secondary.main,
+        marginBottom: "1rem",
+        [theme.breakpoints.down("xs")]: {
+          fontSize: 32,
+        },
+      },
+      "& .subheading": {
+        fontSize: 18,
+        marginTop: "-2rem",
+      },
+      "& .MyInputContainer": {
+        width: "100%",
+      },
       "& .row": {
         display: "flex",
         justifyContent: "space-between",
@@ -148,10 +163,15 @@ export const loginStyles = makeStyles((theme) => ({
           gap: 5,
         },
       },
-      "& .noAccount": {
-        textAlign: "center",
-        color: "#8F8F8F",
-      },
+    },
+    "& .bottomLinks": {
+      margin: "auto",
+      marginTop: "2rem",
+      maxWidth: 600,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 20,
     },
   },
 }));

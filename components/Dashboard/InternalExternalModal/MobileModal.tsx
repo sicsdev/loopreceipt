@@ -17,7 +17,7 @@ const MobileModal = ({ dialogItems }: MobileModalProps) => {
       <div className={styles.MobileModal}>
         {dialogItems.map((item, i) => (
           <div key={i} className="item" onClick={item.click}>
-            <Image src={item.src} width="35" height="35" />
+            <Image alt="icon" src={item.src} width="35" height="35" />
             <div className="content">
               <p className={"title"}>{item.title}</p>
               <p className="description">{item.description}</p>

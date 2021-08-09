@@ -109,8 +109,13 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
       )}
       {searchItems.every((item) => !item.matchLength) && (
         <div className={styles.nomatch}>
-          <Image src="/icons/create/exclamation.svg" width={15} height={15} />{" "}
-          No recipient found with the name “{searchInput}”
+          <Image
+            alt="icon"
+            src="/icons/create/exclamation.svg"
+            width={15}
+            height={15}
+          />
+          &nbsp; No recipient found with the name “{searchInput}”
         </div>
       )}
       <div
@@ -127,7 +132,12 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
       </div>
       {formType === "internal" && (
         <div className={styles.bottomText}>
-          <Image src="/icons/exclaimation.svg" width={15} height={15} />
+          <Image
+            alt="icon"
+            src="/icons/exclaimation.svg"
+            width={15}
+            height={15}
+          />
           &nbsp; You are searching contacts with dropisle.com
         </div>
       )}
@@ -152,7 +162,9 @@ function SearchItem({
   return (
     <div className={classNames(styles.item, { active })} onClick={onClick}>
       <div className="tick">
-        {active && <Image src="/icons/check.svg" width="16" height="12" />}
+        {active && (
+          <Image alt="icon" src="/icons/check.svg" width="16" height="12" />
+        )}
       </div>
       <div>
         <div className={"primary"}>{primary}</div>

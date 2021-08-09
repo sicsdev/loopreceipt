@@ -13,19 +13,26 @@ export const validateAllFieldsOfForm = (
   const updatedFormState = { ...formProps.formState };
   for (const name in updatedFormState) {
     const input = { ...updatedFormState[name] };
+    let valid = true;
     if (input.validate) {
-      let valid = input.validate();
-
-      // console.log(valid);
-      if (!valid) {
-        input.error = input.errorText;
-        allFieldsValid = false;
+      if (input.strictlyMatchDependency) {
+        valid = input.validate({
+          dependencyValue:
+            updatedFormState[input.strictlyMatchDependency].value,
+        });
       } else {
-        input.error = "";
+        valid = input.validate();
       }
-      // console.log(input);
-      updatedFormState[name] = input;
     }
+    // console.log(valid);
+    if (!valid) {
+      input.error = input.errorText;
+      allFieldsValid = false;
+    } else {
+      input.error = "";
+    }
+    // console.log(input);
+    updatedFormState[name] = input;
   }
   formProps.setFormState(updatedFormState);
 
@@ -43,17 +50,22 @@ export const validateSingleFieldOfForm = (
   const updatedFormState = { ...formProps.formState };
 
   const input = { ...updatedFormState[fieldName] };
+  // console.log(input);
   if (input.validate) {
-    valid = input.validate();
-    // console.log(valid);
-    if (!valid) {
-      input.error = input.errorText;
+    if (input.strictlyMatchDependency) {
+      valid = input.validate({
+        dependencyValue: updatedFormState[input.strictlyMatchDependency].value,
+      });
     } else {
-      input.error = "";
+      valid = input.validate();
     }
-    // console.log(input);
-    updatedFormState[fieldName] = input;
   }
+  if (!valid) {
+    input.error = input.errorText;
+  } else {
+    input.error = "";
+  }
+  updatedFormState[fieldName] = input;
 
   formProps.setFormState(updatedFormState);
   return valid;
