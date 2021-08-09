@@ -121,7 +121,7 @@ export default Login;
 export const commonUserFormStyles = makeStyles((theme) => ({
   UserForm: {
     // border: "1px solid red",
-    padding: "4rem 16px",
+    padding: "7rem 16px",
 
     "& .form": {
       maxWidth: 600,

@@ -82,6 +82,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   content: {
-    marginTop: 70,
+    marginTop: 0,
   },
 }));
