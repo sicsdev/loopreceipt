@@ -11,8 +11,8 @@ const signupForm: FormType = {
       placeholder: "name*",
       value: "",
       type: "text",
-      validate: function () {
-        return validations.isRequired(this);
+      inputProps: {
+        required: true,
       },
     },
     email: {
@@ -21,8 +21,8 @@ const signupForm: FormType = {
       placeholder: "email*",
       value: "",
       type: "email",
-      validate: function () {
-        return validations.isRequired(this) && validations.email(this);
+      inputProps: {
+        required: true,
       },
     },
     password: {
@@ -39,6 +39,11 @@ const signupForm: FormType = {
         "Minimum eight in length",
       ],
       showPasswordStrengthBar: true,
+      inputProps: {
+        minLength: 8,
+        pattern:
+          "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$",
+      },
       validate: function () {
         return (
           validations.isRequired(this) &&
@@ -49,6 +54,9 @@ const signupForm: FormType = {
           validations.minMaxLength({ min: 8 })(this)
         );
       },
+      errorText:
+        "Password must have at least 8 characters and cannot contain common words or patterns. Try adding numbers, symbols, or characters to make your password longer and more unique.",
+      customError: true,
     },
   },
 };

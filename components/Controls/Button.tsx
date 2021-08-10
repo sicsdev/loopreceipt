@@ -23,6 +23,7 @@ function Button({
   labelColor = "black",
   labelWeight = "normal",
   borderColor,
+  ...props
 }: ButtonProps & AdditionalButtonProps) {
   const styles = useStyles({ labelColor, labelWeight, borderColor });
   return (
@@ -35,6 +36,7 @@ function Button({
       classes={{
         label: classNames(styles.label),
       }}
+      {...props}
     >
       {children}
     </MuiButton>
@@ -44,13 +46,10 @@ function Button({
 export default Button;
 const useStyles = makeStyles((theme) => ({
   button: (props: AdditionalButtonProps) => ({
-    boxShadow: "none",
     borderRadius: 8,
     borderColor: props.borderColor,
     margin: 0,
-    "&:hover": {
-      boxShadow: "none",
-    },
+
     "&.shrink": {
       paddingTop: 2,
       paddingBottom: 2,

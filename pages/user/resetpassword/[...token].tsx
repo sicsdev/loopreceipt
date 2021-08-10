@@ -141,25 +141,24 @@ const ResetPassword = ({}: ResetPasswordProps) => {
               &nbsp;form.
             </MessageCard>
           ) : (
-            <>
-              <Form
-                form={resetPasswordForm}
-                formProps={resetPasswordFormProps}
-                padForm={false}
-                validateOnBlur={true}
-              />
-
+            <Form
+              form={resetPasswordForm}
+              formProps={resetPasswordFormProps}
+              padForm={false}
+              validateOnBlur={true}
+              onSubmit={resetPassword}
+            >
               {error && <Message message={error.message} type="warning" />}
               {loading ? (
                 <Button labelWeight="bold" color="default" labelColor="gray">
                   Loading...
                 </Button>
               ) : (
-                <Button labelWeight="bold" onClick={resetPassword}>
+                <Button labelWeight="bold" type="submit">
                   Reset Password
                 </Button>
               )}
-            </>
+            </Form>
           )}
         </div>
         <div className="bottomLinks">

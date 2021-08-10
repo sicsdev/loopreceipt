@@ -7,9 +7,15 @@ interface PrimaryLinkProps {
 const PrimaryLink = ({ children, href }: PrimaryLinkProps) => {
   const styles = useStyles();
   return (
-    <Link href={href}>
-      <a className={styles.PrimaryLink}>{children}</a>
-    </Link>
+    <p
+      style={{
+        display: "inline-block",
+      }}
+    >
+      <Link href={href}>
+        <a className={styles.PrimaryLink}>{children}</a>
+      </Link>
+    </p>
   );
 };
 export default PrimaryLink;
