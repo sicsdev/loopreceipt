@@ -44,6 +44,19 @@ const signupForm: FormType = {
         pattern:
           "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$",
       },
+      validate: function () {
+        return (
+          validations.isRequired(this) &&
+          validations.atLeastOneUpperCaseCharacter(this) &&
+          validations.atLeastOneLowerCaseCharacter(this) &&
+          validations.atLeastOneDigit(this) &&
+          validations.atLeastOneSpecialCharacter(this) &&
+          validations.minMaxLength({ min: 8 })(this)
+        );
+      },
+      errorText:
+        "Password must have at least 8 characters and cannot contain common words or patterns. Try adding numbers, symbols, or characters to make your password longer and more unique.",
+      customError: true,
     },
   },
 };

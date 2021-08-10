@@ -20,6 +20,7 @@ const Message = ({ type, message }: MessageProps) => {
 export default Message;
 const useStyles = makeStyles((theme) => ({
   Message: {
+    textAlign: "left",
     "& .warning": {
       color: "#FFC107",
     },

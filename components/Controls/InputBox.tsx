@@ -13,6 +13,7 @@ import { usePreviousValue } from "@hooks/usePreviousValue";
 import InputConstraints from "@components/Controls/InputConstraints";
 import { useState } from "react";
 import PasswordStrengthBar from "@components/Controls/PasswordStrengthBar";
+import Message from "@components/Shared/Message";
 // console.log(CountryRegionData);
 interface InputBoxProps {
   input: InputType;
@@ -126,7 +127,7 @@ function InputBox({
           )}
         </div>
       )}
-      <p className="error">{input.error}</p>
+
       {input.showPasswordStrengthBar && (
         <div
           style={{
@@ -134,6 +135,11 @@ function InputBox({
           }}
         >
           <PasswordStrengthBar password={input.value} />
+        </div>
+      )}
+      {input.error && (
+        <div className={styles.inputError}>
+          <Message type="warning" message={input.error}></Message>
         </div>
       )}
     </div>
@@ -162,10 +168,6 @@ const useStyles = makeStyles((theme) => {
           fontSize: "1.1rem",
         },
       },
-      "& .error": {
-        color: "red",
-        fontSize: 14,
-      },
     },
     input: inputCommon(theme),
     phoneInput: {
@@ -183,6 +185,9 @@ const useStyles = makeStyles((theme) => {
         right: 10,
         top: 10,
       },
+    },
+    inputError: {
+      margin: "1rem 0",
     },
   };
 });
