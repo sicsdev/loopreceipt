@@ -23,6 +23,7 @@ function Button({
   labelColor = "black",
   labelWeight = "normal",
   borderColor,
+  ...props
 }: ButtonProps & AdditionalButtonProps) {
   const styles = useStyles({ labelColor, labelWeight, borderColor });
   return (
@@ -35,6 +36,7 @@ function Button({
       classes={{
         label: classNames(styles.label),
       }}
+      {...props}
     >
       {children}
     </MuiButton>

@@ -11,8 +11,9 @@ const loginForm: FormType = {
       placeholder: "email*",
       value: "",
       type: "email",
-      validate: function () {
-        return validations.isRequired(this) && validations.email(this);
+      inputProps: {
+        required: true,
+        pattern: "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,}$",
       },
     },
     password: {
@@ -21,8 +22,8 @@ const loginForm: FormType = {
       placeholder: "password*",
       value: "",
       type: "password",
-      validate: function () {
-        return validations.isRequired(this);
+      inputProps: {
+        required: true,
       },
     },
   },

@@ -11,8 +11,8 @@ const signupForm: FormType = {
       placeholder: "name*",
       value: "",
       type: "text",
-      validate: function () {
-        return validations.isRequired(this);
+      inputProps: {
+        required: true,
       },
     },
     email: {
@@ -21,8 +21,8 @@ const signupForm: FormType = {
       placeholder: "email*",
       value: "",
       type: "email",
-      validate: function () {
-        return validations.isRequired(this) && validations.email(this);
+      inputProps: {
+        required: true,
       },
     },
     password: {
@@ -39,15 +39,10 @@ const signupForm: FormType = {
         "Minimum eight in length",
       ],
       showPasswordStrengthBar: true,
-      validate: function () {
-        return (
-          validations.isRequired(this) &&
-          validations.atLeastOneUpperCaseCharacter(this) &&
-          validations.atLeastOneLowerCaseCharacter(this) &&
-          validations.atLeastOneDigit(this) &&
-          validations.atLeastOneSpecialCharacter(this) &&
-          validations.minMaxLength({ min: 8 })(this)
-        );
+      inputProps: {
+        minLength: 8,
+        pattern:
+          "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$",
       },
     },
   },

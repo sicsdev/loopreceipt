@@ -101,6 +101,7 @@ function InputBox({
         <div className={styles.inputContainer + " MyInputContainer"}>
           <input
             className={styles.input}
+            {...input.inputProps}
             type={
               input.type !== "password"
                 ? input.type

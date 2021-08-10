@@ -41,6 +41,7 @@ const Login = ({}: LoginProps) => {
 
   const login = async () => {
     // console.log(loginFormProps.formState);
+
     if (validateAllFieldsOfForm(loginFormProps)) {
       const response = await sendLoginRequest();
       /*
@@ -70,48 +71,54 @@ const Login = ({}: LoginProps) => {
       <div className={styles.UserForm}>
         <div className="form">
           <h1 className="heading">{loginForm.formHeading}</h1>
-          <Form form={loginForm} formProps={loginFormProps} padForm={false} />
-          {error && <Message message={error.message} type="warning" />}
-          {/* Invalid Email or Password. If email is correct use forgot password
+          <Form
+            form={loginForm}
+            formProps={loginFormProps}
+            padForm={false}
+            onSubmit={login}
+          >
+            {error && <Message message={error.message} type="warning" />}
+            {/* Invalid Email or Password. If email is correct use forgot password
               to get a new password. */}
-          <div className="row">
-            <div className="rememberMe">
-              <Radio
-                color="primary"
-                checked={rememberMe}
-                onClick={() => {
-                  setRememberMe(!rememberMe);
-                }}
-                name="rememberMe"
-                inputProps={{ "aria-label": "Remember Me?" }}
-              />
-              <div
-                style={{
-                  paddingTop: 2,
-                }}
-              >
-                Remember Me
+            <div className="row">
+              <div className="rememberMe">
+                <Radio
+                  color="primary"
+                  checked={rememberMe}
+                  onClick={() => {
+                    setRememberMe(!rememberMe);
+                  }}
+                  name="rememberMe"
+                  inputProps={{ "aria-label": "Remember Me?" }}
+                />
+                <div
+                  style={{
+                    paddingTop: 2,
+                  }}
+                >
+                  Remember Me
+                </div>
               </div>
+              <PrimaryLink href="/user/forgotpassword">
+                Forgot Password?
+              </PrimaryLink>
             </div>
-            <PrimaryLink href="/user/forgotpassword">
-              Forgot Password?
-            </PrimaryLink>
-          </div>
-          {loading ? (
-            <Button labelWeight="bold" color="default" labelColor="gray">
-              Loading...
-            </Button>
-          ) : (
-            <Button labelWeight="bold" onClick={login}>
-              Log In
-            </Button>
-          )}
+            {loading ? (
+              <Button labelWeight="bold" color="default" labelColor="gray">
+                Loading...
+              </Button>
+            ) : (
+              <Button labelWeight="bold" type="submit">
+                Log In
+              </Button>
+            )}
+          </Form>
         </div>
         <div className="bottomLinks">
-          <p>
+          <div>
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Join free today</PrimaryLink>
-          </p>
+          </div>
         </div>
       </div>
     </Layout>
