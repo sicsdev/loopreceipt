@@ -1,34 +1,38 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import { merge } from "lodash";
-import dynamic from 'next/dynamic'
-const ReactApexChart = dynamic(() => import('react-apexcharts'), {ssr:false})
+import dynamic from "next/dynamic";
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 // import ReactApexChart from "react-apexcharts";
 // material
+import { useTheme, styled, makeStyles } from "@material-ui/core/styles";
 import {
-  useTheme,
-  styled,
-  makeStyles
-} from "@material-ui/core/styles";
-import { Card, Box, Typography, TextField, InputAdornment, MenuItem } from "@material-ui/core";
+  Card,
+  Box,
+  Typography,
+  TextField,
+  InputAdornment,
+  MenuItem,
+} from "@material-ui/core";
 // utils
 import { fNumber } from "../../utils/formatNumber";
 //
 import { BaseOptionChart } from "@components/charts";
 // import { makeStyles } from "@material-ui/styles";
-
+import analyticsApi from "@apiClient/analyticsApi";
 // ----------------------------------------------------------------------
 
 const CHART_HEIGHT = 200;
 const LEGEND_HEIGHT = 0;
 
 const CHART_FILTERS = [
-  "This Week",
-  "This Month",
-  "This Year",
-  "Last Year"
-]
+  { label: "This Week", value: "weekly" },
+  { label: "This Month", value: "monthly" },
+  { label: "This Year", value: "yearly" },
+];
 
-const happyProgress = "/icons/analytics/happyProgress.svg"
+const happyProgress = "/icons/analytics/happyProgress.svg";
 
 const ChartWrapperStyle = styled("div")(({ theme }) => ({
   height: CHART_HEIGHT,
@@ -48,17 +52,17 @@ const ChartWrapperStyle = styled("div")(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-const CHART_DATA = [80];
+// const CHART_DATA = [80];
 
 const useStyles = makeStyles((theme) => ({
   title: {
-    fontFamily: 'Roboto',
-    fontStyle: 'normal',
+    fontFamily: "Roboto",
+    fontStyle: "normal",
     fontWeight: 500,
     fontSize: 15,
-    lineHeight: '18px',
-    letterSpacing: '0.01em',
-    color: '#4F4F4F'
+    lineHeight: "18px",
+    letterSpacing: "0.01em",
+    color: "#4F4F4F",
   },
   headingStyle: {
     fontWeight: 700,
@@ -93,6 +97,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#000",
     fontFamily: "Roboto",
     textAlign: "left",
+    alignSelf: "center",
     marginLeft: 10,
     [theme.breakpoints.down("md")]: {
       fontSize: 12,
@@ -116,11 +121,22 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   select: {
-    '& .MuiInputAdornment-root > .MuiTypography-root': { fontSize: 12, alignSelf: "center" },
-    '& .MuiInput-underline:before': { border: '0px !important'},
-    '& .MuiInput-underline:after': { border: '0px !important'},
-    '& .MuiSelect-root': { paddingLeft: 1, paddingTop: 0.5, paddingBottom: 0.5, paddingRight: '24px !important', fontSize: 12, color: "#6A707E", border: '0 !important' },
-  }
+    "& .MuiInputAdornment-root > .MuiTypography-root": {
+      fontSize: 12,
+      alignSelf: "center",
+    },
+    "& .MuiInput-underline:before": { border: "0px !important" },
+    "& .MuiInput-underline:after": { border: "0px !important" },
+    "& .MuiSelect-root": {
+      paddingLeft: 1,
+      paddingTop: 0.5,
+      paddingBottom: 0.5,
+      paddingRight: "24px !important",
+      fontSize: 12,
+      color: "#6A707E",
+      border: "0 !important",
+    },
+  },
 }));
 
 export default function RecipientCommentAnalytics() {
@@ -181,50 +197,72 @@ export default function RecipientCommentAnalytics() {
     //   },
     // },
   });
-  const [seriesData, setSeriesData] = useState("This Week");
-  const handleChangeSeriesData = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSeriesData(String(event.target.value));
+
+  const [percent, setPercent] = useState([0]);
+  const [range, setRange] = useState("weekly");
+  const handleChangeRange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRange(String(event.target.value));
   };
 
+  const getCommentsPercentage = async () => {
+    let response = await analyticsApi.commentsReceived(range);
+    if (response.error === false && response.percent) {
+      setPercent([response.percent]);
+    } else {
+      setPercent([0]);
+    }
+  };
+  useEffect(() => {
+    getCommentsPercentage();
+  }, [range]);
+
   return (
-    <Card style={{height: 344, boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.06)"}}>
-      <Box display="flex" sx={{px: 3, py: 2, borderBottom: "1px solid #EBEFF2"}}>
+    <Card
+      style={{ height: 344, boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.06)" }}
+    >
+      <Box
+        display="flex"
+        sx={{ px: 3, py: 2, borderBottom: "1px solid #EBEFF2" }}
+      >
         <Typography className={classes.title}>Recipient Comments</Typography>
 
         <TextField
-            select
-            value={seriesData}
-            onChange={handleChangeSeriesData}
-            InputProps={{
-              startAdornment: <InputAdornment position="start">Show: </InputAdornment>,
-              
-            }}
-            className={classes.select}
-            style={{
-              marginRight: 0,
-              marginLeft: 'auto',
-              border: '0 !important',
-            }}
-          >
-            {CHART_FILTERS.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
+          select
+          value={range}
+          onChange={handleChangeRange}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">Show: </InputAdornment>
+            ),
+          }}
+          className={classes.select}
+          style={{
+            marginRight: 0,
+            marginLeft: "auto",
+            border: "0 !important",
+          }}
+        >
+          {CHART_FILTERS.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
       </Box>
       <ChartWrapperStyle dir="ltr">
         <ReactApexChart
           type="radialBar"
-          series={CHART_DATA}
+          series={percent}
           options={chartOptions}
           height={240}
         />
         <Box>
           <Typography className={classes.headingStyle}>Superb!</Typography>
         </Box>
-        <div style={{display: "flex"}} className={classes.text}>
-          <Typography className={classes.percentageStyle}>93%</Typography>
+        <div style={{ display: "flex" }} className={classes.text}>
+          <Typography className={classes.percentageStyle}>
+            {percent[0]}%
+          </Typography>
           <Typography className={classes.bodyStyle}>
             of recipients left a comment on delivery
           </Typography>
