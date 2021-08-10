@@ -277,7 +277,7 @@ const useStyles = makeStyles((theme) => ({
 
   right: {
     marginLeft: 250,
-    padding: "3rem 4rem",
+    padding: "5rem 4rem",
     // border: "2px solid blue",
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0,

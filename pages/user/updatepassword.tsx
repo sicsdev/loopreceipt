@@ -50,18 +50,19 @@ const UpdatePassword = ({}: UpdatePasswordProps) => {
             form={updatePasswordForm}
             formProps={updatePasswordFormProps}
             padForm={false}
-          />
-
-          {error && <Message message={error.message} type="warning" />}
-          {loading ? (
-            <Button labelWeight="bold" color="default" labelColor="gray">
-              Loading...
-            </Button>
-          ) : (
-            <Button labelWeight="bold" onClick={updatePassword}>
-              Update Password
-            </Button>
-          )}
+            onSubmit={updatePassword}
+          >
+            {error && <Message message={error.message} type="warning" />}
+            {loading ? (
+              <Button labelWeight="bold" color="default" labelColor="gray">
+                Loading...
+              </Button>
+            ) : (
+              <Button labelWeight="bold" type="submit">
+                Update Password
+              </Button>
+            )}
+          </Form>
         </div>
         <div className="bottomLinks">
           <p>

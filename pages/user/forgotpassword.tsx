@@ -76,22 +76,22 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
               </p>
             </div>
           ) : (
-            <>
-              <Form
-                form={forgotPasswordForm}
-                formProps={forgotPasswordFormProps}
-                padForm={false}
-              />
+            <Form
+              form={forgotPasswordForm}
+              formProps={forgotPasswordFormProps}
+              padForm={false}
+              onSubmit={sendEmailLink}
+            >
               {loading ? (
                 <Button labelWeight="bold" color="default" labelColor="gray">
                   Loading...
                 </Button>
               ) : (
-                <Button labelWeight="bold" onClick={sendEmailLink}>
+                <Button labelWeight="bold" type="submit">
                   Send Reset Email
                 </Button>
               )}
-            </>
+            </Form>
           )}
         </div>
         <div className="bottomLinks">

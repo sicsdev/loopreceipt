@@ -155,6 +155,7 @@ const useStyles = makeStyles((theme) => ({
       display: "flex",
       alignItems: "center",
       gap: "1rem",
+      zIndex: "10",
       "& .text": {
         color: "#828282",
         fontWeight: "bold",
