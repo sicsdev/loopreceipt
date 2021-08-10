@@ -65,10 +65,10 @@ const UpdatePassword = ({}: UpdatePasswordProps) => {
           </Form>
         </div>
         <div className="bottomLinks">
-          <p>
+          <div>
             Cancel update go to dashboard?&nbsp;
             <PrimaryLink href="/dashboard">Dashboard</PrimaryLink>
-          </p>
+          </div>
         </div>
       </div>
     </Layout>

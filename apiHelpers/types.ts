@@ -23,6 +23,7 @@ export interface EntityRecipient {
   city: string;
 }
 export interface EntityLooper {
+  _id?: string;
   email: string;
   name: string;
 }
@@ -39,15 +40,17 @@ export interface EntityLoop {
   recipient: EntityRecipient;
 }
 export interface EntityGroup {
-  members: EntityLooper[];
-  creator?: {
-    isVerified: boolean;
-    isFirstTime: boolean;
-    name: string;
-    email: string;
-    userid: string;
-  };
+  createdFor: string;
+  name: string;
+  recipient: EntityRecipient;
+  loopers: EntityLooper[];
+  // below fields are only received in EntityGroup received as response
+  isDefault?: boolean;
+  creator?: string;
+
   createdAt?: string;
-  __v?: string;
+  updatedAt?: string;
+  __v?: number;
   groupid?: string;
 }
+// fields marked as ? are filled only on entity received in response

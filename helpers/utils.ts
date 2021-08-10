@@ -76,6 +76,18 @@ export const randomColor = (
   const rgba = `rgba(${r},${g},${b}, ${opacity})`;
   return rgba;
 };
+export const randomMemoizedColor = (key: string) => {
+  if (!memoizationMap[key]) {
+    return (memoizationMap[key] = randomColor());
+  }
+  return memoizationMap[key];
+};
+const memoizationMap: {
+  [key: string]: any;
+} = {};
+export const memoizedValue = (key: string, value?: any) => {
+  return (memoizationMap[key] = value);
+};
 export const capitalize = (value: string) => {
   return value[0].toUpperCase() + value.slice(1);
 };

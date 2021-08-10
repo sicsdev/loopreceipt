@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import ProfileIcons from "@components/Shared/ProfileIcons";
 import Switch from "@components/Controls/Switch";
-import { randomColor, range } from "@helpers/utils";
+import { randomColor, randomMemoizedColor, range } from "@helpers/utils";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
@@ -36,7 +36,7 @@ const Group = ({ group }: GroupProps) => {
               height={20}
             />
           </div>
-          <h2>Group Name</h2>
+          <h2>{group.name}</h2>
         </div>
         <div className={"details"} ref={detailsRef}>
           <div className="column">
@@ -44,7 +44,7 @@ const Group = ({ group }: GroupProps) => {
             <div className="content">
               <ProfileIcons
                 firstAlphabets={["M"]}
-                colorStrings={[randomColor()]}
+                colorStrings={[randomMemoizedColor("fdsfsd")]}
               />
             </div>
           </div>
@@ -55,11 +55,11 @@ const Group = ({ group }: GroupProps) => {
             <div className="head">Loopers</div>
             <div className="content">
               <ProfileIcons
-                firstAlphabets={group.members.map(({ name }) =>
+                firstAlphabets={group.loopers.map(({ name }) =>
                   name[0].toUpperCase()
                 )}
-                colorStrings={range(1, group.members.length).map(() =>
-                  randomColor()
+                colorStrings={group.loopers.map((looper, i) =>
+                  randomMemoizedColor(looper.name + looper.email)
                 )}
               />
             </div>
@@ -72,7 +72,7 @@ const Group = ({ group }: GroupProps) => {
           <div className="column">
             <div className="head">Group created for</div>
             <div className="content">
-              <p>Dropsile Inc.</p>
+              <p>{group.createdFor}</p>
             </div>
           </div>
           <div className="line">
@@ -87,12 +87,12 @@ const Group = ({ group }: GroupProps) => {
     ) : (
       <div className={styles.mobileGroup}>
         <div className="line"></div>
-        <div className="head">Group Name</div>
-        <div className="recipient">For Dropsile Inc.</div>
+        <div className="head">{group.name}</div>
+        <div className="recipient">For {group.createdFor}</div>
         <div className="divider"></div>
         <div className="loopers">
           <div className="h">Loopers:</div>
-          {group?.members.map(({ email }, i) => {
+          {group?.loopers.map(({ email }, i) => {
             return (
               <p key={i} className="email">
                 {email}

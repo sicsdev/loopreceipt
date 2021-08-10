@@ -2,7 +2,8 @@ import axios from "@apiHelpers/axios";
 import { EntityLoop } from "@apiHelpers/types";
 import { axiosErrorHandler, cacheMap } from "@apiHelpers/apiUtils";
 import { LoopSource } from "@interfaces/LoopTypes";
-export default {
+import Cookies from "js-cookie";
+const loopsApi = {
   create: async (
     loop: EntityLoop
   ): Promise<{ loop: EntityLoop } | undefined> => {
@@ -31,6 +32,7 @@ export default {
       // Sample queries - /api/loops?page=1&filter1=date&from=1609775390&to=1628092190
       // /api/loops?page=1&filter1=type&type=internal
       // /api/loops?page=1&filter1=type&type=internal&filter2=date&from=1609775390&to=1628092190
+      const token = Cookies.get("token") ?? "";
       let url = `/loops?page=${page}`;
       if (filters) {
         if (filters.type && filters.from && filters.to) {
@@ -42,11 +44,12 @@ export default {
         }
       }
       console.log(url);
-      if (cacheMap[url]) {
-        return cacheMap[url];
+      // because map will be specific to user
+      if (cacheMap[token + url]) {
+        return cacheMap[token + url];
       }
       const response = await axios.get(url);
-      cacheMap[url] = response.data;
+      cacheMap[token + url] = response.data;
       // console.log(response.data);
       return response.data;
     } catch (error) {
@@ -54,3 +57,4 @@ export default {
     }
   },
 };
+export default loopsApi;

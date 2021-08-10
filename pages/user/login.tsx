@@ -52,7 +52,11 @@ const Login = ({}: LoginProps) => {
       if (response) {
         Cookies.set("token", response.token);
         Cookies.set("isFirstTime", String(response.isFirstTime));
-        router.push("/dashboard");
+        if (response.isFirstTime) {
+          router.push("/selectindustry");
+        } else {
+          router.push("/dashboard");
+        }
       } else {
       }
     }

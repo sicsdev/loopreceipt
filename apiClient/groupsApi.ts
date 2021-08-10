@@ -1,7 +1,7 @@
 import axios from "@apiHelpers/axios";
 import { EntityGroup } from "@apiHelpers/types";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
-export default {
+const groupsApi = {
   create: async (
     group: EntityGroup
   ): Promise<
@@ -19,14 +19,25 @@ export default {
       throw axiosErrorHandler(error);
     }
   },
-  getAll: async () => {
+  getAll: async (
+    page: number
+  ): Promise<
+    | {
+        error: boolean;
+        total: number;
+        groups: EntityGroup[];
+      }
+    | undefined
+  > => {
     try {
-      const response = await axios.get(`/groups`);
+      let url = `/groups?page=${page}`;
 
-      //   console.log(response.data);
-      return response.data as { groups: EntityGroup[] };
+      const response = await axios.get(url);
+      // console.log(response.data);
+      return response.data;
     } catch (error) {
       throw axiosErrorHandler(error);
     }
   },
 };
+export default groupsApi;

@@ -139,7 +139,9 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   const loopersFormIndex = forms.findIndex(
     (form) => form.formName === "loopersDetailsForm"
   );
-
+  const recipientFormIdx = forms.findIndex(
+    (form) => form.formName === "recipientDetailsForm"
+  );
   return (
     <div>
       <FormUpperBar
@@ -172,12 +174,15 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
             >
               {showExistingGroups ? (
                 <ShowExistingGroups
-                  groupsIsEmpty={groupsIsEmpty}
                   setGroupsIsEmpty={setGroupsIsEmpty}
+                  createGroupClick={() => {
+                    handleNextClick();
+                  }}
                 />
               ) : index === forms.length ? (
                 <SaveCreatedGroup
                   loopers={getLoopers(formsProps[loopersFormIndex].formState)}
+                  recipientState={formsProps[recipientFormIdx].formState}
                 />
               ) : (
                 <Forms
