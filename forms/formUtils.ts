@@ -1,6 +1,13 @@
-import { EntityLooper } from "apiHelpers/types";
-import { FormStateType, useFormReturnType } from "@interfaces/FormTypes";
+import {
+  FormStateType,
+  FormType,
+  useFormReturnType,
+} from "@interfaces/FormTypes";
 import store from "@store/store";
+import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
+import faker from "faker";
+import { useAppSelector } from "@store/hooks";
+import { v4 as uuidv4 } from "uuid";
 
 export const validateAllFieldsOfForm = (
   formProps: useFormReturnType,
@@ -70,7 +77,9 @@ export const validateSingleFieldOfForm = (
   formProps.setFormState(updatedFormState);
   return valid;
 };
-export const getLoopers = (loopersState: FormStateType) => {
+export const getEntityLoopersFromLoopersState = (
+  loopersState: FormStateType
+) => {
   const loopers: EntityLooper[] = [];
   if (
     loopersState.looperEmail.validate?.() &&
@@ -86,4 +95,75 @@ export const getLoopers = (loopersState: FormStateType) => {
     loopers.push({ email, name });
   }
   return loopers;
+};
+export const getEntityRecipientFromRecipientState = (
+  recipientState: FormStateType
+) => {
+  const recipient: EntityRecipient = {
+    email: faker.internet.email(),
+    name: faker.name.findName(),
+    postalCode: recipientState.zipCode.value,
+    address: recipientState.shippingAddress.value,
+    city: recipientState.city.value,
+    company:
+      recipientState.receivingCompanyName?.value || faker.company.companyName(),
+    country: recipientState.country.value,
+  };
+  return recipient;
+};
+export const getEntityLoopFromFormsProps = ({
+  forms,
+  formsProps,
+  formType,
+}: {
+  forms: FormType[];
+  formsProps: useFormReturnType[];
+  formType: "internal" | "external";
+}) => {
+  const recipientFormIdx = forms.findIndex(
+    (form) => form.formName === "recipientDetailsForm"
+  );
+  const companyFormIdx = forms.findIndex(
+    (form) => form.formName === "companyDetailsForm"
+  );
+  const loopersFormIndex = forms.findIndex(
+    (form) => form.formName === "loopersDetailsForm"
+  );
+  const loopers = getEntityLoopersFromLoopersState(
+    formsProps[loopersFormIndex].formState
+  );
+  const recipient: EntityRecipient = getEntityRecipientFromRecipientState(
+    formsProps[recipientFormIdx].formState
+  );
+  let loop: EntityLoop;
+  switch (formType) {
+    case "internal": {
+      loop = {
+        barcode: uuidv4(),
+        city: recipient.city,
+        country: recipient.country,
+        postalCode: recipient.postalCode,
+        province: "nothing",
+        type: "internal",
+        loopers,
+        recipient,
+      };
+      break;
+    }
+    case "external": {
+      const companyState = formsProps[companyFormIdx].formState;
+      loop = {
+        barcode: uuidv4(),
+        city: companyState.city.value,
+        country: companyState.country.value,
+        postalCode: companyState.zipCode.value,
+        province: companyState.province.value,
+        type: "external",
+        loopers,
+        recipient,
+      };
+      break;
+    }
+  }
+  return loop;
 };

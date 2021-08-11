@@ -11,6 +11,7 @@ import { useForm } from "@hooks/useForm";
 import groupDetailsForm from "forms/groupDetailsForm";
 import { useState, useEffect } from "react";
 import Form from "../Form";
+import { getEntityRecipientFromRecipientState } from "@forms/formUtils";
 interface SaveCreatedGroupProps {
   loopers: EntityLooper[];
   recipientState: FormStateType;
@@ -24,17 +25,7 @@ const SaveCreatedGroup = ({
   const [group, setGroup] = useState<EntityGroup>();
   const groupFormProps = useForm(groupDetailsForm.initialState);
   useEffect(() => {
-    const recipient = {
-      email: faker.internet.email(),
-      name: faker.name.findName(),
-      postalCode: recipientState.zipCode.value,
-      address: recipientState.shippingAddress.value,
-      city: recipientState.city.value,
-      company:
-        recipientState.receivingCompanyName?.value ||
-        faker.company.companyName(),
-      country: recipientState.country.value,
-    };
+    const recipient = getEntityRecipientFromRecipientState(recipientState);
     setGroup({
       recipient,
       loopers,

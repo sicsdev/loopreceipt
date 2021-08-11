@@ -18,7 +18,10 @@ import LoopReceipt from "../LoopReceipt";
 import SaveCreatedGroup from "./SaveCreatedGroup";
 import ShowExistingGroups from "./ShowExistingGroups";
 import { useAppSelector } from "@store/hooks";
-import { getLoopers, validateAllFieldsOfForm } from "forms/formUtils";
+import {
+  getEntityLoopersFromLoopersState,
+  validateAllFieldsOfForm,
+} from "forms/formUtils";
 import { useRouter } from "next/router";
 interface AddByGroupProps {
   setOption: React.Dispatch<
@@ -163,7 +166,6 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
               generatedLoopReceipt={() => {
                 setIndex(index + 1);
               }}
-              loopers={getLoopers(formsProps[loopersFormIndex].formState)}
             />
           ) : (
             <BoxContent
@@ -181,7 +183,9 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
                 />
               ) : index === forms.length ? (
                 <SaveCreatedGroup
-                  loopers={getLoopers(formsProps[loopersFormIndex].formState)}
+                  loopers={getEntityLoopersFromLoopersState(
+                    formsProps[loopersFormIndex].formState
+                  )}
                   recipientState={formsProps[recipientFormIdx].formState}
                 />
               ) : (

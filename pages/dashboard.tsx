@@ -14,7 +14,10 @@ import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
 import Pagination from "@components/Dashboard/Pagination";
 import Image from "next/image";
-import { openGettingStartedGuide } from "@store/slices/genericSlice";
+import {
+  openGettingStartedGuide,
+  setActiveTabIndex,
+} from "@store/slices/dashboardSlice";
 
 import useSWR from "swr";
 import { EntityLoop, EntityUser } from "apiHelpers/types";
@@ -31,6 +34,10 @@ import MyLoader from "@components/Shared/MyLoader";
 import Cookies from "js-cookie";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setUser } from "@store/slices/userSlice";
+import Outgoing from "@components/Dashboard/Tabs/Outgoing";
+import Received from "@components/Dashboard/Tabs/Received";
+import Drafts from "@components/Dashboard/Tabs/Drafts";
+import { getEpochDateRangeFromDateRange } from "@helpers/dateFormats";
 interface DashboardProps {
   path: string;
 }
@@ -48,7 +55,9 @@ const Dashboard = ({ path }: DashboardProps) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const activeTabIndex = useAppSelector(
+    (state) => state.dashboard.activeTabIndex
+  );
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
   const [loopsIsEmpty, setLoopsIsEmpty] = useState(true);
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -79,35 +88,13 @@ const Dashboard = ({ path }: DashboardProps) => {
       | undefined;
     if (dateRange.start || dateRange.end) {
       // apply date filters
-      const localDateRange = {
-        start: dateRange.start && new Date(dateRange.start),
-        end: dateRange.end && new Date(dateRange.end),
-      };
-      // console.log(localDateRange);
-      if (localDateRange.end) {
-        localDateRange.end.setDate(localDateRange.end.getDate() + 1);
-        localDateRange.end.setSeconds(localDateRange.end.getSeconds() - 1);
-      }
-      // console.log(localDateRange);
-      if (localDateRange.end == null && localDateRange.start) {
-        localDateRange.end = new Date(localDateRange.start);
-        localDateRange.end.setDate(localDateRange.end.getDate() + 1);
-        localDateRange.end.setSeconds(localDateRange.end.getSeconds() - 1);
-      }
-      if (localDateRange.start == null && localDateRange.end) {
-        localDateRange.start = new Date(localDateRange.end);
-        localDateRange.start.setDate(localDateRange.start.getDate() - 1);
-        localDateRange.start.setSeconds(localDateRange.start.getSeconds() + 1);
-      }
-      // console.log(localDateRange);
-      let epochStartDate = (localDateRange.start as any) / 1000;
 
-      let epochEndDate = (localDateRange.end as any) / 1000;
-
+      // console.log(localDateRange);
+      const { start, end } = getEpochDateRangeFromDateRange(dateRange);
       loopsResponse = await getLoops.sendRequest(page, {
         type: loopSource === "all" ? undefined : loopSource,
-        from: epochStartDate,
-        to: epochEndDate,
+        from: start,
+        to: end,
       });
     } else {
       loopsResponse = await getLoops.sendRequest(page, {
@@ -156,13 +143,13 @@ const Dashboard = ({ path }: DashboardProps) => {
     onSwipedLeft: () => {
       // console.log("swipe left");
       if (activeTabIndex + 1 < tabs.length) {
-        setActiveTabIndex(activeTabIndex + 1);
+        dispatch(setActiveTabIndex(activeTabIndex + 1));
       }
     },
     onSwipedRight: () => {
       // console.log("swipe right");
       if (activeTabIndex - 1 >= 0) {
-        setActiveTabIndex(activeTabIndex - 1);
+        dispatch(setActiveTabIndex(activeTabIndex - 1));
       }
     },
   });
@@ -182,11 +169,7 @@ const Dashboard = ({ path }: DashboardProps) => {
               {mobileNewButton}
             </div>
           </div>
-          <Links
-            links={tabs}
-            activeIndex={activeTabIndex}
-            setActiveIndex={setActiveTabIndex}
-          />
+          <Links links={tabs} />
 
           <div className="dropdowns">
             <FilterDropdowns
@@ -228,6 +211,13 @@ const Dashboard = ({ path }: DashboardProps) => {
                           loop={loop}
                         />
                       ))}
+                      {tabs[activeTabIndex] === "outgoing" ? (
+                        <Outgoing />
+                      ) : tabs[activeTabIndex] === "received" ? (
+                        <Received />
+                      ) : (
+                        <Drafts />
+                      )}
                     </div>
 
                     <div className="pagination">

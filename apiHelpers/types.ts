@@ -39,6 +39,25 @@ export interface EntityLoop {
   loopers: EntityLooper[];
   recipient: EntityRecipient;
 }
+
+// just owner and timestamp is extra
+export interface EntityDraft {
+  timestamp?: string;
+  country?: string;
+  province?: string;
+  city?: string;
+  postalCode?: string;
+  barcode?: string;
+  type?: "external" | "internal";
+  owner?: string;
+  loopers?: EntityLooper[];
+  recipient?: EntityRecipient;
+  // response only fields
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+  draftId?: string;
+}
 export interface EntityGroup {
   createdFor: string;
   name: string;

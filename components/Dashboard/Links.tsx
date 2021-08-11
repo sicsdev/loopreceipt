@@ -1,20 +1,24 @@
 import { makeStyles } from "@material-ui/core";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setActiveTabIndex } from "@store/slices/dashboardSlice";
 import classNames from "classnames";
 import { useState } from "react";
 interface LinksProps {
   links: string[];
-  activeIndex: number;
-  setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
 }
-const Links = ({ links, activeIndex, setActiveIndex }: LinksProps) => {
+const Links = ({ links }: LinksProps) => {
   const styles = useStyles();
+  const activeTabIndex = useAppSelector(
+    (state) => state.dashboard.activeTabIndex
+  );
+  const dispatch = useAppDispatch();
   return (
     <div className={styles.links}>
       {links.map((link, i) => (
         <p
           key={i}
-          className={classNames("link", { active: i === activeIndex })}
-          onClick={() => setActiveIndex(i)}
+          className={classNames("link", { active: i === activeTabIndex })}
+          onClick={() => dispatch(setActiveTabIndex(i))}
         >
           {link}
         </p>
