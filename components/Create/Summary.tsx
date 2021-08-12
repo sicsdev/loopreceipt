@@ -11,18 +11,15 @@ import loopApi from "@apiClient/loopsApi";
 import { v4 as uuidv4 } from "uuid";
 import Win from "@helpers/Win";
 import faker from "faker";
+import { getEntityLoopFromFormsProps } from "@forms/formUtils";
+import { useState } from "react";
+import { useEffect } from "react";
 interface SummaryProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
   generatedLoopReceipt: () => void;
-  loopers: EntityLooper[];
 }
-const Summary = ({
-  loopers,
-  forms,
-  formsProps,
-  generatedLoopReceipt,
-}: SummaryProps) => {
+const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
   // console.log(formsProps);
   // log this to check the form state when coming to this page
 
@@ -33,65 +30,24 @@ const Summary = ({
   const recipientFormIdx = forms.findIndex(
     (form) => form.formName === "recipientDetailsForm"
   );
-  const companyFormIdx = forms.findIndex(
-    (form) => form.formName === "companyDetailsForm"
-  );
-  const loopersFormIndex = forms.findIndex(
-    (form) => form.formName === "loopersDetailsForm"
-  );
+
+  const [loop, setLoop] = useState<EntityLoop>();
+  useEffect(() => {
+    setLoop(
+      getEntityLoopFromFormsProps({
+        forms,
+        formsProps,
+        formType,
+      })
+    );
+  }, [forms, formsProps, formType]);
   const handleSubmit = async () => {
     for (let i = 0; i < formsProps.length; i++) {
       // console.log(formsProps[i].formState);
     }
-    const recipientState = formsProps[recipientFormIdx].formState;
-    console.log(recipientState.phone.value);
-    const recipient: EntityRecipient = {
-      email: faker.internet.email(),
-      name: faker.name.findName(),
-      postalCode: recipientState.zipCode.value,
-      address: recipientState.shippingAddress.value,
-      city: recipientState.city.value,
-      company:
-        recipientState.receivingCompanyName?.value ||
-        faker.company.companyName(),
-      country: recipientState.country.value,
-    };
-    // console.log(recipient);
 
-    // console.log(loopers);
-
-    let loop: EntityLoop;
-    switch (formType) {
-      case "internal": {
-        loop = {
-          barcode: uuidv4(),
-          city: recipient.city,
-          country: recipient.country,
-          postalCode: recipient.postalCode,
-          province: "nothing",
-          type: "internal",
-          loopers,
-          recipient,
-        };
-        break;
-      }
-      case "external": {
-        const companyState = formsProps[companyFormIdx].formState;
-        loop = {
-          barcode: uuidv4(),
-          city: companyState.city.value,
-          country: companyState.country.value,
-          postalCode: companyState.zipCode.value,
-          province: companyState.province.value,
-          type: "external",
-          loopers,
-          recipient,
-        };
-        break;
-      }
-    }
     console.log(loop);
-    const createdLoop = await loopApi.create(loop);
+    const createdLoop = await loopApi.create(loop!);
     console.log(createdLoop);
     for (let i = 0; i < formsProps.length; i++) {
       formsProps[i].resetForm();
@@ -146,7 +102,7 @@ const Summary = ({
             <h1>Loopers</h1>
           )}
 
-          {loopers.map((looper, i) => (
+          {loop?.loopers.map((looper, i) => (
             <Entry key={i} inputIcon="email" text={looper.email} />
           ))}
         </div>

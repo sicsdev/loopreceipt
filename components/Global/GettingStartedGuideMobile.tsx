@@ -2,7 +2,7 @@ import Button from "@components/Controls/Button";
 import RevealContent from "@components/Shared/RevealContent";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles } from "@material-ui/core";
-import { closeGettingStartedGuide } from "@store/slices/genericSlice";
+import { closeGettingStartedGuide } from "@store/slices/dashboardSlice";
 import Image from "next/image";
 import { useRef, useState } from "react";
 interface GettingStartedGuideMobileProps {}

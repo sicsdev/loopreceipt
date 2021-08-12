@@ -95,14 +95,14 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
           )}
         </div>
         <div className="bottomLinks">
-          <p>
+          <div>
             Already have a loopreceipt account?&nbsp;
             <PrimaryLink href="/user/login">Log in</PrimaryLink>
-          </p>
-          <p>
+          </div>
+          <div>
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Sign up</PrimaryLink>
-          </p>
+          </div>
         </div>
       </div>
     </Layout>

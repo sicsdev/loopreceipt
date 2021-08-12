@@ -52,7 +52,11 @@ const Login = ({}: LoginProps) => {
       if (response) {
         Cookies.set("token", response.token);
         Cookies.set("isFirstTime", String(response.isFirstTime));
-        router.push("/dashboard");
+        if (response.isFirstTime) {
+          router.push("/selectindustry");
+        } else {
+          router.push("/dashboard");
+        }
       } else {
       }
     }
@@ -115,7 +119,7 @@ const Login = ({}: LoginProps) => {
           </Form>
         </div>
         <div className="bottomLinks">
-          <div>
+          <div style={{ margin: "auto" }}>
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Join free today</PrimaryLink>
           </div>
@@ -176,9 +180,12 @@ export const commonUserFormStyles = makeStyles((theme) => ({
       marginTop: "2rem",
       maxWidth: 600,
       display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
+      justifyContent: "space-between",
       gap: 20,
+      [theme.breakpoints.down("md")]: {
+        flexDirection: "column",
+        alignItems: "center",
+      },
     },
   },
 }));
