@@ -1,3 +1,5 @@
+import { LoopSource } from "@interfaces/LoopTypes";
+
 export interface EntityUser {
   contacts: {
     google: [];
@@ -23,6 +25,7 @@ export interface EntityRecipient {
   city: string;
 }
 export interface EntityLooper {
+  _id?: string;
   email: string;
   name: string;
 }
@@ -38,16 +41,42 @@ export interface EntityLoop {
   loopers: EntityLooper[];
   recipient: EntityRecipient;
 }
-export interface EntityGroup {
-  members: EntityLooper[];
-  creator?: {
-    isVerified: boolean;
-    isFirstTime: boolean;
-    name: string;
-    email: string;
-    userid: string;
-  };
+
+// just owner and timestamp is extra
+export interface EntityDraft {
+  timestamp?: string;
+  country?: string;
+  province?: string;
+  city?: string;
+  postalCode?: string;
+  barcode?: string;
+  type?: "external" | "internal";
+  owner?: string;
+  loopers?: EntityLooper[];
+  recipient?: EntityRecipient;
+  // response only fields
   createdAt?: string;
-  __v?: string;
+  updatedAt?: string;
+  __v?: number;
+  draftId?: string;
+}
+export interface EntityGroup {
+  createdFor: string;
+  name: string;
+  recipient: EntityRecipient;
+  loopers: EntityLooper[];
+  // below fields are only received in EntityGroup received as response
+  isDefault?: boolean;
+  creator?: string;
+
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
   groupid?: string;
+}
+// fields marked as ? are filled only on entity received in response
+export interface LoopFilters {
+  type: LoopSource;
+  from: Date;
+  to: Date;
 }

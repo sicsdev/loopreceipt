@@ -8,56 +8,68 @@ import { useWindowScrolledTillEndListener } from "@hooks/useWindowScrolledTillEn
 import { useState } from "react";
 import MyLoader from "@components/Shared/MyLoader";
 import { useEffect } from "react";
+import { useCallback } from "react";
+import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 interface ShowExistingGroupsProps {
-  groupsIsEmpty: boolean;
   setGroupsIsEmpty: React.Dispatch<React.SetStateAction<boolean>>;
+  createGroupClick: Function;
+
+  forms: FormType[];
+  formsProps: useFormReturnType[];
 }
 const ShowExistingGroups = ({
-  groupsIsEmpty,
   setGroupsIsEmpty,
+  createGroupClick,
+  forms,
+  formsProps,
 }: ShowExistingGroupsProps) => {
   const theme = useTheme();
   const styles = useStyles();
-  const [showLoader, setShowLoader] = useState(false);
-  const [numEntriesFetched, setNumEntriesFetched] = useState(2);
-  const [allEntriesFetched, setAllEntriesFetched] = useState(false);
-  const { data, loading } = useFetch<{ groups: EntityGroup[] }>(
-    groupsApi.getAll
+  const [numGroupsFetched, setNumGroupsFetched] = useState(2);
+  const [totalGroups, setTotalGroups] = useState(0);
+  const [fetchedGroups, setFetchedGroups] = useState<EntityGroup[]>([]);
+  const [page, setPage] = useState(1);
+  const { loading, sendRequest } = useFetch<{
+    error: boolean;
+    total: number;
+    groups: EntityGroup[];
+  }>(groupsApi.getAll, {
+    deferred: true,
+  });
+  useEffect(() => {
+    (async () => {
+      const response = await sendRequest(1);
+      if (response && response.total > 0) {
+        setGroupsIsEmpty(false);
+        setTotalGroups(response.total);
+        addGroups(response.groups);
+      }
+    })();
+  }, []);
+  const addGroups = (fetchedGroups: EntityGroup[]) => {
+    setFetchedGroups((prev) => [...prev, ...fetchedGroups]);
+    setNumGroupsFetched((prev) => prev + fetchedGroups.length);
+    setPage((prev) => prev + 1);
+  };
+  useWindowScrolledTillEndListener(
+    async () => {
+      // console.log("scrolled till end");
+
+      if (numGroupsFetched >= totalGroups) return;
+
+      const newGroups = (await sendRequest(page))?.groups;
+      // console.log(newGroups);
+      if (newGroups) {
+        addGroups(newGroups);
+      }
+    },
+    300,
+    [numGroupsFetched, totalGroups, page]
   );
-  useEffect(() => {
-    if (groupsIsEmpty && data?.groups && data.groups.length > 0) {
-      setGroupsIsEmpty(false);
-    }
-  }, [data]);
-  useEffect(() => {
-    setAllEntriesFetched(numEntriesFetched >= (data?.groups?.length ?? 0));
-  }, [numEntriesFetched, data]);
-  useWindowScrolledTillEndListener(async () => {
-    // console.log("scrolled till end");
-
-    setShowLoader(true);
-    await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(1);
-      }, 1000);
-    });
-    setNumEntriesFetched((prev) => {
-      // console.log({ prev });
-      // console.log({ new: prev + 2 });
-      return prev + 2;
-    });
-    setShowLoader(false);
-  }, 300);
-
-  if (loading) {
-    return <MyLoader loaded={false} />;
-  } else if (!data) {
-    return <div>Error while fetching</div>;
-  }
 
   return (
     <div className={styles.ShowExistingGroups}>
-      {data.groups.length === 0 ? (
+      {!loading && totalGroups === 0 ? (
         <>
           <p className="normal">You do not have any groups at the moment.</p>
           <p className="bolded">Create a group to send packages</p>
@@ -66,17 +78,19 @@ const ShowExistingGroups = ({
             text="Create Group"
             iconWidth={100}
             iconHeight={50}
+            onClick={() => {
+              createGroupClick();
+            }}
           />
         </>
       ) : (
         <>
           <div className="groups">
-            {data.groups
-              .slice(0, Math.min(numEntriesFetched, data.groups.length))
-              .map((group, i) => (
-                <Group key={group.groupid} group={group} />
-              ))}
-            <MyLoader loaded={allEntriesFetched || !showLoader} />
+            {fetchedGroups.map((group, i) => (
+              <Group key={i} group={group} />
+            ))}
+
+            <MyLoader loaded={!loading} />
           </div>
         </>
       )}

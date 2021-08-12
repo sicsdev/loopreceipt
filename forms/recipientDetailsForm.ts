@@ -121,7 +121,7 @@ const recipientDetailsForm: FormType = {
   populateSearchItems: async function () {
     const response = await loopsApi.getAll();
     if (response) {
-      const loops = response.loops;
+      const loops = response.items;
       const newSearchItems: SearchItemType<EntityRecipient>[] = [];
       for (let loop of loops) {
         newSearchItems.push({

@@ -1,6 +1,6 @@
 import axios from "@apiHelpers/axios";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
-export default {
+const authApi = {
   login: async ({
     email,
     password,
@@ -24,3 +24,4 @@ export default {
     }
   },
 };
+export default authApi;

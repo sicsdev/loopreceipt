@@ -15,7 +15,8 @@ export interface FormType {
     | "forgotPasswordForm"
     | "updatePasswordForm"
     | "loginForm"
-    | "profileForm";
+    | "profileForm"
+    | "groupDetailsForm";
   optionalFields?: FormStateType;
   formHeading?: string;
   methods?: {

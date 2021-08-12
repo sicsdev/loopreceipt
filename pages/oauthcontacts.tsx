@@ -118,6 +118,7 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
               src={`/icons/oauthcontacts/${authMethod}.svg`}
               width={30}
               height={30}
+              alt="authMethod"
             />
             <div className="name">{authMethods[authMethod]}</div>
           </div>

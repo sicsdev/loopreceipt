@@ -12,7 +12,8 @@ function getDocHeight() {
 }
 export const useWindowScrolledTillEndListener = (
   func: Function,
-  offset: number = 0
+  offset: number = 0,
+  deps: any[]
 ) => {
   // offset is the number of pixels we want to listen document end early
   // func to be ran when window scrolled till end
@@ -32,5 +33,5 @@ export const useWindowScrolledTillEndListener = (
     return () => {
       window.removeEventListener("scroll", cb);
     };
-  }, []);
+  }, deps);
 };

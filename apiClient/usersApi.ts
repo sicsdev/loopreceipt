@@ -1,7 +1,7 @@
 import axios from "@apiHelpers/axios";
 import { EntityLoop, EntityUser } from "@apiHelpers/types";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
-export default {
+const usersApi = {
   getMe: async (): Promise<
     | {
         user: EntityUser;
@@ -88,3 +88,4 @@ export default {
     }
   },
 };
+export default usersApi;
