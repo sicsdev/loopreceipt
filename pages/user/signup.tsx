@@ -50,6 +50,16 @@ const Signup = ({}: SignupProps) => {
     deferred: true,
   });
   const postUsersVerify = useFetch<string>(usersApi.verify);
+  useEffect(() => {
+    // console.log(error);
+    if (!error) return;
+    if (error.message === "User already registered") {
+      signupFormProps.setFormState((prev) => {
+        prev.email.error = "An account already exits with this email";
+        return prev;
+      });
+    }
+  }, [error]);
   const signup = async () => {
     console.log(signupFormProps);
     if (validateAllFieldsOfForm(signupFormProps)) {
@@ -145,7 +155,6 @@ const Signup = ({}: SignupProps) => {
                 padForm={false}
                 onSubmit={signup}
               >
-                {error && <Message message={error.message} type="warning" />}
                 {loading ? (
                   <Button labelWeight="bold" color="default" labelColor="gray">
                     Loading...

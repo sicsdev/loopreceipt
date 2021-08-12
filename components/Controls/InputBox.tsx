@@ -14,6 +14,7 @@ import InputConstraints from "@components/Controls/InputConstraints";
 import { useState } from "react";
 import PasswordStrengthBar from "@components/Controls/PasswordStrengthBar";
 import Message from "@components/Shared/Message";
+import classNames from "classnames";
 // console.log(CountryRegionData);
 interface InputBoxProps {
   input: InputType;
@@ -102,7 +103,9 @@ function InputBox({
       ) : (
         <div className={styles.inputContainer + " MyInputContainer"}>
           <input
-            className={styles.input}
+            className={classNames(styles.input, {
+              [styles.inputWithError]: input.error,
+            })}
             {...input.inputProps}
             type={
               input.type !== "password"
@@ -170,9 +173,13 @@ const useStyles = makeStyles((theme) => {
         },
       },
     },
+
     input: inputCommon(theme),
     phoneInput: {
       "& input": inputCommon(theme),
+    },
+    inputWithError: {
+      borderColor: "#FFC107",
     },
     inputContainer: {
       width: "80%",
