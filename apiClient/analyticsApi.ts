@@ -21,5 +21,23 @@ export default {
     } catch (error) {
       throw axiosErrorHandler(error);
     }
+  },
+  packagesSentReceived: async (range) => {
+    try {
+      const response = await axios.get(`/analytics/packages/sent/received/${range}`);
+
+      return response?.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
+  packagesMode: async (range) => {
+    try {
+      const response = await axios.get(`/analytics/packages/mode/${range}`);
+
+      return response?.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
   }
 };
