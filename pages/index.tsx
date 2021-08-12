@@ -6,6 +6,7 @@ export default function Index() {
       <Link href="/create">create</Link>
       <Link href="/dashboard">dashboard</Link>
       <Link href="/analytics">analytics</Link>
+      <Link href="/account">Account Settings</Link>
     </Layout>
   );
 }
