@@ -10,7 +10,6 @@ import {
 } from "react-country-region-selector";
 import { useEffect, useRef } from "react";
 import { usePreviousValue } from "@hooks/usePreviousValue";
-import InputConstraints from "@components/Controls/InputConstraints";
 import { useState } from "react";
 import PasswordStrengthBar from "@components/Controls/PasswordStrengthBar";
 import Message from "@components/Shared/Message";
@@ -39,7 +38,11 @@ function InputBox({
     }
   }, [dependency]);
   return (
-    <div className={styles.inputBox}>
+    <div
+      className={classNames(styles.inputBox, {
+        [styles.errorBorderOnInput]: !!input.error,
+      })}
+    >
       <label className="label">
         <p className="text">{input.label}</p>
         {/* input constraints are not needed for now */}
@@ -103,9 +106,7 @@ function InputBox({
       ) : (
         <div className={styles.inputContainer + " MyInputContainer"}>
           <input
-            className={classNames(styles.input, {
-              [styles.inputWithError]: input.error,
-            })}
+            className={classNames(styles.input)}
             {...input.inputProps}
             type={
               input.type !== "password"
@@ -162,6 +163,11 @@ const inputCommon = (theme: Theme) => ({
 const useStyles = makeStyles((theme) => {
   // console.log(theme.breakpoints.values);
   return {
+    errorBorderOnInput: {
+      "& input, select": {
+        borderColor: "#FFC107 !important",
+      },
+    },
     inputBox: {
       "& .label": {
         display: "flex",
@@ -178,9 +184,7 @@ const useStyles = makeStyles((theme) => {
     phoneInput: {
       "& input": inputCommon(theme),
     },
-    inputWithError: {
-      borderColor: "#FFC107",
-    },
+
     inputContainer: {
       width: "80%",
       [theme.breakpoints.down("md")]: {

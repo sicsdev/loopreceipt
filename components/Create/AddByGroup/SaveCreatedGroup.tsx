@@ -61,7 +61,7 @@ const SaveCreatedGroup = ({
           padForm={false}
         />
         <div style={{ height: "2rem" }}></div>
-        <Group group={group} />
+        <Group group={group} selected={false} />
         <div style={{ height: "2rem" }}></div>
         <Button
           onClick={async () => {
@@ -86,7 +86,7 @@ const SaveCreatedGroup = ({
   } else if (!data) {
     child = <div>Failed to save group</div>;
   } else {
-    child = <Group group={data.group} />;
+    child = <Group group={data.group} selected={false} />;
   }
   return <div className={styles.SaveCreatedGroup}>{child}</div>;
 };

@@ -8,20 +8,19 @@ import { useWindowScrolledTillEndListener } from "@hooks/useWindowScrolledTillEn
 import { useState } from "react";
 import MyLoader from "@components/Shared/MyLoader";
 import { useEffect } from "react";
-import { useCallback } from "react";
-import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 interface ShowExistingGroupsProps {
   setGroupsIsEmpty: React.Dispatch<React.SetStateAction<boolean>>;
   createGroupClick: Function;
-
-  forms: FormType[];
-  formsProps: useFormReturnType[];
+  selectedGroup?: EntityGroup;
+  setSelectedGroup: React.Dispatch<
+    React.SetStateAction<EntityGroup | undefined>
+  >;
 }
 const ShowExistingGroups = ({
   setGroupsIsEmpty,
   createGroupClick,
-  forms,
-  formsProps,
+  selectedGroup,
+  setSelectedGroup,
 }: ShowExistingGroupsProps) => {
   const theme = useTheme();
   const styles = useStyles();
@@ -36,6 +35,7 @@ const ShowExistingGroups = ({
   }>(groupsApi.getAll, {
     deferred: true,
   });
+
   useEffect(() => {
     (async () => {
       const response = await sendRequest(1);
@@ -87,7 +87,13 @@ const ShowExistingGroups = ({
         <>
           <div className="groups">
             {fetchedGroups.map((group, i) => (
-              <Group key={i} group={group} />
+              <div key={i} onClick={() => setSelectedGroup(group)}>
+                <Group
+                  key={i}
+                  group={group}
+                  selected={group == selectedGroup}
+                />
+              </div>
             ))}
 
             <MyLoader loaded={!loading} />

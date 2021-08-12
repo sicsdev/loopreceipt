@@ -17,12 +17,18 @@ import UpperBarMobile from "../UpperBarMobile";
 import LoopReceipt from "../LoopReceipt";
 import SaveCreatedGroup from "./SaveCreatedGroup";
 import ShowExistingGroups from "./ShowExistingGroups";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import {
   getEntityLoopersFromLoopersState,
   validateAllFieldsOfForm,
 } from "forms/formUtils";
 import { useRouter } from "next/router";
+import { EntityGroup } from "@apiHelpers/types";
+import {
+  confirmLooper,
+  confirmLoopers,
+  setConfirmedLoopers,
+} from "@store/slices/searchBarSlice";
 interface AddByGroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -34,6 +40,7 @@ interface AddByGroupProps {
 function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   const styles = useStyles();
   const [showExistingGroups, setShowExistingGroups] = useState(true);
+  const [selectedGroup, setSelectedGroup] = useState<EntityGroup>();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [groupsIsEmpty, setGroupsIsEmpty] = useState(true);
@@ -50,10 +57,14 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
     },
   });
   const detailsRef = useRef<HTMLDivElement>(null);
-
-  const confirmedLoopers = useAppSelector(
-    (state) => state.searchBar.confirmedLoopers
+  const dispatch = useAppDispatch();
+  const loopersFormIndex = forms.findIndex(
+    (form) => form.formName === "loopersDetailsForm"
   );
+  const recipientFormIdx = forms.findIndex(
+    (form) => form.formName === "recipientDetailsForm"
+  );
+
   useEffect(() => {
     if (detailsRef.current) {
       const contentDivs: any =
@@ -75,8 +86,27 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
       }
     }
   }, [index, windowDimensions]);
+  useEffect(() => {
+    // here we can show update form according to group and generate loop receipt based on
+    // specifications of the group
+    if (selectedGroup) {
+      formsProps[recipientFormIdx].setFormState((prev) => {
+        prev.shippingAddress.value = selectedGroup.recipient.address;
+        prev.country.value = selectedGroup.recipient.country;
+        prev.city.value = selectedGroup.recipient.city;
+        prev.province.value = selectedGroup.recipient.city;
+        prev.phone.value = "32132112";
+        prev.zipCode.value = selectedGroup.recipient.postalCode;
+        return prev;
+      });
+      dispatch(setConfirmedLoopers({ loopers: selectedGroup.loopers }));
+    }
+  }, [selectedGroup]);
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
-    if (index > 0) setIndex(index - 1);
+    if (index === forms.length + 1 && selectedGroup) {
+      setIndex(0);
+      setShowExistingGroups(true);
+    } else if (index > 0) setIndex(index - 1);
     else {
       if (!showExistingGroups) {
         setShowExistingGroups(true);
@@ -96,8 +126,12 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   const handleNextClick = () => {
     if (showExistingGroups) {
       setShowExistingGroups(false);
+      if (selectedGroup) {
+        setIndex(forms.length + 1);
+      }
       return;
     }
+
     // handleSubmit();
     if (index < forms.length) {
       if (
@@ -139,12 +173,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
       </p>
     </>
   );
-  const loopersFormIndex = forms.findIndex(
-    (form) => form.formName === "loopersDetailsForm"
-  );
-  const recipientFormIdx = forms.findIndex(
-    (form) => form.formName === "recipientDetailsForm"
-  );
+
   return (
     <div>
       <FormUpperBar
@@ -180,8 +209,8 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
                   createGroupClick={() => {
                     handleNextClick();
                   }}
-                  forms={forms}
-                  formsProps={formsProps}
+                  selectedGroup={selectedGroup}
+                  setSelectedGroup={setSelectedGroup}
                 />
               ) : index === forms.length ? (
                 <SaveCreatedGroup

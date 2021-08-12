@@ -23,9 +23,35 @@ export const searchBarSlice = createSlice({
     setSearchItemClickDetector: (state, action: PayloadAction<boolean>) => {
       state.searchItemClickDetector = action.payload;
     },
+    setConfirmedLoopers: (
+      state,
+      action: PayloadAction<{ loopers: EntityLooper[] }>
+    ) => {
+      state.confirmedLoopers = action.payload.loopers.map((looper) => {
+        return {
+          id: uuidV4(),
+          ...looper,
+        };
+      });
+    },
     confirmLooper: (state, action: PayloadAction<{ looper: EntityLooper }>) => {
       state.confirmedLoopers.push({ id: uuidV4(), ...action.payload.looper });
     },
+    confirmLoopers: (
+      state,
+      action: PayloadAction<{ loopers: EntityLooper[] }>
+    ) => {
+      state.confirmedLoopers = [
+        ...state.confirmedLoopers,
+        ...action.payload.loopers.map((looper) => {
+          return {
+            id: uuidV4(),
+            ...looper,
+          };
+        }),
+      ];
+    },
+
     editConfirmedLooper: (
       state,
       action: PayloadAction<{ looper: EntityLooper & { id: string } }>
@@ -48,7 +74,9 @@ export const searchBarSlice = createSlice({
 export const {
   setSearchItems,
   setSearchItemClickDetector,
+  setConfirmedLoopers,
   confirmLooper,
+  confirmLoopers,
   editConfirmedLooper,
   deleteConfirmedLooper,
 } = searchBarSlice.actions;
