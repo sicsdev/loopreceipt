@@ -14,4 +14,7 @@ export interface InputType {
   showPasswordStrengthBar?: boolean;
   dependency?: string;
   strictlyMatchDependency?: string;
+  inputProps?: {
+    [key: string]: any;
+  };
 }

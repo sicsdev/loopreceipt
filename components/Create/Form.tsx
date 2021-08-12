@@ -14,6 +14,8 @@ interface FormProps {
   methodOnBlur?: () => void;
   padForm?: boolean;
   defaultValues?: { [key: string]: string };
+  onSubmit?: Function;
+  children?: any;
 }
 const Form = ({
   form,
@@ -23,6 +25,8 @@ const Form = ({
   methodOnBlur,
   padForm = true,
   defaultValues,
+  onSubmit,
+  children,
 }: FormProps) => {
   const styles = useStyles();
   const { formState, setFormState, handleInputChange, resetForm } = formProps;
@@ -49,6 +53,10 @@ const Form = ({
         className={styles.form}
         style={{
           padding: padForm ? "2rem" : 0,
+        }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit?.();
         }}
       >
         {Object.keys(formState).map((inputName, i) => {
@@ -80,6 +88,7 @@ const Form = ({
             />
           );
         })}
+        {children}
       </form>
       {form.formName === "loopersDetailsForm" && (
         <ConfirmedEntities form={form} formProps={formProps} />

@@ -76,33 +76,33 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
               </p>
             </div>
           ) : (
-            <>
-              <Form
-                form={forgotPasswordForm}
-                formProps={forgotPasswordFormProps}
-                padForm={false}
-              />
+            <Form
+              form={forgotPasswordForm}
+              formProps={forgotPasswordFormProps}
+              padForm={false}
+              onSubmit={sendEmailLink}
+            >
               {loading ? (
                 <Button labelWeight="bold" color="default" labelColor="gray">
                   Loading...
                 </Button>
               ) : (
-                <Button labelWeight="bold" onClick={sendEmailLink}>
+                <Button labelWeight="bold" type="submit">
                   Send Reset Email
                 </Button>
               )}
-            </>
+            </Form>
           )}
         </div>
         <div className="bottomLinks">
-          <p>
+          <div>
             Already have a loopreceipt account?&nbsp;
             <PrimaryLink href="/user/login">Log in</PrimaryLink>
-          </p>
-          <p>
+          </div>
+          <div>
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Sign up</PrimaryLink>
-          </p>
+          </div>
         </div>
       </div>
     </Layout>

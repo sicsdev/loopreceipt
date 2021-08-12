@@ -141,36 +141,35 @@ const ResetPassword = ({}: ResetPasswordProps) => {
               &nbsp;form.
             </MessageCard>
           ) : (
-            <>
-              <Form
-                form={resetPasswordForm}
-                formProps={resetPasswordFormProps}
-                padForm={false}
-                validateOnBlur={true}
-              />
-
+            <Form
+              form={resetPasswordForm}
+              formProps={resetPasswordFormProps}
+              padForm={false}
+              validateOnBlur={true}
+              onSubmit={resetPassword}
+            >
               {error && <Message message={error.message} type="warning" />}
               {loading ? (
                 <Button labelWeight="bold" color="default" labelColor="gray">
                   Loading...
                 </Button>
               ) : (
-                <Button labelWeight="bold" onClick={resetPassword}>
+                <Button labelWeight="bold" type="submit">
                   Reset Password
                 </Button>
               )}
-            </>
+            </Form>
           )}
         </div>
         <div className="bottomLinks">
-          <p>
+          <div>
             Already have a loopreceipt account?&nbsp;
             <PrimaryLink href="/user/login">Log in</PrimaryLink>
-          </p>
-          <p>
+          </div>
+          <div>
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Sign up</PrimaryLink>
-          </p>
+          </div>
         </div>
       </div>
     </Layout>

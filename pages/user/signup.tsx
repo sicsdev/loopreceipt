@@ -50,6 +50,16 @@ const Signup = ({}: SignupProps) => {
     deferred: true,
   });
   const postUsersVerify = useFetch<string>(usersApi.verify);
+  useEffect(() => {
+    // console.log(error);
+    if (!error) return;
+    if (error.message === "User already registered") {
+      signupFormProps.setFormState((prev) => {
+        prev.email.error = "An account already exits with this email";
+        return prev;
+      });
+    }
+  }, [error]);
   const signup = async () => {
     console.log(signupFormProps);
     if (validateAllFieldsOfForm(signupFormProps)) {
@@ -143,25 +153,25 @@ const Signup = ({}: SignupProps) => {
                 form={signupForm}
                 formProps={signupFormProps}
                 padForm={false}
-              />
-
-              {error && <Message message={error.message} type="warning" />}
-              {loading ? (
-                <Button labelWeight="bold" color="default" labelColor="gray">
-                  Loading...
-                </Button>
-              ) : (
-                <Button labelWeight="bold" onClick={signup}>
-                  Sign Up
-                </Button>
-              )}
+                onSubmit={signup}
+              >
+                {loading ? (
+                  <Button labelWeight="bold" color="default" labelColor="gray">
+                    Loading...
+                  </Button>
+                ) : (
+                  <Button labelWeight="bold" type="submit">
+                    Sign Up
+                  </Button>
+                )}
+              </Form>
             </div>
             <div className="bottomLinks">
-              <p>
+              <div style={{ margin: "auto" }}>
                 By clicking &ldquo;Sign Up&rdquo; you agree to&nbsp;
                 <PrimaryLink href="/">Loopreceipt Terms</PrimaryLink> and&nbsp;
                 <PrimaryLink href="/">Privacy Policy</PrimaryLink>.
-              </p>
+              </div>
             </div>
           </>
         ) : (

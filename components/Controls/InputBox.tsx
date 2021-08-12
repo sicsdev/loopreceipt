@@ -13,6 +13,8 @@ import { usePreviousValue } from "@hooks/usePreviousValue";
 import InputConstraints from "@components/Controls/InputConstraints";
 import { useState } from "react";
 import PasswordStrengthBar from "@components/Controls/PasswordStrengthBar";
+import Message from "@components/Shared/Message";
+import classNames from "classnames";
 // console.log(CountryRegionData);
 interface InputBoxProps {
   input: InputType;
@@ -40,9 +42,10 @@ function InputBox({
     <div className={styles.inputBox}>
       <label className="label">
         <p className="text">{input.label}</p>
-        {input.constraints && (
+        {/* input constraints are not needed for now */}
+        {/* {input.constraints && (
           <InputConstraints constraints={input.constraints} />
-        )}
+        )} */}
       </label>
       {input.type === "country" ? (
         <div className={styles.inputContainer + " MyInputContainer"}>
@@ -100,7 +103,10 @@ function InputBox({
       ) : (
         <div className={styles.inputContainer + " MyInputContainer"}>
           <input
-            className={styles.input}
+            className={classNames(styles.input, {
+              [styles.inputWithError]: input.error,
+            })}
+            {...input.inputProps}
             type={
               input.type !== "password"
                 ? input.type
@@ -125,7 +131,7 @@ function InputBox({
           )}
         </div>
       )}
-      <p className="error">{input.error}</p>
+
       {input.showPasswordStrengthBar && (
         <div
           style={{
@@ -133,6 +139,11 @@ function InputBox({
           }}
         >
           <PasswordStrengthBar password={input.value} />
+        </div>
+      )}
+      {input.error && (
+        <div className={styles.inputError}>
+          <Message type="warning" message={input.error}></Message>
         </div>
       )}
     </div>
@@ -161,14 +172,14 @@ const useStyles = makeStyles((theme) => {
           fontSize: "1.1rem",
         },
       },
-      "& .error": {
-        color: "red",
-        fontSize: 14,
-      },
     },
+
     input: inputCommon(theme),
     phoneInput: {
       "& input": inputCommon(theme),
+    },
+    inputWithError: {
+      borderColor: "#FFC107",
     },
     inputContainer: {
       width: "80%",
@@ -182,6 +193,9 @@ const useStyles = makeStyles((theme) => {
         right: 10,
         top: 10,
       },
+    },
+    inputError: {
+      margin: "1rem 0",
     },
   };
 });

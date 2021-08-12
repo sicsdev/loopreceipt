@@ -5,6 +5,13 @@ export const deferrer = (func: Function, ...prevargs: any) => {
     return func(...prevargs, ...args);
   };
 };
+export interface useFetchReturnType<T> {
+  data: T | undefined;
+  loading: boolean;
+  sendRequest: (...args: any) => Promise<T | undefined>;
+  requestSent: boolean;
+  error: any;
+}
 export const useFetch = <T>(
   fetcher: Function,
   {
@@ -18,7 +25,7 @@ export const useFetch = <T>(
     retryMethodOnError?: Function;
     methodOnError?: Function;
   } = {}
-) => {
+): useFetchReturnType<T> => {
   const [data, setData] = useState<T>();
   const [requestSent, setRequestSent] = useState(!deferred);
   const [loading, setLoading] = useState<boolean>(!deferred);

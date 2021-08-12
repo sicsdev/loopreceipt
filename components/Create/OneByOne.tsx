@@ -15,7 +15,16 @@ import FormUpperBar from "./FormUpperBar";
 import Win from "@helpers/Win";
 import UpperBarMobile from "./UpperBarMobile";
 import LoopReceipt from "./LoopReceipt";
-import { getLoopers, validateAllFieldsOfForm } from "forms/formUtils";
+import {
+  getEntityLoopersFromLoopersState,
+  getEntityLoopFromFormsProps,
+  validateAllFieldsOfForm,
+} from "forms/formUtils";
+import draftsApi from "@apiClient/draftsApi";
+import { EntityDraft } from "@apiHelpers/types";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import router from "next/router";
+import { setActiveTabIndex } from "@store/slices/dashboardSlice";
 interface OneByOneProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -28,16 +37,25 @@ function OneByOne({ setOption, forms, formsProps }: OneByOneProps) {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
+  const dispatch = useAppDispatch();
   const [index, setIndex] = useState(0);
-
+  const formType = useAppSelector((state) => state.loopReceipt.type);
+  const user = useAppSelector((state) => state.user.user);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
     title: "Save Changes?",
     subTitle: "",
     confirmText: "Save Changes",
     cancelText: "Cancel",
-    onConfirm: () => {
-      console.log("confirmed");
+    onConfirm: async () => {
+      // here we want to save the partially filled form
+      // console.log(formsProps);
+      const loop = getEntityLoopFromFormsProps({ forms, formsProps, formType });
+      const response = await draftsApi.create(loop);
+      // console.log(response);
+      dispatch(setActiveTabIndex(2));
+      // 2 -> drafts
+      router.push("/dashboard");
     },
   });
 
@@ -104,7 +122,6 @@ function OneByOne({ setOption, forms, formsProps }: OneByOneProps) {
             <LoopReceipt />
           ) : index === forms.length ? (
             <Summary
-              loopers={getLoopers(formsProps[loopersFormIndex].formState)}
               formsProps={formsProps}
               forms={forms}
               generatedLoopReceipt={() => {

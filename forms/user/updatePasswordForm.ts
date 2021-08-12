@@ -17,14 +17,10 @@ const updatePasswordForm: FormType = {
       },
     },
     newPassword: {
+      ...signupForm.initialState.password,
       name: "newPassword",
       label: `New Password *`,
       placeholder: "New Password *",
-      value: "",
-      type: "password",
-      constraints: signupForm.initialState.password.constraints,
-      validate: signupForm.initialState.password.validate,
-      showPasswordStrengthBar: true,
     },
     confirmPassword: {
       name: "confirmPassword",

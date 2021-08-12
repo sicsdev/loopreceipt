@@ -1,3 +1,5 @@
+import { DateRange } from "@interfaces/LoopTypes";
+
 export const days = ["S", "M", "T", "W", "T", "F", "S"];
 export const months = [
   "January",
@@ -42,4 +44,33 @@ export const twoDateString = (d1: Date, d2: Date) => {
     // 26 Mar, 2020
     return dmy(d1);
   }
+};
+export const getEpochDateRangeFromDateRange = (dateRange: DateRange) => {
+  const localDateRange = {
+    start: dateRange.start && new Date(dateRange.start),
+    end: dateRange.end && new Date(dateRange.end),
+  };
+  // console.log(localDateRange);
+  if (localDateRange.end) {
+    localDateRange.end.setDate(localDateRange.end.getDate() + 1);
+    localDateRange.end.setSeconds(localDateRange.end.getSeconds() - 1);
+  }
+  // console.log(localDateRange);
+  if (localDateRange.end == null && localDateRange.start) {
+    localDateRange.end = new Date(localDateRange.start);
+    localDateRange.end.setDate(localDateRange.end.getDate() + 1);
+    localDateRange.end.setSeconds(localDateRange.end.getSeconds() - 1);
+  }
+  if (localDateRange.start == null && localDateRange.end) {
+    localDateRange.start = new Date(localDateRange.end);
+    localDateRange.start.setDate(localDateRange.start.getDate() - 1);
+    localDateRange.start.setSeconds(localDateRange.start.getSeconds() + 1);
+  }
+  const epochStartDate = Math.floor((localDateRange.start as any) / 1000);
+
+  const epochEndDate = Math.floor((localDateRange.end as any) / 1000);
+  return {
+    start: epochStartDate,
+    end: epochEndDate,
+  };
 };

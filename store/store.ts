@@ -8,6 +8,7 @@ import modalReducer from "./slices/modalSlice";
 import notificationsReducer from "./slices/notificationsSlice";
 import genericReducer from "./slices/genericSlice";
 import searchBarReducer from "./slices/searchBarSlice";
+import dashboardReducer from "./slices/dashboardSlice";
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -18,6 +19,7 @@ export const store = configureStore({
     notifications: notificationsReducer,
     generic: genericReducer,
     searchBar: searchBarReducer,
+    dashboard: dashboardReducer,
   },
 });
 export default store;
