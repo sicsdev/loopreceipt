@@ -1,3 +1,5 @@
+import { LoopSource } from "@interfaces/LoopTypes";
+
 export interface EntityUser {
   contacts: {
     google: [];
@@ -73,3 +75,8 @@ export interface EntityGroup {
   groupid?: string;
 }
 // fields marked as ? are filled only on entity received in response
+export interface LoopFilters {
+  type: LoopSource;
+  from: Date;
+  to: Date;
+}

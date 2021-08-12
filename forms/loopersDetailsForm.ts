@@ -35,7 +35,7 @@ const loopersDetailsForm: FormType = {
   populateSearchItems: async () => {
     const response = await loopsApi.getAll();
     if (response) {
-      const loops = response.loops;
+      const loops = response.items;
       const searchItems: SearchItemType<EntityLooper>[] = [];
       for (let loop of loops) {
         for (let looper of loop.loopers) {

@@ -65,7 +65,7 @@ const UpdatePassword = ({}: UpdatePasswordProps) => {
           </Form>
         </div>
         <div className="bottomLinks">
-          <div>
+          <div style={{ margin: "auto" }}>
             Cancel update go to dashboard?&nbsp;
             <PrimaryLink href="/dashboard">Dashboard</PrimaryLink>
           </div>

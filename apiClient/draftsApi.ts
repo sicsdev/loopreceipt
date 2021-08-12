@@ -1,8 +1,39 @@
 import { axiosErrorHandler, cacheMap } from "@apiHelpers/apiUtils";
-import { EntityDraft, EntityLoop, EntityUser } from "@apiHelpers/types";
+import {
+  EntityDraft,
+  EntityLoop,
+  EntityUser,
+  LoopFilters,
+} from "@apiHelpers/types";
 import axios from "@apiHelpers/axios";
+import { applyFilters } from "./commonApiFunctions";
 
 const draftsApi = {
+  getAll: async (
+    page: number = 1,
+    filters?: LoopFilters
+  ): Promise<{ items: EntityDraft[]; total: number } | undefined> => {
+    try {
+      // console.log("get all");
+      // console.log(Cookies.get("token"));
+      // Sample queries - /api/loops?page=1&filter1=date&from=1609775390&to=1628092190
+      // /api/loops?page=1&filter1=type&type=internal
+      // /api/loops?page=1&filter1=type&type=internal&filter2=date&from=1609775390&to=1628092190
+
+      let url = `/drafts${applyFilters(page, filters)}`;
+      console.log(url);
+
+      const response = await axios.get(url);
+
+      // console.log(response.data);
+      return {
+        items: response.data.drafts,
+        total: response.data.totalDrafts,
+      };
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
   create: async (
     draft: EntityDraft
   ): Promise<{ error: boolean; draftId: string } | undefined> => {

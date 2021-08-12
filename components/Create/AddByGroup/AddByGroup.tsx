@@ -180,6 +180,8 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
                   createGroupClick={() => {
                     handleNextClick();
                   }}
+                  forms={forms}
+                  formsProps={formsProps}
                 />
               ) : index === forms.length ? (
                 <SaveCreatedGroup

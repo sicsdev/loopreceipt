@@ -41,9 +41,10 @@ function InputBox({
     <div className={styles.inputBox}>
       <label className="label">
         <p className="text">{input.label}</p>
-        {input.constraints && (
+        {/* input constraints are not needed for now */}
+        {/* {input.constraints && (
           <InputConstraints constraints={input.constraints} />
-        )}
+        )} */}
       </label>
       {input.type === "country" ? (
         <div className={styles.inputContainer + " MyInputContainer"}>

@@ -9,13 +9,19 @@ import { useState } from "react";
 import MyLoader from "@components/Shared/MyLoader";
 import { useEffect } from "react";
 import { useCallback } from "react";
+import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 interface ShowExistingGroupsProps {
   setGroupsIsEmpty: React.Dispatch<React.SetStateAction<boolean>>;
   createGroupClick: Function;
+
+  forms: FormType[];
+  formsProps: useFormReturnType[];
 }
 const ShowExistingGroups = ({
   setGroupsIsEmpty,
   createGroupClick,
+  forms,
+  formsProps,
 }: ShowExistingGroupsProps) => {
   const theme = useTheme();
   const styles = useStyles();

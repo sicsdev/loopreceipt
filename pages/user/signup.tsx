@@ -158,7 +158,7 @@ const Signup = ({}: SignupProps) => {
               </Form>
             </div>
             <div className="bottomLinks">
-              <div>
+              <div style={{ margin: "auto" }}>
                 By clicking &ldquo;Sign Up&rdquo; you agree to&nbsp;
                 <PrimaryLink href="/">Loopreceipt Terms</PrimaryLink> and&nbsp;
                 <PrimaryLink href="/">Privacy Policy</PrimaryLink>.
