@@ -1,4 +1,4 @@
-import { makeStyles, Paper } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
@@ -15,20 +15,24 @@ import Forms from "../Forms";
 import Win from "@helpers/Win";
 import UpperBarMobile from "../UpperBarMobile";
 import LoopReceipt from "../LoopReceipt";
-import SaveCreatedGroup from "./SaveCreatedGroup";
 import ShowExistingGroups from "./ShowExistingGroups";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import {
   getEntityLoopersFromLoopersState,
+  getEntityRecipientFromRecipientState,
   validateAllFieldsOfForm,
 } from "forms/formUtils";
 import { useRouter } from "next/router";
 import { EntityGroup } from "@apiHelpers/types";
-import {
-  confirmLooper,
-  confirmLoopers,
-  setConfirmedLoopers,
-} from "@store/slices/searchBarSlice";
+import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
+
+import { useFetch } from "@hooks/useFetch";
+import groupsApi from "@apiClient/groupsApi";
+import MyLoader from "@components/Shared/MyLoader";
+import Group from "./Group";
+import SaveGroupDialog from "./SaveGroupDialog";
+import { useForm } from "@hooks/useForm";
+import groupDetailsForm from "@forms/groupDetailsForm";
 interface AddByGroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -39,13 +43,15 @@ interface AddByGroupProps {
 }
 function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   const styles = useStyles();
+  const router = useRouter();
   const [showExistingGroups, setShowExistingGroups] = useState(true);
   const [selectedGroup, setSelectedGroup] = useState<EntityGroup>();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [groupsIsEmpty, setGroupsIsEmpty] = useState(true);
   const [index, setIndex] = useState(0);
-  const router = useRouter();
+  const groupFormProps = useForm(groupDetailsForm.initialState);
+  const [saveGroupDialogOpen, setSaveGroupDialogOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
     title: "Save Changes?",
@@ -56,6 +62,10 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
       console.log("confirmed");
     },
   });
+  const postGroup = useFetch<{ group: EntityGroup }>(groupsApi.create, {
+    deferred: true,
+  });
+
   const detailsRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const loopersFormIndex = forms.findIndex(
@@ -123,7 +133,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
       isOpen: true,
     });
   };
-  const handleNextClick = () => {
+  const handleNextClick = async () => {
     if (showExistingGroups) {
       setShowExistingGroups(false);
       if (selectedGroup) {
@@ -142,7 +152,11 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
       ) {
         // if current form is valid only then navigate to next
 
-        setIndex(index + 1);
+        if (index === forms.length - 1) {
+          setSaveGroupDialogOpen(true);
+        } else {
+          setIndex(index + 1);
+        }
       }
     } else {
       setIndex(index + 1);
@@ -151,6 +165,25 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   // useEffect(() => {
   //   console.log(saveAsDefault);
   // }, [saveAsDefault]);
+  const saveGroup = async () => {
+    const recipient = getEntityRecipientFromRecipientState(
+      formsProps[recipientFormIdx].formState
+    );
+    const loopers = getEntityLoopersFromLoopersState(
+      formsProps[loopersFormIndex].formState
+    );
+
+    if (validateAllFieldsOfForm(groupFormProps)) {
+      setSaveGroupDialogOpen(false);
+      setIndex(index + 1);
+      postGroup.sendRequest({
+        recipient,
+        loopers,
+        name: groupFormProps.formState.groupName.value,
+        createdFor: groupFormProps.formState.createdFor.value,
+      });
+    }
+  };
   const upperBarContent = (
     <>
       {!showExistingGroups && index !== forms.length + 2 && (
@@ -176,6 +209,12 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
 
   return (
     <div>
+      <SaveGroupDialog
+        saveGroupDialogOpen={saveGroupDialogOpen}
+        setSaveGroupDialogOpen={setSaveGroupDialogOpen}
+        saveGroup={saveGroup}
+        groupFormProps={groupFormProps}
+      />
       <FormUpperBar
         handleBackButtonClick={handleBackButtonClick}
         upperBarText={upperBarContent}
@@ -213,12 +252,13 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
                   setSelectedGroup={setSelectedGroup}
                 />
               ) : index === forms.length ? (
-                <SaveCreatedGroup
-                  loopers={getEntityLoopersFromLoopersState(
-                    formsProps[loopersFormIndex].formState
+                <div style={{ padding: "1rem" }}>
+                  {postGroup.loading ? (
+                    <MyLoader />
+                  ) : (
+                    <Group group={postGroup.data?.group} selected={false} />
                   )}
-                  recipientState={formsProps[recipientFormIdx].formState}
-                />
+                </div>
               ) : (
                 <Forms
                   forms={forms}

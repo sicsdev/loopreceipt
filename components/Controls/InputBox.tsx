@@ -100,6 +100,7 @@ function InputBox({
               onBlur={(e) => {
                 onBlur(e as any);
               }}
+              placeholder={input.placeholder}
             />
           </div>
         </div>

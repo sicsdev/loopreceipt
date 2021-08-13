@@ -14,6 +14,10 @@ import { useRouter } from "next/router";
 import Snackbar from "@material-ui/core/Snackbar";
 import Slide from "@material-ui/core/Slide";
 import Alert from "@material-ui/lab/Alert";
+import { useFetch } from "@hooks/useFetch";
+import { EntityUser } from "@apiHelpers/types";
+import usersApi from "@apiClient/usersApi";
+
 export type IndustryTypes =
   | "automobile"
   | "construction"
@@ -41,6 +45,9 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
   const [selectedIndustry, setSelectedIndustry] = useState<IndustryTypes | "">(
     ""
   );
+  const getUser = useFetch<{ user: EntityUser }>(usersApi.getMe);
+  // currently we are fetching user at both dashboard and here
+
   useEffect(() => {
     console.log(showAlert);
   }, [showAlert]);
@@ -74,7 +81,8 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
       <UPadWrapper>
         <div className={styles.SelectIndustry}>
           <h1 className="heading">
-            Welcome to Loopreceipt, Gari! Let&apos;s get you set up.
+            Welcome to Loopreceipt, {getUser.data?.user.name} Let&apos;s get you
+            set up.
           </h1>
           <h4 className="subheading">
             But first, what industry do you work on?

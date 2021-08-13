@@ -45,7 +45,7 @@ const companyDetailsForm: FormType = {
     province: {
       name: "province",
       label: "Province",
-      placeholder: "Please",
+      placeholder: "Osaka",
       value: "",
       type: "text",
     },
