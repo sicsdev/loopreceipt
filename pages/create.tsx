@@ -2,7 +2,7 @@ import OneByOne from "@components/Create/OneByOne";
 import SelectOption from "@components/Create/SelectOption";
 import { makeStyles } from "@material-ui/core";
 import Layout from "@components/Global/Layout";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { useEffect, useState } from "react";
 import recipientDetailsForm from "forms/recipientDetailsForm";
 import loopersDetailsForm from "forms/loopersDetailsForm";
@@ -12,10 +12,15 @@ import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useForm } from "@hooks/useForm";
 import AddByGroup from "@components/Create/AddByGroup/AddByGroup";
 import { validateAllFieldsOfForm } from "forms/formUtils";
+import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 const Create = () => {
   const styles = useStyles();
   const [option, setOption] = useState<"onebyone" | "group">();
   const formType = useAppSelector((state) => state.loopReceipt.type);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setConfirmedLoopers({ loopers: [] }));
+  }, []);
   let forms: FormType[] = [
     recipientDetailsForm,
     companyDetailsForm,

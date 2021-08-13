@@ -1,5 +1,5 @@
 import React from "react";
-import { EntityLoop } from "apiHelpers/types";
+import { EntityDraft, EntityLoop } from "apiHelpers/types";
 import { LoopType } from "@interfaces/LoopTypes";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
@@ -9,15 +9,17 @@ interface LoopCardProps {
   loop: EntityLoop;
 }
 const LoopCard = ({ type, loop }: LoopCardProps) => {
-  // console.log(loop);
+  console.log(loop);
   const styles = useStyles();
   return (
     <div className={styles.LoopCard}>
       <p className={classNames("line", type)}></p>
       <p className="head">
-        {type === "received" ? "From" : "To"}: {loop.recipient.company}
+        {type === "received" ? "From" : "To"}: {loop.recipient.name}
       </p>
-      <p className="barcode">Barcode:#{loop.barcode}</p>
+      <p className="barcode">
+        Barcode:#{loop.loopid || (loop as EntityDraft).draftId}
+      </p>
       <p className="divider"></p>
       <div className="bottom">
         <p className="loopers">Loopers:</p>
@@ -38,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.16)",
     borderRadius: 8,
     position: "relative",
+    overflow: "hidden",
     width: "30%",
     [theme.breakpoints.down("md")]: {
       width: "40%",
@@ -71,6 +74,7 @@ const useStyles = makeStyles((theme) => ({
     "& .barcode": {
       margin: ".5rem 0",
       color: "#BDBDBD",
+      wordWrap: "break-word",
     },
     "& .divider": {
       borderTop: "1px solid #DBDBDB",

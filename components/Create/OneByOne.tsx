@@ -25,6 +25,7 @@ import { EntityDraft } from "@apiHelpers/types";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import router from "next/router";
 import { setActiveTabIndex } from "@store/slices/dashboardSlice";
+import { useRef } from "react";
 interface OneByOneProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -41,21 +42,27 @@ function OneByOne({ setOption, forms, formsProps }: OneByOneProps) {
   const [index, setIndex] = useState(0);
   const formType = useAppSelector((state) => state.loopReceipt.type);
   const user = useAppSelector((state) => state.user.user);
+  const onConfirmRef = useRef<any>();
+  onConfirmRef.current = async () => {
+    // here we want to save the partially filled form
+    // console.log(formsProps);
+
+    const loop = getEntityLoopFromFormsProps({ forms, formsProps, formType });
+    // console.log(loop);
+    const response = await draftsApi.create(loop);
+    // console.log(response);
+    dispatch(setActiveTabIndex(2));
+    // 2 -> drafts
+    router.push("/dashboard");
+  };
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
     title: "Save Changes?",
     subTitle: "",
     confirmText: "Save Changes",
     cancelText: "Cancel",
-    onConfirm: async () => {
-      // here we want to save the partially filled form
-      // console.log(formsProps);
-      const loop = getEntityLoopFromFormsProps({ forms, formsProps, formType });
-      const response = await draftsApi.create(loop);
-      // console.log(response);
-      dispatch(setActiveTabIndex(2));
-      // 2 -> drafts
-      router.push("/dashboard");
+    onConfirm: () => {
+      onConfirmRef.current();
     },
   });
 

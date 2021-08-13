@@ -101,7 +101,7 @@ export const getEntityRecipientFromRecipientState = (
 ) => {
   const recipient: EntityRecipient = {
     email: faker.internet.email(),
-    name: faker.name.findName(),
+    name: recipientState.name.value,
     postalCode: recipientState.zipCode.value,
     address: recipientState.shippingAddress.value,
     city: recipientState.city.value,
