@@ -40,8 +40,14 @@ interface AddByGroupProps {
 
   forms: FormType[];
   formsProps: useFormReturnType[];
+  handleCancelClick: () => void;
 }
-function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
+function AddByGroup({
+  setOption,
+  forms,
+  formsProps,
+  handleCancelClick,
+}: AddByGroupProps) {
   const styles = useStyles();
   const router = useRouter();
   const [showExistingGroups, setShowExistingGroups] = useState(true);
@@ -52,16 +58,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   const [index, setIndex] = useState(0);
   const groupFormProps = useForm(groupDetailsForm.initialState);
   const [saveGroupDialogOpen, setSaveGroupDialogOpen] = useState(false);
-  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
-    isOpen: false,
-    title: "Save Changes?",
-    subTitle: "",
-    confirmText: "Save Changes",
-    cancelText: "Cancel",
-    onConfirm: () => {
-      console.log("confirmed");
-    },
-  });
+
   const postGroup = useFetch<{ group: EntityGroup }>(groupsApi.create, {
     deferred: true,
   });
@@ -128,12 +125,6 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
     }
   };
 
-  const handleCancelClick = () => {
-    setConfirmDialog({
-      ...confirmDialog,
-      isOpen: true,
-    });
-  };
   const handleNextClick = async () => {
     if (showExistingGroups) {
       setShowExistingGroups(false);
@@ -238,8 +229,6 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
             />
           ) : (
             <BoxContent
-              confirmDialog={confirmDialog}
-              setConfirmDialog={setConfirmDialog}
               handleCancelClick={handleCancelClick}
               handleNextClick={handleNextClick}
             >

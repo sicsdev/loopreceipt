@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import BoxContent from "./BoxContent";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 
@@ -33,49 +33,24 @@ interface OneByOneProps {
 
   forms: FormType[];
   formsProps: useFormReturnType[];
+  handleCancelClick: () => void;
 }
-function OneByOne({ setOption, forms, formsProps }: OneByOneProps) {
+function OneByOne({
+  setOption,
+  forms,
+  formsProps,
+  handleCancelClick,
+}: OneByOneProps) {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
-  const dispatch = useAppDispatch();
   const [index, setIndex] = useState(0);
-  const formType = useAppSelector((state) => state.loopReceipt.type);
-  const user = useAppSelector((state) => state.user.user);
-  const onConfirmRef = useRef<any>();
-  onConfirmRef.current = async () => {
-    // here we want to save the partially filled form
-    // console.log(formsProps);
-
-    const loop = getEntityLoopFromFormsProps({ forms, formsProps, formType });
-    // console.log(loop);
-    const response = await draftsApi.create(loop);
-    // console.log(response);
-    dispatch(setActiveTabIndex(2));
-    // 2 -> drafts
-    router.push("/dashboard");
-  };
-  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
-    isOpen: false,
-    title: "Save Changes?",
-    subTitle: "",
-    confirmText: "Save Changes",
-    cancelText: "Cancel",
-    onConfirm: () => {
-      onConfirmRef.current();
-    },
-  });
 
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
     if (index > 0) setIndex(index - 1);
     else setOption(undefined);
   };
-  const handleCancelClick = () => {
-    setConfirmDialog({
-      ...confirmDialog,
-      isOpen: true,
-    });
-  };
+
   const handleNextClick = () => {
     // handleSubmit();
     if (index < forms.length) {
@@ -138,8 +113,6 @@ function OneByOne({ setOption, forms, formsProps }: OneByOneProps) {
             />
           ) : (
             <BoxContent
-              confirmDialog={confirmDialog}
-              setConfirmDialog={setConfirmDialog}
               handleCancelClick={handleCancelClick}
               handleNextClick={handleNextClick}
             >
