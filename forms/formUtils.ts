@@ -107,7 +107,7 @@ export const getEntityRecipientFromRecipientState = (
     city: recipientState.city.value,
     company:
       recipientState.receivingCompanyName?.value || faker.company.companyName(),
-    country: recipientState.country.value,
+    country: recipientState.country.value || "india",
   };
   return recipient;
 };
@@ -145,6 +145,7 @@ export const getEntityLoopFromFormsProps = ({
         postalCode: recipient.postalCode,
         province: "nothing",
         type: "internal",
+        mode: "single",
         loopers,
         recipient,
       };
@@ -159,6 +160,7 @@ export const getEntityLoopFromFormsProps = ({
         postalCode: companyState.zipCode.value,
         province: companyState.province.value,
         type: "external",
+        mode: "group",
         loopers,
         recipient,
       };

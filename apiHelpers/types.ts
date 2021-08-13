@@ -38,6 +38,7 @@ export interface EntityLoop {
   postalCode: string;
   barcode: string;
   type: "external" | "internal";
+  mode: "single" | "group";
   loopers: EntityLooper[];
   recipient: EntityRecipient;
 }

@@ -107,6 +107,7 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
         prev.province.value = selectedGroup.recipient.city;
         prev.phone.value = "32132112";
         prev.zipCode.value = selectedGroup.recipient.postalCode;
+        prev.name.value = selectedGroup.recipient.name;
         return prev;
       });
       dispatch(setConfirmedLoopers({ loopers: selectedGroup.loopers }));
