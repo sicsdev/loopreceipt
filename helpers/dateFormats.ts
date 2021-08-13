@@ -66,9 +66,9 @@ export const getEpochDateRangeFromDateRange = (dateRange: DateRange) => {
     localDateRange.start.setDate(localDateRange.start.getDate() - 1);
     localDateRange.start.setSeconds(localDateRange.start.getSeconds() + 1);
   }
-  const epochStartDate = Math.floor((localDateRange.start as any) / 1000);
+  const epochStartDate = (localDateRange.start as any) / 1;
 
-  const epochEndDate = Math.floor((localDateRange.end as any) / 1000);
+  const epochEndDate = (localDateRange.end as any) / 1;
   return {
     start: epochStartDate,
     end: epochEndDate,

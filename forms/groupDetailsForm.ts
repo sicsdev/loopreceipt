@@ -1,3 +1,4 @@
+import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 
 const groupDetailsForm: FormType = {
@@ -10,6 +11,9 @@ const groupDetailsForm: FormType = {
       placeholder: "Dropisle Management team",
       value: "",
       type: "text",
+      validate: function () {
+        return validations.isRequired(this);
+      },
     },
     createdFor: {
       name: "createdFor",
@@ -17,6 +21,9 @@ const groupDetailsForm: FormType = {
       placeholder: "Dropisle Inc",
       value: "",
       type: "text",
+      validate: function () {
+        return validations.isRequired(this);
+      },
     },
   },
 };

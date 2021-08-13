@@ -120,6 +120,7 @@ const Login = ({}: LoginProps) => {
         </div>
         <div className="bottomLinks">
           <div style={{ margin: "auto" }}>
+            {/* // if there is only one link please do margin: 'auto' to center it */}
             Don&apos;t have an account?&nbsp;
             <PrimaryLink href="/user/signup">Join free today</PrimaryLink>
           </div>

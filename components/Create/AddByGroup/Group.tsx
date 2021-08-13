@@ -9,10 +9,11 @@ import Win from "@helpers/Win";
 import { EntityGroup } from "apiHelpers/types";
 interface GroupProps {
   group?: EntityGroup;
+  selected: boolean;
 }
-const Group = ({ group }: GroupProps) => {
+const Group = ({ group, selected }: GroupProps) => {
   const [saveAsDefault, setSaveAsDefault] = useState(false);
-  const styles = useStyles();
+  const styles = useStyles({ selected });
   const detailsRef = useRef<HTMLDivElement>(null);
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
@@ -24,9 +25,20 @@ const Group = ({ group }: GroupProps) => {
       inputProps={{ "aria-label": "saveAsDefault" }}
     />
   );
+  const checkmark = selected ? (
+    <div className={styles.checkmark}>
+      <Image
+        alt="icon"
+        src="/icons/create/group/checkmark.svg"
+        width={20}
+        height={20}
+      />
+    </div>
+  ) : null;
   return group ? (
     win.up("sm") ? (
       <div className={styles.desktopGroup}>
+        {checkmark}
         <div className="heading">
           <div>
             <Image
@@ -86,6 +98,7 @@ const Group = ({ group }: GroupProps) => {
       </div>
     ) : (
       <div className={styles.mobileGroup}>
+        {checkmark}
         <div className="line"></div>
         <div className="head">{group.name}</div>
         <div className="recipient">For {group.createdFor}</div>
@@ -109,11 +122,17 @@ const Group = ({ group }: GroupProps) => {
   ) : null;
 };
 export default Group;
+interface StyleProps {
+  selected: boolean;
+}
+
 const useStyles = makeStyles((theme) => ({
-  desktopGroup: {
+  desktopGroup: (props: StyleProps) => ({
+    backgroundColor: props.selected ? "#F6FBFF" : "#fff",
     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
     borderRadius: 8,
     padding: "1rem",
+    position: "relative",
     "& .heading": {
       display: "flex",
       gap: "2rem",
@@ -142,7 +161,6 @@ const useStyles = makeStyles((theme) => ({
         },
       },
       "& .column": {
-        backgroundColor: "white",
         [theme.breakpoints.down("xs")]: {
           "&:not(:last-child)": {
             borderBottom: "1px solid #dbdbdb",
@@ -156,8 +174,9 @@ const useStyles = makeStyles((theme) => ({
         "& .content": {},
       },
     },
-  },
-  mobileGroup: {
+  }),
+  mobileGroup: (props: StyleProps) => ({
+    backgroundColor: props.selected ? "#F6FBFF" : "#fff",
     padding: "1rem",
     position: "relative",
     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.16)",
@@ -203,5 +222,10 @@ const useStyles = makeStyles((theme) => ({
         transform: "scale(.8)",
       },
     },
+  }),
+  checkmark: {
+    position: "absolute",
+    top: 16,
+    right: 16,
   },
 }));

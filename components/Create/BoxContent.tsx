@@ -6,15 +6,11 @@ import NextCancelButtons from "./NextCancelButtons";
 import SearchBar from "@components/Create/SearchBar";
 import Win from "@helpers/Win";
 interface BoxContentProps {
-  confirmDialog: ConfirmDialogType;
-  setConfirmDialog: React.Dispatch<React.SetStateAction<ConfirmDialogType>>;
   handleCancelClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
   handleNextClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
   children: JSX.Element;
 }
 const BoxContent = ({
-  confirmDialog,
-  setConfirmDialog,
   handleCancelClick,
   handleNextClick,
   children,
@@ -24,11 +20,6 @@ const BoxContent = ({
   const win = new Win(windowDimensions);
   return (
     <div className={styles.BoxContent}>
-      <ConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-      />
-
       <div className={styles.top}>
         <SearchBar />
         {win.up("sm") && (
