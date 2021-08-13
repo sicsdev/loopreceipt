@@ -1,4 +1,4 @@
-import { makeStyles, Paper } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
 
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
@@ -15,14 +15,24 @@ import Forms from "../Forms";
 import Win from "@helpers/Win";
 import UpperBarMobile from "../UpperBarMobile";
 import LoopReceipt from "../LoopReceipt";
-import SaveCreatedGroup from "./SaveCreatedGroup";
 import ShowExistingGroups from "./ShowExistingGroups";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import {
   getEntityLoopersFromLoopersState,
+  getEntityRecipientFromRecipientState,
   validateAllFieldsOfForm,
 } from "forms/formUtils";
 import { useRouter } from "next/router";
+import { EntityGroup } from "@apiHelpers/types";
+import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
+
+import { useFetch } from "@hooks/useFetch";
+import groupsApi from "@apiClient/groupsApi";
+import MyLoader from "@components/Shared/MyLoader";
+import Group from "./Group";
+import SaveGroupDialog from "./SaveGroupDialog";
+import { useForm } from "@hooks/useForm";
+import groupDetailsForm from "@forms/groupDetailsForm";
 interface AddByGroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -30,30 +40,38 @@ interface AddByGroupProps {
 
   forms: FormType[];
   formsProps: useFormReturnType[];
+  handleCancelClick: () => void;
 }
-function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
+function AddByGroup({
+  setOption,
+  forms,
+  formsProps,
+  handleCancelClick,
+}: AddByGroupProps) {
   const styles = useStyles();
+  const router = useRouter();
   const [showExistingGroups, setShowExistingGroups] = useState(true);
+  const [selectedGroup, setSelectedGroup] = useState<EntityGroup>();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [groupsIsEmpty, setGroupsIsEmpty] = useState(true);
   const [index, setIndex] = useState(0);
-  const router = useRouter();
-  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
-    isOpen: false,
-    title: "Save Changes?",
-    subTitle: "",
-    confirmText: "Save Changes",
-    cancelText: "Cancel",
-    onConfirm: () => {
-      console.log("confirmed");
-    },
-  });
-  const detailsRef = useRef<HTMLDivElement>(null);
+  const groupFormProps = useForm(groupDetailsForm.initialState);
+  const [saveGroupDialogOpen, setSaveGroupDialogOpen] = useState(false);
 
-  const confirmedLoopers = useAppSelector(
-    (state) => state.searchBar.confirmedLoopers
+  const postGroup = useFetch<{ group: EntityGroup }>(groupsApi.create, {
+    deferred: true,
+  });
+
+  const detailsRef = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
+  const loopersFormIndex = forms.findIndex(
+    (form) => form.formName === "loopersDetailsForm"
   );
+  const recipientFormIdx = forms.findIndex(
+    (form) => form.formName === "recipientDetailsForm"
+  );
+
   useEffect(() => {
     if (detailsRef.current) {
       const contentDivs: any =
@@ -75,8 +93,28 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
       }
     }
   }, [index, windowDimensions]);
+  useEffect(() => {
+    // here we can show update form according to group and generate loop receipt based on
+    // specifications of the group
+    if (selectedGroup) {
+      formsProps[recipientFormIdx].setFormState((prev) => {
+        prev.shippingAddress.value = selectedGroup.recipient.address;
+        prev.country.value = selectedGroup.recipient.country;
+        prev.city.value = selectedGroup.recipient.city;
+        prev.province.value = selectedGroup.recipient.city;
+        prev.phone.value = "32132112";
+        prev.zipCode.value = selectedGroup.recipient.postalCode;
+        prev.name.value = selectedGroup.recipient.name;
+        return prev;
+      });
+      dispatch(setConfirmedLoopers({ loopers: selectedGroup.loopers }));
+    }
+  }, [selectedGroup]);
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
-    if (index > 0) setIndex(index - 1);
+    if (index === forms.length + 1 && selectedGroup) {
+      setIndex(0);
+      setShowExistingGroups(true);
+    } else if (index > 0) setIndex(index - 1);
     else {
       if (!showExistingGroups) {
         setShowExistingGroups(true);
@@ -87,17 +125,15 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
     }
   };
 
-  const handleCancelClick = () => {
-    setConfirmDialog({
-      ...confirmDialog,
-      isOpen: true,
-    });
-  };
-  const handleNextClick = () => {
+  const handleNextClick = async () => {
     if (showExistingGroups) {
       setShowExistingGroups(false);
+      if (selectedGroup) {
+        setIndex(forms.length + 1);
+      }
       return;
     }
+
     // handleSubmit();
     if (index < forms.length) {
       if (
@@ -108,7 +144,11 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
       ) {
         // if current form is valid only then navigate to next
 
-        setIndex(index + 1);
+        if (index === forms.length - 1) {
+          setSaveGroupDialogOpen(true);
+        } else {
+          setIndex(index + 1);
+        }
       }
     } else {
       setIndex(index + 1);
@@ -117,6 +157,25 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
   // useEffect(() => {
   //   console.log(saveAsDefault);
   // }, [saveAsDefault]);
+  const saveGroup = async () => {
+    const recipient = getEntityRecipientFromRecipientState(
+      formsProps[recipientFormIdx].formState
+    );
+    const loopers = getEntityLoopersFromLoopersState(
+      formsProps[loopersFormIndex].formState
+    );
+
+    if (validateAllFieldsOfForm(groupFormProps)) {
+      setSaveGroupDialogOpen(false);
+      setIndex(index + 1);
+      postGroup.sendRequest({
+        recipient,
+        loopers,
+        name: groupFormProps.formState.groupName.value,
+        createdFor: groupFormProps.formState.createdFor.value,
+      });
+    }
+  };
   const upperBarContent = (
     <>
       {!showExistingGroups && index !== forms.length + 2 && (
@@ -139,14 +198,15 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
       </p>
     </>
   );
-  const loopersFormIndex = forms.findIndex(
-    (form) => form.formName === "loopersDetailsForm"
-  );
-  const recipientFormIdx = forms.findIndex(
-    (form) => form.formName === "recipientDetailsForm"
-  );
+
   return (
     <div>
+      <SaveGroupDialog
+        saveGroupDialogOpen={saveGroupDialogOpen}
+        setSaveGroupDialogOpen={setSaveGroupDialogOpen}
+        saveGroup={saveGroup}
+        groupFormProps={groupFormProps}
+      />
       <FormUpperBar
         handleBackButtonClick={handleBackButtonClick}
         upperBarText={upperBarContent}
@@ -169,8 +229,6 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
             />
           ) : (
             <BoxContent
-              confirmDialog={confirmDialog}
-              setConfirmDialog={setConfirmDialog}
               handleCancelClick={handleCancelClick}
               handleNextClick={handleNextClick}
             >
@@ -180,16 +238,17 @@ function AddByGroup({ setOption, forms, formsProps }: AddByGroupProps) {
                   createGroupClick={() => {
                     handleNextClick();
                   }}
-                  forms={forms}
-                  formsProps={formsProps}
+                  selectedGroup={selectedGroup}
+                  setSelectedGroup={setSelectedGroup}
                 />
               ) : index === forms.length ? (
-                <SaveCreatedGroup
-                  loopers={getEntityLoopersFromLoopersState(
-                    formsProps[loopersFormIndex].formState
+                <div style={{ padding: "1rem" }}>
+                  {postGroup.loading ? (
+                    <MyLoader />
+                  ) : (
+                    <Group group={postGroup.data?.group} selected={false} />
                   )}
-                  recipientState={formsProps[recipientFormIdx].formState}
-                />
+                </div>
               ) : (
                 <Forms
                   forms={forms}

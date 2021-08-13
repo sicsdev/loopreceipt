@@ -56,6 +56,7 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
     //   setSummaryPageActive(false);
     generatedLoopReceipt();
   };
+  const recipientState = formsProps[recipientFormIdx].formState;
   return (
     <div className={styles.Summary}>
       {win.up("sm") && (
@@ -70,20 +71,20 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
             <>
               <Entry
                 inputIcon="location"
-                text={`To: ${formsProps[recipientFormIdx].formState.receivingCompanyName?.value}`}
+                text={`To: ${recipientState.name?.value}`}
                 // since receivingCompanyName is optional field
               />
               <Entry
                 inputIcon="location"
                 text={
                   forms[recipientFormIdx].methods?.getCompleteAddress({
-                    formState: formsProps[recipientFormIdx].formState,
+                    formState: recipientState,
                   })!
                 }
               />
             </>
           )}
-          <Entry inputIcon="phone" text={"+234 081-1236-4568"} />
+          <Entry inputIcon="phone" text={recipientState.phone.value} />
           <Entry inputIcon="email" text={"hello@info.com.ng"} />
         </div>
         <div className="line">

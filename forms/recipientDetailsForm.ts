@@ -28,7 +28,7 @@ const recipientDetailsForm: FormType = {
     receivingCompanyName: {
       name: "receivingCompanyName",
       label: "Receiving Company Name",
-      placeholder: "Your full name",
+      placeholder: "Receiving Company Name",
       value: "",
       type: "text",
 
@@ -45,10 +45,21 @@ const recipientDetailsForm: FormType = {
     },
   },
   initialState: {
+    name: {
+      name: "name",
+      label: "Name",
+      placeholder: "Recipient Name",
+      value: "",
+      type: "text",
+
+      validate: function () {
+        return validations.isRequired(this);
+      },
+    },
     shippingAddress: {
       name: "shippingAddress",
       label: "Shipping Address",
-      placeholder: "Your full name",
+      placeholder: "Shipping Address",
       value: "",
       type: "text",
       iconType: "location",
@@ -63,7 +74,7 @@ const recipientDetailsForm: FormType = {
     country: {
       name: "country",
       label: "Country",
-      placeholder: "Your full name",
+      placeholder: "Country",
       value: "",
       type: "country",
 
@@ -80,14 +91,14 @@ const recipientDetailsForm: FormType = {
     city: {
       name: "city",
       label: "City",
-      placeholder: "Your full name",
+      placeholder: "City",
       value: "",
       type: "text",
     },
     province: {
       name: "province",
       label: "State / Province",
-      placeholder: "Your full name",
+      placeholder: "Province",
       value: "",
       type: "region",
       dependency: "country",
@@ -100,7 +111,7 @@ const recipientDetailsForm: FormType = {
     phone: {
       name: "phone",
       label: "Phone / Mobile",
-      placeholder: "Your full name",
+      placeholder: "Phone",
       value: "",
       type: "phone",
       dependency: "country",
@@ -113,7 +124,7 @@ const recipientDetailsForm: FormType = {
     zipCode: {
       name: "zipCode",
       label: "Zip / Postal Code",
-      placeholder: "Your full name",
+      placeholder: "Code",
       value: "",
       type: "number",
     },

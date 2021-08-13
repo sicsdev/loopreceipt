@@ -201,7 +201,6 @@ const useStyles = makeStyles((theme) => ({
     "& .cards": {
       padding: "3rem 0",
       display: "flex",
-      justifyContent: "space-between",
       flexWrap: "wrap",
       gap: 40,
     },
