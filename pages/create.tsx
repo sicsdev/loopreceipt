@@ -30,6 +30,7 @@ const Create = () => {
   const dispatch = useAppDispatch();
   const currentDraftIdRef = useRef<string>();
   const initRef = useRef(true);
+
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
     title: "Changes will be lost. Are you sure?",
@@ -38,13 +39,14 @@ const Create = () => {
     cancelText: "No",
     onConfirm: async () => {
       if (currentDraftIdRef.current) {
-        // console.log("deleting");
+        console.log("deleting");
         const response = await draftsApi.delete(currentDraftIdRef.current);
         // console.log(response);
       }
       router.push("/dashboard");
     },
   });
+
   let forms: FormType[] = [
     recipientDetailsForm,
     companyDetailsForm,
@@ -61,12 +63,12 @@ const Create = () => {
       console.log(formsProps[0].formState.name.value);
       const loop = getEntityLoopFromFormsProps({ forms, formsProps, formType });
       if (!currentDraftIdRef.current) {
-        // console.log("creating");
+        console.log("creating");
         const response = await draftsApi.create(loop);
         currentDraftIdRef.current = response?.draftId;
         // console.log(response);
       } else {
-        // console.log("updating");
+        console.log("updating");
         const response = await draftsApi.update(
           currentDraftIdRef.current,
           loop
@@ -75,6 +77,7 @@ const Create = () => {
       }
     }, 3000)
   );
+
   useEffect(
     () => {
       // console.log("create recipient form updated");

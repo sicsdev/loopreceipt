@@ -10,7 +10,6 @@ import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
 import loopApi from "@apiClient/loopsApi";
 import { v4 as uuidv4 } from "uuid";
 import Win from "@helpers/Win";
-import faker from "faker";
 import { getEntityLoopFromFormsProps } from "@forms/formUtils";
 import { useState } from "react";
 import { useEffect } from "react";

@@ -64,10 +64,8 @@ const recipientDetailsForm: FormType = {
       type: "text",
       iconType: "location",
       validate: function () {
-        return (
-          validations.isRequired(this) &&
-          validations.minMaxLength({ max: 20 })(this)
-        );
+        return validations.isRequired(this);
+        // validations.minMaxLength({ max: 20 })(this)
         // default validation message is used
       },
     },
