@@ -16,18 +16,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     lineHeight: "21px",
     textAlign: "center",
     color: "#676767",
+    [theme.breakpoints.down("sm")]: {
+      fontFamily: "Roboto",
+    },
   },
   uploadButton: {
     border: "1px solid #21F9AE",
     background: "#fff",
     textTransform: "unset",
     color: "#000000",
-    fontFamily: "Titillium Web",
+    fontFamily: "Roboto",
     fontStyle: "normal",
     fontWeight: "normal",
     fontSize: 15,
     lineHeight: "23px",
     marginBottom: "15px",
+    borderRadius: "8px",
     [theme.breakpoints.down("sm")]: {
       width: "100%",
     },
@@ -40,7 +44,11 @@ export default function UploadImage() {
     <Box display="flex">
       <Avatar alt="Avatar" src="/avatar.png" className={classes.avatar} />
       <Box style={{ paddingLeft: "2rem", paddingTop: "1rem" }}>
-        <Button variant="outlined" className={classes.uploadButton}>
+        <Button
+          variant="outlined"
+          className={classes.uploadButton}
+          size="large"
+        >
           Upload Picture
         </Button>
         <Typography className={classes.caption}>

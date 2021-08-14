@@ -49,34 +49,48 @@ const useStyles = makeStyles((theme) => ({
       },
       [theme.breakpoints.up("sm")]: {
         fontSize: 24,
+        marginLeft: 70,
       },
     },
   },
+  selected: {
+    "& > span": {
+      color: "#000",
+    },
+  },
   heading: {
-    [theme.breakpoints.down("sm")]: {
-      marginBottom: 24,
-    },
-    [theme.breakpoints.up("sm")]: {
-      marginBottom: 70,
-    },
+    // [theme.breakpoints.down("sm")]: {
+
+    // },
+    // [theme.breakpoints.up("sm")]: {
+
+    // },
 
     "& .head": {
       fontWeight: "500",
-
       fontFamily: "Roboto",
       fontStyle: "normal",
-
       lineHeight: "108.1%",
       [theme.breakpoints.down("sm")]: {
         fontSize: 20,
-        marginTop: 23,
+        paddingTop: 23,
         marginLeft: 19,
+        paddingBottom: 23,
       },
       [theme.breakpoints.up("sm")]: {
         fontSize: 24,
-        marginTop: 73,
+        paddingTop: 73,
         marginLeft: 91,
+        paddingBottom: 19,
       },
+    },
+  },
+  page: {
+    [theme.breakpoints.down("sm")]: {
+      marginTop: 24,
+    },
+    [theme.breakpoints.up("sm")]: {
+      marginTop: 60,
     },
   },
 }));
@@ -106,6 +120,7 @@ export default function Analytics({ path }: AnalyticsProps) {
 
   return (
     <Layout>
+      {/* <div> */}
       <div className={classes.heading}>
         <div className="head">Account Settings</div>
         <MobileView>
@@ -122,14 +137,15 @@ export default function Analytics({ path }: AnalyticsProps) {
                 label={tab.value}
                 value={tab.value}
                 className={classes.tab}
+                classes={{ selected: classes.selected }}
               />
             ))}
           </Tabs>
-          <Divider />
         </MobileView>
+        <Divider />
       </div>
 
-      <Grid container spacing={3}>
+      <Grid container className={classes.page}>
         <Grid item xs={12} sm={4} md={2}>
           <BrowserView>
             <Tabs
@@ -147,6 +163,7 @@ export default function Analytics({ path }: AnalyticsProps) {
                   label={tab.value}
                   value={tab.value}
                   className={classes.tab}
+                  classes={{ selected: classes.selected }}
                 />
               ))}
             </Tabs>
@@ -159,6 +176,8 @@ export default function Analytics({ path }: AnalyticsProps) {
           })}
         </Grid>
       </Grid>
+      {/* </div> */}
+      <div style={{ marginBottom: 100 }}></div>
     </Layout>
   );
 }
