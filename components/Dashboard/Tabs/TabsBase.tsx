@@ -140,11 +140,7 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
               >
                 <div className="cards" {...swipeHandlers}>
                   {getter.data.items.map((item, i) => (
-                    <LoopCard
-                      key={i}
-                      type={tabs[activeTabIndex]}
-                      loop={item as EntityLoop}
-                    />
+                    <LoopCard key={i} type={tabs[activeTabIndex]} loop={item} />
                   ))}
                 </div>
 

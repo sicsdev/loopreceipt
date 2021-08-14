@@ -4,26 +4,40 @@ import { LoopType } from "@interfaces/LoopTypes";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import dayjs from "dayjs";
+import router from "next/router";
 interface LoopCardProps {
   type: LoopType;
-  loop: EntityLoop;
+  loop: EntityLoop | EntityDraft;
 }
 const LoopCard = ({ type, loop }: LoopCardProps) => {
   console.log(loop);
   const styles = useStyles();
+  const draftId = (loop as EntityDraft).draftId;
   return (
-    <div className={styles.LoopCard}>
+    <div
+      className={styles.LoopCard}
+      onClick={() => {
+        if (draftId) {
+          router.push({
+            pathname: "/create",
+            query: {
+              draftId,
+            },
+          });
+        }
+      }}
+    >
       <p className={classNames("line", type)}></p>
       <p className="head">
-        {type === "received" ? "From" : "To"}: {loop.recipient.name}
+        {type === "received" ? "From" : "To"}: {loop.recipient?.name}
       </p>
       <p className="barcode">
-        Barcode:#{loop.loopid || (loop as EntityDraft).draftId}
+        Barcode:#{(loop as EntityLoop).loopid || draftId}
       </p>
       <p className="divider"></p>
       <div className="bottom">
         <p className="loopers">Loopers:</p>
-        {loop.loopers.map(({ email }, i) => (
+        {loop.loopers?.map(({ email }, i) => (
           <p key={i} className="email">
             {email}
           </p>

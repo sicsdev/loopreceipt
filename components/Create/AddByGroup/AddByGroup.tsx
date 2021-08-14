@@ -41,12 +41,14 @@ interface AddByGroupProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
   handleCancelClick: () => void;
+  currentDraftIdRef: React.MutableRefObject<string | undefined>;
 }
 function AddByGroup({
   setOption,
   forms,
   formsProps,
   handleCancelClick,
+  currentDraftIdRef,
 }: AddByGroupProps) {
   const styles = useStyles();
   const router = useRouter();
@@ -96,26 +98,26 @@ function AddByGroup({
     // specifications of the group
     if (selectedGroup) {
       groupFormProps.setFormState(
-        produce((draft) => {
-          draft.groupName.value = selectedGroup.name;
-          draft.createdFor.value = selectedGroup.createdFor;
+        produce((prev) => {
+          prev.groupName.value = selectedGroup.name;
+          prev.createdFor.value = selectedGroup.createdFor;
         })
       );
 
       formsProps[recipientFormIdx].setFormState(
-        produce((draft) => {
-          draft.shippingAddress.value = selectedGroup.recipient.address;
-          draft.country.value = selectedGroup.recipient.country;
-          draft.city.value = selectedGroup.recipient.city;
-          draft.province.value = selectedGroup.recipient.city;
-          draft.phone.value = "32132112";
-          draft.zipCode.value = selectedGroup.recipient.postalCode;
-          draft.name.value = selectedGroup.recipient.name;
+        produce((prev) => {
+          prev.shippingAddress.value = selectedGroup.recipient.address;
+          prev.country.value = selectedGroup.recipient.country;
+          prev.city.value = selectedGroup.recipient.city;
+          prev.province.value = selectedGroup.recipient.city;
+          prev.phone.value = "32132112";
+          prev.zipCode.value = selectedGroup.recipient.postalCode;
+          prev.name.value = selectedGroup.recipient.name;
         })
       );
       dispatch(setConfirmedLoopers({ loopers: selectedGroup.loopers }));
     } else {
-      console.log("resetting form");
+      // console.log("resetting form");
       groupFormProps.setFormState(groupDetailsForm.initialState);
       formsProps[recipientFormIdx].setFormState(
         forms[recipientFormIdx].initialState
@@ -209,15 +211,16 @@ function AddByGroup({
       setLoading(true);
       if (!selectedGroup) {
         const response = await groupsApi.create(groupToBeSaved);
-        console.log(response?.group);
+        // console.log('creating group');
+        // console.log(response?.group);
         setSavedGroup(response?.group);
       } else {
         const response = await groupsApi.update({
           group: groupToBeSaved,
           groupid: selectedGroup.groupid!,
         });
-        console.log("updating group");
-        console.log(response?.group);
+        // console.log("updating group");
+        // console.log(response?.group);
         setSavedGroup(response?.group);
       }
 
@@ -274,6 +277,7 @@ function AddByGroup({
               generatedLoopReceipt={() => {
                 setIndex(index + 1);
               }}
+              currentDraftIdRef={currentDraftIdRef}
             />
           ) : (
             <BoxContent
