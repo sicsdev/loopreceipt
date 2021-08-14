@@ -95,11 +95,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface AnalyticsProps {
+interface PrivacySecurityProps {
   path: string;
 }
 
-export default function Analytics({ path }: AnalyticsProps) {
+export default function PrivacySecurity({ path }: PrivacySecurityProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState("Workflows");
 

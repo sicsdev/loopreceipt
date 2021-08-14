@@ -96,11 +96,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface AnalyticsProps {
+interface AccountProps {
   path: string;
 }
 
-export default function Analytics({ path }: AnalyticsProps) {
+export default function Account({ path }: AccountProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState("Profile");
   const [mobileDevice, setMobileDevice] = useState(false);
