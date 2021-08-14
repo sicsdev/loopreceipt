@@ -13,8 +13,7 @@ import {
 // components
 import Layout from "@components/Global/Layout";
 import { makeStyles } from "@material-ui/core";
-import Login from "@components/AccountSettings/Login";
-import Profile from "@components/AccountSettings/Profile";
+import Workflows from "@components/PrivacySecurity/Workflows";
 import { isMobile, BrowserView, MobileView } from "react-device-detect";
 
 // ----------------------------------------------------------------------
@@ -102,20 +101,12 @@ interface AnalyticsProps {
 
 export default function Analytics({ path }: AnalyticsProps) {
   const classes = useStyles();
-  const [value, setValue] = React.useState("Profile");
-  const [mobileDevice, setMobileDevice] = useState(false);
-  useEffect(() => {
-    setMobileDevice(isMobile);
-  }, [isMobile]);
+  const [value, setValue] = React.useState("Workflows");
 
   const TABS = [
     {
-      value: "Profile",
-      component: <Profile />,
-    },
-    {
-      value: "Login",
-      component: <Login />,
+      value: "Workflows",
+      component: <Workflows />,
     },
   ];
 
@@ -123,8 +114,8 @@ export default function Analytics({ path }: AnalyticsProps) {
     <Layout>
       {/* <div> */}
       <div className={classes.heading}>
-        <div className="head">Account Settings</div>
-        <MobileView>
+        <div className="head">Privacy & Security</div>
+        {/* <MobileView>
           <Tabs
             variant="fullWidth"
             value={value}
@@ -142,7 +133,7 @@ export default function Analytics({ path }: AnalyticsProps) {
               />
             ))}
           </Tabs>
-        </MobileView>
+        </MobileView> */}
         <Divider />
       </div>
 

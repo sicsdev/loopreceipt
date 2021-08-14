@@ -46,6 +46,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       margin: "10px 30px",
     },
+    minWidth: 143,
+    minHeight: 47,
   },
   saveButton: {
     color: "#000000",
@@ -64,8 +66,7 @@ export default function Profile() {
 
   const formProps = useForm(ProfileFormDetails.initialState);
   return (
-    // <Container maxWidth="lg">
-    <>
+    <Container>
       <UploadImage />
       <ProfileForm form={ProfileFormDetails} formProps={formProps} />
       <Box className={classes.buttonContainer}>
@@ -86,7 +87,6 @@ export default function Profile() {
           Delete Account
         </Button>
       </Box>
-    </>
-    // {/* </Container> */}
+    </Container>
   );
 }
