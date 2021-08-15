@@ -18,7 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
     setTouchStartedAtSwipeListenerForMobileSidebar,
   ] = useState(false);
   const showGettingStartedGuide = useAppSelector(
-    (state) => state.generic.showGettingStartedGuide
+    (state) => state.dashboard.showGettingStartedGuide
   );
 
   useEffect(() => {
