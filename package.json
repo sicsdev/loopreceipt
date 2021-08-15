@@ -40,6 +40,7 @@
     "@types/js-cookie": "^2.2.7",
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.4.7",
+    "@types/numeral": "^2.0.1",
     "@types/react": "17.0.14",
     "@types/react-loader": "^2.4.5",
     "@types/react-phone-number-input": "^3.0.10",
