@@ -3,8 +3,8 @@ import { EntityLoop } from "@apiHelpers/types";
 import { axiosErrorHandler, cacheMap } from "@apiHelpers/apiUtils";
 import { LoopSource } from "@interfaces/LoopTypes";
 
-export default {
-  commentsReceived: async (range) => {
+const analyticsApi = {
+  commentsReceived: async (range: any) => {
     try {
       const response = await axios.get(`/analytics/comments/${range}`);
 
@@ -13,7 +13,7 @@ export default {
       throw axiosErrorHandler(error);
     }
   },
-  loopsTypes: async (range) => {
+  loopsTypes: async (range: any) => {
     try {
       const response = await axios.get(`/analytics/loop/types/${range}`);
 
@@ -22,16 +22,18 @@ export default {
       throw axiosErrorHandler(error);
     }
   },
-  packagesSentReceived: async (range) => {
+  packagesSentReceived: async (range: any) => {
     try {
-      const response = await axios.get(`/analytics/packages/sent/received/${range}`);
+      const response = await axios.get(
+        `/analytics/packages/sent/received/${range}`
+      );
 
       return response?.data;
     } catch (error) {
       throw axiosErrorHandler(error);
     }
   },
-  packagesMode: async (range) => {
+  packagesMode: async (range: any) => {
     try {
       const response = await axios.get(`/analytics/packages/mode/${range}`);
 
@@ -39,5 +41,6 @@ export default {
     } catch (error) {
       throw axiosErrorHandler(error);
     }
-  }
+  },
 };
+export default analyticsApi;

@@ -106,7 +106,7 @@ const ChartWrapperStyle = styled("div")(({ theme }) => ({
 export default function LoopAnalytics() {
   const theme = useTheme();
   const classes = useStyles();
-  const [data, setData] = useState<dataType>([
+  const [data, setData] = useState<dataType[]>([
     {
       name: "Singles",
       type: "line",
