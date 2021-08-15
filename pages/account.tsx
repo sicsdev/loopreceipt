@@ -21,15 +21,6 @@ import { isMobile, BrowserView, MobileView } from "react-device-detect";
 
 const useStyles = makeStyles((theme) => ({
   tabs: {
-    // borderRight: `1px solid #007780`,
-    // textAlign: "left",
-    // [theme.breakpoints.down("sm")]: {
-    //   marginLeft: 0,
-    //   padding: "0",
-    // },
-    // [theme.breakpoints.up("sm")]: {
-    //   marginLeft: "8rem",
-    // },
     [theme.breakpoints.down("sm")]: {
       marginLeft: 6,
     },
@@ -60,13 +51,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   heading: {
-    // [theme.breakpoints.down("sm")]: {
-
-    // },
-    // [theme.breakpoints.up("sm")]: {
-
-    // },
-
     "& .head": {
       fontWeight: "500",
       fontFamily: "Roboto",

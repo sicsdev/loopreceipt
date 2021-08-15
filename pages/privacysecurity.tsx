@@ -93,6 +93,11 @@ const useStyles = makeStyles((theme) => ({
       marginTop: 60,
     },
   },
+  divider: {
+    [theme.breakpoints.down("sm")]: {
+      height: 4,
+    },
+  },
 }));
 
 interface PrivacySecurityProps {
@@ -112,29 +117,9 @@ export default function PrivacySecurity({ path }: PrivacySecurityProps) {
 
   return (
     <Layout>
-      {/* <div> */}
       <div className={classes.heading}>
         <div className="head">Privacy & Security</div>
-        {/* <MobileView>
-          <Tabs
-            variant="fullWidth"
-            value={value}
-            onChange={(e, value) => setValue(value)}
-            className={classes.tabs}
-          >
-            {TABS.map((tab) => (
-              <Tab
-                disableRipple
-                key={tab.value}
-                label={tab.value}
-                value={tab.value}
-                className={classes.tab}
-                classes={{ selected: classes.selected }}
-              />
-            ))}
-          </Tabs>
-        </MobileView> */}
-        <Divider />
+        <Divider className={classes.divider} />
       </div>
 
       <Grid container className={classes.page}>
@@ -168,7 +153,7 @@ export default function PrivacySecurity({ path }: PrivacySecurityProps) {
           })}
         </Grid>
       </Grid>
-      {/* </div> */}
+
       <div style={{ marginBottom: 100 }}></div>
     </Layout>
   );
