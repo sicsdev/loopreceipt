@@ -19,6 +19,27 @@ const groupsApi = {
       throw axiosErrorHandler(error);
     }
   },
+  update: async ({
+    group,
+    groupid,
+  }: {
+    group: EntityGroup;
+    groupid: string;
+  }): Promise<
+    | {
+        group: EntityGroup;
+      }
+    | undefined
+  > => {
+    try {
+      const response = await axios.put(`/groups/${groupid}`, group);
+
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
   getAll: async (
     page: number
   ): Promise<

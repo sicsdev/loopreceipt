@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PackageAnalytics() {
   const classes = useStyles();
-  const [data, setData] = useState<dataType>([
+  const [data, setData] = useState<dataType[]>([
     {
       name: "Outgoing Packages",
       type: "column",

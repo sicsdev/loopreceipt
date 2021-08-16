@@ -138,3 +138,24 @@ export const nToL = (str: string) => {
   // returns "My Name Is Khan"
   return splitOnUpperCase(capitalize(str));
 };
+export const getStrippedObject = (
+  baseObject: { [key: string]: any },
+  objectToBeStripped: { [key: string]: any }
+) => {
+  if (objectToBeStripped === undefined) return undefined;
+  let strippedObject: { [key: string]: any } = {};
+  if (baseObject.constructor.name === "Array") {
+    strippedObject = [];
+  }
+  for (let key in baseObject) {
+    if (typeof baseObject[key] === "object") {
+      strippedObject[key] = getStrippedObject(
+        baseObject[key],
+        objectToBeStripped[key]
+      );
+    } else {
+      strippedObject[key] = objectToBeStripped[key];
+    }
+  }
+  return strippedObject;
+};

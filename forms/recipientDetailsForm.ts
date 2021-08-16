@@ -16,10 +16,9 @@ const recipientDetailsForm: FormType = {
 
   methods: {
     getCompleteAddress: ({ formState }) => {
-      let ans = `${formState.province.value},
+      let ans = `${formState.shippingAddress.value}, ${formState.province.value},
        ${formState.city.value},
         ${formState.country.value},
-         ${formState.city.value},
           ${formState.zipCode.value}`;
       return ans;
     },
@@ -51,9 +50,18 @@ const recipientDetailsForm: FormType = {
       placeholder: "Recipient Name",
       value: "",
       type: "text",
-
       validate: function () {
         return validations.isRequired(this);
+      },
+    },
+    email: {
+      name: "email",
+      label: "Email",
+      placeholder: "Recipient Email",
+      value: "",
+      type: "text",
+      validate: function () {
+        return validations.isRequired(this) && validations.email(this);
       },
     },
     shippingAddress: {
@@ -64,10 +72,8 @@ const recipientDetailsForm: FormType = {
       type: "text",
       iconType: "location",
       validate: function () {
-        return (
-          validations.isRequired(this) &&
-          validations.minMaxLength({ max: 20 })(this)
-        );
+        return validations.isRequired(this);
+        // validations.minMaxLength({ max: 20 })(this)
         // default validation message is used
       },
     },

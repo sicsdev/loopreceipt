@@ -9,7 +9,7 @@ import PackageAnalytics from "@components/Analytics/PackagesAnalytics";
 import LoopAnalytics from "@components/Analytics/LoopAnalytics";
 import LoopTypeAnalytics from "@components/Analytics/LoopTypeAnalytics";
 import RecipientCommentAnalytics from "@components/Analytics/RecipientCommentAnalytics";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@material-ui/core";
 
 // ----------------------------------------------------------------------
 
@@ -47,8 +47,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface AnalyticsProps {
-    path: string;
-  }
+  path: string;
+}
 
 export default function Analytics({ path }: AnalyticsProps) {
   const classes = useStyles();
@@ -57,28 +57,28 @@ export default function Analytics({ path }: AnalyticsProps) {
 
   return (
     <Layout>
-        <div>
-            {win.up("md") && <Sidebar path={path} />}
-            <div className={classes.right}>
-                <Container maxWidth="xl">
-                    <Typography className={classes.title}>Analytics</Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={6} md={7}>
-                            <PackageAnalytics />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={5}>
-                            <LoopAnalytics />
-                        </Grid>
+      <div>
+        {win.up("md") && <Sidebar path={path} />}
+        <div className={classes.right}>
+          <Container maxWidth="xl">
+            <Typography className={classes.title}>Analytics</Typography>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6} md={7}>
+                <PackageAnalytics />
+              </Grid>
+              <Grid item xs={12} sm={6} md={5}>
+                <LoopAnalytics />
+              </Grid>
 
-                        <Grid item xs={12} sm={6} md={7}>
-                            <LoopTypeAnalytics />
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={5}>
-                            <RecipientCommentAnalytics />
-                        </Grid>
-                    </Grid>
-                </Container>
-            </div>
+              <Grid item xs={12} sm={6} md={7}>
+                <LoopTypeAnalytics />
+              </Grid>
+              <Grid item xs={12} sm={6} md={5}>
+                <RecipientCommentAnalytics />
+              </Grid>
+            </Grid>
+          </Container>
+        </div>
       </div>
     </Layout>
   );

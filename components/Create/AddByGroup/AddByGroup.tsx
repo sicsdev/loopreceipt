@@ -1,8 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import React, { useEffect, useRef, useState } from "react";
-
-import ConfirmDialogType from "@interfaces/ConfirmDialogType";
-
+import produce from "immer";
+import _ from "lodash";
 import Box from "@components/Create/Box";
 
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
@@ -33,6 +32,7 @@ import Group from "./Group";
 import SaveGroupDialog from "./SaveGroupDialog";
 import { useForm } from "@hooks/useForm";
 import groupDetailsForm from "@forms/groupDetailsForm";
+import { getStrippedObject } from "@helpers/utils";
 interface AddByGroupProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -41,12 +41,14 @@ interface AddByGroupProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
   handleCancelClick: () => void;
+  currentDraftIdRef: React.MutableRefObject<string | undefined>;
 }
 function AddByGroup({
   setOption,
   forms,
   formsProps,
   handleCancelClick,
+  currentDraftIdRef,
 }: AddByGroupProps) {
   const styles = useStyles();
   const router = useRouter();
@@ -58,10 +60,8 @@ function AddByGroup({
   const [index, setIndex] = useState(0);
   const groupFormProps = useForm(groupDetailsForm.initialState);
   const [saveGroupDialogOpen, setSaveGroupDialogOpen] = useState(false);
-
-  const postGroup = useFetch<{ group: EntityGroup }>(groupsApi.create, {
-    deferred: true,
-  });
+  const [loading, setLoading] = useState(false);
+  const [savedGroup, setSavedGroup] = useState<EntityGroup>();
 
   const detailsRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
@@ -97,26 +97,43 @@ function AddByGroup({
     // here we can show update form according to group and generate loop receipt based on
     // specifications of the group
     if (selectedGroup) {
-      formsProps[recipientFormIdx].setFormState((prev) => {
-        prev.shippingAddress.value = selectedGroup.recipient.address;
-        prev.country.value = selectedGroup.recipient.country;
-        prev.city.value = selectedGroup.recipient.city;
-        prev.province.value = selectedGroup.recipient.city;
-        prev.phone.value = "32132112";
-        prev.zipCode.value = selectedGroup.recipient.postalCode;
-        prev.name.value = selectedGroup.recipient.name;
-        return prev;
-      });
+      groupFormProps.setFormState(
+        produce((prev) => {
+          prev.groupName.value = selectedGroup.name;
+          prev.createdFor.value = selectedGroup.createdFor;
+        })
+      );
+
+      formsProps[recipientFormIdx].setFormState(
+        produce((prev) => {
+          prev.shippingAddress.value = selectedGroup.recipient.address;
+          prev.country.value = selectedGroup.recipient.country;
+          prev.city.value = selectedGroup.recipient.city;
+          prev.province.value = selectedGroup.recipient.city;
+          prev.phone.value = "32132112";
+          prev.zipCode.value = selectedGroup.recipient.postalCode;
+          prev.name.value = selectedGroup.recipient.name;
+        })
+      );
       dispatch(setConfirmedLoopers({ loopers: selectedGroup.loopers }));
+    } else {
+      // console.log("resetting form");
+      groupFormProps.setFormState(groupDetailsForm.initialState);
+      formsProps[recipientFormIdx].setFormState(
+        forms[recipientFormIdx].initialState
+      );
+
+      dispatch(setConfirmedLoopers({ loopers: [] }));
     }
   }, [selectedGroup]);
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
-    if (index === forms.length + 1 && selectedGroup) {
-      setIndex(0);
-      setShowExistingGroups(true);
-    } else if (index > 0) setIndex(index - 1);
-    else {
+    if (index === forms.length + 1) {
+      setIndex(index - 2);
+    } else if (index > 0) {
+      setIndex(index - 1);
+    } else {
       if (!showExistingGroups) {
+        setSelectedGroup(undefined);
         setShowExistingGroups(true);
       } else {
         setShowExistingGroups(false);
@@ -128,9 +145,6 @@ function AddByGroup({
   const handleNextClick = async () => {
     if (showExistingGroups) {
       setShowExistingGroups(false);
-      if (selectedGroup) {
-        setIndex(forms.length + 1);
-      }
       return;
     }
 
@@ -145,7 +159,24 @@ function AddByGroup({
         // if current form is valid only then navigate to next
 
         if (index === forms.length - 1) {
-          setSaveGroupDialogOpen(true);
+          if (selectedGroup) {
+            const groupToBeSaved = getGroupToBeSaved();
+            const strippedGroup = getStrippedObject(
+              groupToBeSaved,
+              selectedGroup
+            );
+
+            // console.log(groupToBeSaved);
+            // console.log(strippedGroup);
+            let areCompletelySame = _.isEqual(groupToBeSaved, strippedGroup);
+            if (areCompletelySame) {
+              setIndex(index + 2);
+            } else {
+              setSaveGroupDialogOpen(true);
+            }
+          } else {
+            setSaveGroupDialogOpen(true);
+          }
         } else {
           setIndex(index + 1);
         }
@@ -157,23 +188,43 @@ function AddByGroup({
   // useEffect(() => {
   //   console.log(saveAsDefault);
   // }, [saveAsDefault]);
-  const saveGroup = async () => {
+  const getGroupToBeSaved = (): EntityGroup => {
     const recipient = getEntityRecipientFromRecipientState(
       formsProps[recipientFormIdx].formState
     );
     const loopers = getEntityLoopersFromLoopersState(
       formsProps[loopersFormIndex].formState
     );
-
+    const groupToBeSaved = {
+      recipient,
+      loopers,
+      name: groupFormProps.formState.groupName.value,
+      createdFor: groupFormProps.formState.createdFor.value,
+    };
+    return groupToBeSaved;
+  };
+  const saveGroup = async () => {
+    const groupToBeSaved = getGroupToBeSaved();
     if (validateAllFieldsOfForm(groupFormProps)) {
       setSaveGroupDialogOpen(false);
       setIndex(index + 1);
-      postGroup.sendRequest({
-        recipient,
-        loopers,
-        name: groupFormProps.formState.groupName.value,
-        createdFor: groupFormProps.formState.createdFor.value,
-      });
+      setLoading(true);
+      if (!selectedGroup) {
+        const response = await groupsApi.create(groupToBeSaved);
+        // console.log('creating group');
+        // console.log(response?.group);
+        setSavedGroup(response?.group);
+      } else {
+        const response = await groupsApi.update({
+          group: groupToBeSaved,
+          groupid: selectedGroup.groupid!,
+        });
+        // console.log("updating group");
+        // console.log(response?.group);
+        setSavedGroup(response?.group);
+      }
+
+      setLoading(false);
     }
   };
   const upperBarContent = (
@@ -226,6 +277,7 @@ function AddByGroup({
               generatedLoopReceipt={() => {
                 setIndex(index + 1);
               }}
+              currentDraftIdRef={currentDraftIdRef}
             />
           ) : (
             <BoxContent
@@ -243,10 +295,10 @@ function AddByGroup({
                 />
               ) : index === forms.length ? (
                 <div style={{ padding: "1rem" }}>
-                  {postGroup.loading ? (
+                  {loading ? (
                     <MyLoader />
                   ) : (
-                    <Group group={postGroup.data?.group} selected={false} />
+                    <Group group={savedGroup} selected={false} />
                   )}
                 </div>
               ) : (

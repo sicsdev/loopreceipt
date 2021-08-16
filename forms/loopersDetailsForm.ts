@@ -13,7 +13,7 @@ const loopersDetailsForm: FormType = {
     looperName: {
       name: "looperName",
       label: `Looper's Name`,
-      placeholder: "Robert",
+      placeholder: "Name",
       value: "",
       type: "text",
       validate: function () {
@@ -23,7 +23,7 @@ const loopersDetailsForm: FormType = {
     looperEmail: {
       name: "looperEmail",
       label: `Looper's email address`,
-      placeholder: "robert@loopreceipt.com",
+      placeholder: "Email",
       value: "",
       type: "email",
       iconType: "email",

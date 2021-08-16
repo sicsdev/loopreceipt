@@ -1,7 +1,5 @@
 import { ApexOptions } from "apexcharts";
-import { createStyles } from "@material-ui/styles";
-import { useTheme } from "@material-ui/core/styles";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles, useTheme, createStyles } from "@material-ui/core";
 // import typography from "../../theme/typography";
 
 // ----------------------------------------------------------------------
@@ -14,16 +12,16 @@ const useStyles = makeStyles((theme) =>
         border: "0 !important",
         boxShadow: `0 0 4px 0 #ffffff00, 0 24px 48px 0 #ffffff00 !important`,
         color: `${theme.palette.text.primary} !important`,
-        borderRadius: `${theme.shape.borderRadiusSm}px !important`,
+        borderRadius: `${(theme.shape as any).borderRadiusSm}px !important`,
         backgroundColor: `${theme.palette.background.default} !important`,
       },
       ".apexcharts-tooltip-title": {
         border: "0 !important",
         fontWeight: theme.typography.fontWeightBold,
-        backgroundColor: `${theme.palette.grey[500_16]} !important`,
+        backgroundColor: `${(theme.palette.grey as any)[500_16]} !important`,
         color:
           theme.palette.text[
-            theme.palette.mode === "light" ? "secondary" : "primary"
+            (theme.palette as any).mode === "light" ? "secondary" : "primary"
           ],
       },
       ".apexcharts-xaxistooltip-bottom": {
@@ -185,7 +183,7 @@ export default function BaseOptionChart(): ApexOptions {
       radialBar: {
         track: {
           strokeWidth: "100%",
-          background: theme.palette.grey[500_16],
+          background: (theme.palette.grey as any)[500_16],
         },
         dataLabels: {
           value: LABEL_VALUE,

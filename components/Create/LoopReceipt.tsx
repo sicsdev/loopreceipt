@@ -3,21 +3,42 @@ import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 interface LoopReceiptProps {}
 const LoopReceipt = ({}: LoopReceiptProps) => {
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const styles = useStyles();
+  const [origin, setOrigin] = useState("");
+  useEffect(() => {
+    // console.log(window.location.origin);
+    setOrigin(window.location.origin);
+  }, []);
+  const PrintLink = ({ children }: { children: any }) => {
+    return (
+      <a
+        href={`${origin}/_next/image?url=%2Ficons%2Fcreate%2Fbarcode.svg&w=1920&q=75`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        {children}
+      </a>
+    );
+  };
   return (
     <div className={styles.LoopReceipt}>
       {win.up("md") && (
         <div className="print">
-          <Image
-            alt="icon"
-            src="/icons/create/print.svg"
-            width={20}
-            height={20}
-          />
+          <PrintLink>
+            <Button>
+              <Image
+                alt="icon"
+                src="/icons/create/print.svg"
+                width={20}
+                height={20}
+              />
+            </Button>
+          </PrintLink>
         </div>
       )}
 
@@ -35,7 +56,11 @@ const LoopReceipt = ({}: LoopReceiptProps) => {
           height={116}
         />
       </div>
-      {win.down("sm") && <Button labelWeight="bold">Print Barcode</Button>}
+      {win.down("sm") && (
+        <PrintLink>
+          <Button labelWeight="bold">Print Barcode</Button>
+        </PrintLink>
+      )}
     </div>
   );
 };
@@ -52,13 +77,15 @@ const useStyles = makeStyles((theme) => ({
       position: "absolute",
       right: 32,
       top: 16,
-      backgroundColor: theme.palette.primary.main,
       width: 40,
       height: 40,
       display: "grid",
       placeContent: "center",
       borderRadius: "50%",
-      cursor: "pointer",
+      overflow: "hidden",
+      "& .MuiButton-root": {
+        height: 40,
+      },
     },
     "& .head": {
       fontSize: 20,
