@@ -5,8 +5,6 @@ import {
 } from "@interfaces/FormTypes";
 import store from "@store/store";
 import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
-import faker from "faker";
-import { useAppSelector } from "@store/hooks";
 import { v4 as uuidv4 } from "uuid";
 
 export const validateAllFieldsOfForm = (
@@ -100,13 +98,12 @@ export const getEntityRecipientFromRecipientState = (
   recipientState: FormStateType
 ) => {
   const recipient: EntityRecipient = {
-    email: faker.internet.email(),
+    email: recipientState.email.value,
     name: recipientState.name.value,
     postalCode: recipientState.zipCode.value,
     address: recipientState.shippingAddress.value,
     city: recipientState.city.value,
-    company:
-      recipientState.receivingCompanyName?.value || faker.company.companyName(),
+    company: recipientState.receivingCompanyName?.value || "Loopreciept.com",
     country: recipientState.country.value || "india",
   };
   return recipient;

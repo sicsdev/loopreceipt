@@ -1,9 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import BoxContent from "./BoxContent";
 
-import React, { useEffect, useState } from "react";
-
-import ConfirmDialogType from "@interfaces/ConfirmDialogType";
+import React, { useState } from "react";
 
 import Box from "@components/Create/Box";
 
@@ -15,17 +13,8 @@ import FormUpperBar from "./FormUpperBar";
 import Win from "@helpers/Win";
 import UpperBarMobile from "./UpperBarMobile";
 import LoopReceipt from "./LoopReceipt";
-import {
-  getEntityLoopersFromLoopersState,
-  getEntityLoopFromFormsProps,
-  validateAllFieldsOfForm,
-} from "forms/formUtils";
-import draftsApi from "@apiClient/draftsApi";
-import { EntityDraft } from "@apiHelpers/types";
-import { useAppDispatch, useAppSelector } from "@store/hooks";
-import router from "next/router";
-import { setActiveTabIndex } from "@store/slices/dashboardSlice";
-import { useRef } from "react";
+import { validateAllFieldsOfForm } from "forms/formUtils";
+
 interface OneByOneProps {
   setOption: React.Dispatch<
     React.SetStateAction<"onebyone" | "group" | undefined>
@@ -34,12 +23,14 @@ interface OneByOneProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
   handleCancelClick: () => void;
+  currentDraftIdRef: React.MutableRefObject<string | undefined>;
 }
 function OneByOne({
   setOption,
   forms,
   formsProps,
   handleCancelClick,
+  currentDraftIdRef,
 }: OneByOneProps) {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
@@ -110,6 +101,7 @@ function OneByOne({
                 // move on to next page
                 setIndex(index + 1);
               }}
+              currentDraftIdRef={currentDraftIdRef}
             />
           ) : (
             <BoxContent

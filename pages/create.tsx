@@ -18,18 +18,21 @@ import {
 import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 import ConfirmDialog from "@components/Create/ConfirmDialog";
-import router from "next/router";
-import { setActiveTabIndex } from "@store/slices/dashboardSlice";
+import { useRouter, withRouter } from "next/router";
 import draftsApi from "@apiClient/draftsApi";
 import { useRef } from "react";
 import { Debounce } from "@helpers/utils";
+import produce from "immer";
 const Create = () => {
+  const router = useRouter();
   const styles = useStyles();
   const [option, setOption] = useState<"onebyone" | "group">();
   const formType = useAppSelector((state) => state.loopReceipt.type);
   const dispatch = useAppDispatch();
   const currentDraftIdRef = useRef<string>();
   const initRef = useRef(true);
+  const { draftId } = router.query;
+  // console.log(draftId);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
     title: "Changes will be lost. Are you sure?",
@@ -38,13 +41,14 @@ const Create = () => {
     cancelText: "No",
     onConfirm: async () => {
       if (currentDraftIdRef.current) {
-        // console.log("deleting");
+        console.log("deleting");
         const response = await draftsApi.delete(currentDraftIdRef.current);
         // console.log(response);
       }
       router.push("/dashboard");
     },
   });
+
   let forms: FormType[] = [
     recipientDetailsForm,
     companyDetailsForm,
@@ -61,12 +65,12 @@ const Create = () => {
       console.log(formsProps[0].formState.name.value);
       const loop = getEntityLoopFromFormsProps({ forms, formsProps, formType });
       if (!currentDraftIdRef.current) {
-        // console.log("creating");
+        console.log("creating");
         const response = await draftsApi.create(loop);
         currentDraftIdRef.current = response?.draftId;
         // console.log(response);
       } else {
-        // console.log("updating");
+        console.log("updating");
         const response = await draftsApi.update(
           currentDraftIdRef.current,
           loop
@@ -75,6 +79,36 @@ const Create = () => {
       }
     }, 3000)
   );
+  useEffect(() => {
+    (async () => {
+      if (draftId) {
+        const response = await draftsApi.getOne(draftId as string);
+        // console.log(response?.draft);
+        const draft = response?.draft;
+        if (draft) {
+          formsProps[0].setFormState(
+            produce((prev) => {
+              if (draft.recipient?.address)
+                prev.shippingAddress.value = draft.recipient.address;
+              if (draft.recipient?.country)
+                prev.country.value = draft.recipient.country;
+              if (draft.recipient?.city) prev.city.value = draft.recipient.city;
+              if (draft.recipient?.city)
+                prev.province.value = draft.recipient.city;
+
+              prev.phone.value = "32132112";
+              if (draft.recipient?.postalCode)
+                prev.zipCode.value = draft.recipient.postalCode;
+              if (draft.recipient?.name) prev.name.value = draft.recipient.name;
+            })
+          );
+          if (draft.loopers)
+            dispatch(setConfirmedLoopers({ loopers: draft.loopers }));
+          currentDraftIdRef.current = draftId as string;
+        }
+      }
+    })();
+  }, []);
   useEffect(
     () => {
       // console.log("create recipient form updated");
@@ -152,6 +186,7 @@ const Create = () => {
             forms={passedForms}
             formsProps={passedFormsProps}
             setOption={setOption}
+            currentDraftIdRef={currentDraftIdRef}
           />
         ) : option === "group" ? (
           <AddByGroup
@@ -159,6 +194,7 @@ const Create = () => {
             forms={passedForms}
             formsProps={passedFormsProps}
             setOption={setOption}
+            currentDraftIdRef={currentDraftIdRef}
           />
         ) : (
           <SelectOption setOption={setOption} />
@@ -167,7 +203,7 @@ const Create = () => {
     </Layout>
   );
 };
-export default Create;
+export default withRouter(Create);
 const useStyles = makeStyles((theme) => ({
   Create: {},
 }));

@@ -8,18 +8,24 @@ import inputIconMap from "forms/inputIconMap";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
 import loopApi from "@apiClient/loopsApi";
-import { v4 as uuidv4 } from "uuid";
 import Win from "@helpers/Win";
-import faker from "faker";
 import { getEntityLoopFromFormsProps } from "@forms/formUtils";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+
+import draftsApi from "@apiClient/draftsApi";
+
 interface SummaryProps {
   forms: FormType[];
   formsProps: useFormReturnType[];
   generatedLoopReceipt: () => void;
+  currentDraftIdRef: React.MutableRefObject<string | undefined>;
 }
-const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
+const Summary = ({
+  forms,
+  formsProps,
+  generatedLoopReceipt,
+  currentDraftIdRef,
+}: SummaryProps) => {
   // console.log(formsProps);
   // log this to check the form state when coming to this page
 
@@ -49,6 +55,11 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
     console.log(loop);
     const createdLoop = await loopApi.create(loop!);
     console.log(createdLoop);
+    // delete the draft if loop is created
+    if (currentDraftIdRef.current) {
+      console.log("deleting the draft");
+      const response = await draftsApi.delete(currentDraftIdRef.current);
+    }
     for (let i = 0; i < formsProps.length; i++) {
       formsProps[i].resetForm();
     }
@@ -85,7 +96,7 @@ const Summary = ({ forms, formsProps, generatedLoopReceipt }: SummaryProps) => {
             </>
           )}
           <Entry inputIcon="phone" text={recipientState.phone.value} />
-          <Entry inputIcon="email" text={"hello@info.com.ng"} />
+          <Entry inputIcon="email" text={recipientState.email.value} />
         </div>
         <div className="line">
           <p></p>
