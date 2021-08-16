@@ -61,6 +61,11 @@ export interface EntityDraft {
   __v?: number;
   draftId?: string;
 }
+export interface EntitySearchedGroup {
+  createdFor: string;
+  name: string;
+  groupid: string;
+}
 export interface EntityGroup {
   createdFor: string;
   name: string;

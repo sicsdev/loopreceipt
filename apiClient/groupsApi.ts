@@ -1,5 +1,5 @@
 import axios from "@apiHelpers/axios";
-import { EntityGroup } from "@apiHelpers/types";
+import { EntityGroup, EntitySearchedGroup } from "@apiHelpers/types";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
 const groupsApi = {
   create: async (
@@ -52,6 +52,37 @@ const groupsApi = {
   > => {
     try {
       let url = `/groups?page=${page}`;
+
+      const response = await axios.get(url);
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
+  getOne: async (
+    groupid: string
+  ): Promise<{ error: boolean; group: EntityGroup } | undefined> => {
+    try {
+      const response = await axios.get(`/groups/${groupid}`);
+
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
+  getBySearch: async (
+    str: string
+  ): Promise<
+    | {
+        error: boolean;
+        results: EntitySearchedGroup[];
+      }
+    | undefined
+  > => {
+    try {
+      let url = `/groups/search?str=${str}`;
 
       const response = await axios.get(url);
       // console.log(response.data);

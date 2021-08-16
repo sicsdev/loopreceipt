@@ -1,5 +1,13 @@
+import groupsApi from "@apiClient/groupsApi";
+import { EntitySearchedGroup } from "@apiHelpers/types";
 import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
+import { SearchItemType } from "@interfaces/SearchItemType";
+import {
+  setEntitySearchedGroup,
+  setSearchItems,
+} from "@store/slices/searchBarSlice";
+import store from "@store/store";
 
 const groupDetailsForm: FormType = {
   formName: "groupDetailsForm",
@@ -25,6 +33,29 @@ const groupDetailsForm: FormType = {
         return validations.isRequired(this);
       },
     },
+  },
+  populateSearchItems: async (str: string) => {
+    if (!str) return;
+    const response = await groupsApi.getBySearch(str);
+    if (response) {
+      const groups = response.results;
+      // console.log(groups);
+      const searchItems: SearchItemType<EntitySearchedGroup>[] = [];
+      for (let group of groups) {
+        searchItems.push({
+          primary: group.name,
+          secondary: group.createdFor,
+          entity: group,
+        });
+      }
+      // console.log(searchItems);
+      store.dispatch(setSearchItems(searchItems));
+    }
+  },
+  searchItemClicked: function ({ entity }: { entity: EntitySearchedGroup }) {
+    if (entity) {
+      store.dispatch(setEntitySearchedGroup(entity));
+    }
   },
 };
 export default groupDetailsForm;

@@ -1,4 +1,9 @@
-export const largestCommonSubstring = (s1: string, s2: string) => {
+import { MatchDetails } from "@interfaces/SearchItemType";
+
+export const largestCommonSubstring = (
+  s1: string,
+  s2: string
+): MatchDetails => {
   // user.name must be first argument
   // since we return matchStartIndex of first string
   // string to array
@@ -32,11 +37,11 @@ export const largestCommonSubstring = (s1: string, s2: string) => {
   for (let i = 1; i <= arr1.length; i++) {
     for (let j = 1; j <= arr2.length; j++) {
       if (matrix[i][j] === len) {
-        return { matchLength: len, matchStartIndex: i - len };
+        return { length: len, startIndex: i - len };
       }
     }
   }
-  return { matchLength: len, matchStartIndex: -1 };
+  return { length: len, startIndex: -1 };
 };
 export const getLastChar = (str: string) => {
   return str.slice(str.length - 1, str.length);

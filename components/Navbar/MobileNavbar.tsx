@@ -5,8 +5,7 @@ import ToggleSidebar from "@components/Shared/ToggleSidebar";
 import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import Link from "next/link";
-import Cookies from "js-cookie";
-import router from "next/router";
+
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setShowMobileSideBar } from "@store/slices/genericSlice";
 import { logoutUser } from "@store/slices/userSlice";
@@ -156,6 +155,7 @@ const useStyles = makeStyles((theme) => ({
       alignItems: "center",
       gap: "1rem",
       zIndex: "10",
+      cursor: "pointer",
       "& .text": {
         color: "#828282",
         fontWeight: "bold",
