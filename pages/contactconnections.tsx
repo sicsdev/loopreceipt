@@ -3,6 +3,7 @@ import UpperBar from "@components/Shared/UpperBar";
 // material
 import {
   Container,
+  Card,
   Grid,
   Typography,
   Tab,
@@ -50,6 +51,20 @@ const useStyles = makeStyles((theme) => ({
       marginTop: 60,
     },
   },
+  card: {
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: 30,
+      border: 0,
+      boxShadow: "unset",
+    },
+    [theme.breakpoints.up("sm")]: {
+      padding: "48px 43px",
+      marginTop: 16,
+      border: "1px solid #BDBDBD",
+      filter: "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25))",
+      borderRadius: 8,
+    },
+  },
 }));
 
 interface ContactConnectionsProps {
@@ -68,7 +83,11 @@ export default function ContactConnections({ path }: ContactConnectionsProps) {
         <Divider className={classes.divider} />
       </div>
 
-      <Container></Container>
+      <Container maxWidth="lg">
+        <Card className={classes.card}>
+          <Typography>Test</Typography>
+        </Card>
+      </Container>
       <div style={{ marginBottom: 100 }}></div>
     </Layout>
   );

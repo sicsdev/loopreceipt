@@ -13,7 +13,8 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: "1rem",
     [theme.breakpoints.down("sm")]: {
       padding: "1.5rem 0",
+      borderBottom: "4px solid #ddd",
     },
-    borderBottom: "4px solid #ddd",
+    borderBottom: "1px solid #ddd",
   },
 }));

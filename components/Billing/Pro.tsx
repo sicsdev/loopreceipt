@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
 const Feature = (props: any) => {
   const classes = useStyles();
   return (
-    <Box display="flex" marginBottom={"8px"}>
+    <Box display="flex" marginBottom={"8px"} alignItems="center">
       <CheckIcon color="primary" />
       <Typography className={classes.featureLabel}>{props.label}</Typography>
     </Box>
