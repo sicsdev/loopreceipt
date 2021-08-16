@@ -96,7 +96,7 @@ const Summary = ({
             </>
           )}
           <Entry inputIcon="phone" text={recipientState.phone.value} />
-          <Entry inputIcon="email" text={"hello@info.com.ng"} />
+          <Entry inputIcon="email" text={recipientState.email.value} />
         </div>
         <div className="line">
           <p></p>

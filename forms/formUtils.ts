@@ -5,7 +5,6 @@ import {
 } from "@interfaces/FormTypes";
 import store from "@store/store";
 import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
-import { useAppSelector } from "@store/hooks";
 import { v4 as uuidv4 } from "uuid";
 
 export const validateAllFieldsOfForm = (
@@ -99,7 +98,7 @@ export const getEntityRecipientFromRecipientState = (
   recipientState: FormStateType
 ) => {
   const recipient: EntityRecipient = {
-    email: "gari@gmail.com",
+    email: recipientState.email.value,
     name: recipientState.name.value,
     postalCode: recipientState.zipCode.value,
     address: recipientState.shippingAddress.value,

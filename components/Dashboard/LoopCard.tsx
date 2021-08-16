@@ -55,13 +55,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 8,
     position: "relative",
     overflow: "hidden",
-    width: "30%",
-    [theme.breakpoints.down("md")]: {
-      width: "40%",
-    },
-    [theme.breakpoints.down("xs")]: {
-      width: "100%",
-    },
+
     padding: "1rem",
     "& .line": {
       height: 4,

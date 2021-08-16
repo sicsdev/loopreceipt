@@ -22,6 +22,7 @@ import { useSwipeable } from "react-swipeable";
 import Win from "@helpers/Win";
 import { setActiveTabIndex } from "@store/slices/dashboardSlice";
 import { useFetchReturnType } from "@hooks/useFetch";
+import MessageCard from "@components/Shared/MessageCard";
 export const tabs: LoopType[] = ["outgoing", "received", "drafts"];
 export const itemsPerPageOptions = [5, 10, 15];
 export interface StdData {
@@ -159,7 +160,13 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
           </UPadWrapper>
         </>
       ) : (
-        <div>Error</div>
+        <div
+          style={{
+            padding: 20,
+          }}
+        >
+          <MessageCard type="warning">Some error occured</MessageCard>
+        </div>
       )}
     </div>
   );
@@ -168,7 +175,7 @@ export default TabsBase;
 const useStyles = makeStyles((theme) => ({
   right: {
     marginLeft: 250,
-    padding: "5rem 4rem",
+    padding: "5rem 2rem",
     // border: "2px solid blue",
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0,
@@ -195,10 +202,17 @@ const useStyles = makeStyles((theme) => ({
   },
   rest: {
     "& .cards": {
+      // border: "1px solid red",
       padding: "3rem 0",
-      display: "flex",
-      flexWrap: "wrap",
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
       gap: 40,
+      [theme.breakpoints.down("md")]: {
+        gridTemplateColumns: "repeat(2, 1fr)",
+      },
+      [theme.breakpoints.down("xs")]: {
+        gridTemplateColumns: "repeat(1, 1fr)",
+      },
     },
     "& .pagination": {},
   },
