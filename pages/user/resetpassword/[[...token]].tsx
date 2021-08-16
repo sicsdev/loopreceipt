@@ -19,7 +19,6 @@ import MessageCard from "@components/Shared/MessageCard";
 import Image from "next/image";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
-import Fade from "@material-ui/core/Fade";
 import Slide from "@material-ui/core/Slide";
 // change this
 interface ResetPasswordProps {}

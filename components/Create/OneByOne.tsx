@@ -82,6 +82,8 @@ function OneByOne({
   return (
     <div>
       <FormUpperBar
+        showBackButton={index !== forms.length + 1}
+        // we want to hide backbutton on looprecipt page
         handleBackButtonClick={handleBackButtonClick}
         upperBarText={upperBarContent}
       />

@@ -49,7 +49,7 @@ const Signup = ({}: SignupProps) => {
   }>(usersApi.create, {
     deferred: true,
   });
-  const postUsersVerify = useFetch<string>(usersApi.verify);
+  const postUsersVerify = useFetch<string>(usersApi.sendVerificationLink);
   useEffect(() => {
     // console.log(error);
     if (!error) return;
@@ -169,8 +169,20 @@ const Signup = ({}: SignupProps) => {
             <div className="bottomLinks">
               <div style={{ margin: "auto" }}>
                 By clicking &ldquo;Sign Up&rdquo; you agree to&nbsp;
-                <PrimaryLink href="/">Loopreceipt Terms</PrimaryLink> and&nbsp;
-                <PrimaryLink href="/">Privacy Policy</PrimaryLink>.
+                <PrimaryLink
+                  href="https://www.loopreceipt.com/terms-of-service"
+                  isTargetBlankLink
+                >
+                  Loopreceipt Terms
+                </PrimaryLink>
+                and&nbsp;
+                <PrimaryLink
+                  href="https://www.loopreceipt.com/privacy-policy"
+                  isTargetBlankLink
+                >
+                  Privacy Policy
+                </PrimaryLink>
+                .
               </div>
             </div>
           </>

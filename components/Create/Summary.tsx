@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import Button from "@components/Controls/Button";
 import { InputIconType } from "@interfaces/InputTypes";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import inputIconMap from "forms/inputIconMap";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
@@ -13,6 +13,7 @@ import { getEntityLoopFromFormsProps } from "@forms/formUtils";
 import { useState, useEffect } from "react";
 
 import draftsApi from "@apiClient/draftsApi";
+import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 
 interface SummaryProps {
   forms: FormType[];
@@ -36,7 +37,7 @@ const Summary = ({
   const recipientFormIdx = forms.findIndex(
     (form) => form.formName === "recipientDetailsForm"
   );
-
+  const dispatch = useAppDispatch();
   const [loop, setLoop] = useState<EntityLoop>();
   useEffect(() => {
     setLoop(
@@ -55,6 +56,8 @@ const Summary = ({
     console.log(loop);
     const createdLoop = await loopApi.create(loop!);
     console.log(createdLoop);
+    // remove confirmed loopers
+    dispatch(setConfirmedLoopers({ loopers: [] }));
     // delete the draft if loop is created
     if (currentDraftIdRef.current) {
       console.log("deleting the draft");

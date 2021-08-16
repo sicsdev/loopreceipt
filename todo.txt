@@ -1,6 +1,8 @@
 // for date picker we can do more for mobile selector
 // ip address to locate user current location and set defaults for country region 
 // https://stackoverflow.com/questions/3489460/how-to-get-visitors-location-i-e-country-using-geolocation
-// show warning or error indicator 
-   - by border
-   - by message just below input field
+// when loading groups 
+by current behaviour it keeps loading groups down and down
+and as a result next and cancel buttons go beyond user
+// AuthGuard above Layout hides the Navbar
+while inside Layout shows the Navbar

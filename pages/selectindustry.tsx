@@ -17,6 +17,8 @@ import Alert from "@material-ui/lab/Alert";
 import { useFetch } from "@hooks/useFetch";
 import { EntityUser } from "@apiHelpers/types";
 import usersApi from "@apiClient/usersApi";
+import { useAppSelector } from "@store/hooks";
+import AuthGuard from "@components/Global/AuthGuard";
 
 export type IndustryTypes =
   | "automobile"
@@ -45,9 +47,8 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
   const [selectedIndustry, setSelectedIndustry] = useState<IndustryTypes | "">(
     ""
   );
-  const getUser = useFetch<{ user: EntityUser }>(usersApi.getMe);
   // currently we are fetching user at both dashboard and here
-
+  const user = useAppSelector((state) => state.user.user);
   useEffect(() => {
     console.log(showAlert);
   }, [showAlert]);
@@ -57,64 +58,65 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
 
   return (
     <Layout>
-      <Snackbar
-        open={showAlert}
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        onClose={(e, reason) => {
-          // reason 'timeout' | 'clickaway';
-          if (reason == "timeout") setShowAlert(false);
-          // i don't know why clickaway is not working
-        }}
-        TransitionComponent={(props) => <Slide {...props} direction="down" />}
-      >
-        <Alert
-          severity="warning"
-          onClose={() => {
-            setShowAlert(false);
+      <AuthGuard>
+        <Snackbar
+          open={showAlert}
+          autoHideDuration={3000}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          onClose={(e, reason) => {
+            // reason 'timeout' | 'clickaway';
+            if (reason == "timeout") setShowAlert(false);
+            // i don't know why clickaway is not working
           }}
+          TransitionComponent={(props) => <Slide {...props} direction="down" />}
         >
-          &quot;Please select the industry&quot;
-        </Alert>
-      </Snackbar>
+          <Alert
+            severity="warning"
+            onClose={() => {
+              setShowAlert(false);
+            }}
+          >
+            &quot;Please select the industry&quot;
+          </Alert>
+        </Snackbar>
 
-      <UPadWrapper>
-        <div className={styles.SelectIndustry}>
-          <h1 className="heading">
-            Welcome to Loopreceipt, {getUser.data?.user.name} Let&apos;s get you
-            set up.
-          </h1>
-          <h4 className="subheading">
-            But first, what industry do you work on?
-          </h4>
+        <UPadWrapper>
+          <div className={styles.SelectIndustry}>
+            <h1 className="heading">
+              Welcome to Loopreceipt, {user?.name} Let&apos;s get you set up.
+            </h1>
+            <h4 className="subheading">
+              But first, what industry do you work on?
+            </h4>
 
-          <FormControl component="fieldset">
-            <RadioGroup
-              aria-label="what industry do you work on"
-              name="industry"
-              value={selectedIndustry}
-              onChange={(e, v) => setSelectedIndustry(v as IndustryTypes)}
-              className="industries"
-            >
-              {industries.map((industry) => (
-                <IndustryItem key={industry} industry={industry} />
-              ))}
-            </RadioGroup>
-          </FormControl>
-        </div>
-      </UPadWrapper>
-      <BottomBar
-        skipListener={() => {
-          router.push("/dashboard");
-        }}
-        nextListener={() => {
-          if (selectedIndustry) {
-            router.push("/oauthcontacts");
-          } else {
-            setShowAlert(true);
-          }
-        }}
-      />
+            <FormControl component="fieldset">
+              <RadioGroup
+                aria-label="what industry do you work on"
+                name="industry"
+                value={selectedIndustry}
+                onChange={(e, v) => setSelectedIndustry(v as IndustryTypes)}
+                className="industries"
+              >
+                {industries.map((industry) => (
+                  <IndustryItem key={industry} industry={industry} />
+                ))}
+              </RadioGroup>
+            </FormControl>
+          </div>
+        </UPadWrapper>
+        <BottomBar
+          skipListener={() => {
+            router.push("/dashboard");
+          }}
+          nextListener={() => {
+            if (selectedIndustry) {
+              router.push("/oauthcontacts");
+            } else {
+              setShowAlert(true);
+            }
+          }}
+        />
+      </AuthGuard>
     </Layout>
   );
   interface IndustryItemProps {
@@ -132,6 +134,7 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
               src={`/icons/selectindustry/${industry}.svg`}
               width={30}
               height={30}
+              alt="industry"
             />
             <div className="name">
               {industry === "ecommerce" ? "E-Commerce" : capitalize(industry)}
