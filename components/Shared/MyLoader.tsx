@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/core";
+import classNames from "classnames";
 // import Loader, { LoaderProps } from "react-loader";
 import Loader from "react-loader";
 // add export in index.ts file to not show error
@@ -7,7 +8,11 @@ import Loader from "react-loader";
 const MyLoader = (props: any) => {
   const styles = useStyles();
   return (
-    <div className={styles.MyLoader}>
+    <div
+      className={classNames(styles.MyLoader, {
+        [styles.windowCentered]: props.windowCentered,
+      })}
+    >
       <Loader {...props} />
     </div>
   );
@@ -21,5 +26,11 @@ const useStyles = makeStyles((theme) => ({
     // border: "1px solid red",
     height: "4rem",
     "& .loader": {},
+  },
+  windowCentered: {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
   },
 }));

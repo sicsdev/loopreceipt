@@ -1,5 +1,6 @@
 import usersApi from "@apiClient/usersApi";
 import Layout from "@components/Global/Layout";
+
 import { useFetch } from "@hooks/useFetch";
 import { makeStyles } from "@material-ui/core";
 import { useRouter } from "next/router";
@@ -7,73 +8,122 @@ import Image from "next/image";
 import { commonUserFormStyles } from "../login";
 import Button from "@components/Controls/Button";
 import PrimaryLink from "@components/Shared/PrimaryLink";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import MyLoader from "@components/Shared/MyLoader";
+import { raiseAlert } from "@store/slices/genericSlice";
+import { ErrorResponse } from "@apiHelpers/types";
+
 interface VerifyProps {}
 const Verify = ({}: VerifyProps) => {
   const styles = useStyles();
   const router = useRouter();
   const commonStyles = commonUserFormStyles();
-
   const { params, email } = router.query;
-  console.log(params);
-
-  // console.log(userid);
-  // console.log(token);
-  // console.log(email);
+  const getVerifyUserRequestSentRef = useRef(false);
   const getVerifyUser = useFetch<{
     error: boolean;
     message?: string | undefined;
-  }>(() =>
-    usersApi.verifyUser({
-      userid: params?.[0] ?? "",
-      token: params?.[1] ?? "",
-    })
-  );
-  const postSendVerificationLink = useFetch<string>(
-    usersApi.sendVerificationLink,
-    {
-      deferred: true,
-    }
-  );
+  }>(usersApi.verifyUser, {
+    deferred: true,
+  });
+
+  const postSendVerificationLink = useFetch<
+    | string
+    | {
+        error: boolean;
+        message: string;
+      }
+  >(usersApi.sendVerificationLink, {
+    deferred: true,
+  });
 
   useEffect(() => {
-    console.log(getVerifyUser.data);
-    console.log(postSendVerificationLink.data);
-  }, [getVerifyUser, postSendVerificationLink]);
+    if (getVerifyUserRequestSentRef.current === true) return;
+    console.log(params);
+    console.log(email);
 
+    if (params) {
+      const payload = {
+        userid: params[0],
+        token: params[1],
+      };
+      if (payload.userid && payload.token) {
+        (async () => {
+          const response = await getVerifyUser.sendRequest(payload);
+          console.log(response);
+          if (response?.error === false) {
+            router.push("/user/login");
+          } else {
+            raiseAlert("Verification failed please retry", "error");
+          }
+          getVerifyUserRequestSentRef.current = true;
+        })();
+      } else {
+        raiseAlert("Verification failed please retry", "error");
+      }
+    }
+  }, [params]);
+  const resendEmail = async () => {
+    const response = await postSendVerificationLink.sendRequest({
+      email: email,
+    });
+    if (response && typeof response != "string") {
+      const errorResponse = response as ErrorResponse;
+      // this is temporary since error status code was not set
+      console.log(errorResponse);
+      raiseAlert(errorResponse.message, "error");
+      // for Account with the given email doesn't exist
+    }
+  };
+  useEffect(() => {
+    if (postSendVerificationLink.error) {
+      if (postSendVerificationLink.error.message === "User already verified") {
+        raiseAlert("User already verified", "success", {
+          type: "success",
+          href: "/users/login",
+          text: "Please Login",
+        });
+      } else {
+        raiseAlert(postSendVerificationLink.error.message, "error");
+      }
+    }
+  }, [postSendVerificationLink.error]);
   return (
-    <div className={commonStyles.UserForm}>
-      <div className="form card">
-        <div className="iconContainer">
-          <Image
-            src="/icons/logo-filled.svg"
-            height={49}
-            width={49}
-            alt="logo"
-          />
-        </div>
-        <h1 className="heading">Resend Verification Link</h1>
-        <p>The link has expired or invalid link</p>
-        <p>To get a new link please click the below button.</p>
+    <Layout>
+      {!params || getVerifyUser.loading ? (
+        <MyLoader windowCentered />
+      ) : (
+        <div className={commonStyles.UserForm}>
+          <div className="form card">
+            <div className="iconContainer">
+              <Image
+                src="/icons/logo-filled.svg"
+                height={49}
+                width={49}
+                alt="logo"
+              />
+            </div>
+            <h1 className="heading">Resend Verification Link</h1>
+            <p>The link has expired or invalid link</p>
+            <p>To get a new link please click the below button.</p>
 
-        <a href="http://localhost:3000/user/verify/611accd2cdcdb00016d4d66b/c855874a14a7065a85c4551d3a5d37637953eab1640109c52f890510facd01be?email=daworeg855%40hax55.com">
-          link
-        </a>
-        <Button
-          labelWeight="bold"
-          onClick={() => {
-            console.log(email);
-            // postSendVerificationLink.sendRequest({ email: email });
-          }}
-        >
-          Resend Email
-        </Button>
-        <div>
-          Need help?&nbsp;
-          <PrimaryLink href="/">Contact Us</PrimaryLink>
+            {postSendVerificationLink.loading ? (
+              <Button labelWeight="bold" color="default" labelColor="gray">
+                Loading...
+              </Button>
+            ) : (
+              <Button labelWeight="bold" onClick={resendEmail}>
+                Resend Email
+              </Button>
+            )}
+            <div>
+              Need help?&nbsp;
+              <PrimaryLink href="/">Contact Us</PrimaryLink>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </Layout>
   );
 };
 export default Verify;

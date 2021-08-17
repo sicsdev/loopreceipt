@@ -20,20 +20,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
       dispatch(setUser(userData.user));
     }
   }, [userData]);
-  return userData?.user ? (
-    children
-  ) : (
-    <div className={styles.center}>
-      <MyLoader />
-    </div>
-  );
+  return userData?.user ? children : <MyLoader windowCentered />;
 };
 export default AuthGuard;
-const useStyles = makeStyles((theme) => ({
-  center: {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-  },
-}));
+const useStyles = makeStyles((theme) => ({}));

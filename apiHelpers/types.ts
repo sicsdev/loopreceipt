@@ -86,3 +86,7 @@ export interface LoopFilters {
   from: Date;
   to: Date;
 }
+export interface ErrorResponse {
+  error: boolean;
+  message: string;
+}

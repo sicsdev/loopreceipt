@@ -70,10 +70,10 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
                 allow you to reset your password. Please check your spam folder
                 if the email doesn&apos;t appear within a few minutes.
               </p>
-              <p className="text2">
+              <div className="text2">
                 If there any issues <PrimaryLink href="/">email us</PrimaryLink>
                 , and we&apos;ll help fix it!
-              </p>
+              </div>
             </div>
           ) : (
             <Form
