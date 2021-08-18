@@ -261,7 +261,7 @@ export default function RecipientCommentAnalytics() {
         </Box>
         <div style={{ display: "flex" }} className={classes.text}>
           <Typography className={classes.percentageStyle}>
-            {percent[0]}%
+            {Math.trunc(percent[0])}%
           </Typography>
           <Typography className={classes.bodyStyle}>
             of recipients left a comment on delivery

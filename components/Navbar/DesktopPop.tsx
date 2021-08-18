@@ -8,7 +8,11 @@ import {
 import React from "react";
 import HomeIcon from "@material-ui/icons/Home";
 import PersonIcon from "@material-ui/icons/Person";
-import SettingsIcon from "@material-ui/icons/Settings";
+import CreditCardIcon from '@material-ui/icons/CreditCard';
+import ContactMailIcon from '@material-ui/icons/ContactMail';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import DashboardOutlinedIcon from '@material-ui/icons/DashboardOutlined';
+import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import { logoutUser } from "@store/slices/userSlice";
 import Button from "@components/Controls/Button";
 import { useAppSelector } from "@store/hooks";
@@ -41,13 +45,18 @@ const DesktopPop = ({ anchorEl, showPop, setShowPop }: DesktopPopProps) => {
     >
       <div className="email">{user?.email}</div>
       <PopItem icon={<HomeIcon />} text="Home" href="/dashboard" />
-      <PopItem icon={<PersonIcon />} text="Profile" href="/user" />
-      <PopItem icon={<SettingsIcon />} text="Settings" href="/settings" />
+      <PopItem icon={<PersonIcon />} text="Account Settings" href="/accountsettings" />
+      <PopItem icon={<CreditCardIcon />} text="Billing" href="/billing" />
+      <PopItem icon={<ContactMailIcon />} text="Contact Connections" href="/contactconnections" />
+      <PopItem icon={<LockOutlinedIcon />} text="Privacy & Security Settings" href="/privacy-and-security" />
+      <PopItem icon={<DashboardOutlinedIcon />} text="Apps" href="/apps" />
+      
       <div className="buttonContainer">
         <Button
           variant="outlined"
           color="inherit"
           labelWeight="bold"
+          startIcon={<ExitToAppOutlinedIcon />}
           onClick={() => {
             // it is raising error rendered fewer hooks
             // so we need a delay
