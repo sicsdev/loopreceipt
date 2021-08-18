@@ -4,8 +4,11 @@ import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 import { SearchItemType } from "@interfaces/SearchItemType";
 import {
+  searchBarSlice,
   setEntitySearchedGroup,
+  setSearchItemName,
   setSearchItems,
+  setSearchSpace,
 } from "@store/slices/searchBarSlice";
 import store from "@store/store";
 
@@ -16,7 +19,7 @@ const groupDetailsForm: FormType = {
     groupName: {
       name: "groupName",
       label: "Group Name",
-      placeholder: "Dropisle Management team",
+      placeholder: "Group Name",
       value: "",
       type: "text",
       validate: function () {
@@ -26,7 +29,7 @@ const groupDetailsForm: FormType = {
     createdFor: {
       name: "createdFor",
       label: "Created For",
-      placeholder: "Dropisle Inc",
+      placeholder: "Created For",
       value: "",
       type: "text",
       validate: function () {
@@ -35,6 +38,12 @@ const groupDetailsForm: FormType = {
     },
   },
   populateSearchItems: async (str: string) => {
+    if (store.getState().searchBar.searchItemName !== "group") {
+      // we want to set this just once
+      store.dispatch(setSearchItemName("group"));
+      store.dispatch(setSearchSpace(""));
+    }
+
     if (!str) return;
     const response = await groupsApi.getBySearch(str);
     if (response) {

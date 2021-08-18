@@ -43,6 +43,7 @@ const Create = () => {
       if (currentDraftIdRef.current) {
         console.log("deleting");
         const response = await draftsApi.delete(currentDraftIdRef.current);
+        currentDraftIdRef.current = "deleted";
         // console.log(response);
       }
       router.push("/dashboard");
@@ -64,6 +65,7 @@ const Create = () => {
     new Debounce(async (formsProps: useFormReturnType[]) => {
       console.log(formsProps[0].formState.name.value);
       const loop = getEntityLoopFromFormsProps({ forms, formsProps, formType });
+      if (currentDraftIdRef.current === "deleted") return;
       if (!currentDraftIdRef.current) {
         console.log("creating");
         const response = await draftsApi.create(loop);

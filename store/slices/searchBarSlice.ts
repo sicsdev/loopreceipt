@@ -11,6 +11,8 @@ export interface SliceSearchBarType {
   searchInput: string;
   searchWithPrimary: boolean;
   searchWithSecondary: boolean;
+  searchSpace: string;
+  searchItemName: string;
 }
 const initialState: SliceSearchBarType = {
   searchItems: [],
@@ -20,6 +22,8 @@ const initialState: SliceSearchBarType = {
   searchInput: "",
   searchWithPrimary: true,
   searchWithSecondary: false,
+  searchSpace: "",
+  searchItemName: "",
 };
 export const searchBarSlice = createSlice({
   name: "searchBar",
@@ -57,7 +61,12 @@ export const searchBarSlice = createSlice({
     setSearchWithSecondary: (state, action: PayloadAction<boolean>) => {
       state.searchWithSecondary = action.payload;
     },
-
+    setSearchSpace: (state, action: PayloadAction<string>) => {
+      state.searchSpace = action.payload;
+    },
+    setSearchItemName: (state, action: PayloadAction<string>) => {
+      state.searchItemName = action.payload;
+    },
     confirmLooper: (state, action: PayloadAction<{ looper: EntityLooper }>) => {
       state.confirmedLoopers.push({ id: uuidV4(), ...action.payload.looper });
     },
@@ -101,6 +110,8 @@ export const {
   setEntitySearchedGroup,
   setConfirmedLoopers,
   setSearchInput,
+  setSearchSpace,
+  setSearchItemName,
   setSearchWithPrimary,
   setSearchWithSecondary,
   confirmLooper,

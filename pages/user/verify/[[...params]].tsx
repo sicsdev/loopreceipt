@@ -39,8 +39,8 @@ const Verify = ({}: VerifyProps) => {
 
   useEffect(() => {
     if (getVerifyUserRequestSentRef.current === true) return;
-    console.log(params);
-    console.log(email);
+    // console.log(params);
+    // console.log(email);
 
     if (params) {
       const payload = {

@@ -34,7 +34,7 @@ const usersApi = {
     | undefined
   > => {
     try {
-      // console.log("get all");
+      console.log("create usersApi called");
       // console.log(Cookies.get("token"));
       const response = await axios.post(`/users`, user);
 

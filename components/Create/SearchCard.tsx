@@ -19,8 +19,14 @@ interface SearchCardProps {}
 const SearchCard = ({}: SearchCardProps) => {
   const styles = useStyles();
   const dispatch = useAppDispatch();
-  const { searchItems, searchInput, searchWithPrimary, searchWithSecondary } =
-    useAppSelector((state) => state.searchBar);
+  const {
+    searchItems,
+    searchInput,
+    searchWithPrimary,
+    searchWithSecondary,
+    searchSpace,
+    searchItemName,
+  } = useAppSelector((state) => state.searchBar);
 
   const addRecepientManually = useAppSelector(
     (state) => state.loopReceipt.addRecepientManually
@@ -145,7 +151,7 @@ const SearchCard = ({}: SearchCardProps) => {
             width={15}
             height={15}
           />
-          &nbsp; No recipient found with the name “{searchInput}”
+          &nbsp; No {searchItemName} found with the name “{searchInput}”
         </div>
       )}
       <div
@@ -160,7 +166,7 @@ const SearchCard = ({}: SearchCardProps) => {
       >
         + Add manually
       </div>
-      {formType === "internal" && (
+      {searchSpace && (
         <div className={styles.bottomText}>
           <Image
             alt="icon"
@@ -168,7 +174,7 @@ const SearchCard = ({}: SearchCardProps) => {
             width={15}
             height={15}
           />
-          &nbsp; You are searching contacts with dropisle.com
+          &nbsp; {searchSpace}
         </div>
       )}
     </div>

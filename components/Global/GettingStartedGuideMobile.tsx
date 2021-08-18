@@ -88,7 +88,7 @@ const Item = ({ i, text, activeContent }: ItemProps) => {
       }}
     >
       <p className="number">{i}</p>
-      <div ref={parentRef}>
+      <div ref={parentRef}> 
         <p className="text">{text}</p>
         {activeContent && (
           <RevealContent show={active} parentRef={parentRef}>
