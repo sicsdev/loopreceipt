@@ -4,7 +4,6 @@ import { useFetch } from "@hooks/useFetch";
 import groupsApi from "@apiClient/groupsApi";
 import { EntityGroup } from "apiHelpers/types";
 import Group from "./Group";
-import { useWindowScrolledTillEndListener } from "@hooks/useWindowScrolledTillEndListener";
 import { useState } from "react";
 import MyLoader from "@components/Shared/MyLoader";
 import { useEffect } from "react";
@@ -16,6 +15,7 @@ import {
 } from "@store/slices/searchBarSlice";
 import { useRef } from "react";
 import { Debounce } from "@helpers/utils";
+import Pagination from "@components/Dashboard/Pagination";
 interface ShowExistingGroupsProps {
   setGroupsIsEmpty: React.Dispatch<React.SetStateAction<boolean>>;
   createGroupClick: Function;
@@ -33,10 +33,10 @@ const ShowExistingGroups = ({
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const styles = useStyles();
-  const [numGroupsFetched, setNumGroupsFetched] = useState(2);
   const [totalGroups, setTotalGroups] = useState(0);
   const [fetchedGroups, setFetchedGroups] = useState<EntityGroup[]>([]);
   const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const { loading, sendRequest } = useFetch<{
     error: boolean;
     total: number;
@@ -95,34 +95,15 @@ const ShowExistingGroups = ({
 
   useEffect(() => {
     (async () => {
-      const response = await sendRequest(1);
+      setFetchedGroups([]);
+      const response = await sendRequest(page);
       if (response && response.total > 0) {
         setGroupsIsEmpty(false);
         setTotalGroups(response.total);
-        addGroups(response.groups);
+        setFetchedGroups(response.groups);
       }
     })();
-  }, []);
-  const addGroups = (fetchedGroups: EntityGroup[]) => {
-    setFetchedGroups((prev) => [...prev, ...fetchedGroups]);
-    setNumGroupsFetched((prev) => prev + fetchedGroups.length);
-    setPage((prev) => prev + 1);
-  };
-  useWindowScrolledTillEndListener(
-    async () => {
-      // console.log("scrolled till end");
-
-      if (numGroupsFetched >= totalGroups) return;
-
-      const newGroups = (await sendRequest(page))?.groups;
-      // console.log(newGroups);
-      if (newGroups) {
-        addGroups(newGroups);
-      }
-    },
-    300,
-    [numGroupsFetched, totalGroups, page]
-  );
+  }, [page]);
 
   return (
     <div className={styles.ShowExistingGroups}>
@@ -162,6 +143,14 @@ const ShowExistingGroups = ({
             })}
 
             <MyLoader loaded={!loading} />
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalItems={totalGroups}
+              itemsPerPageOptions={[5, 10, 15]}
+              itemsPerPage={10}
+              setItemsPerPage={setItemsPerPage}
+            />
           </div>
         </>
       )}

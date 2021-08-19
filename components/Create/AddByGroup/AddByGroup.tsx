@@ -25,7 +25,6 @@ import { useRouter } from "next/router";
 import { EntityGroup } from "@apiHelpers/types";
 import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 
-import { useFetch } from "@hooks/useFetch";
 import groupsApi from "@apiClient/groupsApi";
 import MyLoader from "@components/Shared/MyLoader";
 import Group from "./Group";
@@ -211,6 +210,7 @@ function AddByGroup({
       setLoading(true);
       if (!selectedGroup) {
         const response = await groupsApi.create(groupToBeSaved);
+
         // console.log('creating group');
         // console.log(response?.group);
         setSavedGroup(response?.group);
