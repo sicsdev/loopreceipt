@@ -14,32 +14,31 @@ import Win from "@helpers/Win";
 import UpperBarMobile from "./UpperBarMobile";
 import LoopReceipt from "./LoopReceipt";
 import { validateAllFieldsOfForm } from "forms/formUtils";
+import { EntityLoopMode } from "@apiHelpers/types";
+import { useAppDispatch } from "@store/hooks";
+import { setLoopReceiptMode } from "@store/slices/loopReceiptSlice";
 
 interface OneByOneProps {
-  setOption: React.Dispatch<
-    React.SetStateAction<"onebyone" | "group" | undefined>
-  >;
-
   forms: FormType[];
   formsProps: useFormReturnType[];
   handleCancelClick: () => void;
   currentDraftIdRef: React.MutableRefObject<string | undefined>;
 }
 function OneByOne({
-  setOption,
   forms,
   formsProps,
   handleCancelClick,
   currentDraftIdRef,
 }: OneByOneProps) {
   const styles = useStyles();
+  const dispatch = useAppDispatch();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [index, setIndex] = useState(0);
 
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
     if (index > 0) setIndex(index - 1);
-    else setOption(undefined);
+    else dispatch(setLoopReceiptMode(undefined));
   };
 
   const handleNextClick = () => {

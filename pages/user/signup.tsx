@@ -71,16 +71,20 @@ const Signup = ({}: SignupProps) => {
       if (response) {
         // on signup verification link is sent automatically
         setUserResponse(response.user);
+        await sendVerificationEmail(response.user);
         setVerificationEmailSent(true);
         raiseAlert("Account created! " + response.user.name, "success");
       }
     }
   };
-  const sendVerificationEmail = async (user: {
-    isFirstTime: boolean;
-    name: string;
-    email: string;
-  }) => {
+  const sendVerificationEmail = async (
+    user: {
+      isFirstTime: boolean;
+      name: string;
+      email: string;
+    },
+    alert = true
+  ) => {
     const message = await postUserVerify.sendRequest({ email: user.email });
     console.log(message);
     // u can change the without checking message too
@@ -88,7 +92,7 @@ const Signup = ({}: SignupProps) => {
       message ===
       "An email has been sent to " + signupFormProps.formState.email.value
     ) {
-      raiseAlert("Email Sent! Successfully", "success");
+      if (alert) raiseAlert("Email Sent! Successfully", "success");
     }
   };
   useEffect(() => {
@@ -189,7 +193,7 @@ const Signup = ({}: SignupProps) => {
               </>
             ) : (
               <>
-                <h1 className="heading">Your Email is verified Please Login</h1>
+                <h1 className="heading">Your Email is verified please login</h1>
                 <Button
                   onClick={() => {
                     router.push("/user/login");

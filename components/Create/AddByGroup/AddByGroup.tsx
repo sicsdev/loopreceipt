@@ -22,7 +22,7 @@ import {
   validateAllFieldsOfForm,
 } from "forms/formUtils";
 import { useRouter } from "next/router";
-import { EntityGroup } from "@apiHelpers/types";
+import { EntityGroup, EntityLoopMode } from "@apiHelpers/types";
 import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 
 import groupsApi from "@apiClient/groupsApi";
@@ -32,18 +32,15 @@ import SaveGroupDialog from "./SaveGroupDialog";
 import { useForm } from "@hooks/useForm";
 import groupDetailsForm from "@forms/groupDetailsForm";
 import { getStrippedObject } from "@helpers/utils";
+import { setLoopReceiptMode } from "@store/slices/loopReceiptSlice";
+import loopersDetailsForm from "@forms/loopersDetailsForm";
 interface AddByGroupProps {
-  setOption: React.Dispatch<
-    React.SetStateAction<"onebyone" | "group" | undefined>
-  >;
-
   forms: FormType[];
   formsProps: useFormReturnType[];
   handleCancelClick: () => void;
   currentDraftIdRef: React.MutableRefObject<string | undefined>;
 }
 function AddByGroup({
-  setOption,
   forms,
   formsProps,
   handleCancelClick,
@@ -112,6 +109,7 @@ function AddByGroup({
           prev.phone.value = "32132112";
           prev.zipCode.value = selectedGroup.recipient.postalCode;
           prev.name.value = selectedGroup.recipient.name;
+          prev.email.value = selectedGroup.recipient.email;
         })
       );
       dispatch(setConfirmedLoopers({ loopers: selectedGroup.loopers }));
@@ -136,7 +134,7 @@ function AddByGroup({
         setShowExistingGroups(true);
       } else {
         setShowExistingGroups(false);
-        setOption(undefined);
+        dispatch(setLoopReceiptMode(undefined));
       }
     }
   };
@@ -194,6 +192,10 @@ function AddByGroup({
     const loopers = getEntityLoopersFromLoopersState(
       formsProps[loopersFormIndex].formState
     );
+    // this is done so that once the group is saved and user clicks back
+    // we don't treat looper in input as new looper added by the user
+    formsProps[loopersFormIndex].setFormState(loopersDetailsForm.initialState);
+    dispatch(setConfirmedLoopers({ loopers }));
     const groupToBeSaved = {
       recipient,
       loopers,
@@ -214,6 +216,7 @@ function AddByGroup({
         // console.log('creating group');
         // console.log(response?.group);
         setSavedGroup(response?.group);
+        setSelectedGroup(response?.group);
       } else {
         const response = await groupsApi.update({
           group: groupToBeSaved,
@@ -222,6 +225,7 @@ function AddByGroup({
         // console.log("updating group");
         // console.log(response?.group);
         setSavedGroup(response?.group);
+        setSelectedGroup(response?.group);
       }
 
       setLoading(false);

@@ -8,6 +8,8 @@ import { EntityUser } from "@apiHelpers/types";
 
 import { setUser } from "@store/slices/userSlice";
 import MyLoader from "@components/Shared/MyLoader";
+// if you want to show navbar then wrap content inside layout in auth guard
+// if don't want to show navbar then wrap layout in authguard
 interface AuthGuardProps {
   children: any;
 }

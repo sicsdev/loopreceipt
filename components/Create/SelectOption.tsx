@@ -1,14 +1,14 @@
+import { EntityLoopMode } from "@apiHelpers/types";
 import Button from "@components/Controls/Button";
 import UpperBar from "@components/Shared/UpperBar";
 import { makeStyles } from "@material-ui/core";
+import { useAppDispatch } from "@store/hooks";
+import { setLoopReceiptMode } from "@store/slices/loopReceiptSlice";
 import Image from "next/image";
-interface SelectOptionProps {
-  setOption: React.Dispatch<
-    React.SetStateAction<"onebyone" | "group" | undefined>
-  >;
-}
-const SelectOption = ({ setOption }: SelectOptionProps) => {
+interface SelectOptionProps {}
+const SelectOption = ({}: SelectOptionProps) => {
   const styles = useStyles();
+  const dispatch = useAppDispatch();
   return (
     <div className={styles.SelectOption}>
       <UpperBar>
@@ -19,13 +19,13 @@ const SelectOption = ({ setOption }: SelectOptionProps) => {
           src="/icons/create/onebyone.svg"
           head="One by One"
           text="Create loop by adding members one by one"
-          onClick={() => setOption("onebyone")}
+          onClick={() => dispatch(setLoopReceiptMode("single"))}
         />
         <Option
           src="/icons/create/group.svg"
           head="Group"
           text="Create loop by adding multiple members"
-          onClick={() => setOption("group")}
+          onClick={() => dispatch(setLoopReceiptMode("group"))}
         />
       </div>
     </div>

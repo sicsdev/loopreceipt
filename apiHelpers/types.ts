@@ -29,6 +29,8 @@ export interface EntityLooper {
   email: string;
   name: string;
 }
+export type EntityLoopType = "external" | "internal";
+export type EntityLoopMode = "single" | "group";
 export interface EntityLoop {
   loopid?: string;
   timestamp?: string;
@@ -37,8 +39,8 @@ export interface EntityLoop {
   city: string;
   postalCode: string;
   barcode: string;
-  type: "external" | "internal";
-  mode: "single" | "group";
+  mode: EntityLoopMode;
+  type: EntityLoopType;
   loopers: EntityLooper[];
   recipient: EntityRecipient;
 }
@@ -51,7 +53,8 @@ export interface EntityDraft {
   city?: string;
   postalCode?: string;
   barcode?: string;
-  type?: "external" | "internal";
+  mode: EntityLoopMode;
+  type: EntityLoopType;
   owner?: string;
   loopers?: EntityLooper[];
   recipient?: EntityRecipient;
