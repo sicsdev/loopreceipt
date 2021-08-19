@@ -20,6 +20,10 @@ const Verify = ({}: VerifyProps) => {
   const commonStyles = commonUserFormStyles();
   const { params, email } = router.query;
   const getVerifyUserRequestSentRef = useRef(false);
+  const [
+    initialVerificationCheckComplete,
+    setInitialVerificationCheckComplete,
+  ] = useState(false);
   const getVerifyUser = useFetch<{
     error: boolean;
     message?: string | undefined;
@@ -54,7 +58,18 @@ const Verify = ({}: VerifyProps) => {
           if (response?.error === false) {
             router.push("/user/login");
           } else {
-            raiseAlert("Verification failed please retry", "error");
+            try {
+              const response = await usersApi.sendVerificationLink({
+                email: email as string,
+              });
+              setInitialVerificationCheckComplete(true);
+              raiseAlert("Verification failed please retry", "error");
+            } catch (err) {
+              console.log("user verification check");
+              if (err.message === "User already verified") {
+                router.push("/user/login");
+              }
+            }
           }
           getVerifyUserRequestSentRef.current = true;
         })();
@@ -63,6 +78,7 @@ const Verify = ({}: VerifyProps) => {
       }
     }
   }, [params]);
+
   const resendEmail = async () => {
     const response = await postSendVerificationLink.sendRequest({
       email: email,
@@ -73,6 +89,8 @@ const Verify = ({}: VerifyProps) => {
       console.log(errorResponse);
       raiseAlert(errorResponse.message, "error");
       // for Account with the given email doesn't exist
+    } else {
+      raiseAlert("Email Sent! Successfully", "success");
     }
   };
   useEffect(() => {
@@ -90,7 +108,7 @@ const Verify = ({}: VerifyProps) => {
   }, [postSendVerificationLink.error]);
   return (
     <Layout>
-      {!params || getVerifyUser.loading ? (
+      {!params || getVerifyUser.loading || !initialVerificationCheckComplete ? (
         <MyLoader windowCentered />
       ) : (
         <div className={commonStyles.UserForm}>

@@ -4,7 +4,7 @@ import loopsApi from "@apiClient/loopsApi";
 import TabsBase, { StdData } from "./TabsBase";
 interface ReceivedProps {}
 const Received = ({}: ReceivedProps) => {
-  const getter = useFetch<StdData>(loopsApi.getAll, { deferred: true });
+  const getter = useFetch<StdData>(loopsApi.getRecieved, { deferred: true });
   const styles = useStyles();
   return <TabsBase getter={getter} />;
 };
