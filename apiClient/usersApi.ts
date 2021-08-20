@@ -108,5 +108,15 @@ const usersApi = {
       throw axiosErrorHandler(error);
     }
   },
+  checkVerificationStatus: async (
+    email: string
+  ): Promise<{ error: boolean; isVerified: boolean } | undefined> => {
+    try {
+      const response = await axios.post(`/users/verification/check`, { email });
+      return response.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
 };
 export default usersApi;
