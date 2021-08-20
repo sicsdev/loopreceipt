@@ -164,3 +164,12 @@ export const getStrippedObject = (
   }
   return strippedObject;
 };
+export const hasValueAtAnyKey = (object: { [key: string]: any }) => {
+  console.log(object);
+  for (let key in object) {
+    if (object[key]) {
+      return true;
+    }
+  }
+  return false;
+};

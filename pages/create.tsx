@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import Router from "next/router";
 import OneByOne from "@components/Create/OneByOne";
 import SelectOption from "@components/Create/SelectOption";
 import { makeStyles } from "@material-ui/core";
@@ -22,7 +23,7 @@ import ConfirmDialog from "@components/Create/ConfirmDialog";
 import { useRouter, withRouter } from "next/router";
 import draftsApi from "@apiClient/draftsApi";
 import { useRef } from "react";
-import { Debounce } from "@helpers/utils";
+import { Debounce, hasValueAtAnyKey } from "@helpers/utils";
 import produce from "immer";
 import { EntityDraft, EntityLoopMode, EntityLoopType } from "@apiHelpers/types";
 import {
@@ -45,6 +46,7 @@ const Create = () => {
   );
   const dispatch = useAppDispatch();
   const currentDraftIdRef = useRef<string>();
+  const acceptRouteChangeRef = useRef(false);
   const { draftId } = router.query;
   // console.log(draftId);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
@@ -53,15 +55,6 @@ const Create = () => {
     subTitle: "",
     confirmText: "Yes",
     cancelText: "No",
-    onConfirm: async () => {
-      if (currentDraftIdRef.current) {
-        console.log("deleting");
-        const response = await draftsApi.delete(currentDraftIdRef.current);
-        currentDraftIdRef.current = "deleted";
-        // console.log(response);
-      }
-      router.push("/dashboard");
-    },
   });
 
   let forms: FormType[] = [
@@ -88,14 +81,23 @@ const Create = () => {
         loopReceiptType: EntityLoopType;
         loopReceiptMode: EntityLoopMode;
       }) => {
+        if (currentDraftIdRef.current === "deleted") return;
         console.log(formsProps[0].formState.name.value);
+        const recipientDetails: { [key: string]: any } = {};
+        for (let key in formsProps[0].formState) {
+          recipientDetails[key] = formsProps[0].formState[key].value;
+        }
+        if (!hasValueAtAnyKey(recipientDetails)) return;
+
         const loop = getEntityLoopFromFormsProps({
           forms,
           formsProps,
           loopReceiptType,
           loopReceiptMode,
         });
-        if (currentDraftIdRef.current === "deleted") return;
+
+        // if (!hasValueAtAnyKey(loop.recipient)) return;
+        // we can check here also if we don't have dummy values
         if (!currentDraftIdRef.current) {
           console.log("creating");
           const response = await draftsApi.create(loop);
@@ -132,6 +134,65 @@ const Create = () => {
       setCheckForExistingDraftComplete(true);
     })();
   }, []);
+
+  useEffect(() => {
+    const preventRouteChange = (url: string) => {
+      Router.events.emit("routeChangeError");
+      throw `Route change to "${url}" was aborted (this error can be safely ignored). `;
+    };
+    const beforeRouteHandler = (url: string) => {
+      if (url === "/create") {
+        if (
+          !currentDraftIdRef.current ||
+          currentDraftIdRef.current === "deleted"
+        ) {
+          for (let i = 0; i < formsProps.length; i++) {
+            formsProps[i].resetForm();
+          }
+          dispatch(setLoopReceiptMode(undefined));
+          return;
+        }
+        setConfirmDialog((prev) => ({
+          ...prev,
+          isOpen: true,
+          onConfirm: async () => {
+            deleteExistingDraftHandler();
+            for (let i = 0; i < formsProps.length; i++) {
+              formsProps[i].resetForm();
+            }
+            dispatch(setLoopReceiptMode(undefined));
+          },
+        }));
+      } else {
+        if (
+          !currentDraftIdRef.current ||
+          currentDraftIdRef.current === "deleted"
+        ) {
+          return;
+        }
+        setConfirmDialog((prev) => ({
+          ...prev,
+          isOpen: true,
+          onConfirm: async () => {
+            acceptRouteChangeRef.current = true;
+            deleteExistingDraftHandler();
+            router.push(url);
+          },
+        }));
+      }
+      if (acceptRouteChangeRef.current) {
+        acceptRouteChangeRef.current = false;
+      } else {
+        preventRouteChange(url);
+      }
+    };
+    Router.events.on("routeChangeStart", beforeRouteHandler);
+
+    return () => {
+      Router.events.off("routeChangeStart", beforeRouteHandler);
+    };
+  }, []);
+
   useEffect(() => {
     // console.log("create recipient form updated");
     if (checkForExistingDraftComplete === false) {
@@ -188,10 +249,23 @@ const Create = () => {
       });
     }
   }, [addRecepientManually]);
+  const deleteExistingDraftHandler = async () => {
+    if (currentDraftIdRef.current) {
+      console.log("deleting");
+      const response = await draftsApi.delete(currentDraftIdRef.current);
+      currentDraftIdRef.current = "deleted";
+      // console.log(response);
+    }
+  };
   const handleCancelClick = () => {
     setConfirmDialog({
       ...confirmDialog,
       isOpen: true,
+      onConfirm: async () => {
+        acceptRouteChangeRef.current = true;
+        deleteExistingDraftHandler();
+        router.push("/dashboard");
+      },
     });
   };
 

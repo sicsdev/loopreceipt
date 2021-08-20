@@ -11,3 +11,6 @@ login rather than verifying with token etc
 // make raise alert easy to use
 // missing group check in draft api, make sure to add logic for 
 selected group and draft
+// work on receive api
+// work on add manually on group page
+clicking on add manually should bring user to Add recipient page

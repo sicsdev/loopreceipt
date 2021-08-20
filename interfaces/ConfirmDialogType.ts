@@ -4,5 +4,5 @@ export default interface ConfirmDialogType {
   subTitle: string;
   confirmText: string;
   cancelText: string;
-  onConfirm: () => void;
+  onConfirm?: () => void;
 }

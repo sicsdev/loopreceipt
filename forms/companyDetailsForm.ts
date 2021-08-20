@@ -10,7 +10,7 @@ const companyDetailsForm: FormType = {
     shippingAddress: {
       name: "shippingAddress",
       label: "Shipping Address",
-      placeholder: "2 Capistro Street",
+      placeholder: "Shipping Address",
       value: "",
       type: "text",
 
@@ -33,7 +33,7 @@ const companyDetailsForm: FormType = {
     city: {
       name: "city",
       label: "City",
-      placeholder: "Brampton",
+      placeholder: "City",
       value: "",
       type: "text",
     },
@@ -51,7 +51,7 @@ const companyDetailsForm: FormType = {
     zipCode: {
       name: "zipCode",
       label: "Zip Code",
-      placeholder: "L7A 3J3",
+      placeholder: "Zip Code",
       value: "",
       type: "number",
     },
