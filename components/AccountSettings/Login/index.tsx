@@ -10,6 +10,7 @@ import Link from "next/link";
 import InputBox from "@components/Controls/InputBox";
 import { validateSingleFieldOfForm } from "@forms/formUtils";
 import ChangeEmailModal from "./ChangeEmailModal";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const useStyles = makeStyles((theme) => ({
   pageLabel: {
@@ -117,6 +118,13 @@ export default function Login() {
   const handleChangeEmailModalClose = () => {
     setChangeEmail(false);
   };
+  const [changePassword, setChangePassword] = useState(false);
+  const handleChangePasswordModalOpen = () => {
+    setChangePassword(true);
+  };
+  const handleChangePasswordModalClose = () => {
+    setChangePassword(false);
+  };
 
   return (
     <Container>
@@ -172,7 +180,7 @@ export default function Login() {
             <Typography className={classes.inputBox}>Password</Typography>
             <Typography
               className={classes.linkStyles}
-              onClick={handleChangeEmailModalOpen}
+              onClick={handleChangePasswordModalOpen}
             >
               Change Password
             </Typography>
@@ -218,6 +226,10 @@ export default function Login() {
       <ChangeEmailModal
         open={changeEmail}
         handleClose={handleChangeEmailModalClose}
+      />
+      <ChangePasswordModal
+        open={changePassword}
+        handleClose={handleChangePasswordModalClose}
       />
     </Container>
   );

@@ -92,25 +92,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface ChangeEmailModalProps {
+interface ChangePasswordModalProps {
   open: boolean;
   handleClose: any;
 }
-export default function ChangeEmailModal({
+export default function ChangePasswordModal({
   open,
   handleClose,
-}: ChangeEmailModalProps) {
+}: ChangePasswordModalProps) {
   const classes = useStyles();
   const handleInputChange = () => {};
   return (
     <Dialog open={open} onClose={handleClose}>
       <Box sx={{ p: 5 }}>
-        <Typography className={classes.title}>Change Log in Email</Typography>
+        <Typography className={classes.title}>Change Password</Typography>
 
         <InputBox
           input={{
             type: "password",
-            label: "Password",
+            label: "Old Password",
             name: "password",
             placeholder: "**********",
             value: "",
@@ -122,10 +122,23 @@ export default function ChangeEmailModal({
 
         <InputBox
           input={{
-            type: "email",
-            label: "New Email Address",
-            name: "email",
-            placeholder: "newemailaddress@gmail.com",
+            type: "password",
+            label: "New Password",
+            name: "password",
+            placeholder: "**********",
+            value: "",
+          }}
+          onChange={handleInputChange}
+          onBlur={(e) => {}}
+        />
+        <br />
+
+        <InputBox
+          input={{
+            type: "password",
+            label: "Confirm New Password",
+            name: "password",
+            placeholder: "**********",
             value: "",
           }}
           onChange={handleInputChange}
