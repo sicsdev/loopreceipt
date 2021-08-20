@@ -1,65 +1,97 @@
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   largestCommonSubstring,
   runSequentiallyAfterDelay,
 } from "@helpers/utils";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setAddRecepientManually } from "@store/slices/loopReceiptSlice";
-import { SearchItemType } from "@interfaces/SearchItemType";
+import { MatchDetails, SearchItemType } from "@interfaces/SearchItemType";
 import {
+  setSearchInput,
   setSearchItemClickDetector,
   setSearchItems,
 } from "@store/slices/searchBarSlice";
-interface SearchCardProps {
-  searchInput: string;
-  setSearchInput: React.Dispatch<React.SetStateAction<string>>;
-}
+interface SearchCardProps {}
 
-const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
+const SearchCard = ({}: SearchCardProps) => {
   const styles = useStyles();
   const dispatch = useAppDispatch();
-  const searchItems = useAppSelector((state) => state.searchBar.searchItems);
+  const {
+    searchItems,
+    searchInput,
+    searchWithPrimary,
+    searchWithSecondary,
+    searchSpace,
+    searchItemName,
+  } = useAppSelector((state) => state.searchBar);
 
   const addRecepientManually = useAppSelector(
     (state) => state.loopReceipt.addRecepientManually
   );
+  const [sortedItems, setSortedItems] = useState<SearchItemType<any>[]>([]);
   const formType = useAppSelector((state) => state.loopReceipt.type);
   useEffect(() => {
     if (searchInput) {
-      const itemDetails = [];
-      for (let item of searchItems) {
-        const matchDetails = largestCommonSubstring(item.primary, searchInput);
-        // user.name must be first argument
-        // since we return matchStartIndex of first string
-        itemDetails.push({
-          ...item,
-          ...matchDetails,
-        });
-      }
-      dispatch(
-        setSearchItems(
+      if (searchWithSecondary) {
+        const itemDetails = [];
+        for (let item of searchItems) {
+          const matchDetails = largestCommonSubstring(
+            item.secondary,
+            searchInput
+          );
+
+          itemDetails.push({
+            ...item,
+            secondaryMatch: matchDetails,
+          });
+        }
+        setSortedItems(
           itemDetails.sort((u1, u2) => {
-            return u2.matchLength - u1.matchLength;
+            return u2.secondaryMatch.length! - u1.secondaryMatch.length!;
           })
-        )
-      );
+        );
+      }
+      if (searchWithPrimary) {
+        const itemDetails = [];
+        for (let item of searchItems) {
+          const matchDetails = largestCommonSubstring(
+            item.primary,
+            searchInput
+          );
+          // user.name must be first argument
+          // since we return matchStartIndex of first string
+          itemDetails.push({
+            ...item,
+            primaryMatch: matchDetails,
+          });
+        }
+        setSortedItems(
+          itemDetails.sort((u1, u2) => {
+            return u2.primaryMatch.length! - u1.primaryMatch.length!;
+          })
+        );
+      }
     }
-  }, [searchInput]);
-  const getBolded = (item: SearchItemType<any>) => {
+  }, [
+    dispatch,
+    searchInput,
+    searchItems,
+    searchWithPrimary,
+    searchWithSecondary,
+  ]);
+  // console.log(sortedItems);
+  const getBolded = (str: string, match?: MatchDetails) => {
     // console.log(user);
-    if (item.matchLength) {
-      const start = item.primary.slice(0, item.matchStartIndex);
-      const matched = item.primary.slice(
-        item.matchStartIndex!,
-        item.matchStartIndex! + item.matchLength
+    if (match && match.length && str && str.length) {
+      const start = str.slice(0, match.startIndex);
+      const matched = str.slice(
+        match.startIndex!,
+        match.startIndex! + match.length
       );
-      const end = item.primary.slice(
-        item.matchStartIndex! + item.matchLength,
-        item.primary.length
-      );
+      const end = str.slice(match.startIndex! + match.length, str.length);
       return (
         <p>
           {start}
@@ -68,16 +100,16 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
         </p>
       );
     }
-    return <p>{item.primary}</p>;
+    return <p>{str}</p>;
   };
   return (
     <div className={styles.searchCard}>
-      {searchItems.map((item, i) =>
-        item.matchLength ? (
+      {sortedItems.map((item, i) =>
+        item.primaryMatch?.length || item.secondaryMatch?.length ? (
           <SearchItem
             key={i}
-            primary={getBolded(item)}
-            secondary={item.secondary}
+            primary={getBolded(item.primary, item.primaryMatch)}
+            secondary={getBolded(item.secondary, item.secondaryMatch)}
             active={item.active}
             onClick={() => {
               const updatedSearchItems = searchItems.map((item, idx) => {
@@ -102,12 +134,16 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
               );
 
               // now we can close the search bar
-              setSearchInput("");
+              dispatch(setSearchInput(""));
             }}
           />
         ) : null
       )}
-      {searchItems.every((item) => !item.matchLength) && (
+      {sortedItems.every(
+        (item) =>
+          (searchWithPrimary && !item.primary.length) ||
+          (searchWithSecondary && !item.secondary.length)
+      ) && (
         <div className={styles.nomatch}>
           <Image
             alt="icon"
@@ -115,7 +151,7 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
             width={15}
             height={15}
           />
-          &nbsp; No recipient found with the name “{searchInput}”
+          &nbsp; No {searchItemName} found with the name “{searchInput}”
         </div>
       )}
       <div
@@ -130,7 +166,7 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
       >
         + Add manually
       </div>
-      {formType === "internal" && (
+      {searchSpace && (
         <div className={styles.bottomText}>
           <Image
             alt="icon"
@@ -138,7 +174,7 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
             width={15}
             height={15}
           />
-          &nbsp; You are searching contacts with dropisle.com
+          &nbsp; {searchSpace}
         </div>
       )}
     </div>
@@ -147,7 +183,7 @@ const SearchCard = ({ searchInput, setSearchInput }: SearchCardProps) => {
 export default SearchCard;
 interface SearchItemProps {
   primary: JSX.Element | string;
-  secondary: string;
+  secondary: JSX.Element | string;
   active?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 }

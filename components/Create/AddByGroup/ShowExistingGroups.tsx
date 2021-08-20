@@ -4,10 +4,18 @@ import { useFetch } from "@hooks/useFetch";
 import groupsApi from "@apiClient/groupsApi";
 import { EntityGroup } from "apiHelpers/types";
 import Group from "./Group";
-import { useWindowScrolledTillEndListener } from "@hooks/useWindowScrolledTillEndListener";
 import { useState } from "react";
 import MyLoader from "@components/Shared/MyLoader";
 import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import groupDetailsForm from "@forms/groupDetailsForm";
+import {
+  setSearchItemClickDetector,
+  setSearchWithSecondary,
+} from "@store/slices/searchBarSlice";
+import { useRef } from "react";
+import { Debounce } from "@helpers/utils";
+import Pagination from "@components/Dashboard/Pagination";
 interface ShowExistingGroupsProps {
   setGroupsIsEmpty: React.Dispatch<React.SetStateAction<boolean>>;
   createGroupClick: Function;
@@ -22,12 +30,13 @@ const ShowExistingGroups = ({
   selectedGroup,
   setSelectedGroup,
 }: ShowExistingGroupsProps) => {
+  const dispatch = useAppDispatch();
   const theme = useTheme();
   const styles = useStyles();
-  const [numGroupsFetched, setNumGroupsFetched] = useState(2);
   const [totalGroups, setTotalGroups] = useState(0);
   const [fetchedGroups, setFetchedGroups] = useState<EntityGroup[]>([]);
   const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const { loading, sendRequest } = useFetch<{
     error: boolean;
     total: number;
@@ -35,37 +44,66 @@ const ShowExistingGroups = ({
   }>(groupsApi.getAll, {
     deferred: true,
   });
+  const {
+    searchInput,
+    searchItems,
+    searchItemClickDetector,
+    selectedGroupFromSearch,
+  } = useAppSelector((state) => state.searchBar);
+
+  const getSelectedGroup = useFetch<{
+    error: boolean;
+    group: EntityGroup;
+  }>(groupsApi.getOne, {
+    deferred: true,
+  });
+  useEffect(() => {
+    // console.log(selectedGroupFromSearch);
+    (async () => {
+      if (selectedGroupFromSearch) {
+        const response = await getSelectedGroup.sendRequest(
+          selectedGroupFromSearch.groupid
+        );
+        if (response) setSelectedGroup(response.group);
+      }
+    })();
+  }, [selectedGroupFromSearch]);
+  useEffect(() => {
+    dispatch(setSearchWithSecondary(true));
+    return () => {
+      dispatch(setSearchWithSecondary(false));
+    };
+  }, []);
+  useEffect(() => {
+    // for entity forms we run itemClickDetector in useEffect defined in Entityform
+    if (searchItemClickDetector) {
+      groupDetailsForm.searchItemClicked?.({
+        entity: searchItems.find((item) => item.active)?.entity,
+      });
+      dispatch(setSearchItemClickDetector(false));
+    }
+  }, [searchItemClickDetector]);
+  const searchMethodRef = useRef(
+    new Debounce((searchInput: string) => {
+      // console.log("search api request sent");
+      groupDetailsForm.populateSearchItems?.(searchInput);
+    }, 300)
+  );
+  useEffect(() => {
+    searchMethodRef.current.callAfterDelay(searchInput);
+  }, [searchInput]);
 
   useEffect(() => {
     (async () => {
-      const response = await sendRequest(1);
+      setFetchedGroups([]);
+      const response = await sendRequest(page);
       if (response && response.total > 0) {
         setGroupsIsEmpty(false);
         setTotalGroups(response.total);
-        addGroups(response.groups);
+        setFetchedGroups(response.groups);
       }
     })();
-  }, []);
-  const addGroups = (fetchedGroups: EntityGroup[]) => {
-    setFetchedGroups((prev) => [...prev, ...fetchedGroups]);
-    setNumGroupsFetched((prev) => prev + fetchedGroups.length);
-    setPage((prev) => prev + 1);
-  };
-  useWindowScrolledTillEndListener(
-    async () => {
-      // console.log("scrolled till end");
-
-      if (numGroupsFetched >= totalGroups) return;
-
-      const newGroups = (await sendRequest(page))?.groups;
-      // console.log(newGroups);
-      if (newGroups) {
-        addGroups(newGroups);
-      }
-    },
-    300,
-    [numGroupsFetched, totalGroups, page]
-  );
+  }, [page]);
 
   return (
     <div className={styles.ShowExistingGroups}>
@@ -86,17 +124,33 @@ const ShowExistingGroups = ({
       ) : (
         <>
           <div className="groups">
-            {fetchedGroups.map((group, i) => (
-              <div key={i} onClick={() => setSelectedGroup(group)}>
+            {getSelectedGroup.data?.group && (
+              <div
+                onClick={() => setSelectedGroup(getSelectedGroup.data?.group)}
+              >
                 <Group
-                  key={i}
-                  group={group}
-                  selected={group == selectedGroup}
+                  group={getSelectedGroup.data.group}
+                  selected={getSelectedGroup.data.group == selectedGroup}
                 />
               </div>
-            ))}
+            )}
+            {fetchedGroups.map((group, i) => {
+              return group.groupid !== getSelectedGroup.data?.group.groupid ? (
+                <div key={i} onClick={() => setSelectedGroup(group)}>
+                  <Group group={group} selected={group == selectedGroup} />
+                </div>
+              ) : null;
+            })}
 
             <MyLoader loaded={!loading} />
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalItems={totalGroups}
+              itemsPerPageOptions={[5, 10, 15]}
+              itemsPerPage={10}
+              setItemsPerPage={setItemsPerPage}
+            />
           </div>
         </>
       )}

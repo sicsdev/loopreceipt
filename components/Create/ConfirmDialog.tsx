@@ -42,7 +42,10 @@ export default function ConfirmDialog({
       <DialogActions className={styles.dialogActions}>
         <Button
           color="primary"
-          onClick={confirmDialog.onConfirm}
+          onClick={() => {
+            confirmDialog.onConfirm?.();
+            closeDialog();
+          }}
           size="medium"
           expand
           labelWeight="bold"

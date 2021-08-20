@@ -17,10 +17,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import MessageCard from "@components/Shared/MessageCard";
 import Image from "next/image";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
-import Fade from "@material-ui/core/Fade";
-import Slide from "@material-ui/core/Slide";
 // change this
 interface ResetPasswordProps {}
 const ResetPassword = ({}: ResetPasswordProps) => {
@@ -34,9 +30,8 @@ const ResetPassword = ({}: ResetPasswordProps) => {
   const [browser, setBrowser] = useState("");
   const [osName, setOsName] = useState("");
   const [location, setLocation] = useState("");
-  const [alertMessage, setAlertMessage] = useState<any>("");
-  const [showAlert, setShowAlert] = useState(false);
   const [invalidLink, setInValidLink] = useState(true);
+  const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false);
   const fetchDeviceAndLocationDetails = () => {
     let c = deviceDetect();
     if (c.isMobile) {
@@ -86,13 +81,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
       const response = await sendRequest(payload);
       console.log(response);
       if (response) {
-        setAlertMessage(
-          <span>
-            Reset Password successful.&nbsp;
-            <PrimaryLink href="/user/login">Login now</PrimaryLink>
-          </span>
-        );
-        setShowAlert(true);
+        setResetPasswordSuccess(true);
       }
     }
   };
@@ -101,25 +90,6 @@ const ResetPassword = ({}: ResetPasswordProps) => {
   });
   return (
     <Layout>
-      <Snackbar
-        open={showAlert}
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        onClose={(e, reason) => {
-          // reason 'timeout' | 'clickaway';
-          setShowAlert(false);
-        }}
-        // TransitionComponent={Fade}
-        TransitionComponent={(props) => <Slide {...props} direction="down" />}
-      >
-        <Alert
-          onClose={() => {
-            setShowAlert(false);
-          }}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
       <div className={commonStyles.UserForm}>
         <div className="form card">
           <div className="iconContainer">
@@ -130,35 +100,61 @@ const ResetPassword = ({}: ResetPasswordProps) => {
               alt="logo"
             />
           </div>
-          <h1 className="heading">{resetPasswordForm.formHeading}</h1>
-          {invalidLink ? (
-            <MessageCard type="warning">
-              No password reset token found or your password reset link has now
-              expired. To reset your password, submit the&nbsp;
-              <PrimaryLink href="/user/forgotpassword">
-                forgot password
-              </PrimaryLink>
-              &nbsp;form.
-            </MessageCard>
+          {resetPasswordSuccess ? (
+            <>
+              <h1 className="heading">Reset Password was successful</h1>
+
+              <Button
+                labelWeight="bold"
+                onClick={() => {
+                  router.push("/user/login");
+                }}
+              >
+                Please Login
+              </Button>
+            </>
           ) : (
-            <Form
-              form={resetPasswordForm}
-              formProps={resetPasswordFormProps}
-              padForm={false}
-              validateOnBlur={true}
-              onSubmit={resetPassword}
-            >
-              {error && <Message message={error.message} type="warning" />}
-              {loading ? (
-                <Button labelWeight="bold" color="default" labelColor="gray">
-                  Loading...
-                </Button>
+            <>
+              <h1 className="heading">{resetPasswordForm.formHeading}</h1>
+              {invalidLink ? (
+                <MessageCard type="warning">
+                  No password reset token found or your password reset link has
+                  now expired. To reset your password, submit the&nbsp;
+                  <PrimaryLink href="/user/forgotpassword">
+                    forgot password
+                  </PrimaryLink>
+                  &nbsp;form.
+                </MessageCard>
               ) : (
-                <Button labelWeight="bold" type="submit">
-                  Reset Password
-                </Button>
+                <Form
+                  form={resetPasswordForm}
+                  formProps={resetPasswordFormProps}
+                  padForm={false}
+                  validateOnBlur={true}
+                  onSubmit={resetPassword}
+                >
+                  {error && (
+                    <Message
+                      message={error.message.replace(/[^a-zA-Z0-9 ]/g, "")}
+                      type="warning"
+                    />
+                  )}
+                  {loading ? (
+                    <Button
+                      labelWeight="bold"
+                      color="default"
+                      labelColor="gray"
+                    >
+                      Loading...
+                    </Button>
+                  ) : (
+                    <Button labelWeight="bold" type="submit">
+                      Reset Password
+                    </Button>
+                  )}
+                </Form>
               )}
-            </Form>
+            </>
           )}
         </div>
         <div className="bottomLinks">

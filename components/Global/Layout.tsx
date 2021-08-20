@@ -4,38 +4,29 @@ import InternalExternalModal from "@components/Dashboard/InternalExternalModal/I
 import Notifications from "@components/Notifications/Notifications";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import GettingStartedGuideMobile from "./GettingStartedGuideMobile";
-import { setShowMobileSideBar } from "@store/slices/genericSlice";
-import { useEffect, useState } from "react";
+import { setShowAlert, setShowMobileSideBar } from "@store/slices/genericSlice";
 import { MobileView } from "react-device-detect";
 import { useSwipeable } from "react-swipeable";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import Fade from "@material-ui/core/Fade";
+import Slide from "@material-ui/core/Slide";
+import { useState } from "react";
+import PrimaryLink from "@components/Shared/PrimaryLink";
 interface LayoutProps {
   children: JSX.Element | JSX.Element[];
 }
 const Layout = ({ children }: LayoutProps) => {
   const styles = useStyles();
-  const [
-    touchStartedAtSwipeListenerForMobileSidebar,
-    setTouchStartedAtSwipeListenerForMobileSidebar,
-  ] = useState(false);
+
   const showGettingStartedGuide = useAppSelector(
     (state) => state.dashboard.showGettingStartedGuide
   );
 
-  useEffect(() => {
-    window.addEventListener("touchstart", (ev) => {
-      // console.dir((ev.target as any).className);
-      const classNameOfElementOnWhichTouchBegan = (ev.target as any).className;
-      if (
-        classNameOfElementOnWhichTouchBegan === "swipeListenerForMobileSidebar"
-      ) {
-        // console.log("now show side bar");
-        setTouchStartedAtSwipeListenerForMobileSidebar(true);
-      } else {
-        setTouchStartedAtSwipeListenerForMobileSidebar(false);
-      }
-    });
-  }, []);
   const dispatch = useAppDispatch();
+  const { showAlert, alertMessage, alertSeverity, alertLink } = useAppSelector(
+    (state) => state.generic
+  );
 
   return (
     <div
@@ -44,20 +35,34 @@ const Layout = ({ children }: LayoutProps) => {
         onSwipedLeft: () => {
           dispatch(setShowMobileSideBar(false));
         },
-        onSwipedRight: (e) => {
-          // console.log(e);
-          if (touchStartedAtSwipeListenerForMobileSidebar) {
-            dispatch(setShowMobileSideBar(true));
-          }
-        },
       })}
     >
-      <MobileView>
-        <div className="swipeListenerForMobileSidebar"></div>
-        {/* on the mobileview this will come on the top of
-          20vw of every page, make sure if you want to listen clicks on them 
-          to provide zIndex more than swipeListenerForMobileSidebar */}
-      </MobileView>
+      <Snackbar
+        open={showAlert}
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={(e, reason) => {
+          // reason 'timeout' | 'clickaway';
+          dispatch(setShowAlert(false));
+        }}
+        TransitionComponent={Fade}
+        // TransitionComponent={(props) => <Slide {...props} direction="down" />}
+      >
+        <Alert
+          onClose={() => {
+            dispatch(setShowAlert(false));
+          }}
+          severity={alertSeverity}
+        >
+          {alertMessage}&nbsp;
+          {alertLink && (
+            <PrimaryLink href={alertLink.href} type={alertLink.type}>
+              {alertLink.text}
+            </PrimaryLink>
+          )}
+        </Alert>
+      </Snackbar>
+      <MobileView></MobileView>
       <Navbar />
       <Notifications />
       <InternalExternalModal />
@@ -68,19 +73,7 @@ const Layout = ({ children }: LayoutProps) => {
 };
 export default Layout;
 const useStyles = makeStyles((theme) => ({
-  Layout: {
-    "& .swipeListenerForMobileSidebar": {
-      position: "fixed",
-      height: "100vh",
-      width: "20vw",
-      top: 0,
-      left: 0,
-      // backgroundColor: "rgba(0,0,0,.5)",
-      zIndex: 8,
-      // less than navbar
-      // so that we can listen click on it
-    },
-  },
+  Layout: {},
   content: {
     // marginTop: 70,
     [theme.breakpoints.down("sm")]: {

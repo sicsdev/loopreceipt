@@ -22,10 +22,9 @@ import {
   validateAllFieldsOfForm,
 } from "forms/formUtils";
 import { useRouter } from "next/router";
-import { EntityGroup } from "@apiHelpers/types";
+import { EntityDraft, EntityGroup, EntityLoopMode } from "@apiHelpers/types";
 import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 
-import { useFetch } from "@hooks/useFetch";
 import groupsApi from "@apiClient/groupsApi";
 import MyLoader from "@components/Shared/MyLoader";
 import Group from "./Group";
@@ -33,26 +32,27 @@ import SaveGroupDialog from "./SaveGroupDialog";
 import { useForm } from "@hooks/useForm";
 import groupDetailsForm from "@forms/groupDetailsForm";
 import { getStrippedObject } from "@helpers/utils";
+import { setLoopReceiptMode } from "@store/slices/loopReceiptSlice";
+import loopersDetailsForm from "@forms/loopersDetailsForm";
 interface AddByGroupProps {
-  setOption: React.Dispatch<
-    React.SetStateAction<"onebyone" | "group" | undefined>
-  >;
-
   forms: FormType[];
   formsProps: useFormReturnType[];
   handleCancelClick: () => void;
   currentDraftIdRef: React.MutableRefObject<string | undefined>;
+  draftSelected: EntityDraft | undefined;
 }
 function AddByGroup({
-  setOption,
   forms,
   formsProps,
   handleCancelClick,
   currentDraftIdRef,
+  draftSelected,
 }: AddByGroupProps) {
   const styles = useStyles();
   const router = useRouter();
-  const [showExistingGroups, setShowExistingGroups] = useState(true);
+  const [showExistingGroups, setShowExistingGroups] = useState(
+    () => !currentDraftIdRef.current || currentDraftIdRef.current === "deleted"
+  );
   const [selectedGroup, setSelectedGroup] = useState<EntityGroup>();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
@@ -64,6 +64,7 @@ function AddByGroup({
   const [savedGroup, setSavedGroup] = useState<EntityGroup>();
 
   const detailsRef = useRef<HTMLDivElement>(null);
+  // const groupFetchedFromDraftRef = useRef(true);
   const dispatch = useAppDispatch();
   const loopersFormIndex = forms.findIndex(
     (form) => form.formName === "loopersDetailsForm"
@@ -94,8 +95,62 @@ function AddByGroup({
     }
   }, [index, windowDimensions]);
   useEffect(() => {
+    if (draftSelected) {
+      (async () => {
+        // i will handle it later
+        // if (draftSelected.groupid) {
+        //   const response = await groupsApi.getOne(draftSelected.groupid);
+        //   const associatedGroup = response?.group;
+        //   if (associatedGroup) {
+        //     groupFormProps.setFormState(
+        //       produce((prev) => {
+        //         prev.groupName.value = associatedGroup.name;
+        //         prev.createdFor.value = associatedGroup.createdFor;
+        //       })
+        //     );
+        //     setSelectedGroup(associatedGroup);
+        //     groupFetchedFromDraftRef.current = true;
+        //   }
+        // }
+        formsProps[0].setFormState(
+          produce((prev) => {
+            if (draftSelected.recipient?.address) {
+              prev.shippingAddress.value = draftSelected.recipient.address;
+            }
+            if (draftSelected.recipient?.country) {
+              prev.country.value = draftSelected.recipient.country;
+            }
+            if (draftSelected.recipient?.city) {
+              prev.city.value = draftSelected.recipient.city;
+            }
+            if (draftSelected.recipient?.city) {
+              prev.province.value = draftSelected.recipient.city;
+            }
+
+            prev.phone.value = "32132112";
+            if (draftSelected.recipient?.postalCode) {
+              prev.zipCode.value = draftSelected.recipient.postalCode;
+            }
+            if (draftSelected.recipient?.name) {
+              prev.name.value = draftSelected.recipient.name;
+            }
+            if (draftSelected.recipient?.email) {
+              prev.email.value = draftSelected.recipient.email;
+            }
+          })
+        );
+        if (draftSelected.loopers) {
+          dispatch(setConfirmedLoopers({ loopers: draftSelected.loopers }));
+        }
+      })();
+    }
+  }, []);
+  useEffect(() => {
     // here we can show update form according to group and generate loop receipt based on
     // specifications of the group
+    if (draftSelected) {
+      return;
+    }
     if (selectedGroup) {
       groupFormProps.setFormState(
         produce((prev) => {
@@ -113,6 +168,7 @@ function AddByGroup({
           prev.phone.value = "32132112";
           prev.zipCode.value = selectedGroup.recipient.postalCode;
           prev.name.value = selectedGroup.recipient.name;
+          prev.email.value = selectedGroup.recipient.email;
         })
       );
       dispatch(setConfirmedLoopers({ loopers: selectedGroup.loopers }));
@@ -126,18 +182,19 @@ function AddByGroup({
       dispatch(setConfirmedLoopers({ loopers: [] }));
     }
   }, [selectedGroup]);
+
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
     if (index === forms.length + 1) {
       setIndex(index - 2);
     } else if (index > 0) {
       setIndex(index - 1);
     } else {
-      if (!showExistingGroups) {
+      if (!showExistingGroups && !draftSelected) {
         setSelectedGroup(undefined);
         setShowExistingGroups(true);
       } else {
         setShowExistingGroups(false);
-        setOption(undefined);
+        dispatch(setLoopReceiptMode(undefined));
       }
     }
   };
@@ -195,6 +252,10 @@ function AddByGroup({
     const loopers = getEntityLoopersFromLoopersState(
       formsProps[loopersFormIndex].formState
     );
+    // this is done so that once the group is saved and user clicks back
+    // we don't treat looper in input as new looper added by the user
+    formsProps[loopersFormIndex].setFormState(loopersDetailsForm.initialState);
+    dispatch(setConfirmedLoopers({ loopers }));
     const groupToBeSaved = {
       recipient,
       loopers,
@@ -211,9 +272,11 @@ function AddByGroup({
       setLoading(true);
       if (!selectedGroup) {
         const response = await groupsApi.create(groupToBeSaved);
+
         // console.log('creating group');
         // console.log(response?.group);
         setSavedGroup(response?.group);
+        setSelectedGroup(response?.group);
       } else {
         const response = await groupsApi.update({
           group: groupToBeSaved,
@@ -222,6 +285,7 @@ function AddByGroup({
         // console.log("updating group");
         // console.log(response?.group);
         setSavedGroup(response?.group);
+        setSelectedGroup(response?.group);
       }
 
       setLoading(false);
@@ -259,6 +323,8 @@ function AddByGroup({
         groupFormProps={groupFormProps}
       />
       <FormUpperBar
+        showBackButton={index !== forms.length + 2}
+        // we want to hide backbutton on looprecipt page
         handleBackButtonClick={handleBackButtonClick}
         upperBarText={upperBarContent}
       />

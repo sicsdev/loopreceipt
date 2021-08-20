@@ -10,7 +10,7 @@ const companyDetailsForm: FormType = {
     shippingAddress: {
       name: "shippingAddress",
       label: "Shipping Address",
-      placeholder: "2 Capistro Street",
+      placeholder: "Shipping Address",
       value: "",
       type: "text",
 
@@ -22,37 +22,36 @@ const companyDetailsForm: FormType = {
     country: {
       name: "country",
       label: "Country",
-      placeholder: "Canada",
+      placeholder: "Country",
       value: "",
-      type: "text",
-      // validate: function () {
-      //   return validations.isRequired(this);
-      //   // we pass 'this' so that we can change the errorText according to
-      //   // the validation that is failing
-      // },
-      // errorText: "custom error",
-      // customError: true,
-      // now custom error message is given to field
-      // this message will override all the validation messages
+      type: "country",
+
+      validate: function () {
+        return validations.isRequired(this);
+      },
     },
     city: {
       name: "city",
       label: "City",
-      placeholder: "Brampton",
+      placeholder: "City",
       value: "",
       type: "text",
     },
     province: {
       name: "province",
-      label: "Province",
-      placeholder: "Osaka",
+      label: "State / Province",
+      placeholder: "Province",
       value: "",
-      type: "text",
+      type: "region",
+      dependency: "country",
+      validate: function () {
+        return validations.isRequired(this);
+      },
     },
     zipCode: {
       name: "zipCode",
       label: "Zip Code",
-      placeholder: "L7A 3J3",
+      placeholder: "Zip Code",
       value: "",
       type: "number",
     },

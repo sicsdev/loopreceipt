@@ -21,7 +21,7 @@ const InternalExternalModal = ({}: InternalExternalModalProps) => {
       description: "Create loops within the members of your organization.",
       src: "/icons/create/internal.svg",
       click: () => {
-        dispatch(setLoopReceiptType({ type: "internal" }));
+        dispatch(setLoopReceiptType("internal"));
         closeModal();
 
         router.push("/create");
@@ -32,7 +32,7 @@ const InternalExternalModal = ({}: InternalExternalModalProps) => {
       description: "Create loops with partners outside of your organization.",
       src: "/icons/create/external.svg",
       click: () => {
-        dispatch(setLoopReceiptType({ type: "external" }));
+        dispatch(setLoopReceiptType("external"));
         closeModal();
         router.push("/create");
       },

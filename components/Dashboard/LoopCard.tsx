@@ -51,6 +51,7 @@ export default React.memo(LoopCard);
 const useStyles = makeStyles((theme) => ({
   LoopCard: {
     // border: "2px solid blue",
+    cursor: "pointer",
     boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.16)",
     borderRadius: 8,
     position: "relative",

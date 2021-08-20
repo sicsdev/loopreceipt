@@ -7,7 +7,11 @@ import {
   useFormReturnType,
 } from "@interfaces/FormTypes";
 import { SearchItemType } from "@interfaces/SearchItemType";
-import { setSearchItems } from "@store/slices/searchBarSlice";
+import {
+  setSearchItemName,
+  setSearchItems,
+  setSearchSpace,
+} from "@store/slices/searchBarSlice";
 import store from "@store/store";
 
 const recipientDetailsForm: FormType = {
@@ -86,13 +90,7 @@ const recipientDetailsForm: FormType = {
 
       validate: function () {
         return validations.isRequired(this);
-        // we pass 'this' so that we can change the errorText according to
-        // the validation that is failing
       },
-      // errorText: "custom error",
-      // customError: true,
-      // now custom error message is given to field
-      // this message will override all the validation messages
     },
     city: {
       name: "city",
@@ -110,8 +108,6 @@ const recipientDetailsForm: FormType = {
       dependency: "country",
       validate: function () {
         return validations.isRequired(this);
-        // we pass 'this' so that we can change the errorText according to
-        // the validation that is failing
       },
     },
     phone: {
@@ -136,6 +132,28 @@ const recipientDetailsForm: FormType = {
     },
   },
   populateSearchItems: async function () {
+    const state = store.getState();
+    if (state.searchBar.searchItemName !== "recipient") {
+      store.dispatch(setSearchItemName("recipient"));
+      if (state.loopReceipt.type === "internal") {
+        const loggedInUser = state.user.user;
+        if (loggedInUser) {
+          const email = loggedInUser.email;
+          const domainStartIndex = email.indexOf("@") + 1;
+          const domain = email.substring(domainStartIndex, email.length);
+          if (!domain.includes("gmail")) {
+            store.dispatch(
+              setSearchSpace("You are searching contacts with " + domain)
+            );
+          } else {
+            store.dispatch(setSearchSpace(""));
+          }
+        }
+      } else {
+        // external
+        store.dispatch(setSearchSpace(""));
+      }
+    }
     const response = await loopsApi.getAll();
     if (response) {
       const loops = response.items;

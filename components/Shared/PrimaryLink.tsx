@@ -1,10 +1,17 @@
 import { makeStyles } from "@material-ui/core";
 import Link from "next/link";
-interface PrimaryLinkProps {
+export interface PrimaryLinkProps {
   children: JSX.Element | string;
   href: string;
+  isTargetBlankLink?: boolean;
+  type?: "error" | "warning" | "info" | "success";
 }
-const PrimaryLink = ({ children, href }: PrimaryLinkProps) => {
+const PrimaryLink = ({
+  children,
+  href,
+  isTargetBlankLink = false,
+  type = "success",
+}: PrimaryLinkProps) => {
   const styles = useStyles();
   return (
     <p
@@ -12,9 +19,20 @@ const PrimaryLink = ({ children, href }: PrimaryLinkProps) => {
         display: "inline-block",
       }}
     >
-      <Link href={href}>
-        <a className={styles.PrimaryLink}>{children}</a>
-      </Link>
+      {!isTargetBlankLink ? (
+        <Link href={href}>
+          <a className={styles.PrimaryLink}>{children}</a>
+        </Link>
+      ) : (
+        <a
+          className={styles.PrimaryLink}
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {children}
+        </a>
+      )}
     </p>
   );
 };

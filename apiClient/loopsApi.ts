@@ -44,5 +44,18 @@ const loopsApi = {
       throw axiosErrorHandler(error);
     }
   },
+  getRecieved: async (
+    page: number = 1,
+    filters?: LoopFilters
+  ): Promise<{ items: EntityLoop[]; total: number } | undefined> => {
+    try {
+      return {
+        items: [],
+        total: 0,
+      };
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
 };
 export default loopsApi;

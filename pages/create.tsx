@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import Router from "next/router";
 import OneByOne from "@components/Create/OneByOne";
 import SelectOption from "@components/Create/SelectOption";
 import { makeStyles } from "@material-ui/core";
@@ -21,16 +23,30 @@ import ConfirmDialog from "@components/Create/ConfirmDialog";
 import { useRouter, withRouter } from "next/router";
 import draftsApi from "@apiClient/draftsApi";
 import { useRef } from "react";
-import { Debounce } from "@helpers/utils";
+import { Debounce, hasValueAtAnyKey } from "@helpers/utils";
 import produce from "immer";
+import { EntityDraft, EntityLoopMode, EntityLoopType } from "@apiHelpers/types";
+import {
+  setLoopReceiptMode,
+  setLoopReceiptType,
+} from "@store/slices/loopReceiptSlice";
+import groupsApi from "@apiClient/groupsApi";
 const Create = () => {
   const router = useRouter();
   const styles = useStyles();
-  const [option, setOption] = useState<"onebyone" | "group">();
-  const formType = useAppSelector((state) => state.loopReceipt.type);
+
+  const { type: loopReceiptType, mode: loopReceiptMode } = useAppSelector(
+    (state) => state.loopReceipt
+  );
+  const [checkForExistingDraftComplete, setCheckForExistingDraftComplete] =
+    useState(false);
+  const [draftSelected, setDraftSelected] = useState<EntityDraft>();
+  const confirmedLoopers = useAppSelector(
+    (state) => state.searchBar.confirmedLoopers
+  );
   const dispatch = useAppDispatch();
   const currentDraftIdRef = useRef<string>();
-  const initRef = useRef(true);
+  const acceptRouteChangeRef = useRef(false);
   const { draftId } = router.query;
   // console.log(draftId);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
@@ -39,14 +55,6 @@ const Create = () => {
     subTitle: "",
     confirmText: "Yes",
     cancelText: "No",
-    onConfirm: async () => {
-      if (currentDraftIdRef.current) {
-        console.log("deleting");
-        const response = await draftsApi.delete(currentDraftIdRef.current);
-        // console.log(response);
-      }
-      router.push("/dashboard");
-    },
   });
 
   let forms: FormType[] = [
@@ -61,23 +69,51 @@ const Create = () => {
     useForm(forms[2].initialState),
   ];
   const saveDraftApiCallRef = useRef(
-    new Debounce(async (formsProps: useFormReturnType[]) => {
-      console.log(formsProps[0].formState.name.value);
-      const loop = getEntityLoopFromFormsProps({ forms, formsProps, formType });
-      if (!currentDraftIdRef.current) {
-        console.log("creating");
-        const response = await draftsApi.create(loop);
-        currentDraftIdRef.current = response?.draftId;
-        // console.log(response);
-      } else {
-        console.log("updating");
-        const response = await draftsApi.update(
-          currentDraftIdRef.current,
-          loop
-        );
-        // console.log(response);
-      }
-    }, 3000)
+    new Debounce(
+      async ({
+        forms,
+        formsProps,
+        loopReceiptType,
+        loopReceiptMode,
+      }: {
+        forms: FormType[];
+        formsProps: useFormReturnType[];
+        loopReceiptType: EntityLoopType;
+        loopReceiptMode: EntityLoopMode;
+      }) => {
+        if (currentDraftIdRef.current === "deleted") return;
+        console.log(formsProps[0].formState.name.value);
+        const recipientDetails: { [key: string]: any } = {};
+        for (let key in formsProps[0].formState) {
+          recipientDetails[key] = formsProps[0].formState[key].value;
+        }
+        if (!hasValueAtAnyKey(recipientDetails)) return;
+
+        const loop = getEntityLoopFromFormsProps({
+          forms,
+          formsProps,
+          loopReceiptType,
+          loopReceiptMode,
+        });
+
+        // if (!hasValueAtAnyKey(loop.recipient)) return;
+        // we can check here also if we don't have dummy values
+        if (!currentDraftIdRef.current) {
+          console.log("creating");
+          const response = await draftsApi.create(loop);
+          currentDraftIdRef.current = response?.draftId;
+          // console.log(response);
+        } else {
+          console.log("updating");
+          const response = await draftsApi.update(
+            currentDraftIdRef.current,
+            loop
+          );
+          // console.log(response);
+        }
+      },
+      3000
+    )
   );
   useEffect(() => {
     (async () => {
@@ -85,46 +121,99 @@ const Create = () => {
         const response = await draftsApi.getOne(draftId as string);
         // console.log(response?.draft);
         const draft = response?.draft;
-        if (draft) {
-          formsProps[0].setFormState(
-            produce((prev) => {
-              if (draft.recipient?.address)
-                prev.shippingAddress.value = draft.recipient.address;
-              if (draft.recipient?.country)
-                prev.country.value = draft.recipient.country;
-              if (draft.recipient?.city) prev.city.value = draft.recipient.city;
-              if (draft.recipient?.city)
-                prev.province.value = draft.recipient.city;
 
-              prev.phone.value = "32132112";
-              if (draft.recipient?.postalCode)
-                prev.zipCode.value = draft.recipient.postalCode;
-              if (draft.recipient?.name) prev.name.value = draft.recipient.name;
-            })
-          );
-          if (draft.loopers)
-            dispatch(setConfirmedLoopers({ loopers: draft.loopers }));
+        if (draft) {
           currentDraftIdRef.current = draftId as string;
+          setDraftSelected(draft);
+          // set loop receipt mode and type
+
+          dispatch(setLoopReceiptMode(draft.mode));
+          dispatch(setLoopReceiptType(draft.type));
         }
       }
+      setCheckForExistingDraftComplete(true);
     })();
   }, []);
-  useEffect(
-    () => {
-      // console.log("create recipient form updated");
-      if (initRef.current) {
-        setTimeout(() => {
-          initRef.current = false;
-        }, 3000);
-        return;
+
+  useEffect(() => {
+    const preventRouteChange = (url: string) => {
+      Router.events.emit("routeChangeError");
+      throw `Route change to "${url}" was aborted (this error can be safely ignored). `;
+    };
+    const beforeRouteHandler = (url: string) => {
+      if (url === "/create") {
+        if (
+          !currentDraftIdRef.current ||
+          currentDraftIdRef.current === "deleted"
+        ) {
+          for (let i = 0; i < formsProps.length; i++) {
+            formsProps[i].resetForm();
+          }
+          dispatch(setLoopReceiptMode(undefined));
+          return;
+        }
+        setConfirmDialog((prev) => ({
+          ...prev,
+          isOpen: true,
+          onConfirm: async () => {
+            deleteExistingDraftHandler();
+            for (let i = 0; i < formsProps.length; i++) {
+              formsProps[i].resetForm();
+            }
+            dispatch(setLoopReceiptMode(undefined));
+          },
+        }));
+      } else {
+        if (
+          !currentDraftIdRef.current ||
+          currentDraftIdRef.current === "deleted"
+        ) {
+          return;
+        }
+        setConfirmDialog((prev) => ({
+          ...prev,
+          isOpen: true,
+          onConfirm: async () => {
+            acceptRouteChangeRef.current = true;
+            deleteExistingDraftHandler();
+            router.push(url);
+          },
+        }));
       }
-      saveDraftApiCallRef.current.callAfterDelay(formsProps);
-    },
-    formsProps.map((formProps) => formProps.formState)
-  );
+      if (acceptRouteChangeRef.current) {
+        acceptRouteChangeRef.current = false;
+      } else {
+        preventRouteChange(url);
+      }
+    };
+    Router.events.on("routeChangeStart", beforeRouteHandler);
+
+    return () => {
+      Router.events.off("routeChangeStart", beforeRouteHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    // console.log("create recipient form updated");
+    if (checkForExistingDraftComplete === false) {
+      return;
+    }
+    saveDraftApiCallRef.current.callAfterDelay({
+      forms,
+      formsProps,
+      loopReceiptType,
+      loopReceiptMode,
+    });
+  }, [
+    ...formsProps.map((formProps) => formProps.formState),
+    loopReceiptType,
+    loopReceiptMode,
+    confirmedLoopers,
+  ]);
 
   useEffect(() => {
     dispatch(setConfirmedLoopers({ loopers: [] }));
+    dispatch(setLoopReceiptMode(undefined));
   }, []);
 
   const addRecepientManually = useAppSelector(
@@ -160,16 +249,29 @@ const Create = () => {
       });
     }
   }, [addRecepientManually]);
+  const deleteExistingDraftHandler = async () => {
+    if (currentDraftIdRef.current) {
+      console.log("deleting");
+      const response = await draftsApi.delete(currentDraftIdRef.current);
+      currentDraftIdRef.current = "deleted";
+      // console.log(response);
+    }
+  };
   const handleCancelClick = () => {
     setConfirmDialog({
       ...confirmDialog,
       isOpen: true,
+      onConfirm: async () => {
+        acceptRouteChangeRef.current = true;
+        deleteExistingDraftHandler();
+        router.push("/dashboard");
+      },
     });
   };
 
   let passedForms: FormType[] = forms;
   let passedFormsProps: useFormReturnType[] = formsProps;
-  if (formType === "internal") {
+  if (loopReceiptType === "internal") {
     passedForms = [forms[0], forms[2]];
     passedFormsProps = [formsProps[0], formsProps[2]];
   }
@@ -180,24 +282,24 @@ const Create = () => {
           confirmDialog={confirmDialog}
           setConfirmDialog={setConfirmDialog}
         />
-        {option === "onebyone" ? (
+        {loopReceiptMode === "single" ? (
           <OneByOne
             handleCancelClick={handleCancelClick}
             forms={passedForms}
             formsProps={passedFormsProps}
-            setOption={setOption}
             currentDraftIdRef={currentDraftIdRef}
+            draftSelected={draftSelected}
           />
-        ) : option === "group" ? (
+        ) : loopReceiptMode === "group" ? (
           <AddByGroup
             handleCancelClick={handleCancelClick}
             forms={passedForms}
             formsProps={passedFormsProps}
-            setOption={setOption}
             currentDraftIdRef={currentDraftIdRef}
+            draftSelected={draftSelected}
           />
         ) : (
-          <SelectOption setOption={setOption} />
+          <SelectOption />
         )}
       </div>
     </Layout>

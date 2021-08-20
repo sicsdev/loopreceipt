@@ -1,6 +1,5 @@
 import { useForm } from "@hooks/useForm";
 import Button from "@components/Controls/Button";
-import Alert from "@material-ui/lab/Alert";
 import Form from "@components/Create/Form";
 import PrimaryLink from "@components/Shared/PrimaryLink";
 import signupForm from "@forms/user/signupForm";
@@ -8,16 +7,14 @@ import { useFetch } from "@hooks/useFetch";
 import usersApi from "@apiClient/usersApi";
 import { validateAllFieldsOfForm } from "forms/formUtils";
 import { useWindowKeyDownListener } from "@hooks/useWindowKeyDownListener";
-import router from "next/router";
 import Layout from "@components/Global/Layout";
-import Message from "@components/Shared/Message";
 import { commonUserFormStyles } from "./login";
 import { useState } from "react";
 import Image from "next/image";
-import Snackbar from "@material-ui/core/Snackbar";
-import Fade from "@material-ui/core/Fade";
-import Slide from "@material-ui/core/Slide";
+import produce from "immer";
 import { useEffect } from "react";
+import { raiseAlert } from "@store/slices/genericSlice";
+import { useRouter } from "next/router";
 interface SignupProps {}
 // Account created! sdf
 // Email Sent! Successfully
@@ -25,10 +22,10 @@ interface SignupProps {}
 
 const Signup = ({}: SignupProps) => {
   const styles = commonUserFormStyles();
+  const router = useRouter();
   const signupFormProps = useForm(signupForm.initialState);
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
-  const [alertMessage, setAlertMessage] = useState<any>("");
-  const [showAlert, setShowAlert] = useState(false);
+  const [emailAlreadyVerified, setEmailAlreadyVerified] = useState(false);
   const [userResponse, setUserResponse] = useState<{
     isFirstTime: boolean;
     name: string;
@@ -49,17 +46,19 @@ const Signup = ({}: SignupProps) => {
   }>(usersApi.create, {
     deferred: true,
   });
-  const postUsersVerify = useFetch<string>(usersApi.verify);
+  const postUserVerify = useFetch<string>(usersApi.sendVerificationLink);
   useEffect(() => {
     // console.log(error);
     if (!error) return;
     if (error.message === "User already registered") {
-      signupFormProps.setFormState((prev) => {
-        prev.email.error = "An account already exits with this email";
-        return prev;
-      });
+      signupFormProps.setFormState(
+        produce((prev) => {
+          prev.email.error = "An account already exits with this email";
+        })
+      );
     }
   }, [error]);
+
   const signup = async () => {
     console.log(signupFormProps);
     if (validateAllFieldsOfForm(signupFormProps)) {
@@ -70,12 +69,11 @@ const Signup = ({}: SignupProps) => {
       });
       console.log(response);
       if (response) {
-        // after signup user must verify his email in order to login
-        // so verification mail is sent immediately on signup
-        // user can login only on successful verification of email
+        // on signup verification link is sent automatically
         setUserResponse(response.user);
-
-        sendVerificationEmail(response.user, true);
+        await sendVerificationEmail(response.user);
+        setVerificationEmailSent(true);
+        raiseAlert("Account created! " + response.user.name, "success");
       }
     }
   };
@@ -85,61 +83,33 @@ const Signup = ({}: SignupProps) => {
       name: string;
       email: string;
     },
-    accountCreationAlert: boolean = false
+    alert = true
   ) => {
-    const message = await postUsersVerify.sendRequest({ email: user.email });
+    const message = await postUserVerify.sendRequest({ email: user.email });
     console.log(message);
     // u can change the without checking message too
     if (
       message ===
       "An email has been sent to " + signupFormProps.formState.email.value
     ) {
-      setVerificationEmailSent(true);
-      if (accountCreationAlert) {
-        setAlertMessage("Account created! " + user.name);
-        setShowAlert(true);
-      } else {
-        setAlertMessage("Email Sent! Successfully");
-        setShowAlert(true);
-      }
+      if (alert) raiseAlert("Email Sent! Successfully", "success");
     }
   };
   useEffect(() => {
-    if (postUsersVerify.error?.message === "User already verified") {
-      setAlertMessage(
-        <span>
-          User already verified.&nbsp;
-          <PrimaryLink href="/user/login">Login here</PrimaryLink>
-        </span>
-      );
-      setShowAlert(true);
+    if (postUserVerify.error?.message === "User already verified") {
+      raiseAlert("User already verified.", "success", {
+        href: "/user/login",
+        text: "Login here",
+        type: "success",
+      });
+      setEmailAlreadyVerified(true);
     }
-  }, [postUsersVerify.error]);
+  }, [postUserVerify.error]);
   useWindowKeyDownListener({
     Enter: signup,
   });
   return (
     <Layout>
-      <Snackbar
-        open={showAlert}
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        onClose={(e, reason) => {
-          // reason 'timeout' | 'clickaway';
-          setShowAlert(false);
-        }}
-        // TransitionComponent={Fade}
-        TransitionComponent={(props) => <Slide {...props} direction="down" />}
-      >
-        <Alert
-          onClose={() => {
-            setShowAlert(false);
-          }}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
-
       <div className={styles.UserForm}>
         {!verificationEmailSent ? (
           <>
@@ -169,8 +139,20 @@ const Signup = ({}: SignupProps) => {
             <div className="bottomLinks">
               <div style={{ margin: "auto" }}>
                 By clicking &ldquo;Sign Up&rdquo; you agree to&nbsp;
-                <PrimaryLink href="/">Loopreceipt Terms</PrimaryLink> and&nbsp;
-                <PrimaryLink href="/">Privacy Policy</PrimaryLink>.
+                <PrimaryLink
+                  href="https://www.loopreceipt.com/terms-of-service"
+                  isTargetBlankLink
+                >
+                  Loopreceipt Terms
+                </PrimaryLink>
+                and&nbsp;
+                <PrimaryLink
+                  href="https://www.loopreceipt.com/privacy-policy"
+                  isTargetBlankLink
+                >
+                  Privacy Policy
+                </PrimaryLink>
+                .
               </div>
             </div>
           </>
@@ -184,30 +166,47 @@ const Signup = ({}: SignupProps) => {
                 alt="logo"
               />
             </div>
-            <h1 className="heading">Please verify your email</h1>
-            <p>
-              You’re almost there! We sent an email to&nbsp;
-              <span style={{ fontWeight: 500 }}>{userResponse?.email}</span>
-            </p>
-            <p>Just click on the link in the email to complete your signup.</p>
-            {postUsersVerify.loading ? (
-              <Button labelWeight="bold" color="default" labelColor="gray">
-                Loading...
-              </Button>
+            {!emailAlreadyVerified ? (
+              <>
+                <h1 className="heading">Please verify your email</h1>
+                <p>
+                  You’re almost there! We sent an email to&nbsp;
+                  <span style={{ fontWeight: 500 }}>{userResponse?.email}</span>
+                </p>
+                <p>
+                  Just click on the link in the email to complete your signup.
+                </p>
+                {postUserVerify.loading ? (
+                  <Button labelWeight="bold" color="default" labelColor="gray">
+                    Loading...
+                  </Button>
+                ) : (
+                  <Button
+                    labelWeight="bold"
+                    onClick={() => {
+                      if (userResponse) sendVerificationEmail(userResponse);
+                    }}
+                  >
+                    Resend Email
+                  </Button>
+                )}
+              </>
             ) : (
-              <Button
-                labelWeight="bold"
-                onClick={() => {
-                  if (userResponse) sendVerificationEmail(userResponse);
-                }}
-              >
-                Resend Email
-              </Button>
+              <>
+                <h1 className="heading">Your Email is verified please login</h1>
+                <Button
+                  onClick={() => {
+                    router.push("/user/login");
+                  }}
+                >
+                  Login
+                </Button>
+              </>
             )}
 
-            <p>
+            <div>
               Need help? <PrimaryLink href="/">Contact Us</PrimaryLink>
-            </p>
+            </div>
           </div>
         )}
       </div>

@@ -6,26 +6,29 @@ import Image from "next/image";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Win from "@helpers/Win";
 interface FormUpperBarProps {
+  showBackButton: boolean;
   handleBackButtonClick: React.MouseEventHandler<any>;
   upperBarText?: JSX.Element | string;
 }
 const FormUpperBar = ({
+  showBackButton,
   handleBackButtonClick,
   upperBarText,
 }: FormUpperBarProps) => {
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const styles = useStyles();
-  const backButton = (
+  const backButton = showBackButton ? (
     <div className={styles.backButton} onClick={handleBackButtonClick}>
       <Button expand>Back</Button>
     </div>
-  );
+  ) : null;
   const upperBarContent = (
     <div className={styles.upperBar}>
       {backButton}
       <div className="info">{upperBarText}</div>
-      {React.cloneElement(backButton, { style: { visibility: "hidden" } })}
+      {backButton &&
+        React.cloneElement(backButton, { style: { visibility: "hidden" } })}
     </div>
   );
 
@@ -35,12 +38,14 @@ const FormUpperBar = ({
         upperBarContent
       ) : (
         <div className={styles.newButton} onClick={handleBackButtonClick}>
-          <Image
-            alt="icon"
-            src="/icons/create/back.svg"
-            width="20"
-            height="20"
-          />
+          {showBackButton && (
+            <Image
+              alt="icon"
+              src="/icons/create/back.svg"
+              width="20"
+              height="20"
+            />
+          )}
           &nbsp; New Loopreceipt
         </div>
       )}
@@ -67,6 +72,8 @@ const useStyles = makeStyles((theme) => ({
       marginTop: "1.5rem",
     },
     "& .info": {
+      // border: "1px solid red",
+      margin: "auto",
       display: "flex",
       gap: 10,
       "& p": {

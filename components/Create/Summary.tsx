@@ -3,16 +3,21 @@ import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import Button from "@components/Controls/Button";
 import { InputIconType } from "@interfaces/InputTypes";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import inputIconMap from "forms/inputIconMap";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
 import loopApi from "@apiClient/loopsApi";
 import Win from "@helpers/Win";
-import { getEntityLoopFromFormsProps } from "@forms/formUtils";
+import {
+  getEntityLoopersFromLoopersState,
+  getEntityLoopFromFormsProps,
+} from "@forms/formUtils";
 import { useState, useEffect } from "react";
 
 import draftsApi from "@apiClient/draftsApi";
+import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
+import { useMemo } from "react";
 
 interface SummaryProps {
   forms: FormType[];
@@ -32,33 +37,39 @@ const Summary = ({
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
-  const formType = useAppSelector((state) => state.loopReceipt.type);
+  const loopReceiptType = useAppSelector((state) => state.loopReceipt.type);
+  const loopReceiptMode = useAppSelector((state) => state.loopReceipt.mode);
   const recipientFormIdx = forms.findIndex(
     (form) => form.formName === "recipientDetailsForm"
   );
+  const loopersFormIdx = forms.findIndex(
+    (form) => form.formName === "loopersDetailsForm"
+  );
+  const confirmedLoopers = useAppSelector(
+    (state) => state.searchBar.confirmedLoopers
+  );
+  const dispatch = useAppDispatch();
 
-  const [loop, setLoop] = useState<EntityLoop>();
-  useEffect(() => {
-    setLoop(
-      getEntityLoopFromFormsProps({
-        forms,
-        formsProps,
-        formType,
-      })
-    );
-  }, [forms, formsProps, formType]);
   const handleSubmit = async () => {
     for (let i = 0; i < formsProps.length; i++) {
       // console.log(formsProps[i].formState);
     }
-
-    console.log(loop);
-    const createdLoop = await loopApi.create(loop!);
+    const loop = getEntityLoopFromFormsProps({
+      forms,
+      formsProps,
+      loopReceiptType,
+      loopReceiptMode,
+    });
+    // console.log(loop);
+    const createdLoop = await loopApi.create(loop);
     console.log(createdLoop);
+    // remove confirmed loopers
+    dispatch(setConfirmedLoopers({ loopers: [] }));
     // delete the draft if loop is created
     if (currentDraftIdRef.current) {
       console.log("deleting the draft");
       const response = await draftsApi.delete(currentDraftIdRef.current);
+      currentDraftIdRef.current = "deleted";
     }
     for (let i = 0; i < formsProps.length; i++) {
       formsProps[i].resetForm();
@@ -68,6 +79,10 @@ const Summary = ({
     generatedLoopReceipt();
   };
   const recipientState = formsProps[recipientFormIdx].formState;
+  const loopers = useMemo(() => {
+    const loopersState = formsProps[loopersFormIdx].formState;
+    return getEntityLoopersFromLoopersState(loopersState);
+  }, [formsProps, loopersFormIdx]);
   return (
     <div className={styles.Summary}>
       {win.up("sm") && (
@@ -114,7 +129,7 @@ const Summary = ({
             <h1>Loopers</h1>
           )}
 
-          {loop?.loopers.map((looper, i) => (
+          {loopers.map((looper, i) => (
             <Entry key={i} inputIcon="email" text={looper.email} />
           ))}
         </div>

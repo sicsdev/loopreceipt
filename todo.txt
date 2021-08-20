@@ -1,6 +1,16 @@
 // for date picker we can do more for mobile selector
 // ip address to locate user current location and set defaults for country region 
 // https://stackoverflow.com/questions/3489460/how-to-get-visitors-location-i-e-country-using-geolocation
-// show warning or error indicator 
-   - by border
-   - by message just below input field
+
+
+// when on create page we want to show Confirm Dialog
+whenever he wants to move to another page or he clicks on internal/external loopreciept
+//  if user clicks on verify email again we want to redirect him to 
+login rather than verifying with token etc
+// clicking draft should work
+// make raise alert easy to use
+// missing group check in draft api, make sure to add logic for 
+selected group and draft
+// work on receive api
+// work on add manually on group page
+clicking on add manually should bring user to Add recipient page

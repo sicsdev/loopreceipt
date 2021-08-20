@@ -1,4 +1,4 @@
-import { EntityLooper } from "apiHelpers/types";
+import { EntityLooper, EntitySearchedGroup } from "apiHelpers/types";
 import { SearchItemType } from "@interfaces/SearchItemType";
 
 import { createSlice, Draft, PayloadAction } from "@reduxjs/toolkit";
@@ -7,11 +7,23 @@ export interface SliceSearchBarType {
   searchItems: SearchItemType<undefined>[];
   searchItemClickDetector: boolean;
   confirmedLoopers: (EntityLooper & { id: string })[];
+  selectedGroupFromSearch: EntitySearchedGroup | undefined;
+  searchInput: string;
+  searchWithPrimary: boolean;
+  searchWithSecondary: boolean;
+  searchSpace: string;
+  searchItemName: string;
 }
 const initialState: SliceSearchBarType = {
   searchItems: [],
   searchItemClickDetector: true,
   confirmedLoopers: [],
+  selectedGroupFromSearch: undefined,
+  searchInput: "",
+  searchWithPrimary: true,
+  searchWithSecondary: false,
+  searchSpace: "",
+  searchItemName: "",
 };
 export const searchBarSlice = createSlice({
   name: "searchBar",
@@ -33,6 +45,27 @@ export const searchBarSlice = createSlice({
           ...looper,
         };
       });
+    },
+    setEntitySearchedGroup: (
+      state,
+      action: PayloadAction<EntitySearchedGroup | undefined>
+    ) => {
+      state.selectedGroupFromSearch = action.payload;
+    },
+    setSearchInput: (state, action: PayloadAction<string>) => {
+      state.searchInput = action.payload;
+    },
+    setSearchWithPrimary: (state, action: PayloadAction<boolean>) => {
+      state.searchWithPrimary = action.payload;
+    },
+    setSearchWithSecondary: (state, action: PayloadAction<boolean>) => {
+      state.searchWithSecondary = action.payload;
+    },
+    setSearchSpace: (state, action: PayloadAction<string>) => {
+      state.searchSpace = action.payload;
+    },
+    setSearchItemName: (state, action: PayloadAction<string>) => {
+      state.searchItemName = action.payload;
     },
     confirmLooper: (state, action: PayloadAction<{ looper: EntityLooper }>) => {
       state.confirmedLoopers.push({ id: uuidV4(), ...action.payload.looper });
@@ -74,7 +107,13 @@ export const searchBarSlice = createSlice({
 export const {
   setSearchItems,
   setSearchItemClickDetector,
+  setEntitySearchedGroup,
   setConfirmedLoopers,
+  setSearchInput,
+  setSearchSpace,
+  setSearchItemName,
+  setSearchWithPrimary,
+  setSearchWithSecondary,
   confirmLooper,
   confirmLoopers,
   editConfirmedLooper,

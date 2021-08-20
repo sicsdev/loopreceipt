@@ -3,7 +3,12 @@ import { EntityLooper } from "apiHelpers/types";
 import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 import { SearchItemType } from "@interfaces/SearchItemType";
-import { confirmLooper, setSearchItems } from "@store/slices/searchBarSlice";
+import {
+  confirmLooper,
+  setSearchItemName,
+  setSearchItems,
+  setSearchSpace,
+} from "@store/slices/searchBarSlice";
 import store from "@store/store";
 
 const loopersDetailsForm: FormType = {
@@ -33,6 +38,11 @@ const loopersDetailsForm: FormType = {
     },
   },
   populateSearchItems: async () => {
+    if (store.getState().searchBar.searchItemName !== "looper") {
+      // we want to set this just once
+      store.dispatch(setSearchItemName("looper"));
+      store.dispatch(setSearchSpace(""));
+    }
     const response = await loopsApi.getAll();
     if (response) {
       const loops = response.items;

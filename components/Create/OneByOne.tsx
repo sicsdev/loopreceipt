@@ -4,7 +4,7 @@ import BoxContent from "./BoxContent";
 import React, { useState } from "react";
 
 import Box from "@components/Create/Box";
-
+import produce from "immer";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Summary from "./Summary";
@@ -14,32 +14,68 @@ import Win from "@helpers/Win";
 import UpperBarMobile from "./UpperBarMobile";
 import LoopReceipt from "./LoopReceipt";
 import { validateAllFieldsOfForm } from "forms/formUtils";
+import { EntityDraft, EntityLoopMode } from "@apiHelpers/types";
+import { useAppDispatch } from "@store/hooks";
+import { setLoopReceiptMode } from "@store/slices/loopReceiptSlice";
+import { useEffect } from "react";
+import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 
 interface OneByOneProps {
-  setOption: React.Dispatch<
-    React.SetStateAction<"onebyone" | "group" | undefined>
-  >;
-
   forms: FormType[];
   formsProps: useFormReturnType[];
   handleCancelClick: () => void;
   currentDraftIdRef: React.MutableRefObject<string | undefined>;
+  draftSelected: EntityDraft | undefined;
 }
 function OneByOne({
-  setOption,
   forms,
   formsProps,
   handleCancelClick,
   currentDraftIdRef,
+  draftSelected,
 }: OneByOneProps) {
   const styles = useStyles();
+  const dispatch = useAppDispatch();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [index, setIndex] = useState(0);
+  useEffect(() => {
+    if (draftSelected) {
+      formsProps[0].setFormState(
+        produce((prev) => {
+          if (draftSelected.recipient?.address) {
+            prev.shippingAddress.value = draftSelected.recipient.address;
+          }
+          if (draftSelected.recipient?.country) {
+            prev.country.value = draftSelected.recipient.country;
+          }
+          if (draftSelected.recipient?.city) {
+            prev.city.value = draftSelected.recipient.city;
+          }
+          if (draftSelected.recipient?.city) {
+            prev.province.value = draftSelected.recipient.city;
+          }
 
+          prev.phone.value = "32132112";
+          if (draftSelected.recipient?.postalCode) {
+            prev.zipCode.value = draftSelected.recipient.postalCode;
+          }
+          if (draftSelected.recipient?.name) {
+            prev.name.value = draftSelected.recipient.name;
+          }
+          if (draftSelected.recipient?.email) {
+            prev.email.value = draftSelected.recipient.email;
+          }
+        })
+      );
+      if (draftSelected.loopers) {
+        dispatch(setConfirmedLoopers({ loopers: draftSelected.loopers }));
+      }
+    }
+  }, []);
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
     if (index > 0) setIndex(index - 1);
-    else setOption(undefined);
+    else dispatch(setLoopReceiptMode(undefined));
   };
 
   const handleNextClick = () => {
@@ -82,6 +118,8 @@ function OneByOne({
   return (
     <div>
       <FormUpperBar
+        showBackButton={index !== forms.length + 1}
+        // we want to hide backbutton on looprecipt page
         handleBackButtonClick={handleBackButtonClick}
         upperBarText={upperBarContent}
       />

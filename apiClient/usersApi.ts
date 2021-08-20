@@ -1,5 +1,5 @@
 import axios from "@apiHelpers/axios";
-import { EntityLoop, EntityUser } from "@apiHelpers/types";
+import { EntityLoop, EntityUser, ErrorResponse } from "@apiHelpers/types";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
 const usersApi = {
   getMe: async (): Promise<
@@ -34,7 +34,7 @@ const usersApi = {
     | undefined
   > => {
     try {
-      // console.log("get all");
+      console.log("create usersApi called");
       // console.log(Cookies.get("token"));
       const response = await axios.post(`/users`, user);
 
@@ -44,7 +44,11 @@ const usersApi = {
       throw axiosErrorHandler(error);
     }
   },
-  verify: async ({ email }: { email: string }): Promise<string | undefined> => {
+  sendVerificationLink: async ({
+    email,
+  }: {
+    email: string;
+  }): Promise<string | ErrorResponse | undefined> => {
     try {
       const response = await axios.post("/users/me/verify", { email });
       return response.data;
@@ -82,6 +86,23 @@ const usersApi = {
   }): Promise<{ error: boolean; message: string } | undefined> => {
     try {
       const response = await axios.post("/users/reset", payload);
+      return response.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
+
+  verifyUser: async (payload: {
+    userid: string;
+    token: string;
+  }): Promise<{ error: boolean; message?: string } | undefined> => {
+    // /api/users/:userid/verify/:token
+    // console.log(payload);
+    // return;
+    try {
+      const response = await axios.get(
+        `/users/${payload.userid}/verify/${payload.token}`
+      );
       return response.data;
     } catch (error) {
       throw axiosErrorHandler(error);

@@ -4,7 +4,13 @@ import {
   useFormReturnType,
 } from "@interfaces/FormTypes";
 import store from "@store/store";
-import { EntityLoop, EntityLooper, EntityRecipient } from "apiHelpers/types";
+import {
+  EntityLoop,
+  EntityLooper,
+  EntityLoopMode,
+  EntityLoopType,
+  EntityRecipient,
+} from "apiHelpers/types";
 import { v4 as uuidv4 } from "uuid";
 
 export const validateAllFieldsOfForm = (
@@ -111,11 +117,13 @@ export const getEntityRecipientFromRecipientState = (
 export const getEntityLoopFromFormsProps = ({
   forms,
   formsProps,
-  formType,
+  loopReceiptType,
+  loopReceiptMode = "single",
 }: {
   forms: FormType[];
   formsProps: useFormReturnType[];
-  formType: "internal" | "external";
+  loopReceiptType: EntityLoopType;
+  loopReceiptMode: EntityLoopMode | undefined;
 }) => {
   const recipientFormIdx = forms.findIndex(
     (form) => form.formName === "recipientDetailsForm"
@@ -129,11 +137,12 @@ export const getEntityLoopFromFormsProps = ({
   const loopers = getEntityLoopersFromLoopersState(
     formsProps[loopersFormIndex].formState
   );
+
   const recipient: EntityRecipient = getEntityRecipientFromRecipientState(
     formsProps[recipientFormIdx].formState
   );
   let loop: EntityLoop;
-  switch (formType) {
+  switch (loopReceiptType) {
     case "internal": {
       loop = {
         barcode: uuidv4(),
@@ -142,7 +151,7 @@ export const getEntityLoopFromFormsProps = ({
         postalCode: recipient.postalCode,
         province: "nothing",
         type: "internal",
-        mode: "single",
+        mode: loopReceiptMode,
         loopers,
         recipient,
       };
@@ -157,7 +166,7 @@ export const getEntityLoopFromFormsProps = ({
         postalCode: companyState.zipCode.value,
         province: companyState.province.value,
         type: "external",
-        mode: "group",
+        mode: loopReceiptMode,
         loopers,
         recipient,
       };

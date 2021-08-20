@@ -108,7 +108,6 @@ function InputBox({
         <div className={styles.inputContainer + " MyInputContainer"}>
           <input
             className={classNames(styles.input)}
-            {...input.inputProps}
             type={
               input.type !== "password"
                 ? input.type
@@ -122,6 +121,7 @@ function InputBox({
             placeholder={input.placeholder}
             onBlur={onBlur}
             autoComplete="on"
+            {...input.inputProps}
           ></input>
           {input.type === "password" && (
             <div

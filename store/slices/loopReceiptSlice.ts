@@ -1,12 +1,14 @@
-import { EntityLooper } from "apiHelpers/types";
+import { EntityLoopMode, EntityLoopType } from "apiHelpers/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+
 interface SliceLoopReceiptType {
-  type: "internal" | "external";
+  type: EntityLoopType;
+  mode: EntityLoopMode | undefined;
   addRecepientManually: boolean;
 }
 const initialState: SliceLoopReceiptType = {
   type: "internal",
+  mode: "single",
   addRecepientManually: false,
 };
 
@@ -14,11 +16,11 @@ export const loopReceiptSlice = createSlice({
   name: "loopReceipt",
   initialState,
   reducers: {
-    setType: (
-      state,
-      action: PayloadAction<{ type: SliceLoopReceiptType["type"] }>
-    ) => {
-      state.type = action.payload.type;
+    setType: (state, action: PayloadAction<EntityLoopType>) => {
+      state.type = action.payload;
+    },
+    setMode: (state, action: PayloadAction<EntityLoopMode | undefined>) => {
+      state.mode = action.payload;
     },
     setAddRecepientManually: (
       state,
@@ -32,7 +34,10 @@ export const loopReceiptSlice = createSlice({
 });
 
 // Reducers and actions
-export const { setType: setLoopReceiptType, setAddRecepientManually } =
-  loopReceiptSlice.actions;
+export const {
+  setType: setLoopReceiptType,
+  setMode: setLoopReceiptMode,
+  setAddRecepientManually,
+} = loopReceiptSlice.actions;
 
 export default loopReceiptSlice.reducer;

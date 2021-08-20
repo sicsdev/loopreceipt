@@ -4,17 +4,23 @@ import Image from "next/image";
 import SearchCard from "@components/Create/SearchCard";
 import UnmountOnWindowClickWrapper from "@components/Shared/UnmountOnWindowClickWrapper";
 import { SearchItemType } from "@interfaces/SearchItemType";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setSearchInput } from "@store/slices/searchBarSlice";
 
 interface SearchBarProps {}
 const SearchBar = ({}: SearchBarProps) => {
-  const [searchInput, setSearchInput] = useState("");
+  const searchInput = useAppSelector((state) => state.searchBar.searchInput);
+  const dispatch = useAppDispatch();
   const styles = useStyles();
   return (
     <div className={styles.SearchBar}>
       <input
         className={"searchInput"}
         value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
+        onChange={(e) => {
+          // console.log(e.target.value);
+          dispatch(setSearchInput(e.target.value));
+        }}
         placeholder="Enter name, email or user group"
       />
       <div className="image">
@@ -24,13 +30,10 @@ const SearchBar = ({}: SearchBarProps) => {
         <UnmountOnWindowClickWrapper
           close={() => {
             // console.log("close called");
-            setSearchInput("");
+            dispatch(setSearchInput(""));
           }}
         >
-          <SearchCard
-            searchInput={searchInput}
-            setSearchInput={setSearchInput}
-          />
+          <SearchCard />
         </UnmountOnWindowClickWrapper>
       )}
     </div>

@@ -1,3 +1,4 @@
+import { ErrorResponse } from "@apiHelpers/types";
 import router from "next/router";
 import { useEffect, useRef, useState } from "react";
 export const deferrer = (func: Function, ...prevargs: any) => {
@@ -10,7 +11,7 @@ export interface useFetchReturnType<T> {
   loading: boolean;
   sendRequest: (...args: any) => Promise<T | undefined>;
   requestSent: boolean;
-  error: any;
+  error: ErrorResponse | undefined;
 }
 export const useFetch = <T>(
   fetcher: Function,
@@ -29,7 +30,7 @@ export const useFetch = <T>(
   const [data, setData] = useState<T>();
   const [requestSent, setRequestSent] = useState(!deferred);
   const [loading, setLoading] = useState<boolean>(!deferred);
-  const [error, setError] = useState<any>();
+  const [error, setError] = useState<ErrorResponse>();
   const remainingTriesOnError = useRef(numRetriesOnError);
 
   const sendRequest = async (...args: any): Promise<T | undefined> => {
@@ -38,7 +39,9 @@ export const useFetch = <T>(
     setData(undefined);
     setError(undefined);
     try {
+      // console.log(...args);
       const res = await fetcher(...args);
+      console.log();
       setData(res);
       setLoading(false);
       return res;
