@@ -216,6 +216,19 @@ export default function RecipientCommentAnalytics() {
     getCommentsPercentage();
   }, [range]);
 
+  let [msg, setMsg] = useState("");
+  useEffect(() => {
+    if (percent[0]) {
+      if (percent[0] >= 30 && percent[0] < 50) {
+        setMsg("Good!");
+      } else if (percent[0] >= 50 && percent[0] <= 80) {
+        setMsg("Super!");
+      } else if (percent[0] > 80) {
+        setMsg("Superb!");
+      }
+    }
+  }, [percent]);
+
   return (
     <Card
       style={{ height: 344, boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.06)" }}
@@ -257,7 +270,7 @@ export default function RecipientCommentAnalytics() {
           height={240}
         />
         <Box>
-          <Typography className={classes.headingStyle}>Superb!</Typography>
+          <Typography className={classes.headingStyle}>{msg}</Typography>
         </Box>
         <div style={{ display: "flex" }} className={classes.text}>
           <Typography className={classes.percentageStyle}>
