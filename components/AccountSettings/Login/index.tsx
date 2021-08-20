@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import InputBox from "@components/Controls/InputBox";
 import { validateSingleFieldOfForm } from "@forms/formUtils";
+import ChangeEmailModal from "./ChangeEmailModal";
 
 const useStyles = makeStyles((theme) => ({
   pageLabel: {
@@ -107,10 +108,14 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles();
 
-  const [disabledEmail, setDisabledEmail] = useState(true);
   const handleInputChange = () => {};
-  const handleDisableEmailLink = () => {
-    setDisabledEmail(false);
+
+  const [changeEmail, setChangeEmail] = useState(false);
+  const handleChangeEmailModalOpen = () => {
+    setChangeEmail(true);
+  };
+  const handleChangeEmailModalClose = () => {
+    setChangeEmail(false);
   };
 
   return (
@@ -138,7 +143,7 @@ export default function Login() {
             <Typography className={classes.inputBox}>Email Address</Typography>
             <Typography
               className={classes.linkStyles}
-              onClick={handleDisableEmailLink}
+              onClick={handleChangeEmailModalOpen}
             >
               Change Email
             </Typography>
@@ -167,7 +172,7 @@ export default function Login() {
             <Typography className={classes.inputBox}>Password</Typography>
             <Typography
               className={classes.linkStyles}
-              onClick={handleDisableEmailLink}
+              onClick={handleChangeEmailModalOpen}
             >
               Change Password
             </Typography>
@@ -210,6 +215,10 @@ export default function Login() {
           </Button>
         </Box>
       </div>
+      <ChangeEmailModal
+        open={changeEmail}
+        handleClose={handleChangeEmailModalClose}
+      />
     </Container>
   );
 }
