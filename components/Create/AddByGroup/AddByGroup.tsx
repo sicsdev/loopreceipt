@@ -22,7 +22,7 @@ import {
   validateAllFieldsOfForm,
 } from "forms/formUtils";
 import { useRouter } from "next/router";
-import { EntityGroup, EntityLoopMode } from "@apiHelpers/types";
+import { EntityDraft, EntityGroup, EntityLoopMode } from "@apiHelpers/types";
 import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 
 import groupsApi from "@apiClient/groupsApi";
@@ -39,16 +39,20 @@ interface AddByGroupProps {
   formsProps: useFormReturnType[];
   handleCancelClick: () => void;
   currentDraftIdRef: React.MutableRefObject<string | undefined>;
+  draftSelected: EntityDraft | undefined;
 }
 function AddByGroup({
   forms,
   formsProps,
   handleCancelClick,
   currentDraftIdRef,
+  draftSelected,
 }: AddByGroupProps) {
   const styles = useStyles();
   const router = useRouter();
-  const [showExistingGroups, setShowExistingGroups] = useState(true);
+  const [showExistingGroups, setShowExistingGroups] = useState(
+    () => !currentDraftIdRef.current || currentDraftIdRef.current === "deleted"
+  );
   const [selectedGroup, setSelectedGroup] = useState<EntityGroup>();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
@@ -60,6 +64,7 @@ function AddByGroup({
   const [savedGroup, setSavedGroup] = useState<EntityGroup>();
 
   const detailsRef = useRef<HTMLDivElement>(null);
+  // const groupFetchedFromDraftRef = useRef(true);
   const dispatch = useAppDispatch();
   const loopersFormIndex = forms.findIndex(
     (form) => form.formName === "loopersDetailsForm"
@@ -90,8 +95,62 @@ function AddByGroup({
     }
   }, [index, windowDimensions]);
   useEffect(() => {
+    if (draftSelected) {
+      (async () => {
+        // i will handle it later
+        // if (draftSelected.groupid) {
+        //   const response = await groupsApi.getOne(draftSelected.groupid);
+        //   const associatedGroup = response?.group;
+        //   if (associatedGroup) {
+        //     groupFormProps.setFormState(
+        //       produce((prev) => {
+        //         prev.groupName.value = associatedGroup.name;
+        //         prev.createdFor.value = associatedGroup.createdFor;
+        //       })
+        //     );
+        //     setSelectedGroup(associatedGroup);
+        //     groupFetchedFromDraftRef.current = true;
+        //   }
+        // }
+        formsProps[0].setFormState(
+          produce((prev) => {
+            if (draftSelected.recipient?.address) {
+              prev.shippingAddress.value = draftSelected.recipient.address;
+            }
+            if (draftSelected.recipient?.country) {
+              prev.country.value = draftSelected.recipient.country;
+            }
+            if (draftSelected.recipient?.city) {
+              prev.city.value = draftSelected.recipient.city;
+            }
+            if (draftSelected.recipient?.city) {
+              prev.province.value = draftSelected.recipient.city;
+            }
+
+            prev.phone.value = "32132112";
+            if (draftSelected.recipient?.postalCode) {
+              prev.zipCode.value = draftSelected.recipient.postalCode;
+            }
+            if (draftSelected.recipient?.name) {
+              prev.name.value = draftSelected.recipient.name;
+            }
+            if (draftSelected.recipient?.email) {
+              prev.email.value = draftSelected.recipient.email;
+            }
+          })
+        );
+        if (draftSelected.loopers) {
+          dispatch(setConfirmedLoopers({ loopers: draftSelected.loopers }));
+        }
+      })();
+    }
+  }, []);
+  useEffect(() => {
     // here we can show update form according to group and generate loop receipt based on
     // specifications of the group
+    if (draftSelected) {
+      return;
+    }
     if (selectedGroup) {
       groupFormProps.setFormState(
         produce((prev) => {
@@ -123,13 +182,14 @@ function AddByGroup({
       dispatch(setConfirmedLoopers({ loopers: [] }));
     }
   }, [selectedGroup]);
+
   const handleBackButtonClick: React.MouseEventHandler<any> = () => {
     if (index === forms.length + 1) {
       setIndex(index - 2);
     } else if (index > 0) {
       setIndex(index - 1);
     } else {
-      if (!showExistingGroups) {
+      if (!showExistingGroups && !draftSelected) {
         setSelectedGroup(undefined);
         setShowExistingGroups(true);
       } else {

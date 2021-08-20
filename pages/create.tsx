@@ -24,11 +24,12 @@ import draftsApi from "@apiClient/draftsApi";
 import { useRef } from "react";
 import { Debounce } from "@helpers/utils";
 import produce from "immer";
-import { EntityLoopMode, EntityLoopType } from "@apiHelpers/types";
+import { EntityDraft, EntityLoopMode, EntityLoopType } from "@apiHelpers/types";
 import {
   setLoopReceiptMode,
   setLoopReceiptType,
 } from "@store/slices/loopReceiptSlice";
+import groupsApi from "@apiClient/groupsApi";
 const Create = () => {
   const router = useRouter();
   const styles = useStyles();
@@ -38,6 +39,10 @@ const Create = () => {
   );
   const [checkForExistingDraftComplete, setCheckForExistingDraftComplete] =
     useState(false);
+  const [draftSelected, setDraftSelected] = useState<EntityDraft>();
+  const confirmedLoopers = useAppSelector(
+    (state) => state.searchBar.confirmedLoopers
+  );
   const dispatch = useAppDispatch();
   const currentDraftIdRef = useRef<string>();
   const { draftId } = router.query;
@@ -116,39 +121,12 @@ const Create = () => {
         const draft = response?.draft;
 
         if (draft) {
+          currentDraftIdRef.current = draftId as string;
+          setDraftSelected(draft);
           // set loop receipt mode and type
+
           dispatch(setLoopReceiptMode(draft.mode));
           dispatch(setLoopReceiptType(draft.type));
-          formsProps[0].setFormState(
-            produce((prev) => {
-              if (draft.recipient?.address) {
-                prev.shippingAddress.value = draft.recipient.address;
-              }
-              if (draft.recipient?.country) {
-                prev.country.value = draft.recipient.country;
-              }
-              if (draft.recipient?.city) {
-                prev.city.value = draft.recipient.city;
-              }
-              if (draft.recipient?.city) {
-                prev.province.value = draft.recipient.city;
-              }
-
-              prev.phone.value = "32132112";
-              if (draft.recipient?.postalCode) {
-                prev.zipCode.value = draft.recipient.postalCode;
-              }
-              if (draft.recipient?.name) {
-                prev.name.value = draft.recipient.name;
-              }
-              if (draft.recipient?.email) {
-                prev.email.value = draft.recipient.email;
-              }
-            })
-          );
-          if (draft.loopers)
-            dispatch(setConfirmedLoopers({ loopers: draft.loopers }));
-          currentDraftIdRef.current = draftId as string;
         }
       }
       setCheckForExistingDraftComplete(true);
@@ -169,6 +147,7 @@ const Create = () => {
     ...formsProps.map((formProps) => formProps.formState),
     loopReceiptType,
     loopReceiptMode,
+    confirmedLoopers,
   ]);
 
   useEffect(() => {
@@ -235,6 +214,7 @@ const Create = () => {
             forms={passedForms}
             formsProps={passedFormsProps}
             currentDraftIdRef={currentDraftIdRef}
+            draftSelected={draftSelected}
           />
         ) : loopReceiptMode === "group" ? (
           <AddByGroup
@@ -242,6 +222,7 @@ const Create = () => {
             forms={passedForms}
             formsProps={passedFormsProps}
             currentDraftIdRef={currentDraftIdRef}
+            draftSelected={draftSelected}
           />
         ) : (
           <SelectOption />

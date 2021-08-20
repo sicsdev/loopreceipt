@@ -55,6 +55,7 @@ export interface EntityDraft {
   barcode?: string;
   mode: EntityLoopMode;
   type: EntityLoopType;
+  groupid?: string;
   owner?: string;
   loopers?: EntityLooper[];
   recipient?: EntityRecipient;

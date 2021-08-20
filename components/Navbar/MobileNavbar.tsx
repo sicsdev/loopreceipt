@@ -176,6 +176,7 @@ const useStyles = makeStyles((theme) => ({
   },
   links: {
     "& .link": {
+      cursor: "pointer",
       color: "#828282",
       fontWeight: "500",
       padding: "1rem",
