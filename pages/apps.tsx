@@ -8,6 +8,7 @@ import {
 import Layout from "@components/Global/Layout";
 import UpperBar from "@components/Shared/UpperBar";
 import Link from "next/link";
+import AuthGuard from "@components/Global/AuthGuard";
 
 const useStyles = makeStyles((theme) => ({
   apps: {
@@ -106,95 +107,97 @@ const Apps = () => {
   const styles = useStyles();
 
   return (
-    <Layout>
-      <div className={styles.apps}>
-        <UpperBar>
-          <Container>
-            <div className="head">Apps</div>
-          </Container>
-        </UpperBar>
-      </div>
-      <Container>
-        <Card className={styles.cards}>
-          <Box display="flex">
-            <Box>
-              <img
-                src="/images/apple.png"
-                alt="Apple Icon"
-                className={styles.appleIcon}
-              />
-            </Box>
-            <Box className={styles.container1}>
-              <Box style={{ display: "grid" }}>
-                <Typography className={styles.captionTexts}>
-                  Mobile App
-                </Typography>
-                <Typography className={styles.titleTexts}>
-                  Loopreceipt iPhone App
-                </Typography>
-                <Typography className={styles.captionTexts}>
-                  Send packages on the go
-                </Typography>
+    <AuthGuard>
+      <Layout>
+        <div className={styles.apps}>
+          <UpperBar>
+            <Container>
+              <div className="head">Apps</div>
+            </Container>
+          </UpperBar>
+        </div>
+        <Container>
+          <Card className={styles.cards}>
+            <Box display="flex">
+              <Box>
+                <img
+                  src="/images/apple.png"
+                  alt="Apple Icon"
+                  className={styles.appleIcon}
+                />
               </Box>
-              <Box
-                display="flex"
-                style={{ marginRight: 0, marginLeft: "auto" }}
-              >
-                <Link href="/" passHref>
-                  <a style={{ alignSelf: "center" }}>
-                    <img
-                      src="/images/apple-store.png"
-                      alt="Apple Store Icon"
-                      className={styles.storeIcon}
-                    />
-                  </a>
-                </Link>
+              <Box className={styles.container1}>
+                <Box style={{ display: "grid" }}>
+                  <Typography className={styles.captionTexts}>
+                    Mobile App
+                  </Typography>
+                  <Typography className={styles.titleTexts}>
+                    Loopreceipt iPhone App
+                  </Typography>
+                  <Typography className={styles.captionTexts}>
+                    Send packages on the go
+                  </Typography>
+                </Box>
+                <Box
+                  display="flex"
+                  style={{ marginRight: 0, marginLeft: "auto" }}
+                >
+                  <Link href="/" passHref>
+                    <a style={{ alignSelf: "center" }}>
+                      <img
+                        src="/images/apple-store.png"
+                        alt="Apple Store Icon"
+                        className={styles.storeIcon}
+                      />
+                    </a>
+                  </Link>
+                </Box>
               </Box>
             </Box>
-          </Box>
-        </Card>
+          </Card>
 
-        <Card className={styles.cards}>
-          <Box display="flex">
-            <Box>
-              <img
-                src="/images/android.png"
-                alt="Apple Icon"
-                className={styles.androidIcon}
-              />
-            </Box>
-            <Box className={styles.container1}>
-              <Box style={{ display: "grid" }}>
-                <Typography className={styles.captionTexts}>
-                  Mobile App
-                </Typography>
-                <Typography className={styles.titleTexts}>
-                  Loopreceipt Android App
-                </Typography>
-                <Typography className={styles.captionTexts}>
-                  Send packages on the go
-                </Typography>
+          <Card className={styles.cards}>
+            <Box display="flex">
+              <Box>
+                <img
+                  src="/images/android.png"
+                  alt="Apple Icon"
+                  className={styles.androidIcon}
+                />
               </Box>
-              <Box
-                display="flex"
-                style={{ marginRight: 0, marginLeft: "auto" }}
-              >
-                <Link href="/" passHref>
-                  <a style={{ alignSelf: "center" }}>
-                    <img
-                      src="/images/android-store.png"
-                      alt="Android Store Icon"
-                      className={styles.storeIcon}
-                    />
-                  </a>
-                </Link>
+              <Box className={styles.container1}>
+                <Box style={{ display: "grid" }}>
+                  <Typography className={styles.captionTexts}>
+                    Mobile App
+                  </Typography>
+                  <Typography className={styles.titleTexts}>
+                    Loopreceipt Android App
+                  </Typography>
+                  <Typography className={styles.captionTexts}>
+                    Send packages on the go
+                  </Typography>
+                </Box>
+                <Box
+                  display="flex"
+                  style={{ marginRight: 0, marginLeft: "auto" }}
+                >
+                  <Link href="/" passHref>
+                    <a style={{ alignSelf: "center" }}>
+                      <img
+                        src="/images/android-store.png"
+                        alt="Android Store Icon"
+                        className={styles.storeIcon}
+                      />
+                    </a>
+                  </Link>
+                </Box>
               </Box>
             </Box>
-          </Box>
-        </Card>
-      </Container>
-      <div style={{ marginBottom: 100 }}></div>
-    </Layout>
+          </Card>
+        </Container>
+        <div style={{ marginBottom: 100 }}></div>
+      </Layout>
+    </AuthGuard>
   );
 };
 

@@ -16,6 +16,7 @@ import { makeStyles } from "@material-ui/core";
 import Login from "@components/AccountSettings/Login";
 import Profile from "@components/AccountSettings/Profile";
 import { isMobile, BrowserView, MobileView } from "react-device-detect";
+import AuthGuard from "@components/Global/AuthGuard";
 
 // ----------------------------------------------------------------------
 
@@ -87,10 +88,6 @@ interface AccountProps {
 export default function Account({ path }: AccountProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState("Profile");
-  const [mobileDevice, setMobileDevice] = useState(false);
-  useEffect(() => {
-    setMobileDevice(isMobile);
-  }, [isMobile]);
 
   const TABS = [
     {
@@ -104,42 +101,16 @@ export default function Account({ path }: AccountProps) {
   ];
 
   return (
-    <Layout>
-      {/* <div> */}
-      <div className={classes.heading}>
-        <div className="head">Account Settings</div>
-        <MobileView>
-          <Tabs
-            variant="fullWidth"
-            value={value}
-            onChange={(e, value) => setValue(value)}
-            className={classes.tabs}
-          >
-            {TABS.map((tab) => (
-              <Tab
-                disableRipple
-                key={tab.value}
-                label={tab.value}
-                value={tab.value}
-                className={classes.tab}
-                classes={{ selected: classes.selected }}
-              />
-            ))}
-          </Tabs>
-        </MobileView>
-        <Divider />
-      </div>
-
-      <Grid container className={classes.page}>
-        <Grid item xs={12} sm={4} md={2}>
-          <BrowserView>
+    <AuthGuard>
+      <Layout>
+        <div className={classes.heading}>
+          <div className="head">Account Settings</div>
+          <MobileView>
             <Tabs
-              orientation={"vertical"}
-              variant="scrollable"
+              variant="fullWidth"
               value={value}
               onChange={(e, value) => setValue(value)}
               className={classes.tabs}
-              TabIndicatorProps={{ color: "#fff" }}
             >
               {TABS.map((tab) => (
                 <Tab
@@ -152,17 +123,44 @@ export default function Account({ path }: AccountProps) {
                 />
               ))}
             </Tabs>
-          </BrowserView>
+          </MobileView>
+          <Divider />
+        </div>
+
+        <Grid container className={classes.page}>
+          <Grid item xs={12} sm={4} md={2}>
+            <BrowserView>
+              <Tabs
+                orientation={"vertical"}
+                variant="scrollable"
+                value={value}
+                onChange={(e, value) => setValue(value)}
+                className={classes.tabs}
+                TabIndicatorProps={{ color: "#fff" }}
+              >
+                {TABS.map((tab) => (
+                  <Tab
+                    disableRipple
+                    key={tab.value}
+                    label={tab.value}
+                    value={tab.value}
+                    className={classes.tab}
+                    classes={{ selected: classes.selected }}
+                  />
+                ))}
+              </Tabs>
+            </BrowserView>
+          </Grid>
+          <Grid item xs={12} sm={8} md={10}>
+            {TABS.map((tab) => {
+              const isMatched = tab.value === value;
+              return isMatched && <Box key={tab.value}>{tab.component}</Box>;
+            })}
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={8} md={10}>
-          {TABS.map((tab) => {
-            const isMatched = tab.value === value;
-            return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-          })}
-        </Grid>
-      </Grid>
-      {/* </div> */}
-      <div style={{ marginBottom: 100 }}></div>
-    </Layout>
+
+        <div style={{ marginBottom: 100 }}></div>
+      </Layout>
+    </AuthGuard>
   );
 }

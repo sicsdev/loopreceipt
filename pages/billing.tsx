@@ -18,6 +18,7 @@ import Choice from "@components/Billing/Choice";
 import Pro from "@components/Billing/Pro";
 import Enterprise from "@components/Billing/Enterprise";
 import { MobileView, BrowserView } from "react-device-detect";
+import AuthGuard from "@components/Global/AuthGuard";
 // ----------------------------------------------------------------------
 
 const useStyles = makeStyles((theme) => ({
@@ -139,75 +140,79 @@ export default function Billing({ path }: BillingProps) {
   ];
 
   return (
-    <Layout>
-      <div className={classes.heading}>
-        <div className="head">Billing</div>
+    <AuthGuard>
+      <Layout>
+        <div className={classes.heading}>
+          <div className="head">Billing</div>
 
-        <Divider className={classes.divider} />
-      </div>
+          <Divider className={classes.divider} />
+        </div>
 
-      <Container maxWidth="lg">
-        <Card className={classes.card}>
-          <Typography className={classes.pageHeading}>
-            You are enjoying a free pro trial with access to all the features
-          </Typography>
-          <Typography
-            className={classes.pageHeading}
-            style={{ color: "#666666" }}
-          >
-            Our Pricing Plans
-          </Typography>
-
-          <MobileView>
-            <Tabs
-              variant="fullWidth"
-              value={value}
-              onChange={(e, value) => setValue(value)}
-              className={classes.tabs}
-              TabIndicatorProps={{
-                style: {
-                  height: "2px",
-                  color: "#234361",
-                },
-              }}
+        <Container maxWidth="lg">
+          <Card className={classes.card}>
+            <Typography className={classes.pageHeading}>
+              You are enjoying a free pro trial with access to all the features
+            </Typography>
+            <Typography
+              className={classes.pageHeading}
+              style={{ color: "#666666" }}
             >
-              {TABS.map((tab) => (
-                <Tab
-                  disableRipple
-                  key={tab.value}
-                  label={tab.value}
-                  value={tab.value}
-                  className={classes.tab}
-                  classes={{ selected: classes.selected }}
-                />
-              ))}
-            </Tabs>
-            <Divider />
+              Our Pricing Plans
+            </Typography>
 
-            <Box>
-              {TABS.map((tab) => {
-                const isMatched = tab.value === value;
-                return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-              })}
-            </Box>
-          </MobileView>
+            <MobileView>
+              <Tabs
+                variant="fullWidth"
+                value={value}
+                onChange={(e, value) => setValue(value)}
+                className={classes.tabs}
+                TabIndicatorProps={{
+                  style: {
+                    height: "2px",
+                    color: "#234361",
+                  },
+                }}
+              >
+                {TABS.map((tab) => (
+                  <Tab
+                    disableRipple
+                    key={tab.value}
+                    label={tab.value}
+                    value={tab.value}
+                    className={classes.tab}
+                    classes={{ selected: classes.selected }}
+                  />
+                ))}
+              </Tabs>
+              <Divider />
 
-          <BrowserView>
-            <Grid container className={classes.grid}>
-              <Grid item xs={12} md={4}>
-                <Choice />
+              <Box>
+                {TABS.map((tab) => {
+                  const isMatched = tab.value === value;
+                  return (
+                    isMatched && <Box key={tab.value}>{tab.component}</Box>
+                  );
+                })}
+              </Box>
+            </MobileView>
+
+            <BrowserView>
+              <Grid container className={classes.grid}>
+                <Grid item xs={12} md={4}>
+                  <Choice />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <Pro />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <Enterprise />
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={4}>
-                <Pro />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Enterprise />
-              </Grid>
-            </Grid>
-          </BrowserView>
-        </Card>
-      </Container>
-      <div style={{ marginBottom: 100 }}></div>
-    </Layout>
+            </BrowserView>
+          </Card>
+        </Container>
+        <div style={{ marginBottom: 100 }}></div>
+      </Layout>
+    </AuthGuard>
   );
 }

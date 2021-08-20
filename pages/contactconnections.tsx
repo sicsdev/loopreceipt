@@ -12,6 +12,7 @@ import {
 // components
 import Layout from "@components/Global/Layout";
 import { makeStyles } from "@material-ui/core";
+import AuthGuard from "@components/Global/AuthGuard";
 
 // ----------------------------------------------------------------------
 
@@ -261,45 +262,51 @@ export default function ContactConnections({ path }: ContactConnectionsProps) {
   const classes = useStyles();
 
   return (
-    <Layout>
-      <div className={classes.heading}>
-        <div className="head">Contact Connections</div>
+    <AuthGuard>
+      <Layout>
+        <div className={classes.heading}>
+          <div className="head">Contact Connections</div>
 
-        <Divider className={classes.divider} />
-      </div>
+          <Divider className={classes.divider} />
+        </div>
 
-      <Container maxWidth="lg">
-        <Card className={classes.card}>
-          <Box className={classes.pageHead}>
-            <Typography className={classes.pageHeadTitle}>
-              Email Contacts
-            </Typography>
-            <Typography className={classes.pageHeadSubheading}>
-              Contacts you integrate ..........
-            </Typography>
-          </Box>
-          <Brand icon="/icons/connect/google.png" label="Google" />
-          <Product
-            icon="/icons/connect/gmail.png"
-            label="Gmail"
-            status="connected"
-          />
-          <Brand icon="/icons/connect/microsoft.png" label="Microsoft" />
-          <Product
-            icon="/icons/connect/office.png"
-            label="Office 365"
-            status=""
-          />
-          <Product
-            icon="/icons/connect/office.png"
-            label="Exchange"
-            status=""
-          />
-          <Brand icon="/icons/connect/apple.png" label="Apple" />
-          <Product icon="/icons/connect/icloud.png" label="iCloud" status="" />
-        </Card>
-      </Container>
-      <div style={{ marginBottom: 100 }}></div>
-    </Layout>
+        <Container maxWidth="lg">
+          <Card className={classes.card}>
+            <Box className={classes.pageHead}>
+              <Typography className={classes.pageHeadTitle}>
+                Email Contacts
+              </Typography>
+              <Typography className={classes.pageHeadSubheading}>
+                Contacts you integrate ..........
+              </Typography>
+            </Box>
+            <Brand icon="/icons/connect/google.png" label="Google" />
+            <Product
+              icon="/icons/connect/gmail.png"
+              label="Gmail"
+              status="connected"
+            />
+            <Brand icon="/icons/connect/microsoft.png" label="Microsoft" />
+            <Product
+              icon="/icons/connect/office.png"
+              label="Office 365"
+              status=""
+            />
+            <Product
+              icon="/icons/connect/office.png"
+              label="Exchange"
+              status=""
+            />
+            <Brand icon="/icons/connect/apple.png" label="Apple" />
+            <Product
+              icon="/icons/connect/icloud.png"
+              label="iCloud"
+              status=""
+            />
+          </Card>
+        </Container>
+        <div style={{ marginBottom: 100 }}></div>
+      </Layout>
+    </AuthGuard>
   );
 }
