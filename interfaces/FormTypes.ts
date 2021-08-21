@@ -31,6 +31,7 @@ export interface FormType {
 
   populateSearchItems?: (args?: any) => void;
   searchItemClicked?: (args?: any) => void;
+  addManuallyClicked?: (args?: any) => void;
 }
 export interface useFormReturnType {
   formState: {

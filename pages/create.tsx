@@ -24,13 +24,11 @@ import { useRouter, withRouter } from "next/router";
 import draftsApi from "@apiClient/draftsApi";
 import { useRef } from "react";
 import { Debounce, hasValueAtAnyKey } from "@helpers/utils";
-import produce from "immer";
 import { EntityDraft, EntityLoopMode, EntityLoopType } from "@apiHelpers/types";
 import {
   setLoopReceiptMode,
   setLoopReceiptType,
 } from "@store/slices/loopReceiptSlice";
-import groupsApi from "@apiClient/groupsApi";
 const Create = () => {
   const router = useRouter();
   const styles = useStyles();
@@ -216,39 +214,10 @@ const Create = () => {
     dispatch(setLoopReceiptMode(undefined));
   }, []);
 
-  const addRecepientManually = useAppSelector(
-    (state) => state.loopReceipt.addRecepientManually
-  );
   const recepientFormIdx = forms.findIndex(
     (form) => form.formName === "recipientDetailsForm"
   );
-  useEffect(() => {
-    if (addRecepientManually) {
-      let optionalFieldsAdded = true;
-      for (let key in recipientDetailsForm.optionalFields) {
-        if (!formsProps[recepientFormIdx].formState[key]) {
-          optionalFieldsAdded = false;
-          break;
-        }
-      }
-      if (!optionalFieldsAdded) {
-        formsProps[recepientFormIdx].setFormState((prev) => {
-          return {
-            ...recipientDetailsForm.optionalFields,
-            ...prev,
-          };
-        });
-      }
-    } else {
-      formsProps[recepientFormIdx].setFormState((prev) => {
-        const updated = { ...prev };
-        for (let key in recipientDetailsForm.optionalFields) {
-          delete updated[key];
-        }
-        return updated;
-      });
-    }
-  }, [addRecepientManually]);
+
   const deleteExistingDraftHandler = async () => {
     if (currentDraftIdRef.current) {
       console.log("deleting");

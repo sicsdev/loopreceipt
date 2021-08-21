@@ -20,3 +20,5 @@ clicking on add manually should bring user to Add recipient page
 // properly sending every field to server /groups, /create, /drafts
 // make filters work
 // clicking on save as default for group should save it as default
+// make sure that [[...token]], [[...params]] are working 
+check for initial params, then set appropriate error and alert if action fails
