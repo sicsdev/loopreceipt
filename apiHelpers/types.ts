@@ -94,3 +94,11 @@ export interface ErrorResponse {
   error: boolean;
   message: string;
 }
+export interface EntityActivity {
+  _id: string;
+  seen: boolean;
+  title: string;
+  category: "Loop" | "Group" | "Profile";
+  createdAt: string;
+  metadata?: any;
+}

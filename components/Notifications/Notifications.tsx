@@ -1,18 +1,40 @@
+import activitiesApi from "@apiClient/activitiesApi";
+import { EntityActivity } from "@apiHelpers/types";
+import { dmy } from "@helpers/dateFormats";
 import Win from "@helpers/Win";
+import { useFetch } from "@hooks/useFetch";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { Dialog, DialogContent, makeStyles } from "@material-ui/core";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
+import dayjs from "dayjs";
 import Image from "next/image";
+import { useState } from "react";
+import { useEffect } from "react";
 import Notification from "./Notification";
 interface NotificationsProps {}
 const Notifications = ({}: NotificationsProps) => {
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
+  const [fetchedNotifications, setFetchedNotifications] = useState<
+    EntityActivity[]
+  >([]);
   const showNotificationsBox = useAppSelector(
     (state) => state.notifications.showNotificationsBox
   );
+  const getAllActivities = useFetch<{
+    error: boolean;
+    activities: EntityActivity[];
+  }>(activitiesApi.getAll);
+
+  useEffect(() => {
+    console.log(getAllActivities.data);
+    if (getAllActivities.data) {
+      setFetchedNotifications(getAllActivities.data.activities);
+    }
+    // dayjs(activity.createdAt).format("MMM DD, h:mm A"
+  }, [getAllActivities.data]);
   const dispatch = useAppDispatch();
   const dialogContent = (
     <>
@@ -20,8 +42,9 @@ const Notifications = ({}: NotificationsProps) => {
         <div
           className="d"
           onClick={() => {
-            console.log("back clicked");
+            // console.log("back clicked");
             // console.log(showNotificationsBox);
+
             dispatch(setShowNotificationsBox({ showNotificationsBox: false }));
           }}
         >
@@ -37,42 +60,9 @@ const Notifications = ({}: NotificationsProps) => {
         </div>
         <p className="b">Mark all as read</p>
       </div>
-      <Notification
-        iconSrc="/icons/notifications/delivery.svg"
-        text="Delivery notice - New package from Sarah Smith"
-        timeAgo="2 min ago"
-        active
-      />
-      <Notification
-        iconSrc="/icons/notifications/check.svg"
-        text="Account Changed Notice - You’ve upgraded your plan to Pro."
-        timeAgo="Jun 12, 12:10 PM"
-      />
-      <Notification
-        iconSrc="/icons/notifications/check.svg"
-        text="Account Change Notice - You’ve downgraded your plan to a free plan."
-        timeAgo="Jun 12, 12:10 PM"
-      />
-      <Notification
-        iconSrc="/icons/notifications/bell.svg"
-        text="Billing Notice - Your credit card ending in 6789 will expire soon. Head over to the billing page to update your info."
-        timeAgo="Jun 12, 12:10 PM"
-      />
-      {/* <Notification
-        iconSrc="/icons/notifications/profile.svg"
-        text="Delivery Notice - Package comment from Sanya L."
-        timeAgo="Jun 12, 12:10 PM"
-      />
-      <Notification
-        iconSrc="/icons/notifications/profile.svg"
-        text="Delivery Notice - Package comment from Sanya L."
-        timeAgo="Jun 12, 12:10 PM"
-      />
-      <Notification
-        iconSrc="/icons/notifications/profile.svg"
-        text="Delivery Notice - Package comment from Sanya L."
-        timeAgo="Jun 12, 12:10 PM"
-      /> */}
+      {fetchedNotifications.map((notification, i) => (
+        <Notification key={i} notification={notification} />
+      ))}
     </>
   );
   return (
