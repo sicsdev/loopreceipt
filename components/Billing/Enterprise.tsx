@@ -111,7 +111,7 @@ const Feature = (props: any) => {
   );
 };
 
-export default function Enterprise() {
+export default function Enterprise({ onUpgrade }) {
   const classes = useStyles();
   return (
     <Box className={classes.box}>
@@ -140,6 +140,7 @@ export default function Enterprise() {
           variant="contained"
           color="primary"
           className={`${classes.buttons} ${classes.saveButton}`}
+          onClick={() => onUpgrade("Enterprise")}
         >
           Upgrade Now
         </Button>
