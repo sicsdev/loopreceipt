@@ -1,4 +1,5 @@
 import Layout from "@components/Global/Layout";
+import MyLoader from "@components/Shared/MyLoader";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -13,6 +14,7 @@ export default function Index() {
       router.push("/user/login");
     }
   }, []);
+  return <MyLoader windowCentered />;
   return (
     <Layout>
       <Link href="/create">create</Link>

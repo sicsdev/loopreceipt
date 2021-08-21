@@ -111,7 +111,7 @@ const Verify = ({}: VerifyProps) => {
   }, [postSendVerificationLink.error]);
   return (
     <Layout>
-      {!params || getVerifyUser.loading || !initialVerificationCheckComplete ? (
+      {getVerifyUser.loading || !initialVerificationCheckComplete ? (
         <MyLoader windowCentered />
       ) : (
         <div className={commonStyles.UserForm}>

@@ -1,5 +1,7 @@
 import activitiesApi from "@apiClient/activitiesApi";
 import { EntityActivity } from "@apiHelpers/types";
+import Message from "@components/Shared/Message";
+import MyLoader from "@components/Shared/MyLoader";
 import { dmy } from "@helpers/dateFormats";
 import Win from "@helpers/Win";
 import { useFetch } from "@hooks/useFetch";
@@ -23,11 +25,16 @@ const Notifications = ({}: NotificationsProps) => {
   const showNotificationsBox = useAppSelector(
     (state) => state.notifications.showNotificationsBox
   );
+
   const getAllActivities = useFetch<{
     error: boolean;
     activities: EntityActivity[];
-  }>(activitiesApi.getAll);
-
+  }>(activitiesApi.getAll, { deferred: true });
+  useEffect(() => {
+    if (showNotificationsBox) {
+      getAllActivities.sendRequest();
+    }
+  }, [showNotificationsBox]);
   useEffect(() => {
     console.log(getAllActivities.data);
     if (getAllActivities.data) {
@@ -36,35 +43,54 @@ const Notifications = ({}: NotificationsProps) => {
     // dayjs(activity.createdAt).format("MMM DD, h:mm A"
   }, [getAllActivities.data]);
   const dispatch = useAppDispatch();
-  const dialogContent = (
-    <>
-      <div className={styles.top}>
-        <div
-          className="d"
-          onClick={() => {
-            // console.log("back clicked");
-            // console.log(showNotificationsBox);
-
-            dispatch(setShowNotificationsBox({ showNotificationsBox: false }));
-          }}
-        >
-          {win.down("xs") && (
-            <Image
-              alt="icon"
-              src="/icons/notifications/backarrow.svg"
-              width={20}
-              height={18}
-            />
-          )}
-          Notifications
+  const dialogContent = () => {
+    if (getAllActivities.loading) {
+      return (
+        <div>
+          <MyLoader />
         </div>
-        <p className="b">Mark all as read</p>
-      </div>
-      {fetchedNotifications.map((notification, i) => (
-        <Notification key={i} notification={notification} />
-      ))}
-    </>
-  );
+      );
+    }
+    if (getAllActivities.error) {
+      return (
+        <div>
+          <Message type="warning" message="Some error occurred" />
+        </div>
+      );
+    }
+    return (
+      <>
+        <div className={styles.top}>
+          <div
+            className="d"
+            onClick={() => {
+              // console.log("back clicked");
+              // console.log(showNotificationsBox);
+
+              dispatch(
+                setShowNotificationsBox({ showNotificationsBox: false })
+              );
+            }}
+          >
+            {win.down("xs") && (
+              <Image
+                alt="icon"
+                src="/icons/notifications/backarrow.svg"
+                width={20}
+                height={18}
+              />
+            )}
+            Notifications
+          </div>
+          <p className="b">Mark all as read</p>
+        </div>
+        {fetchedNotifications.map((notification, i) => (
+          <Notification key={i} notification={notification} />
+        ))}
+      </>
+    );
+  };
+
   return (
     <div className={styles.Notifications}>
       {win.up("sm") ? (
@@ -80,7 +106,7 @@ const Notifications = ({}: NotificationsProps) => {
           }}
         >
           <DialogContent className={styles.dialogContent}>
-            {dialogContent}
+            {dialogContent()}
           </DialogContent>
         </Dialog>
       ) : (
@@ -89,7 +115,7 @@ const Notifications = ({}: NotificationsProps) => {
             className={styles.mobileView}
             style={{ height: windowDimensions.innerHeight + "px" }}
           >
-            {dialogContent}
+            {dialogContent()}
           </div>
         )
       )}

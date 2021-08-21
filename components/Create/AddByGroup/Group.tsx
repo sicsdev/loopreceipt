@@ -3,24 +3,77 @@ import ProfileIcons from "@components/Shared/ProfileIcons";
 import Switch from "@components/Controls/Switch";
 import { randomColor, randomMemoizedColor, range } from "@helpers/utils";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Win from "@helpers/Win";
 import { EntityGroup } from "apiHelpers/types";
+import { useFetch } from "@hooks/useFetch";
+import groupsApi from "@apiClient/groupsApi";
 interface GroupProps {
   group?: EntityGroup;
   selected: boolean;
 }
 const Group = ({ group, selected }: GroupProps) => {
-  const [saveAsDefault, setSaveAsDefault] = useState(false);
+  const [isDefault, setIsDefault] = useState(() => {
+    if (group && group.isDefault) return true;
+    return false;
+  });
   const styles = useStyles({ selected });
   const detailsRef = useRef<HTMLDivElement>(null);
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
+  const initRef = useRef(true);
+  const updateDefaultStatus = useFetch<{
+    group: EntityGroup;
+  }>(groupsApi.update, { deferred: true });
+  useEffect(() => {
+    if (initRef.current) {
+      // because we don't want to do this at first render
+      initRef.current = false;
+      return;
+    }
+    // console.log(group?.groupid);
+    // console.log(isDefault);
+    if (group?.groupid) {
+      (async () => {
+        console.log(group);
+        const loopersWithoutId = group.loopers.map((looper) => {
+          return {
+            email: looper.email,
+            name: looper.name,
+          };
+        });
+        const response = await updateDefaultStatus.sendRequest({
+          group: {
+            ...group,
+            loopers: loopersWithoutId,
+            // isDefault: undefined,
+            creator: undefined,
+            createdAt: undefined,
+            updatedAt: undefined,
+            isDefault: isDefault,
+            __v: undefined,
+            groupid: undefined,
+          },
+          groupid: group.groupid,
+        });
+        console.log("response");
+        if (response) console.log(response.group.isDefault);
+      })();
+    }
+  }, [isDefault]);
   const switchButton = (
     <Switch
-      checked={saveAsDefault}
-      onChange={(e, checked) => setSaveAsDefault(checked)}
+      checked={isDefault}
+      onChange={(e, checked) => {
+        setIsDefault(checked);
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        // we want to prevent group getting selecting
+        // while we are just toggling the default status of this group
+        // console.log("switch button clicked");
+      }}
       name="saveAsDefault"
       inputProps={{ "aria-label": "saveAsDefault" }}
     />
