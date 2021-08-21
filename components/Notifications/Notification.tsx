@@ -32,7 +32,13 @@ export default function Notification({ notification }: NotificationProps) {
         <Image alt="icon" src={iconSrc} width={25} height={25} />
         {!notification.seen && <div className="dot"></div>}
       </div>
-      <div className="text">&ldquo;{notification.title}&rdquo;</div>
+      <div className="text">
+        &ldquo;
+        {notification.title.includes("You have create a loop")
+          ? "You have created a new Loopreceipt"
+          : notification.title}
+        &rdquo;
+      </div>
       <div className="time">
         {dayjs(notification.createdAt).format("MMM DD, h:mm A")}
       </div>
