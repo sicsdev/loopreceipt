@@ -34,7 +34,7 @@ export default function Notification({ notification }: NotificationProps) {
       </div>
       <div className="text">
         &ldquo;
-        {notification.title.includes("You have create a loop")
+        {notification.title.includes("You have created a loop")
           ? "You have created a new Loopreceipt"
           : notification.title}
         &rdquo;
