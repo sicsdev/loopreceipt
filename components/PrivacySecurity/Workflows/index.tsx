@@ -129,7 +129,7 @@ export default function Workflows() {
       </RadioGroup>
 
       <Link href="https://www.loopreceipt.com/privacy-policy" passHref>
-        <a>
+        <a target="_blank">
           <Typography className={classes.link}>
             Learn more about our privacy policies.
           </Typography>
