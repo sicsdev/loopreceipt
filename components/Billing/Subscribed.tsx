@@ -40,13 +40,14 @@ const useStyles = makeStyles((theme) => ({
     fontStyle: "normal",
     fontWeight: "bold",
     color: "#000000",
-    marginBottom: 15,
     [theme.breakpoints.down("sm")]: {
       fontSize: 20,
+      marginBottom: 19,
       lineHeight: "27px",
     },
     [theme.breakpoints.up("sm")]: {
-      fontSize: 25,
+      fontSize: 24,
+      marginBottom: 28,
       lineHeight: "29px",
     },
   },
@@ -54,15 +55,15 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Roboto",
     fontStyle: "normal",
     fontWeight: 500,
-
     color: "#828282",
-    marginBottom: 19,
     [theme.breakpoints.down("sm")]: {
       fontSize: 18,
+      marginBottom: 19,
       lineHeight: "27px",
     },
     [theme.breakpoints.up("sm")]: {
       fontSize: 16,
+      marginBottom: 28,
       lineHeight: "19px",
     },
   },
@@ -90,7 +91,15 @@ const useStyles = makeStyles((theme) => ({
   nextPaymentButton: {
     color: "#234361",
     borderColor: "#234361",
-    "& span": { fontWeight: 500 },
+    "& span": {
+      fontWeight: 500,
+      textTransform: "none",
+      [theme.breakpoints.down("sm")]: {
+        fontSize: 12,
+        lineHeight: "14px",
+        padding: "14px",
+      },
+    },
   },
   table: {
     minWidth: 650,
@@ -126,6 +135,20 @@ const useStyles = makeStyles((theme) => ({
     color: "#828282",
     marginBottom: 32,
   },
+  contentHeadings: {
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontWeight: 500,
+    color: "#4F4F4F",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 20,
+      lineHeight: "23px",
+    },
+    [theme.breakpoints.up("sm")]: {
+      fontSize: 22,
+      lineHeight: "26px",
+    },
+  },
 }));
 
 interface SubscribedProps {
@@ -149,7 +172,7 @@ export default function Subscribed({ upgrade, onUpgrade }: SubscribedProps) {
   const [msgDescription, setMsgDescription] = useState(
     "You will no longer be billed."
   );
-  const [msgModal, setMsgModal] = useState(true);
+  const [msgModal, setMsgModal] = useState(false);
   const handleMsgModalOpen = () => setMsgModal(true);
   const handleMsgModalClose = () => setMsgModal(false);
 
@@ -189,7 +212,10 @@ export default function Subscribed({ upgrade, onUpgrade }: SubscribedProps) {
       <br /> <br /> <br />
       <Divider />
       <br /> <br />
-      <Typography variant="h5" style={{ marginBottom: 20 }}>
+      <Typography
+        className={classes.contentHeadings}
+        style={{ marginBottom: 29 }}
+      >
         Change Plan
       </Typography>
       <Box className={classes.changePlan}>
@@ -223,7 +249,10 @@ export default function Subscribed({ upgrade, onUpgrade }: SubscribedProps) {
       <br />
       <br />
       <br />
-      <Typography variant="h5" style={{ marginBottom: 20 }}>
+      <Typography
+        className={classes.contentHeadings}
+        style={{ marginBottom: 29 }}
+      >
         Payment History
       </Typography>
       <br />

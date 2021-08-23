@@ -20,10 +20,16 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Roboto",
     fontStyle: "normal",
     fontWeight: "bold",
-    fontSize: 25,
-    lineHeight: "29px",
     color: "#000000",
     marginBottom: 15,
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 20,
+      lineHeight: "30px",
+    },
+    [theme.breakpoints.up("sm")]: {
+      fontSize: 25,
+      lineHeight: "29px",
+    },
   },
   subheading: {
     fontFamily: "Roboto",
@@ -33,6 +39,14 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "19px",
     color: "#828282",
     marginBottom: 19,
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 18,
+      lineHeight: "21px",
+    },
+    [theme.breakpoints.up("sm")]: {
+      fontSize: 24,
+      lineHeight: "28px",
+    },
   },
   prize: {
     fontFamily: "Roboto",
@@ -127,12 +141,6 @@ export default function FreePlan({ upgrade, onUpgrade }: FreePlanProps) {
       >
         Upgrade Now
       </Button>
-
-      <Box textAlign="center" marginTop="13px">
-        <Link href="/" passHref>
-          <a className={classes.link}>Learn More</a>
-        </Link>
-      </Box>
     </Box>
   );
 }
