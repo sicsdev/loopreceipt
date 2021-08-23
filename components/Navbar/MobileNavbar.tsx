@@ -57,14 +57,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
             <MyLink link="/billing">Pricing</MyLink>
             <MyLink link="/accountsettings">My Account</MyLink>
           </div>
-          <div
-            style={{
-              padding: "1rem",
-              color: "#BDBDBD",
-            }}
-          >
-            Version 1.3.0
-          </div>
+
           <div className={styles.button}>
             <RoundButton
               color={theme.palette.secondary.main}
