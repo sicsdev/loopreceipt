@@ -272,7 +272,10 @@ export default function RecipientCommentAnalytics() {
         <Box>
           <Typography className={classes.headingStyle}>{msg}</Typography>
         </Box>
-        <div style={{ display: "flex" }} className={classes.text}>
+        <div
+          style={{ display: "flex", justifyContent: "center" }}
+          className={classes.text}
+        >
           <Typography className={classes.percentageStyle}>
             {Math.trunc(percent[0])}%
           </Typography>

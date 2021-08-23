@@ -31,7 +31,7 @@ type labelOptions = {
 };
 
 const LABELS: labelOptions = {
-  weekly: ["Sun", "Tues", "Wed", "Thurs", "Fri", "Sat", "Mon"],
+  weekly: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"],
   monthly: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"],
   yearly: [
     "Jan",
@@ -89,6 +89,16 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 12,
       color: "#6A707E",
       border: "0 !important",
+    },
+  },
+  chartBox: {
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 0,
+      marginRight: 0,
+    },
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: 24,
+      marginRight: 24,
     },
   },
 }));
@@ -206,7 +216,7 @@ export default function PackageAnalytics() {
       >
         <Typography className={classes.title1}>{totalPackages}</Typography>
       </Box>
-      <Box sx={{ px: 3, pb: 1 }} dir="ltr">
+      <Box className={classes.chartBox} dir="ltr">
         <ReactApexChart
           type="line"
           series={data}

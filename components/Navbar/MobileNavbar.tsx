@@ -54,8 +54,8 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
             <MyLink link="/recipients">Recepients</MyLink>
             <MyLink link="/analytics">Analytics</MyLink>
             <MyLink link="/integration">Integration</MyLink>
-            <MyLink link="/pricing">Pricing</MyLink>
-            <MyLink link="/account">My Account</MyLink>
+            <MyLink link="/billing">Pricing</MyLink>
+            <MyLink link="/accountsettings">My Account</MyLink>
           </div>
           <div
             style={{
