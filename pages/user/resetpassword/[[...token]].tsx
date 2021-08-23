@@ -17,6 +17,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import MessageCard from "@components/Shared/MessageCard";
 import Image from "next/image";
+import { useRef } from "react";
+import MyLoader from "@components/Shared/MyLoader";
 // change this
 interface ResetPasswordProps {}
 const ResetPassword = ({}: ResetPasswordProps) => {
@@ -27,39 +29,28 @@ const ResetPassword = ({}: ResetPasswordProps) => {
   let { token } = router.query;
   token = token?.[0];
   console.log(token);
-  const [browser, setBrowser] = useState("");
-  const [osName, setOsName] = useState("");
-  const [location, setLocation] = useState("");
-  const [invalidLink, setInValidLink] = useState(true);
+
+  const [invalidLink, setInValidLink] = useState(false);
   const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false);
-  const fetchDeviceAndLocationDetails = () => {
-    let c = deviceDetect();
-    if (c.isMobile) {
-      setBrowser(`${c.model} ${c.vendor} ${c.ua}`);
-      setOsName(c.os);
-    } else {
-      setBrowser(c.browserName);
-      setOsName(c.osName);
-    }
-    axios
-      .get("https://extreme-ip-lookup.com/json/")
-      .then((response) => {
-        if (response.data) {
-          setLocation(
-            `${response?.data?.city}, ${response?.data?.region}, ${response?.data?.country}`
-          );
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const [waitingForParams, setWaitingForParams] = useState(true);
   useEffect(() => {
-    if (token && invalidLink) {
-      setInValidLink(false);
-      fetchDeviceAndLocationDetails();
+    setTimeout(() => {
+      // we will wait for param for 3 seconds
+      // if param is still not set we are going to declare this link as invalid
+      setWaitingForParams(false);
+    }, 3000);
+  }, []);
+  useEffect(() => {
+    if (token) {
+      setWaitingForParams(false);
     }
   }, [token]);
+  useEffect(() => {
+    if (!waitingForParams && !token) {
+      console.log("exiting due to no token provided");
+      setInValidLink(true);
+    }
+  }, [waitingForParams]);
   const { data, loading, sendRequest, requestSent, error } = useFetch<string>(
     usersApi.passwordReset,
     {
@@ -68,27 +59,55 @@ const ResetPassword = ({}: ResetPasswordProps) => {
   );
   const resetPassword = async () => {
     // console.log(resetPasswordFormProps);
+
     if (validateAllFieldsOfForm(resetPasswordFormProps)) {
+      let c = deviceDetect();
+
+      let browser = "";
+      let os = "";
+      if (c.isMobile) {
+        browser = `${c.model} ${c.vendor} ${c.ua}`;
+        os = c.os;
+      } else {
+        browser = c.browserName;
+        os = c.osName;
+      }
+      let location = "";
+      try {
+        const response = await axios.get("https://extreme-ip-lookup.com/json/");
+
+        location = `${response?.data?.city}, ${response?.data?.region}, ${response?.data?.country}`;
+      } catch (err) {
+        console.log(err);
+      }
+
       const payload = {
         token: token,
         newPassword: resetPasswordFormProps.formState.newPassword.value,
         confirmPassword: resetPasswordFormProps.formState.confirmPassword.value,
         location: location,
         browser: browser,
-        os: osName,
+        os: os,
       };
       console.log(payload);
       const response = await sendRequest(payload);
       console.log(response);
       if (response) {
         setResetPasswordSuccess(true);
+      } else {
+        // no token case is covered initially
+        // this check is for expired link ie. 10 minutes
+        // so if the response is not received we declare it as invalid link
+        setInValidLink(true);
       }
     }
   };
   useWindowKeyDownListener({
     Enter: resetPassword,
   });
-  return (
+  return waitingForParams ? (
+    <MyLoader windowCentered />
+  ) : (
     <Layout>
       <div className={commonStyles.UserForm}>
         <div className="form card">

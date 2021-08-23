@@ -1,6 +1,6 @@
 import axios from "@apiHelpers/axios";
 import { EntityGroup, EntitySearchedGroup } from "@apiHelpers/types";
-import { axiosErrorHandler } from "@apiHelpers/apiUtils";
+import { axiosErrorHandler, cacheMap } from "@apiHelpers/apiUtils";
 const groupsApi = {
   create: async (
     group: EntityGroup
@@ -51,10 +51,13 @@ const groupsApi = {
     | undefined
   > => {
     try {
+      // getAll route for groups is perfect example for using caching
+      // since groups created by user don't change
       let url = `/groups?page=${page}`;
-
+      if (cacheMap[url]) return cacheMap[url];
       const response = await axios.get(url);
       // console.log(response.data);
+      cacheMap[url] = response.data;
       return response.data;
     } catch (error) {
       throw axiosErrorHandler(error);

@@ -6,6 +6,7 @@ import { v4 as uuidV4 } from "uuid";
 export interface SliceSearchBarType {
   searchItems: SearchItemType<undefined>[];
   searchItemClickDetector: boolean;
+  addManuallyClickDetector: boolean;
   confirmedLoopers: (EntityLooper & { id: string })[];
   selectedGroupFromSearch: EntitySearchedGroup | undefined;
   searchInput: string;
@@ -16,7 +17,8 @@ export interface SliceSearchBarType {
 }
 const initialState: SliceSearchBarType = {
   searchItems: [],
-  searchItemClickDetector: true,
+  searchItemClickDetector: false,
+  addManuallyClickDetector: false,
   confirmedLoopers: [],
   selectedGroupFromSearch: undefined,
   searchInput: "",
@@ -34,6 +36,9 @@ export const searchBarSlice = createSlice({
     },
     setSearchItemClickDetector: (state, action: PayloadAction<boolean>) => {
       state.searchItemClickDetector = action.payload;
+    },
+    setAddManuallyClickDetector: (state, action: PayloadAction<boolean>) => {
+      state.addManuallyClickDetector = action.payload;
     },
     setConfirmedLoopers: (
       state,
@@ -107,6 +112,7 @@ export const searchBarSlice = createSlice({
 export const {
   setSearchItems,
   setSearchItemClickDetector,
+  setAddManuallyClickDetector,
   setEntitySearchedGroup,
   setConfirmedLoopers,
   setSearchInput,

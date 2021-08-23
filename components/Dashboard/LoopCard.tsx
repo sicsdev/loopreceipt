@@ -32,7 +32,8 @@ const LoopCard = ({ type, loop }: LoopCardProps) => {
         {type === "received" ? "From" : "To"}: {loop.recipient?.name}
       </p>
       <p className="barcode">
-        Barcode:#{(loop as EntityLoop).loopid || draftId}
+        {draftId ? "DraftID" : "LoopreceiptID"}:#
+        {(loop as EntityLoop).loopid || draftId}
       </p>
       <p className="divider"></p>
       <div className="bottom">

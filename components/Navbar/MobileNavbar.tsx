@@ -11,6 +11,7 @@ import { setShowMobileSideBar } from "@store/slices/genericSlice";
 import { logoutUser } from "@store/slices/userSlice";
 import DesktopPop from "./DesktopPop";
 import { useRef, useState } from "react";
+import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
 interface MobileNavbarProps {}
 const MobileNavbar = ({}: MobileNavbarProps) => {
   const styles = useStyles();
@@ -83,6 +84,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
         />
         <span className={"text"}>Home</span>
       </div>
+
       <div className="items">
         <Image alt="icon" src="/icons/profile.png" width="38" height="38" />
         <div

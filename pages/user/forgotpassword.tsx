@@ -33,6 +33,7 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
       });
       // console.log(response);
       if (response) {
+        console.log(response);
         setEmailSentSuccessfully(true);
       }
     }

@@ -4,12 +4,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface SliceLoopReceiptType {
   type: EntityLoopType;
   mode: EntityLoopMode | undefined;
-  addRecepientManually: boolean;
 }
 const initialState: SliceLoopReceiptType = {
   type: "internal",
   mode: "single",
-  addRecepientManually: false,
 };
 
 export const loopReceiptSlice = createSlice({
@@ -22,22 +20,11 @@ export const loopReceiptSlice = createSlice({
     setMode: (state, action: PayloadAction<EntityLoopMode | undefined>) => {
       state.mode = action.payload;
     },
-    setAddRecepientManually: (
-      state,
-      action: PayloadAction<{
-        addRecepientManually: SliceLoopReceiptType["addRecepientManually"];
-      }>
-    ) => {
-      state.addRecepientManually = action.payload.addRecepientManually;
-    },
   },
 });
 
 // Reducers and actions
-export const {
-  setType: setLoopReceiptType,
-  setMode: setLoopReceiptMode,
-  setAddRecepientManually,
-} = loopReceiptSlice.actions;
+export const { setType: setLoopReceiptType, setMode: setLoopReceiptMode } =
+  loopReceiptSlice.actions;
 
 export default loopReceiptSlice.reducer;

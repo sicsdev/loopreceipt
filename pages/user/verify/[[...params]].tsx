@@ -40,6 +40,10 @@ const Verify = ({}: VerifyProps) => {
   >(usersApi.sendVerificationLink, {
     deferred: true,
   });
+  const postCheckVerificatonStatus = useFetch<{
+    error: boolean;
+    isVerified: boolean;
+  }>(usersApi.checkVerificationStatus, { deferred: true });
 
   useEffect(() => {
     if (getVerifyUserRequestSentRef.current === true) return;
@@ -58,17 +62,16 @@ const Verify = ({}: VerifyProps) => {
           if (response?.error === false) {
             router.push("/user/login");
           } else {
-            try {
-              const response = await usersApi.sendVerificationLink({
-                email: email as string,
-              });
+            const response = await postCheckVerificatonStatus.sendRequest(
+              email as string
+            );
+
+            if (response?.isVerified) {
+              console.log("user is already verified");
+              router.push("/user/login");
+            } else {
               setInitialVerificationCheckComplete(true);
               raiseAlert("Verification failed please retry", "error");
-            } catch (err) {
-              console.log("user verification check");
-              if (err.message === "User already verified") {
-                router.push("/user/login");
-              }
             }
           }
           getVerifyUserRequestSentRef.current = true;
@@ -108,7 +111,7 @@ const Verify = ({}: VerifyProps) => {
   }, [postSendVerificationLink.error]);
   return (
     <Layout>
-      {!params || getVerifyUser.loading || !initialVerificationCheckComplete ? (
+      {getVerifyUser.loading || !initialVerificationCheckComplete ? (
         <MyLoader windowCentered />
       ) : (
         <div className={commonStyles.UserForm}>

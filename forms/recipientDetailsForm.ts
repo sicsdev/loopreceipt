@@ -195,5 +195,27 @@ const recipientDetailsForm: FormType = {
       setFormState(updatedForm);
     }
   },
+  addManuallyClicked: function ({
+    setFormState,
+  }: {
+    setFormState: useFormReturnType["setFormState"];
+  }) {
+    setFormState((prev) => {
+      let optionalFieldsAdded = true;
+      for (let key in recipientDetailsForm.optionalFields) {
+        if (!prev[key]) {
+          optionalFieldsAdded = false;
+          break;
+        }
+      }
+      if (!optionalFieldsAdded) {
+        return {
+          ...recipientDetailsForm.optionalFields,
+          ...prev,
+        };
+      }
+      return prev;
+    });
+  },
 };
 export default recipientDetailsForm;

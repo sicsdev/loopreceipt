@@ -23,7 +23,10 @@ import {
 } from "forms/formUtils";
 import { useRouter } from "next/router";
 import { EntityDraft, EntityGroup, EntityLoopMode } from "@apiHelpers/types";
-import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
+import {
+  setAddManuallyClickDetector,
+  setConfirmedLoopers,
+} from "@store/slices/searchBarSlice";
 
 import groupsApi from "@apiClient/groupsApi";
 import MyLoader from "@components/Shared/MyLoader";
@@ -62,7 +65,9 @@ function AddByGroup({
   const [saveGroupDialogOpen, setSaveGroupDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [savedGroup, setSavedGroup] = useState<EntityGroup>();
-
+  const addManuallyClickDetector = useAppSelector(
+    (state) => state.searchBar.addManuallyClickDetector
+  );
   const detailsRef = useRef<HTMLDivElement>(null);
   // const groupFetchedFromDraftRef = useRef(true);
   const dispatch = useAppDispatch();
@@ -72,7 +77,15 @@ function AddByGroup({
   const recipientFormIdx = forms.findIndex(
     (form) => form.formName === "recipientDetailsForm"
   );
-
+  useEffect(() => {
+    // for entity forms we run itemClickDetector in useEffect defined in Entityform
+    if (addManuallyClickDetector) {
+      if (showExistingGroups) {
+        setShowExistingGroups(false);
+      }
+      dispatch(setAddManuallyClickDetector(false));
+    }
+  }, [addManuallyClickDetector]);
   useEffect(() => {
     if (detailsRef.current) {
       const contentDivs: any =

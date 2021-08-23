@@ -7,9 +7,9 @@ import {
   runSequentiallyAfterDelay,
 } from "@helpers/utils";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { setAddRecepientManually } from "@store/slices/loopReceiptSlice";
 import { MatchDetails, SearchItemType } from "@interfaces/SearchItemType";
 import {
+  setAddManuallyClickDetector,
   setSearchInput,
   setSearchItemClickDetector,
   setSearchItems,
@@ -28,9 +28,6 @@ const SearchCard = ({}: SearchCardProps) => {
     searchItemName,
   } = useAppSelector((state) => state.searchBar);
 
-  const addRecepientManually = useAppSelector(
-    (state) => state.loopReceipt.addRecepientManually
-  );
   const [sortedItems, setSortedItems] = useState<SearchItemType<any>[]>([]);
   const formType = useAppSelector((state) => state.loopReceipt.type);
   useEffect(() => {
@@ -157,11 +154,8 @@ const SearchCard = ({}: SearchCardProps) => {
       <div
         className={styles.addManuallyButton}
         onClick={() => {
-          dispatch(
-            setAddRecepientManually({
-              addRecepientManually: !addRecepientManually,
-            })
-          );
+          dispatch(setAddManuallyClickDetector(true));
+          dispatch(setSearchInput(""));
         }}
       >
         + Add manually

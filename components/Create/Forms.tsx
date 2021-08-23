@@ -3,7 +3,10 @@ import Form from "@components/Create/Form";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { setSearchItemClickDetector } from "@store/slices/searchBarSlice";
+import {
+  setAddManuallyClickDetector,
+  setSearchItemClickDetector,
+} from "@store/slices/searchBarSlice";
 
 interface FormsProps {
   forms: FormType[];
@@ -13,9 +16,8 @@ interface FormsProps {
 const Forms = ({ forms, formsProps, activeFormIndex }: FormsProps) => {
   const styles = useStyles();
 
-  const { searchItems, searchItemClickDetector } = useAppSelector(
-    (state) => state.searchBar
-  );
+  const { searchItems, searchItemClickDetector, addManuallyClickDetector } =
+    useAppSelector((state) => state.searchBar);
   const dispatch = useAppDispatch();
   useEffect(() => {
     // for entity forms we run itemClickDetector in useEffect defined in Entityform
@@ -27,6 +29,16 @@ const Forms = ({ forms, formsProps, activeFormIndex }: FormsProps) => {
       dispatch(setSearchItemClickDetector(false));
     }
   }, [searchItemClickDetector]);
+  useEffect(() => {
+    if (addManuallyClickDetector) {
+      // console.log("add manually clicked");
+      forms[activeFormIndex].addManuallyClicked?.({
+        setFormState: formsProps[activeFormIndex].setFormState,
+      });
+      dispatch(setAddManuallyClickDetector(false));
+    }
+  }, [addManuallyClickDetector]);
+
   useEffect(() => {
     forms[activeFormIndex].populateSearchItems?.();
   }, [activeFormIndex]);

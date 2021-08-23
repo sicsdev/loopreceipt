@@ -1,26 +1,47 @@
+import activitiesApi from "@apiClient/activitiesApi";
+import { EntityActivity } from "@apiHelpers/types";
+import { useFetch } from "@hooks/useFetch";
 import { makeStyles } from "@material-ui/core";
+import dayjs from "dayjs";
 import Image from "next/image";
+import { useEffect } from "react";
 interface NotificationProps {
-  active?: boolean;
-  iconSrc: string;
-  text: string;
-  timeAgo: string;
+  notification: EntityActivity;
 }
-export default function Notification({
-  text,
-  iconSrc,
-  active = false,
-  timeAgo,
-}: NotificationProps) {
+// iconSrc="/icons/notifications/bell.svg"
+export default function Notification({ notification }: NotificationProps) {
   const styles = useStyles();
+  const patchMarkNotificationAsSeen = useFetch<any>(() =>
+    activitiesApi.markAsSeen(notification._id)
+  );
+  useEffect(() => {
+    // console.log(patchMarkNotificationAsSeen.data);
+    // console.log(patchMarkNotificationAsSeen.error);
+  }, [patchMarkNotificationAsSeen]);
+  const iconSrc =
+    notification.category === "Loop"
+      ? "/icons/notifications/delivery.svg"
+      : notification.category === "Profile"
+      ? "/icons/notifications/profile.svg"
+      : notification.category === "Group"
+      ? "/icons/notifications/check.svg"
+      : "";
   return (
     <div className={styles.item}>
       <div className="image">
         <Image alt="icon" src={iconSrc} width={25} height={25} />
-        {active && <div className="dot"></div>}
+        {!notification.seen && <div className="dot"></div>}
       </div>
-      <div className="text">&ldquo;{text}&rdquo;</div>
-      <div className="time">{timeAgo}</div>
+      <div className="text">
+        &ldquo;
+        {notification.title.includes("You have created a loop")
+          ? "You have created a new Loopreceipt"
+          : notification.title}
+        &rdquo;
+      </div>
+      <div className="time">
+        {dayjs(notification.createdAt).format("MMM DD, h:mm A")}
+      </div>
     </div>
   );
 }

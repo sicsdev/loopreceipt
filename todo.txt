@@ -11,6 +11,14 @@ login rather than verifying with token etc
 // make raise alert easy to use
 // missing group check in draft api, make sure to add logic for 
 selected group and draft
-// work on receive api
+// work on loops receive api
 // work on add manually on group page
 clicking on add manually should bring user to Add recipient page
+// send right location on resetting password
+// make sure + add manually works properly for all forms just like search
+// clear distinction between internal/external loopreciepts
+// properly sending every field to server /groups, /create, /drafts
+// make filters work
+// clicking on save as default for group should save it as default
+// make sure that [[...token]], [[...params]] are working 
+check for initial params, then set appropriate error and alert if action fails
