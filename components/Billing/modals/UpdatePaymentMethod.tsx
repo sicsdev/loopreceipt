@@ -12,6 +12,20 @@ import InputBox from "@components/Controls/InputBox";
 import CreditCardInput from "react-credit-card-input";
 
 const useStyles = makeStyles((theme) => ({
+  dialog: {
+    [theme.breakpoints.down("sm")]: {
+      margin: 8,
+    },
+  },
+  dialogBox: {
+    maxWidth: 465,
+    [theme.breakpoints.down("sm")]: {
+      padding: 24,
+    },
+    [theme.breakpoints.up("sm")]: {
+      padding: 40,
+    },
+  },
   title: {
     fontFamily: "Roboto",
     fontStyle: "normal",
@@ -70,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer1: {
     display: "flex",
     [theme.breakpoints.down("sm")]: {
-      flexDirection: "column",
+      justifyContent: "center",
     },
     [theme.breakpoints.up("sm")]: {},
   },
@@ -80,6 +94,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     "& span": {
       fontWeight: 500,
+      textTransform: "none",
     },
     fontSize: 18,
     lineHeight: "21px",
@@ -87,6 +102,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 8,
     [theme.breakpoints.down("sm")]: {
       margin: "10px 0px",
+      minWidth: 138,
+      minHeight: 47,
     },
     minWidth: 143,
     minHeight: 47,
@@ -95,6 +112,9 @@ const useStyles = makeStyles((theme) => ({
     color: "#000000",
     "& span": {
       fontWeight: "bold !important",
+    },
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 10,
     },
     [theme.breakpoints.up("sm")]: {
       marginLeft: 10,
@@ -175,8 +195,12 @@ export default function UpdatePaymentMethodModal({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <Box sx={{ p: 5, maxWidth: 465 }}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      classes={{ paper: classes.dialog }}
+    >
+      <Box className={classes.dialogBox}>
         <Typography className={classes.title}>Enter New Card</Typography>
 
         <Box marginBottom={2}>

@@ -151,20 +151,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface SubscribedProps {
-  upgrade: boolean;
-  onUpgrade: (value: any) => void;
-}
-
-export default function Subscribed({ upgrade, onUpgrade }: SubscribedProps) {
+export default function Subscribed() {
   const classes = useStyles();
   const [downgraded, setDowngraded] = useState(false);
-  const onUpgradeNow = () => {
-    onUpgrade(!upgrade);
-  };
+
   const [modal, setModal] = useState("");
   const handleChangePlan = (e) => {
-    // console.log(e.target.value);
     setModal(e.target.value);
   };
 
@@ -240,7 +232,6 @@ export default function Subscribed({ upgrade, onUpgrade }: SubscribedProps) {
           variant="contained"
           color="primary"
           className={classes.switchButton}
-          onClick={onUpgradeNow}
         >
           Switch to annual (save $24 per year)
         </Button>

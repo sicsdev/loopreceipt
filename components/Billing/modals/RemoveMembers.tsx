@@ -10,6 +10,15 @@ import {
 import InputBox from "@components/Controls/InputBox";
 
 const useStyles = makeStyles((theme) => ({
+  dialogBox: {
+    maxWidth: 465,
+    [theme.breakpoints.down("sm")]: {
+      padding: 24,
+    },
+    [theme.breakpoints.up("sm")]: {
+      padding: 40,
+    },
+  },
   title: {
     fontFamily: "Roboto",
     fontStyle: "normal",
@@ -50,8 +59,28 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "normal",
     color: "#333333",
   },
+  text1: {
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontWeight: "normal",
+    color: "#828282",
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 12,
+      lineHeight: "18px",
+      marginBottom: 25,
+      textAlign: "center",
+    },
+    [theme.breakpoints.up("sm")]: {
+      fontSize: 14,
+      lineHeight: "16px",
+      marginBottom: 19,
+    },
+  },
   input: {
     width: 130,
+    [theme.breakpoints.down("sm")]: {
+      width: 100,
+    },
   },
   buttonContainer: {
     display: "flex",
@@ -68,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer1: {
     display: "flex",
     [theme.breakpoints.down("sm")]: {
-      flexDirection: "column",
+      justifyContent: "center",
     },
     [theme.breakpoints.up("sm")]: {},
   },
@@ -78,6 +107,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     "& span": {
       fontWeight: 500,
+      textTransform: "none",
     },
     fontSize: 18,
     lineHeight: "21px",
@@ -85,6 +115,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 8,
     [theme.breakpoints.down("sm")]: {
       margin: "10px 0px",
+      minWidth: 138,
+      minHeight: 47,
     },
     minWidth: 143,
     minHeight: 47,
@@ -93,6 +125,9 @@ const useStyles = makeStyles((theme) => ({
     color: "#000000",
     "& span": {
       fontWeight: "bold !important",
+    },
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 10,
     },
     [theme.breakpoints.up("sm")]: {
       marginLeft: 10,
@@ -122,7 +157,7 @@ export default function RemoveMembersModal({
   const handleInputChange = () => {};
   return (
     <Dialog open={open} onClose={handleClose}>
-      <Box sx={{ p: 5, maxWidth: 465 }}>
+      <Box className={classes.dialogBox}>
         <Typography className={classes.title}>Remove Members</Typography>
         <Typography className={classes.titleCaption}>
           Prices are in CAD/USD
@@ -141,7 +176,7 @@ export default function RemoveMembersModal({
         </Box>
 
         <br />
-        <Typography className={classes.inputTexts}>
+        <Typography className={classes.text1}>
           Your new member count will be 0 and your monthly charge will be
           increased to $14
         </Typography>

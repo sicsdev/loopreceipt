@@ -11,6 +11,15 @@ import {
 import InputBox from "@components/Controls/InputBox";
 
 const useStyles = makeStyles((theme) => ({
+  dialogBox: {
+    maxWidth: 465,
+    [theme.breakpoints.down("sm")]: {
+      padding: 24,
+    },
+    [theme.breakpoints.up("sm")]: {
+      padding: 40,
+    },
+  },
   title: {
     fontFamily: "Roboto",
     fontStyle: "normal",
@@ -77,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
   buttonContainer1: {
     display: "flex",
     [theme.breakpoints.down("sm")]: {
-      flexDirection: "column",
+      justifyContent: "center",
     },
     [theme.breakpoints.up("sm")]: {},
   },
@@ -87,6 +96,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 500,
     "& span": {
       fontWeight: 500,
+      textTransform: "none",
     },
     fontSize: 18,
     lineHeight: "21px",
@@ -94,6 +104,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 8,
     [theme.breakpoints.down("sm")]: {
       margin: "10px 0px",
+      minWidth: 120,
+      minHeight: 47,
     },
     minWidth: 143,
     minHeight: 47,
@@ -102,6 +114,9 @@ const useStyles = makeStyles((theme) => ({
     color: "#000000",
     "& span": {
       fontWeight: "bold !important",
+    },
+    [theme.breakpoints.down("sm")]: {
+      marginRight: 10,
     },
     [theme.breakpoints.up("sm")]: {
       marginRight: 10,
@@ -138,7 +153,7 @@ export default function DowngradeModal({
   };
   return (
     <Dialog open={open} onClose={handleClose}>
-      <Box sx={{ p: 5, maxWidth: 465 }}>
+      <Box className={classes.dialogBox}>
         <Typography className={classes.title}>Downgrade to Super</Typography>
         <Typography className={classes.titleCaption}>
           Your Pro plan will end on 3 June 2021, and you will no longer be
