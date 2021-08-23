@@ -1,7 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import router from "next/router";
-export const baseURL = process.env.NEXT_PUBLIC_API_URL + "/api";
+// export const baseURL = process.env.NEXT_PUBLIC_API_URL + "/api";
+export const baseURL = "https://loop-staging-api.herokuapp.com" + "/api";
 const instance = axios.create({
   baseURL,
 });

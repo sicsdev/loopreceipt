@@ -15,6 +15,7 @@ import Layout from "@components/Global/Layout";
 import { makeStyles } from "@material-ui/core";
 import Workflows from "@components/PrivacySecurity/Workflows";
 import { isMobile, BrowserView, MobileView } from "react-device-detect";
+import AuthGuard from "@components/Global/AuthGuard";
 
 // ----------------------------------------------------------------------
 
@@ -116,45 +117,47 @@ export default function PrivacySecurity({ path }: PrivacySecurityProps) {
   ];
 
   return (
-    <Layout>
-      <div className={classes.heading}>
-        <div className="head">Privacy & Security</div>
-        <Divider className={classes.divider} />
-      </div>
+    <AuthGuard>
+      <Layout>
+        <div className={classes.heading}>
+          <div className="head">Privacy & Security</div>
+          <Divider className={classes.divider} />
+        </div>
 
-      <Grid container className={classes.page}>
-        <Grid item xs={12} sm={4} md={2}>
-          <BrowserView>
-            <Tabs
-              orientation={"vertical"}
-              variant="scrollable"
-              value={value}
-              onChange={(e, value) => setValue(value)}
-              className={classes.tabs}
-              TabIndicatorProps={{ color: "#fff" }}
-            >
-              {TABS.map((tab) => (
-                <Tab
-                  disableRipple
-                  key={tab.value}
-                  label={tab.value}
-                  value={tab.value}
-                  className={classes.tab}
-                  classes={{ selected: classes.selected }}
-                />
-              ))}
-            </Tabs>
-          </BrowserView>
+        <Grid container className={classes.page}>
+          <Grid item xs={12} sm={4} md={2}>
+            <BrowserView>
+              <Tabs
+                orientation={"vertical"}
+                variant="scrollable"
+                value={value}
+                onChange={(e, value) => setValue(value)}
+                className={classes.tabs}
+                TabIndicatorProps={{ color: "#fff" }}
+              >
+                {TABS.map((tab) => (
+                  <Tab
+                    disableRipple
+                    key={tab.value}
+                    label={tab.value}
+                    value={tab.value}
+                    className={classes.tab}
+                    classes={{ selected: classes.selected }}
+                  />
+                ))}
+              </Tabs>
+            </BrowserView>
+          </Grid>
+          <Grid item xs={12} sm={8} md={10}>
+            {TABS.map((tab) => {
+              const isMatched = tab.value === value;
+              return isMatched && <Box key={tab.value}>{tab.component}</Box>;
+            })}
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={8} md={10}>
-          {TABS.map((tab) => {
-            const isMatched = tab.value === value;
-            return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-          })}
-        </Grid>
-      </Grid>
 
-      <div style={{ marginBottom: 100 }}></div>
-    </Layout>
+        <div style={{ marginBottom: 100 }}></div>
+      </Layout>
+    </AuthGuard>
   );
 }

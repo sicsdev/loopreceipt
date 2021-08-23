@@ -144,7 +144,7 @@ export default function Billing({ path }: BillingProps) {
     handlePaymentModalOpen();
   };
 
-  const [subscribed, setSubscribed] = useState(false);
+  const [subscribed, setSubscribed] = useState(true);
 
   const TABS = [
     {
