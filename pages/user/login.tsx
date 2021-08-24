@@ -11,7 +11,7 @@ import { validateAllFieldsOfForm } from "@forms/formUtils";
 import loginForm from "@forms/user/loginForm";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "@components/Global/Layout";
 import Message from "@components/Shared/Message";
 interface LoginProps {}
@@ -81,7 +81,18 @@ const Login = ({}: LoginProps) => {
             padForm={false}
             onSubmit={login}
           >
-            {error && <Message message={error.message} type="warning" />}
+            {error ? (
+              error.message.toLowerCase().includes("invalid") ? (
+                <Message
+                  message={
+                    "Invalid Email or password. If email is correct please use forgot password to get a new password"
+                  }
+                  type="warning"
+                />
+              ) : (
+                <Message message={error.message} type="warning" />
+              )
+            ) : null}
             {/* Invalid Email or Password. If email is correct use forgot password
               to get a new password. */}
             <div className="row">

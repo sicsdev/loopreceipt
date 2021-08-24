@@ -182,6 +182,7 @@ export const BottomBar = ({ skipListener, nextListener }: BottomBarProps) => {
 const useStyles = makeStyles((theme) => ({
   SelectIndustry: {
     paddingTop: "3rem",
+    paddingBottom: "10rem",
     textAlign: "center",
     "& .heading": {
       fontWeight: 500,

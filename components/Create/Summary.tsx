@@ -68,8 +68,8 @@ const Summary = ({
     // delete the draft if loop is created
     if (currentDraftIdRef.current) {
       console.log("deleting the draft");
-      const response = await draftsApi.delete(currentDraftIdRef.current);
       currentDraftIdRef.current = "deleted";
+      draftsApi.delete(currentDraftIdRef.current);
     }
     for (let i = 0; i < formsProps.length; i++) {
       formsProps[i].resetForm();

@@ -52,19 +52,11 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
               </MyLink>
             ))}
             <MyLink link="/packages">Packages</MyLink>
-            <MyLink link="/recipients">Recepients</MyLink>
+            <MyLink link="/recipients">Recipients</MyLink>
             <MyLink link="/analytics">Analytics</MyLink>
             <MyLink link="/integration">Integration</MyLink>
             <MyLink link="/pricing">Pricing</MyLink>
             <MyLink link="/account">My Account</MyLink>
-          </div>
-          <div
-            style={{
-              padding: "1rem",
-              color: "#BDBDBD",
-            }}
-          >
-            Version 1.3.0
           </div>
           <div className={styles.button}>
             <RoundButton
@@ -186,6 +178,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   button: {
+    marginTop: 30,
     textAlign: "center",
     padding: "0 24px",
   },

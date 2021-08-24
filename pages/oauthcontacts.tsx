@@ -11,7 +11,6 @@ import {
 import { useState } from "react";
 import { BottomBar } from "./selectindustry";
 import Image from "next/image";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Snackbar from "@material-ui/core/Snackbar";
 import Slide from "@material-ui/core/Slide";
@@ -74,8 +73,8 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
             Which contact directory do you want to integrate with?
           </h1>
           <h4 className="subheading">
-            Select a couple of mail platforms to get started. You&apos;ll be
-            able to add or change these choices later
+            Select a contact platform to get started. You&apos;ll be able to add
+            or change your choice later
           </h4>
           <FormControl component="fieldset">
             <RadioGroup
@@ -133,7 +132,9 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
 export default OAuthContacts;
 const useStyles = makeStyles((theme) => ({
   OAuthContacts: {
+    // border: "1px solid red",
     paddingTop: "2rem",
+    paddingBottom: "10rem",
     textAlign: "center",
     "& .heading": {
       fontWeight: 500,
