@@ -27,7 +27,7 @@ const PrimaryLink = ({
         <a
           className={styles.PrimaryLink}
           href={href}
-          target="_blank"
+          target=""
           rel="noreferrer"
         >
           {children}

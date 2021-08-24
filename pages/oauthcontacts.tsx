@@ -134,8 +134,11 @@ const useStyles = makeStyles((theme) => ({
   OAuthContacts: {
     // border: "1px solid red",
     paddingTop: "2rem",
-    paddingBottom: "10rem",
     textAlign: "center",
+    paddingBottom: "10rem",
+    [theme.breakpoints.down("sm")]: {
+      paddingBottom: "0rem",
+    },
     "& .heading": {
       fontWeight: 500,
       fontSize: 35,

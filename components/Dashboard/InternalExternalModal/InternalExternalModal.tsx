@@ -28,7 +28,7 @@ const InternalExternalModal = ({}: InternalExternalModalProps) => {
       },
     },
     {
-      title: "External Looprecipts",
+      title: "External Loopreceipts",
       description: "Create loops with partners outside of your organization.",
       src: "/icons/create/external.svg",
       click: () => {

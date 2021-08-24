@@ -7,17 +7,19 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import HomeIcon from "@material-ui/icons/Home";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import PersonIcon from "@material-ui/icons/Person";
-import CreditCardIcon from '@material-ui/icons/CreditCard';
-import ContactMailIcon from '@material-ui/icons/ContactMail';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import DashboardOutlinedIcon from '@material-ui/icons/DashboardOutlined';
-import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
+import CreditCardIcon from "@material-ui/icons/CreditCard";
+import ContactMailIcon from "@material-ui/icons/ContactMail";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import DashboardOutlinedIcon from "@material-ui/icons/DashboardOutlined";
+import ExitToAppOutlinedIcon from "@material-ui/icons/ExitToAppOutlined";
 import { logoutUser } from "@store/slices/userSlice";
 import Button from "@components/Controls/Button";
-import { useAppSelector } from "@store/hooks";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
 interface DesktopPopProps {
   anchorEl: Element | null;
   showPop: boolean;
@@ -25,6 +27,8 @@ interface DesktopPopProps {
 }
 const DesktopPop = ({ anchorEl, showPop, setShowPop }: DesktopPopProps) => {
   const user = useAppSelector((state) => state.user.user);
+  const dispatch = useAppDispatch();
+
   const styles = useStyles();
   return (
     <Popover
@@ -45,12 +49,31 @@ const DesktopPop = ({ anchorEl, showPop, setShowPop }: DesktopPopProps) => {
     >
       <div className="email">{user?.email}</div>
       <PopItem icon={<HomeIcon />} text="Home" href="/dashboard" />
-      <PopItem icon={<PersonIcon />} text="Account Settings" href="/accountsettings" />
+      <PopItem
+        icon={<NotificationsIcon />}
+        text="Notifications"
+        onClick={() => {
+          dispatch(setShowNotificationsBox({ showNotificationsBox: true }));
+        }}
+      />
+      <PopItem
+        icon={<PersonIcon />}
+        text="Account Settings"
+        href="/accountsettings"
+      />
       <PopItem icon={<CreditCardIcon />} text="Billing" href="/billing" />
-      <PopItem icon={<ContactMailIcon />} text="Contact Connections" href="/contactconnections" />
-      <PopItem icon={<LockOutlinedIcon />} text="Privacy & Security Settings" href="/privacy-and-security" />
+      <PopItem
+        icon={<ContactMailIcon />}
+        text="Contact Connections"
+        href="/contactconnections"
+      />
+      <PopItem
+        icon={<LockOutlinedIcon />}
+        text="Privacy & Security Settings"
+        href="/privacy-and-security"
+      />
       <PopItem icon={<DashboardOutlinedIcon />} text="Apps" href="/apps" />
-      
+
       <div className="buttonContainer">
         <Button
           variant="outlined"
@@ -73,25 +96,26 @@ const DesktopPop = ({ anchorEl, showPop, setShowPop }: DesktopPopProps) => {
   interface PopItemProps {
     icon: JSX.Element;
     text: string;
-    href: string;
+    href?: string;
+    onClick?: Function;
   }
-  function PopItem({ href, text, icon }: PopItemProps) {
+  function PopItem({ href, text, icon, onClick }: PopItemProps) {
     const router = useRouter();
-    return (
-      <Link href={href}>
-        <ListItem
-          button
-          component="a"
-          selected={href === router.asPath}
-          onClick={() => {
-            setShowPop(false);
-          }}
-        >
-          <ListItemIcon>{icon}</ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
-      </Link>
+    const child = (
+      <ListItem
+        button
+        component="a"
+        selected={href === router.asPath}
+        onClick={() => {
+          onClick?.();
+          setShowPop(false);
+        }}
+      >
+        <ListItemIcon>{icon}</ListItemIcon>
+        <ListItemText primary={text} />
+      </ListItem>
     );
+    return href ? <Link href={href}>{child}</Link> : child;
   }
 };
 

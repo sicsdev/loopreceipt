@@ -49,8 +49,7 @@ const useStyles = makeStyles((theme) => ({
   item: {
     width: "calc(100% - 18*2px)",
     margin: "auto",
-    paddingTop: 25,
-    height: 120,
+    height: 90,
     display: "flex",
     alignItems: "center",
     borderBottom: "1px solid #E0E0E0",

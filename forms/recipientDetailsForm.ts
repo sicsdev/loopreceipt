@@ -128,7 +128,7 @@ const recipientDetailsForm: FormType = {
       label: "Zip / Postal Code",
       placeholder: "Code",
       value: "",
-      type: "number",
+      type: "text",
     },
   },
   populateSearchItems: async function () {

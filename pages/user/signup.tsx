@@ -145,7 +145,7 @@ const Signup = ({}: SignupProps) => {
                 >
                   Loopreceipt Terms
                 </PrimaryLink>
-                and&nbsp;
+                &nbsp;and&nbsp;
                 <PrimaryLink
                   href="https://www.loopreceipt.com/privacy-policy"
                   isTargetBlankLink

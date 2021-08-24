@@ -9,7 +9,7 @@ const UpperBar = ({ children }: UpperBarProps) => {
 export default UpperBar;
 const useStyles = makeStyles((theme) => ({
   upperBar: {
-    paddingTop: "3rem",
+    paddingTop: "2rem",
     paddingBottom: "1rem",
     [theme.breakpoints.down("sm")]: {
       padding: "1.5rem 0",

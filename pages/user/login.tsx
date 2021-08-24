@@ -198,6 +198,9 @@ export const commonUserFormStyles = makeStyles((theme) => ({
         flexDirection: "column",
         alignItems: "center",
       },
+      "& > div": {
+        textAlign: "center",
+      },
     },
   },
 }));

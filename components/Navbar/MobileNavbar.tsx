@@ -86,6 +86,15 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
       </div>
 
       <div className="items">
+        <Image
+          alt="icon"
+          src="/icons/desktopnavbar/bell.svg"
+          width="25"
+          height="25"
+          onClick={() => {
+            dispatch(setShowNotificationsBox({ showNotificationsBox: true }));
+          }}
+        />
         <Image alt="icon" src="/icons/profile.png" width="38" height="38" />
         <div
           className="arrowDownContainer"
