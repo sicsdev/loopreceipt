@@ -55,9 +55,16 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
             <MyLink link="/recipients">Recipients</MyLink>
             <MyLink link="/analytics">Analytics</MyLink>
             <MyLink link="/integration">Integration</MyLink>
+<<<<<<< HEAD
             <MyLink link="/pricing">Pricing</MyLink>
             <MyLink link="/account">My Account</MyLink>
           </div>
+=======
+            <MyLink link="/billing">Pricing</MyLink>
+            <MyLink link="/accountsettings">My Account</MyLink>
+          </div>
+
+>>>>>>> 696caae53348faba1502996f47e718077608614e
           <div className={styles.button}>
             <RoundButton
               color={theme.palette.secondary.main}

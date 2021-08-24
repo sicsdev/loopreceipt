@@ -4,6 +4,8 @@ import Link from "next/link";
 
 const useStyles = makeStyles((theme) => ({
   box: {
+    marginTop: 150,
+    marginBottom: 150,
     [theme.breakpoints.down("sm")]: {
       paddingTop: 30,
       border: 0,
@@ -18,10 +20,16 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Roboto",
     fontStyle: "normal",
     fontWeight: "bold",
-    fontSize: 25,
-    lineHeight: "29px",
     color: "#000000",
     marginBottom: 15,
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 20,
+      lineHeight: "30px",
+    },
+    [theme.breakpoints.up("sm")]: {
+      fontSize: 25,
+      lineHeight: "29px",
+    },
   },
   subheading: {
     fontFamily: "Roboto",
@@ -31,6 +39,14 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "19px",
     color: "#828282",
     marginBottom: 19,
+    [theme.breakpoints.down("sm")]: {
+      fontSize: 18,
+      lineHeight: "21px",
+    },
+    [theme.breakpoints.up("sm")]: {
+      fontSize: 24,
+      lineHeight: "28px",
+    },
   },
   prize: {
     fontFamily: "Roboto",
@@ -98,58 +114,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Feature = (props: any) => {
-  const classes = useStyles();
-  return (
-    <Box display="flex" marginBottom={"8px"} alignItems="center">
-      <CheckIcon color="primary" />
-      <Typography className={classes.featureLabel}>{props.label}</Typography>
-    </Box>
-  );
-};
+interface FreePlanProps {
+  upgrade: boolean;
+  onUpgrade: (value: any) => void;
+}
 
-export default function Pro({ onUpgrade }) {
+export default function FreePlan({ upgrade, onUpgrade }: FreePlanProps) {
   const classes = useStyles();
+  const onUpgradeNow = () => {
+    onUpgrade(!upgrade);
+  };
   return (
-    <Box className={classes.box}>
-      <Typography className={classes.heading}>Pro</Typography>
-      <Typography className={classes.subheading}>
-        For small and medium-sized <br /> businesses
+    <Box className={classes.box} textAlign="center">
+      <Typography className={classes.heading}>
+        You are enjoying the FREE PLAN.
       </Typography>
-      <Typography className={classes.prize}>$14/user/mo</Typography>
       <Typography className={classes.subheading}>
-        $11 per user, per month ($132 when billed <br />
-        yearly)
+        Your trial will expire on June 3, 20121.
       </Typography>
-      <Typography className={classes.features}>Top features:</Typography>
-
-      <Feature label="100 Users" />
-      <Feature label="Unlimited usage" />
-      <Feature label="Unlimited saved reports" />
-      <Feature label="OAuth" />
-      <Feature label="Four Contact Directory Connections" />
-      <Feature label="Customer Support - 24/7 support" />
-      <Feature label="Core reports" />
-      <Feature label="Advance Analytics" />
-      <Feature label="Customize your invitees' experience" />
-      <Feature label="Email reminders" />
-      <Feature label="Slack Integration" />
 
       <Button
-        fullWidth
         variant="contained"
         color="primary"
         className={`${classes.buttons} ${classes.saveButton}`}
-        onClick={() => onUpgrade("Pro")}
+        onClick={onUpgradeNow}
       >
         Upgrade Now
       </Button>
-
-      <Box textAlign="center" marginTop="13px">
-        <Link href="/" passHref>
-          <a className={classes.link}>Learn More</a>
-        </Link>
-      </Box>
     </Box>
   );
 }

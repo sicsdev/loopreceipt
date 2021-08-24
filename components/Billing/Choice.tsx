@@ -108,7 +108,7 @@ const Feature = (props: any) => {
   );
 };
 
-export default function Choice() {
+export default function Choice({ onUpgrade }) {
   const classes = useStyles();
   return (
     <Box className={classes.box}>
@@ -141,6 +141,7 @@ export default function Choice() {
         variant="contained"
         color="primary"
         className={`${classes.buttons} ${classes.saveButton}`}
+        onClick={() => onUpgrade("Choice")}
       >
         Upgrade Now
       </Button>
