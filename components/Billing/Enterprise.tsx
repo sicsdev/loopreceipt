@@ -111,7 +111,11 @@ const Feature = (props: any) => {
   );
 };
 
-export default function Enterprise({ onUpgrade }) {
+interface PackageProps {
+  onUpgrade: (packageName: string) => void;
+}
+
+export default function Enterprise({ onUpgrade }: PackageProps) {
   const classes = useStyles();
   return (
     <Box className={classes.box}>

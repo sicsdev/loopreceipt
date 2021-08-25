@@ -9,6 +9,7 @@ import {
   TextField,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+/* @ts-ignore */
 import CreditCardInput from "react-credit-card-input";
 
 const useStyles = makeStyles((theme) => ({

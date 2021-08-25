@@ -156,7 +156,7 @@ export default function Subscribed() {
   const [downgraded, setDowngraded] = useState(false);
 
   const [modal, setModal] = useState("");
-  const handleChangePlan = (e) => {
+  const handleChangePlan = (e: any) => {
     setModal(e.target.value);
   };
 
