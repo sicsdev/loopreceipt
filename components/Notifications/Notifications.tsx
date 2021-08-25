@@ -2,14 +2,12 @@ import activitiesApi from "@apiClient/activitiesApi";
 import { EntityActivity } from "@apiHelpers/types";
 import Message from "@components/Shared/Message";
 import MyLoader from "@components/Shared/MyLoader";
-import { dmy } from "@helpers/dateFormats";
 import Win from "@helpers/Win";
 import { useFetch } from "@hooks/useFetch";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { Dialog, DialogContent, makeStyles } from "@material-ui/core";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
-import dayjs from "dayjs";
 import Image from "next/image";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -46,7 +44,7 @@ const Notifications = ({}: NotificationsProps) => {
   const dialogContent = () => {
     if (getAllActivities.loading) {
       return (
-        <div>
+        <div className={styles.center}>
           <MyLoader />
         </div>
       );
@@ -126,6 +124,12 @@ export default Notifications;
 
 const useStyles = makeStyles((theme) => ({
   Notifications: {},
+  center: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+  },
   paper: {
     borderRadius: 8,
   },
@@ -133,6 +137,7 @@ const useStyles = makeStyles((theme) => ({
     width: 550,
     maxWidth: "100vw",
     padding: 0,
+
     "&:first-child": {
       paddingTop: 0,
     },
@@ -163,6 +168,7 @@ const useStyles = makeStyles((theme) => ({
 
   mobileView: {
     zIndex: 100000,
+    width: "100vw",
     backgroundColor: "white",
     position: "fixed",
     top: 0,

@@ -13,10 +13,7 @@ import companyDetailsForm from "forms/companyDetailsForm";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useForm } from "@hooks/useForm";
 import AddByGroup from "@components/Create/AddByGroup/AddByGroup";
-import {
-  getEntityLoopFromFormsProps,
-  validateAllFieldsOfForm,
-} from "forms/formUtils";
+import { getEntityLoopFromFormsProps } from "forms/formUtils";
 import { setConfirmedLoopers } from "@store/slices/searchBarSlice";
 import ConfirmDialogType from "@interfaces/ConfirmDialogType";
 import ConfirmDialog from "@components/Create/ConfirmDialog";
@@ -44,8 +41,7 @@ const Create = () => {
   );
   const dispatch = useAppDispatch();
   const currentDraftIdRef = useRef<string>();
-  const acceptRouteChangeRef = useRef(false);
-  const { draftId } = router.query;
+  let { draftId } = router.query;
   // console.log(draftId);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogType>({
     isOpen: false,
@@ -107,7 +103,7 @@ const Create = () => {
             currentDraftIdRef.current,
             loop
           );
-          // console.log(response);
+          console.log(response);
         }
       },
       3000
@@ -124,14 +120,13 @@ const Create = () => {
           currentDraftIdRef.current = draftId as string;
           setDraftSelected(draft);
           // set loop receipt mode and type
-
           dispatch(setLoopReceiptMode(draft.mode));
           dispatch(setLoopReceiptType(draft.type));
         }
       }
       setCheckForExistingDraftComplete(true);
     })();
-  }, []);
+  }, [draftId]);
 
   useEffect(() => {
     const preventRouteChange = (url: string) => {
@@ -140,48 +135,15 @@ const Create = () => {
     };
     const beforeRouteHandler = (url: string) => {
       if (url === "/create") {
-        if (
-          !currentDraftIdRef.current ||
-          currentDraftIdRef.current === "deleted"
-        ) {
-          for (let i = 0; i < formsProps.length; i++) {
-            formsProps[i].resetForm();
-          }
-          dispatch(setLoopReceiptMode(undefined));
-          return;
+        currentDraftIdRef.current = "";
+        setDraftSelected(undefined);
+        for (let i = 0; i < formsProps.length; i++) {
+          formsProps[i].resetForm();
         }
-        setConfirmDialog((prev) => ({
-          ...prev,
-          isOpen: true,
-          onConfirm: async () => {
-            deleteExistingDraftHandler();
-            for (let i = 0; i < formsProps.length; i++) {
-              formsProps[i].resetForm();
-            }
-            dispatch(setLoopReceiptMode(undefined));
-          },
-        }));
-      } else {
-        if (
-          !currentDraftIdRef.current ||
-          currentDraftIdRef.current === "deleted"
-        ) {
-          return;
-        }
-        setConfirmDialog((prev) => ({
-          ...prev,
-          isOpen: true,
-          onConfirm: async () => {
-            acceptRouteChangeRef.current = true;
-            deleteExistingDraftHandler();
-            router.push(url);
-          },
-        }));
-      }
-      if (acceptRouteChangeRef.current) {
-        acceptRouteChangeRef.current = false;
-      } else {
-        preventRouteChange(url);
+        dispatch(setConfirmedLoopers({ loopers: [] }));
+        dispatch(setLoopReceiptMode(undefined));
+        // preventRouteChange(url);
+        // can be used later for other routes
       }
     };
     Router.events.on("routeChangeStart", beforeRouteHandler);
@@ -231,7 +193,6 @@ const Create = () => {
       ...confirmDialog,
       isOpen: true,
       onConfirm: async () => {
-        acceptRouteChangeRef.current = true;
         deleteExistingDraftHandler();
         router.push("/dashboard");
       },

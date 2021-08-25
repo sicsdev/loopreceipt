@@ -99,10 +99,10 @@ const recipientDetailsForm: FormType = {
       value: "",
       type: "text",
     },
-    province: {
-      name: "province",
+    state: {
+      name: "state",
       label: "State / Province",
-      placeholder: "Province",
+      placeholder: "State",
       value: "",
       type: "region",
       dependency: "country",
@@ -128,7 +128,7 @@ const recipientDetailsForm: FormType = {
       label: "Zip / Postal Code",
       placeholder: "Code",
       value: "",
-      type: "number",
+      type: "text",
     },
   },
   populateSearchItems: async function () {

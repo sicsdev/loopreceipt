@@ -13,7 +13,6 @@ import Cookies from "js-cookie";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import DesktopPop from "./DesktopPop";
-import usersApi from "@apiClient/usersApi";
 
 interface DesktopNavbarPropTypes {
   showOnlyLogo: boolean;
@@ -104,7 +103,7 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
               <div className="item">
                 <Image
                   alt="icon"
-                  src="/icons/search.svg"
+                  src="/icons/desktopnavbar/search.svg"
                   width="20"
                   height="20"
                 />
@@ -119,7 +118,7 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
               >
                 <Image
                   alt="icon"
-                  src="/icons/bell.svg"
+                  src="/icons/desktopnavbar/bell.svg"
                   width="20"
                   height="20"
                 />
@@ -127,7 +126,7 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
               <div className="item">
                 <Image
                   alt="icon"
-                  src="/icons/message.svg"
+                  src="/icons/desktopnavbar/message.svg"
                   width="20"
                   height="20"
                 />

@@ -63,7 +63,6 @@ function AddByGroup({
   const [index, setIndex] = useState(0);
   const groupFormProps = useForm(groupDetailsForm.initialState);
   const [saveGroupDialogOpen, setSaveGroupDialogOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [savedGroup, setSavedGroup] = useState<EntityGroup>();
   const addManuallyClickDetector = useAppSelector(
     (state) => state.searchBar.addManuallyClickDetector
@@ -136,11 +135,13 @@ function AddByGroup({
             if (draftSelected.recipient?.city) {
               prev.city.value = draftSelected.recipient.city;
             }
-            if (draftSelected.recipient?.city) {
-              prev.province.value = draftSelected.recipient.city;
+            if (draftSelected.recipient?.state) {
+              prev.state.value = draftSelected.recipient.state;
             }
 
-            prev.phone.value = "32132112";
+            if (draftSelected.recipient?.phone) {
+              prev.phone.value = draftSelected.recipient.phone;
+            }
             if (draftSelected.recipient?.postalCode) {
               prev.zipCode.value = draftSelected.recipient.postalCode;
             }
@@ -177,8 +178,8 @@ function AddByGroup({
           prev.shippingAddress.value = selectedGroup.recipient.address;
           prev.country.value = selectedGroup.recipient.country;
           prev.city.value = selectedGroup.recipient.city;
-          prev.province.value = selectedGroup.recipient.city;
-          prev.phone.value = "32132112";
+          prev.state.value = selectedGroup.recipient.state;
+          prev.phone.value = selectedGroup.recipient.phone;
           prev.zipCode.value = selectedGroup.recipient.postalCode;
           prev.name.value = selectedGroup.recipient.name;
           prev.email.value = selectedGroup.recipient.email;
@@ -281,8 +282,8 @@ function AddByGroup({
     const groupToBeSaved = getGroupToBeSaved();
     if (validateAllFieldsOfForm(groupFormProps)) {
       setSaveGroupDialogOpen(false);
+      setSavedGroup(groupToBeSaved);
       setIndex(index + 1);
-      setLoading(true);
       if (!selectedGroup) {
         const response = await groupsApi.create(groupToBeSaved);
 
@@ -300,8 +301,6 @@ function AddByGroup({
         setSavedGroup(response?.group);
         setSelectedGroup(response?.group);
       }
-
-      setLoading(false);
     }
   };
   const upperBarContent = (
@@ -374,11 +373,7 @@ function AddByGroup({
                 />
               ) : index === forms.length ? (
                 <div style={{ padding: "1rem" }}>
-                  {loading ? (
-                    <MyLoader />
-                  ) : (
-                    <Group group={savedGroup} selected={false} />
-                  )}
+                  <Group group={savedGroup} selected={false} />
                 </div>
               ) : (
                 <Forms

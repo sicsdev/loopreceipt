@@ -52,11 +52,13 @@ function OneByOne({
           if (draftSelected.recipient?.city) {
             prev.city.value = draftSelected.recipient.city;
           }
-          if (draftSelected.recipient?.city) {
-            prev.province.value = draftSelected.recipient.city;
-          }
 
-          prev.phone.value = "32132112";
+          if (draftSelected.recipient?.state) {
+            prev.state.value = draftSelected.recipient.state;
+          }
+          if (draftSelected.recipient?.phone) {
+            prev.phone.value = draftSelected.recipient.phone;
+          }
           if (draftSelected.recipient?.postalCode) {
             prev.zipCode.value = draftSelected.recipient.postalCode;
           }

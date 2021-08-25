@@ -110,8 +110,10 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
         </div>
       </div>
       <Links links={tabs} />
-
-      <div className="dropdowns">
+      <div
+        className="dropdowns"
+        style={{ display: noItems ? "none" : "block" }}
+      >
         <FilterDropdowns
           loopSource={loopSource}
           setLoopSource={setLoopSource}
@@ -175,7 +177,7 @@ export default TabsBase;
 const useStyles = makeStyles((theme) => ({
   right: {
     marginLeft: 250,
-    padding: "5rem 2rem",
+    padding: "3rem 2rem",
     // border: "2px solid blue",
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0,
@@ -183,7 +185,10 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .dropdowns": {
       padding: "0 4%",
-      paddingTop: "2rem",
+      paddingTop: "0rem",
+      [theme.breakpoints.down("sm")]: {
+        paddingTop: "2rem",
+      },
     },
     "& .top": {
       display: "flex",

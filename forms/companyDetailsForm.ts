@@ -53,7 +53,7 @@ const companyDetailsForm: FormType = {
       label: "Zip Code",
       placeholder: "Zip Code",
       value: "",
-      type: "number",
+      type: "text",
     },
   },
 };

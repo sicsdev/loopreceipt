@@ -52,7 +52,7 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
               </MyLink>
             ))}
             <MyLink link="/packages">Packages</MyLink>
-            <MyLink link="/recipients">Recepients</MyLink>
+            <MyLink link="/recipients">Recipients</MyLink>
             <MyLink link="/analytics">Analytics</MyLink>
             <MyLink link="/integration">Integration</MyLink>
             <MyLink link="/billing">Pricing</MyLink>
@@ -86,6 +86,15 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
       </div>
 
       <div className="items">
+        <Image
+          alt="icon"
+          src="/icons/desktopnavbar/bell.svg"
+          width="25"
+          height="25"
+          onClick={() => {
+            dispatch(setShowNotificationsBox({ showNotificationsBox: true }));
+          }}
+        />
         <Image alt="icon" src="/icons/profile.png" width="38" height="38" />
         <div
           className="arrowDownContainer"
@@ -179,6 +188,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   button: {
+    marginTop: 30,
     textAlign: "center",
     padding: "0 24px",
   },

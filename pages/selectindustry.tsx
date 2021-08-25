@@ -21,7 +21,7 @@ import { useAppSelector } from "@store/hooks";
 import AuthGuard from "@components/Global/AuthGuard";
 
 export type IndustryTypes =
-  | "automobile"
+  | "technology"
   | "construction"
   | "ecommerce"
   | "finance"
@@ -33,7 +33,7 @@ const industries: IndustryTypes[] = [
   "healthcare",
   "transportation",
   "ecommerce",
-  "automobile",
+  "technology",
   "sales",
   "marketing",
   "construction",
@@ -183,6 +183,10 @@ const useStyles = makeStyles((theme) => ({
   SelectIndustry: {
     paddingTop: "3rem",
     textAlign: "center",
+    paddingBottom: "10rem",
+    [theme.breakpoints.down("sm")]: {
+      paddingBottom: "0rem",
+    },
     "& .heading": {
       fontWeight: 500,
       fontSize: 35,

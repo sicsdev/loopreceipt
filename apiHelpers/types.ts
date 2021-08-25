@@ -21,6 +21,8 @@ export interface EntityRecipient {
   postalCode: string;
   address: string;
   company: string;
+  state: string;
+  phone: string;
   country: string;
   city: string;
 }

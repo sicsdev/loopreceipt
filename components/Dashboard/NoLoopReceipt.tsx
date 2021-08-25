@@ -9,6 +9,7 @@ import Button from "@components/Controls/Button";
 import { LoopType } from "@interfaces/LoopTypes";
 import Image from "next/image";
 import { EntityUser } from "@apiHelpers/types";
+import PrimaryLink from "@components/Shared/PrimaryLink";
 interface NoLoopReceiptProps {
   activeTab: LoopType;
   user?: EntityUser;
@@ -41,7 +42,7 @@ const NoLoopReceipt = ({ activeTab, user }: NoLoopReceiptProps) => {
   const ManWithText = (imgSource: string) => {
     return (
       <div className={styles.manWithText}>
-        <Image src={imgSource} width={500} height={500} alt="man icon" />
+        <Image src={imgSource} width={300} height={300} alt="man icon" />
         <p className="text">
           Oh Boyyy...No, orders yet!! Create new loopreceipt
         </p>
@@ -72,6 +73,7 @@ const NoLoopReceipt = ({ activeTab, user }: NoLoopReceiptProps) => {
           >
             <Typography
               variant="body1"
+              component="div"
               gutterBottom
               style={{
                 fontWeight: "bold",
@@ -82,11 +84,14 @@ const NoLoopReceipt = ({ activeTab, user }: NoLoopReceiptProps) => {
             </Typography>
             <Typography
               variant="body2"
+              component="div"
               style={{
                 color: "#4F5257",
               }}
             >
-              You’ll want to add recipients to create Loops with you.
+              You’ll want to&nbsp;
+              <PrimaryLink href="/contactconnections">add</PrimaryLink>&nbsp;
+              recipients to create Loops with you.
             </Typography>
           </div>
           <OptionCards />

@@ -67,13 +67,15 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
             <div className={styles.emailSentMessage}>
               <p className="head">Check your email</p>
               <p className="text1">
-                We just sent you an email containing a temporary link that will
-                allow you to reset your password. Please check your spam folder
-                if the email doesn&apos;t appear within a few minutes.
+                We&apos;ve just sent you an email containing a temporary link
+                that will allow you to reset your password. Please check your
+                spam folder if the email doesn&apos;t appear within a few
+                minutes.
               </p>
               <div className="text2">
-                If there any issues <PrimaryLink href="/">email us</PrimaryLink>
-                , and we&apos;ll help fix it!
+                If there are any issues&nbsp;
+                <PrimaryLink href="/">email us</PrimaryLink>, and we&apos;ll
+                help fix it!
               </div>
             </div>
           ) : (

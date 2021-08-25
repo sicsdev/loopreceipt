@@ -9,7 +9,7 @@ import store from "@store/store";
 import axiosInstance from "@apiHelpers/axios";
 import { useEffect } from "react";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
-
+import Head from "next/head";
 const theme = createTheme({
   palette: {
     primary: {
@@ -52,6 +52,17 @@ function MyApp({ Component, pageProps }: AppProps) {
                 }),
           }}
         >
+          <Head>
+            <link rel="icon" href="/fav.png" />
+            <title>
+              Loopreceipt | The power of connecting your deliveries with smarter
+              workflow
+            </title>
+            <meta
+              name="description"
+              content="Loopreceipt is delivery management made easy. Create your own account in minutes. A little smarter and faster to help you and your team stay in the loop for shipping and delivery communication."
+            ></meta>
+          </Head>
           <Component {...pageProps} path={path} />
           {/* // path variable is available to all pages */}
         </SWRConfig>

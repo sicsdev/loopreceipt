@@ -19,7 +19,7 @@ const OptionCards = ({}: OptionCardsProps) => {
         (childClick) => (
           <OptionCard
             iconSrc="/icons/create/delivery-notification.svg"
-            text="Create a delivery notification"
+            text="Create a New Loopreceipt"
             onClick={childClick}
           />
         )
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "stretch",
     gap: 30,
-    marginTop: "5rem",
+    marginTop: "3rem",
     [theme.breakpoints.down("xs")]: {
       flexDirection: "column",
       marginTop: "2rem",

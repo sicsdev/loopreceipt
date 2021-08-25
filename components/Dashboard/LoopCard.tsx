@@ -10,7 +10,7 @@ interface LoopCardProps {
   loop: EntityLoop | EntityDraft;
 }
 const LoopCard = ({ type, loop }: LoopCardProps) => {
-  console.log(loop);
+  // console.log(loop);
   const styles = useStyles();
   const draftId = (loop as EntityDraft).draftId;
   return (
