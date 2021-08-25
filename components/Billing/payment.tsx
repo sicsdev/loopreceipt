@@ -11,6 +11,7 @@ import {
   Card,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+/* @ts-ignore */
 import CreditCardInput from "react-credit-card-input";
 import LockIcon from "@material-ui/icons/Lock";
 
@@ -99,7 +100,6 @@ const useStyles = makeStyles((theme) => ({
     fontStyle: "normal",
     fontWeight: "normal",
     color: "#828282",
-    fontWeight: 500,
     [theme.breakpoints.down("sm")]: {
       fontSize: 14,
       lineHeight: "16px",
