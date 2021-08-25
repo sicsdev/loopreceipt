@@ -51,13 +51,9 @@ const groupsApi = {
     | undefined
   > => {
     try {
-      // getAll route for groups is perfect example for using caching
-      // since groups created by user don't change
       let url = `/groups?page=${page}`;
-      if (cacheMap[url]) return cacheMap[url];
       const response = await axios.get(url);
       // console.log(response.data);
-      cacheMap[url] = response.data;
       return response.data;
     } catch (error) {
       throw axiosErrorHandler(error);

@@ -109,6 +109,8 @@ export const getEntityRecipientFromRecipientState = (
     postalCode: recipientState.zipCode.value,
     address: recipientState.shippingAddress.value,
     city: recipientState.city.value,
+    state: recipientState.state.value,
+    phone: recipientState.phone.value,
     company: recipientState.receivingCompanyName?.value || "Loopreciept.com",
     country: recipientState.country.value || "india",
   };
