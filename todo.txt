@@ -24,3 +24,5 @@ clicking on add manually should bring user to Add recipient page
 check for initial params, then set appropriate error and alert if action fails
 // dashboard
 // create group external and immediately create a new loopreceipt
+// if no loading shown on group creation and then we will not have groupId 
+// make sure search is working perfectly

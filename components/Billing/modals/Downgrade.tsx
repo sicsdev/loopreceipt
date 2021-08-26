@@ -187,8 +187,7 @@ export default function DowngradeModal({
           variant="outlined"
           multiline={true}
           type="text"
-          minRows={4}
-          maxRows={4}
+          // @Malik min rows max rows was raising error please set height
         />
         <br /> <br />
         <Box className={classes.buttonContainer1}>

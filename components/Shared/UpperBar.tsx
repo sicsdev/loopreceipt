@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 interface UpperBarProps {
-  children: JSX.Element;
+  children: any;
 }
 const UpperBar = ({ children }: UpperBarProps) => {
   const styles = useStyles();

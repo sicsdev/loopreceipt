@@ -4,10 +4,12 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles } from "@material-ui/core";
 import { closeGettingStartedGuide } from "@store/slices/dashboardSlice";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 interface GettingStartedGuideMobileProps {}
 const GettingStartedGuideMobile = ({}: GettingStartedGuideMobileProps) => {
   const styles = useStyles();
+  const router = useRouter();
   const { windowDimensions } = useWindowDimensions();
   return (
     <div
@@ -41,7 +43,14 @@ const GettingStartedGuideMobile = ({}: GettingStartedGuideMobileProps) => {
                   Loopreceipt can check google Contact, Office 365, Outlook or
                   iCloud and add your contacts for easier looping
                 </p>
-                <Button>Connect Contacts</Button>
+                <Button
+                  onClick={() => {
+                    closeGettingStartedGuide();
+                    router.push("/contactconnections");
+                  }}
+                >
+                  Connect Contacts
+                </Button>
               </>
             }
           />
@@ -50,11 +59,15 @@ const GettingStartedGuideMobile = ({}: GettingStartedGuideMobileProps) => {
             text="Create single loops or create Loops by groups"
             activeContent={
               <>
-                <p>
-                  Loopreceipt can check google Contact, Office 365, Outlook or
-                  iCloud and add your contacts for easier looping
-                </p>
-                <Button>Connect Contacts</Button>
+                <p>Start creating a loopreceipt</p>
+                <Button
+                  onClick={() => {
+                    closeGettingStartedGuide();
+                    router.push("/create");
+                  }}
+                >
+                  Create Loopreceipt
+                </Button>
               </>
             }
           />
@@ -64,8 +77,12 @@ const GettingStartedGuideMobile = ({}: GettingStartedGuideMobileProps) => {
         </div>
 
         <div className="buttons">
-          <div className="gotit">Got it! Don’t show this again</div>
-          <div className="back">Back to home</div>
+          <div className="gotit" onClick={closeGettingStartedGuide}>
+            Got it! Don’t show this again
+          </div>
+          <div className="back" onClick={closeGettingStartedGuide}>
+            Back to home
+          </div>
         </div>
       </div>
     </div>
@@ -88,21 +105,24 @@ const Item = ({ i, text, activeContent }: ItemProps) => {
       }}
     >
       <p className="number">{i}</p>
-      <div ref={parentRef}> 
+      <div
+        ref={parentRef}
+        style={{
+          width: "100%",
+        }}
+      >
         <p className="text">{text}</p>
-        {activeContent && (
-          <RevealContent show={active} parentRef={parentRef}>
-            <div
-              className="activeContent"
-              onClick={(e) => {
-                e.stopPropagation();
-                // because we want to listen click on the button
-              }}
-            >
-              {activeContent}
-            </div>
-          </RevealContent>
-        )}
+        <RevealContent show={active} parentRef={parentRef}>
+          <div
+            className="activeContent"
+            onClick={(e) => {
+              e.stopPropagation();
+              // because we want to listen click on the button
+            }}
+          >
+            {activeContent}
+          </div>
+        </RevealContent>
       </div>
     </div>
   );
@@ -128,7 +148,9 @@ const useStyles = makeStyles((theme) => ({
         "& .text": {
           fontSize: 18,
         },
-        "& .cross": {},
+        "& .cross": {
+          cursor: "pointer",
+        },
       },
       "& .bars": {
         paddingBottom: 22,
@@ -151,6 +173,7 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: "column",
         gap: 37,
         "& .item": {
+          cursor: "pointer",
           userSelect: "none",
           borderBottom: "1px solid #444D5C",
           borderTop: "1px solid #444D5C",
@@ -175,6 +198,7 @@ const useStyles = makeStyles((theme) => ({
             fontWeight: 500,
           },
           "& .activeContent": {
+            width: "100%",
             paddingTop: 20,
             color: "white",
             display: "flex",
@@ -194,11 +218,13 @@ const useStyles = makeStyles((theme) => ({
           padding: "1.5rem 0",
           backgroundColor: "#2F3947",
           color: "white",
+          cursor: "pointer",
         },
         "& .back": {
           paddingTop: "1.5rem",
           paddingBottom: "2.5rem",
           color: "#A5A2A2",
+          cursor: "pointer",
         },
       },
     },

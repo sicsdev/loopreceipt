@@ -3,6 +3,8 @@ import { EntityLooper } from "apiHelpers/types";
 import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 import { SearchItemType } from "@interfaces/SearchItemType";
+import _ from "lodash";
+
 import {
   confirmLooper,
   setSearchItemName,
@@ -49,14 +51,18 @@ const loopersDetailsForm: FormType = {
       const searchItems: SearchItemType<EntityLooper>[] = [];
       for (let loop of loops) {
         for (let looper of loop.loopers) {
-          searchItems.push({
-            primary: looper.name,
-            secondary: looper.email,
-            entity: looper,
-          });
+          // this is done to prevent multiple
+          // duplicate loopers in search with same name and email
+          if (!searchItems.find((s) => _.isEqual(s.entity, looper))) {
+            searchItems.push({
+              primary: looper.name,
+              secondary: looper.email,
+              entity: looper,
+            });
+          }
         }
       }
-      // console.log(searchItems);
+      console.log(searchItems);
       store.dispatch(setSearchItems(searchItems));
     }
   },

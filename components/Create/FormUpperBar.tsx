@@ -32,32 +32,14 @@ const FormUpperBar = ({
     </div>
   );
 
-  return (
-    <UpperBar>
-      {win.up("sm") ? (
-        upperBarContent
-      ) : (
-        <div className={styles.newButton} onClick={handleBackButtonClick}>
-          {showBackButton && (
-            <Image
-              alt="icon"
-              src="/icons/create/back.svg"
-              width="20"
-              height="20"
-            />
-          )}
-          &nbsp; New Loopreceipt
-        </div>
-      )}
-    </UpperBar>
-  );
+  return <UpperBar>{win.up("sm") ? upperBarContent : backButton}</UpperBar>;
 };
 export default FormUpperBar;
 const useStyles = makeStyles((theme) => ({
   FormUpperBar: {},
   backButton: {
     [theme.breakpoints.down("xs")]: {
-      display: "none",
+      marginLeft: "1rem",
     },
   },
   upperBar: {
@@ -81,14 +63,5 @@ const useStyles = makeStyles((theme) => ({
         fontSize: 18,
       },
     },
-  },
-  newButton: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    fontWeight: "bold",
-    fontSize: "1.1rem",
-    paddingLeft: "5%",
-    "& img": {},
   },
 }));
