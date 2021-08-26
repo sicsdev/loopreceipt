@@ -14,6 +14,7 @@ import {
   setSearchItemClickDetector,
   setSearchItems,
 } from "@store/slices/searchBarSlice";
+import _ from "lodash";
 interface SearchCardProps {}
 
 const SearchCard = ({}: SearchCardProps) => {
@@ -109,19 +110,20 @@ const SearchCard = ({}: SearchCardProps) => {
             secondary={getBolded(item.secondary, item.secondaryMatch)}
             active={item.active}
             onClick={() => {
-              const updatedSearchItems = searchItems.map((item, idx) => {
-                if (idx === i) {
+              const updatedSearchItems = searchItems.map((it) => {
+                if (_.isEqual(it.entity, item.entity)) {
                   return {
-                    ...item,
+                    ...it,
                     active: true,
                   };
                 } else {
                   return {
-                    ...item,
+                    ...it,
                     active: false,
                   };
                 }
               });
+              // console.log(updatedSearchItems);
               runSequentiallyAfterDelay(
                 [
                   () => dispatch(setSearchItems(updatedSearchItems)),

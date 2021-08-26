@@ -1,6 +1,7 @@
 import loopsApi from "@apiClient/loopsApi";
 import { EntityRecipient } from "apiHelpers/types";
 import validations from "@helpers/validations";
+import _ from "lodash";
 import {
   FormStateType,
   FormType,
@@ -20,7 +21,7 @@ const recipientDetailsForm: FormType = {
 
   methods: {
     getCompleteAddress: ({ formState }) => {
-      let ans = `${formState.shippingAddress.value}, ${formState.province.value},
+      let ans = `${formState.shippingAddress.value}, ${formState.state.value},
        ${formState.city.value},
         ${formState.country.value},
           ${formState.zipCode.value}`;
@@ -159,13 +160,15 @@ const recipientDetailsForm: FormType = {
       const loops = response.items;
       const newSearchItems: SearchItemType<EntityRecipient>[] = [];
       for (let loop of loops) {
-        newSearchItems.push({
-          primary: loop.recipient.name,
-          secondary: loop.recipient.email,
-          entity: loop.recipient,
-        });
+        if (newSearchItems.every((s) => !_.isEqual(s.entity, loop.recipient))) {
+          newSearchItems.push({
+            primary: loop.recipient.name,
+            secondary: loop.recipient.email,
+            entity: loop.recipient,
+          });
+        }
       }
-      // console.log(searchItems);
+      console.log(newSearchItems);
       store.dispatch(setSearchItems(newSearchItems));
     }
   },
@@ -178,6 +181,10 @@ const recipientDetailsForm: FormType = {
   }) {
     if (recipient) {
       const modifiedRecipient: { [key: string]: string } = {
+        name: recipient.name,
+        email: recipient.email,
+        state: recipient.state,
+        phone: recipient.phone,
         zipCode: recipient.postalCode,
         shippingAddress: recipient.address,
         city: recipient.city,
