@@ -165,17 +165,21 @@ export default function Billing({ path }: BillingProps) {
     <AuthGuard>
       <Layout>
         <div className={classes.heading}>
-          <div className="head">
-            {!subscribed ? (
-              <MobileView>
-                <Box display="flex" alignItems="center">
-                  <ArrowBackIcon /> Billing
-                </Box>
-              </MobileView>
-            ) : (
-              "Billing"
-            )}
-          </div>
+          {!subscribed && freePlanUpgrade && paymentModal ? (
+            <MobileView>
+              <Box
+                display="flex"
+                alignItems="center"
+                className={classes.heading}
+                onClick={() => setPaymentModal(false)}
+              >
+                <ArrowBackIcon style={{ marginLeft: 19 }} />
+                <p className="head">Billing</p>
+              </Box>
+            </MobileView>
+          ) : (
+            <div className="head">Billing</div>
+          )}
 
           <Divider className={classes.divider} />
         </div>
