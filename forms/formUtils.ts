@@ -163,10 +163,10 @@ export const getEntityLoopFromFormsProps = ({
       const companyState = formsProps[companyFormIdx].formState;
       loop = {
         barcode: uuidv4(),
-        city: companyState.city.value,
-        country: companyState.country.value,
-        postalCode: companyState.zipCode.value,
-        province: companyState.province.value,
+        city: companyState.city.value || recipient.city,
+        country: companyState.country.value || recipient.country,
+        postalCode: companyState.zipCode.value || recipient.postalCode,
+        province: companyState.province.value || recipient.state,
         type: "external",
         mode: loopReceiptMode,
         loopers,

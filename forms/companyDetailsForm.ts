@@ -26,9 +26,9 @@ const companyDetailsForm: FormType = {
       value: "",
       type: "country",
 
-      validate: function () {
-        return validations.isRequired(this);
-      },
+      // validate: function () {
+      //   return validations.isRequired(this);
+      // },
     },
     city: {
       name: "city",
@@ -44,9 +44,9 @@ const companyDetailsForm: FormType = {
       value: "",
       type: "region",
       dependency: "country",
-      validate: function () {
-        return validations.isRequired(this);
-      },
+      // validate: function () {
+      //   return validations.isRequired(this);
+      // },
     },
     zipCode: {
       name: "zipCode",

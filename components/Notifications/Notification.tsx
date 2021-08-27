@@ -25,7 +25,7 @@ export default function Notification({ notification }: NotificationProps) {
       ? "/icons/notifications/profile.svg"
       : notification.category === "Group"
       ? "/icons/notifications/check.svg"
-      : "";
+      : "/icons/notifications/check.svg";
   return (
     <div className={styles.item}>
       <div className="image">

@@ -193,9 +193,6 @@ const FilterDropdowns = ({
                 {pickers("table")[0]}
                 {pickers("table")[1]}
               </div>
-              <div className="end">
-                <Button>Save</Button>
-              </div>
             </div>
           ) : (
             <MovableModal
@@ -300,10 +297,6 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .picker": {
       marginTop: "5rem",
-    },
-    "& .end": {
-      padding: "0 4%",
-      textAlign: "right",
     },
   },
   desktopDatePicker: {
