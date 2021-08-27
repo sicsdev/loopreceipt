@@ -36,11 +36,11 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
     }
     if (selectedAuthMethod === "google") {
       window.location.href =
-        "https://loop-staging-api.herokuapp.com/api/users/contacts/google?token=" +
+        "https://api.loopreceipt.com/api/users/contacts/google?token=" +
         Cookies.get("token");
     } else if (selectedAuthMethod === "microsoft365") {
       window.location.href =
-        "https://loop-staging-api.herokuapp.com/api/users/contacts/microsoft?token=" +
+        "https://api.loopreceipt.com/api/users/contacts/microsoft?token=" +
         Cookies.get("token");
     }
   };
