@@ -55,8 +55,8 @@ const DesktopSideBar = ({ path }: DesktopSideBarProps) => {
       <SidebarItem
         iconSrc="/icons/sidebar/integration.svg"
         text="Integration"
-        link="/integration"
-        active={path == "/integration"}
+        link="/contactconnections"
+        active={path == "/contactconnections"}
       />
     </div>
   );
