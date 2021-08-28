@@ -139,7 +139,12 @@ const Verify = ({}: VerifyProps) => {
             )}
             <div>
               Need help?&nbsp;
-              <PrimaryLink href="/">Contact Us</PrimaryLink>
+              <PrimaryLink
+                href="https://www.loopreceipt.com/contact"
+                target="_blank"
+              >
+                Contact Us
+              </PrimaryLink>
             </div>
           </div>
         </div>

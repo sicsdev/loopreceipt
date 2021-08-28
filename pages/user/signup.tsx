@@ -141,14 +141,14 @@ const Signup = ({}: SignupProps) => {
                 By clicking &ldquo;Sign Up&rdquo; you agree to&nbsp;
                 <PrimaryLink
                   href="https://www.loopreceipt.com/terms-of-service"
-                  isTargetBlankLink
+                  target="_blank"
                 >
                   Loopreceipt Terms
                 </PrimaryLink>
                 &nbsp;and&nbsp;
                 <PrimaryLink
                   href="https://www.loopreceipt.com/privacy-policy"
-                  isTargetBlankLink
+                  target="_blank"
                 >
                   Privacy Policy
                 </PrimaryLink>
@@ -205,7 +205,13 @@ const Signup = ({}: SignupProps) => {
             )}
 
             <div>
-              Need help? <PrimaryLink href="/">Contact Us</PrimaryLink>
+              Need help?&nbsp;
+              <PrimaryLink
+                href="https://www.loopreceipt.com/contact"
+                target="_blank"
+              >
+                Contact Us
+              </PrimaryLink>
             </div>
           </div>
         )}

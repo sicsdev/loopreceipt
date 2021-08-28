@@ -3,13 +3,13 @@ import Link from "next/link";
 export interface PrimaryLinkProps {
   children: JSX.Element | string;
   href: string;
-  isTargetBlankLink?: boolean;
+  target?: React.HTMLAttributeAnchorTarget;
   type?: "error" | "warning" | "info" | "success";
 }
 const PrimaryLink = ({
   children,
   href,
-  isTargetBlankLink = false,
+  target,
   type = "success",
 }: PrimaryLinkProps) => {
   const styles = useStyles();
@@ -19,7 +19,7 @@ const PrimaryLink = ({
         display: "inline-block",
       }}
     >
-      {!isTargetBlankLink ? (
+      {!target ? (
         <Link href={href}>
           <a className={styles.PrimaryLink}>{children}</a>
         </Link>
@@ -27,7 +27,7 @@ const PrimaryLink = ({
         <a
           className={styles.PrimaryLink}
           href={href}
-          target=""
+          target={target}
           rel="noreferrer"
         >
           {children}

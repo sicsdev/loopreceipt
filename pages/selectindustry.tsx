@@ -83,7 +83,7 @@ const SelectIndustry = ({}: SelectIndustryProps) => {
         <UPadWrapper>
           <div className={styles.SelectIndustry}>
             <h1 className="heading">
-              Welcome to Loopreceipt, {user?.name} Let&apos;s get you set up.
+              Welcome to Loopreceipt, {user?.name}. Let&apos;s get you set up.
             </h1>
             <h4 className="subheading">
               But first, what industry do you work on?

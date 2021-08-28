@@ -56,7 +56,7 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
           <h1 className="heading">{forgotPasswordForm.formHeading}</h1>
           {error && (
             <MessageCard type="warning">
-              That user doesn&apos;t exist There is no user with that address.{" "}
+              There is no user with that email address.
               <br />
               Do you want to&nbsp;
               <PrimaryLink href="/user/signup">sign up</PrimaryLink>

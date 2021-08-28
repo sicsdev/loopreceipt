@@ -100,7 +100,7 @@ export interface EntityActivity {
   _id: string;
   seen: boolean;
   title: string;
-  category: "Loop" | "Group" | "Profile";
+  category: "Comment" | "Loop" | "Profile" | "Group" | "Contacts";
   createdAt: string;
   metadata?: any;
 }

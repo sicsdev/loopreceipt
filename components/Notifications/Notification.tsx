@@ -8,6 +8,7 @@ import { useEffect } from "react";
 interface NotificationProps {
   notification: EntityActivity;
 }
+
 // iconSrc="/icons/notifications/bell.svg"
 export default function Notification({ notification }: NotificationProps) {
   const styles = useStyles();

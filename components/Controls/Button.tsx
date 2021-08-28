@@ -23,6 +23,7 @@ function Button({
   labelColor = "black",
   labelWeight = "normal",
   borderColor,
+  type = "button",
   ...props
 }: ButtonProps & AdditionalButtonProps) {
   const styles = useStyles({ labelColor, labelWeight, borderColor });
@@ -33,6 +34,7 @@ function Button({
       size={size}
       color={color}
       onClick={onClick}
+      type={type}
       classes={{
         label: classNames(styles.label),
       }}

@@ -1,4 +1,5 @@
 import Button from "@components/Controls/Button";
+import PrimaryLink from "@components/Shared/PrimaryLink";
 import RevealContent from "@components/Shared/RevealContent";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles } from "@material-ui/core";
@@ -73,7 +74,20 @@ const GettingStartedGuideMobile = ({}: GettingStartedGuideMobileProps) => {
           />
           <Item i={3} text="View all your loops via “Package page”" />
           <Item i={4} text="Invite others to Loopreceipt to join your team" />
-          <Item i={5} text="Need something not listed here. Contact Support" />
+          <Item
+            i={5}
+            text={
+              <>
+                Need something not listed here.&nbsp;
+                <PrimaryLink
+                  href="https://www.loopreceipt.com/contact"
+                  target="_blank"
+                >
+                  Contact Support
+                </PrimaryLink>
+              </>
+            }
+          />
         </div>
 
         <div className="buttons">
@@ -91,7 +105,7 @@ const GettingStartedGuideMobile = ({}: GettingStartedGuideMobileProps) => {
 export default GettingStartedGuideMobile;
 interface ItemProps {
   i: number;
-  text: string;
+  text: any;
   activeContent?: JSX.Element;
 }
 const Item = ({ i, text, activeContent }: ItemProps) => {
@@ -111,7 +125,7 @@ const Item = ({ i, text, activeContent }: ItemProps) => {
           width: "100%",
         }}
       >
-        <p className="text">{text}</p>
+        <div className="text">{text}</div>
         <RevealContent show={active} parentRef={parentRef}>
           <div
             className="activeContent"
