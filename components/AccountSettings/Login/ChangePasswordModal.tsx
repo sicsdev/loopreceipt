@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -7,8 +8,20 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+import classNames from "classnames";
+import usersApi from "@apiClient/usersApi";
 
 const useStyles = makeStyles((theme) => ({
+  dialogBox: {
+    maxWidth: 465,
+    [theme.breakpoints.down("sm")]: {
+      padding: 24,
+      width: 310,
+    },
+    [theme.breakpoints.up("sm")]: {
+      padding: 40,
+    },
+  },
   title: {
     fontFamily: "Roboto",
     fontStyle: "normal",
@@ -26,11 +39,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   inputBox: {
-    display: "flex",
-    marginBottom: ".5rem",
-    gap: 10,
-    fontWeight: "bold",
-    fontSize: "1.1rem",
+    "& .MyInputContainer": {
+      width: "100%",
+    },
   },
 
   buttonContainer: {
@@ -101,19 +112,33 @@ export default function ChangePasswordModal({
   handleClose,
 }: ChangePasswordModalProps) {
   const classes = useStyles();
-  const handleInputChange = () => {};
+  const [state, setState] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const handleInputChange = (event: any) => {
+    setState({ ...state, [event.target.name]: event.target.value });
+  };
+
+  const onSubmit = async () => {
+    setIsSaving(true);
+    let response = await usersApi.passwordUpdate(state);
+    setIsSaving(false);
+  };
   return (
     <Dialog open={open} onClose={handleClose}>
-      <Box sx={{ p: 5 }}>
+      <Box className={classNames(classes.dialogBox, classes.inputBox)}>
         <Typography className={classes.title}>Change Password</Typography>
 
         <InputBox
           input={{
             type: "password",
             label: "Old Password",
-            name: "password",
+            name: "currentPassword",
             placeholder: "**********",
-            value: "",
+            value: state.currentPassword,
           }}
           onChange={handleInputChange}
           onBlur={(e) => {}}
@@ -124,9 +149,9 @@ export default function ChangePasswordModal({
           input={{
             type: "password",
             label: "New Password",
-            name: "password",
+            name: "newPassword",
             placeholder: "**********",
-            value: "",
+            value: state.newPassword,
           }}
           onChange={handleInputChange}
           onBlur={(e) => {}}
@@ -137,9 +162,9 @@ export default function ChangePasswordModal({
           input={{
             type: "password",
             label: "Confirm New Password",
-            name: "password",
+            name: "confirmPassword",
             placeholder: "**********",
-            value: "",
+            value: state.confirmPassword,
           }}
           onChange={handleInputChange}
           onBlur={(e) => {}}
@@ -148,10 +173,12 @@ export default function ChangePasswordModal({
 
         <Box className={classes.buttonContainer1}>
           <Button
+            onClick={onSubmit}
             variant="contained"
             className={`${classes.buttons} ${classes.saveButton}`}
             color="primary"
             size="large"
+            disabled={isSaving}
           >
             Save Changes
           </Button>

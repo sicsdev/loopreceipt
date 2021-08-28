@@ -36,6 +36,7 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
     }
     if (selectedAuthMethod === "google") {
       window.location.href =
+<<<<<<< HEAD
         process.env.NEXT_PUBLIC_API_URL +
         "/api/users/contacts/google?token=" +
         Cookies.get("token");
@@ -43,6 +44,13 @@ const OAuthContacts = ({}: OAuthContactsProps) => {
       window.location.href =
         process.env.NEXT_PUBLIC_API_URL +
         "/api/users/contacts/microsoft?token=" +
+=======
+        "https://api.loopreceipt.com/api/users/contacts/google?token=" +
+        Cookies.get("token");
+    } else if (selectedAuthMethod === "microsoft365") {
+      window.location.href =
+        "https://api.loopreceipt.com/api/users/contacts/microsoft?token=" +
+>>>>>>> 8acabfa56ea43fd01346da173192894ab56d2a2d
         Cookies.get("token");
     }
   };
