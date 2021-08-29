@@ -25,7 +25,9 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
   const accountArrowDownRef = useRef<HTMLDivElement>(null);
   const [showPop, setShowPop] = useState(false);
   const user = useAppSelector((state) => state.user.user);
-
+  const unseenNotificationsExist = useAppSelector(
+    (state) => state.notifications.unseenNotificationsExist
+  );
   return (
     <div className={styles.DesktopNavbar}>
       <Link href="/dashboard">
@@ -116,12 +118,21 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
                   );
                 }}
               >
-                <Image
-                  alt="icon"
-                  src="/icons/desktopnavbar/bell.svg"
-                  width="20"
-                  height="20"
-                />
+                {unseenNotificationsExist ? (
+                  <Image
+                    alt="icon"
+                    src="/icons/desktopnavbar/activebell.svg"
+                    width="20"
+                    height="20"
+                  />
+                ) : (
+                  <Image
+                    alt="icon"
+                    src="/icons/desktopnavbar/bell.svg"
+                    width="20"
+                    height="20"
+                  />
+                )}
               </div>
               <div className="item">
                 <Image
@@ -199,6 +210,7 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         alignItems: "center",
         gap: "10px",
+        position: "relative",
         "& a": {
           color: "black",
         },

@@ -2,23 +2,98 @@ import activitiesApi from "@apiClient/activitiesApi";
 import { EntityActivity } from "@apiHelpers/types";
 import { useFetch } from "@hooks/useFetch";
 import { makeStyles } from "@material-ui/core";
+import { useAppSelector } from "@store/hooks";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { useEffect } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 interface NotificationProps {
   notification: EntityActivity;
+  notificationsContainerRef: RefObject<HTMLDivElement>;
+  setUnreadNotificationPosition: React.Dispatch<
+    React.SetStateAction<"" | "up" | "down">
+  >;
+  scrollObserver: boolean;
 }
 
 // iconSrc="/icons/notifications/bell.svg"
-export default function Notification({ notification }: NotificationProps) {
+
+export default function Notification({
+  notification,
+  notificationsContainerRef,
+  setUnreadNotificationPosition,
+  scrollObserver,
+}: NotificationProps) {
+  const [seenStatus, setSeenStatus] = useState(() => notification.seen);
+
+  const showNotificationsBox = useAppSelector(
+    (state) => state.notifications.showNotificationsBox
+  );
+  const notificationRef = useRef<HTMLDivElement>(null);
   const styles = useStyles();
-  const patchMarkNotificationAsSeen = useFetch<any>(() =>
-    activitiesApi.markAsSeen(notification._id)
+  const patchMarkNotificationAsSeen = useFetch<any>(
+    () => activitiesApi.markAsSeen(notification._id),
+    { deferred: true }
   );
   useEffect(() => {
-    // console.log(patchMarkNotificationAsSeen.data);
-    // console.log(patchMarkNotificationAsSeen.error);
-  }, [patchMarkNotificationAsSeen]);
+    setSeenStatus(notification.seen);
+    // we change seen status of notification in the ui only when
+    // we show or unshow the notifications
+  }, []);
+  useEffect(() => {
+    if (!notification.seen && !patchMarkNotificationAsSeen.requestSent) {
+      const { withinViewPort, position } = checkWithinViewport();
+      if (withinViewPort) {
+        patchMarkNotificationAsSeen.sendRequest();
+      } else if (position) {
+        setUnreadNotificationPosition(position);
+        setTimeout(() => {
+          setUnreadNotificationPosition("");
+        }, 1000);
+      }
+    }
+  }, [showNotificationsBox]);
+  useEffect(() => {
+    if (!notification.seen && !patchMarkNotificationAsSeen.requestSent) {
+      const { withinViewPort, position } = checkWithinViewport();
+      if (withinViewPort) {
+        patchMarkNotificationAsSeen.sendRequest();
+      }
+    }
+  }, [scrollObserver]);
+  const checkWithinViewport: () => {
+    withinViewPort: boolean;
+    position: "up" | "down" | undefined;
+  } = () => {
+    if (notificationsContainerRef.current && notificationRef.current) {
+      const containerBox =
+        notificationsContainerRef.current.getBoundingClientRect();
+      const notificationBox = notificationRef.current.getBoundingClientRect();
+      const belowTop = notificationBox.top + 20 >= containerBox.top;
+      const aboveBottom = notificationBox.bottom <= containerBox.bottom + 20;
+      if (belowTop && aboveBottom) {
+        return {
+          withinViewPort: true,
+          position: undefined,
+        };
+      }
+      if (belowTop) {
+        return {
+          withinViewPort: false,
+          position: "down",
+        };
+      }
+      if (aboveBottom) {
+        return {
+          withinViewPort: false,
+          position: "up",
+        };
+      }
+    }
+    return {
+      withinViewPort: false,
+      position: undefined,
+    };
+  };
   const iconSrc =
     notification.category === "Loop"
       ? "/icons/notifications/delivery.svg"
@@ -28,10 +103,16 @@ export default function Notification({ notification }: NotificationProps) {
       ? "/icons/notifications/check.svg"
       : "/icons/notifications/check.svg";
   return (
-    <div className={styles.item}>
+    <div
+      className={styles.item}
+      ref={notificationRef}
+      onClick={() => {
+        checkWithinViewport();
+      }}
+    >
       <div className="image">
         <Image alt="icon" src={iconSrc} width={25} height={25} />
-        {!notification.seen && <div className="dot"></div>}
+        {!seenStatus && <div className="dot"></div>}
       </div>
       <div className="text">
         &ldquo;

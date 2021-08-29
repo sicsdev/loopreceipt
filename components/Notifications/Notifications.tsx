@@ -7,19 +7,31 @@ import { useFetch } from "@hooks/useFetch";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { Dialog, DialogContent, makeStyles } from "@material-ui/core";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
-import { setShowNotificationsBox } from "@store/slices/notificationsSlice";
+import {
+  setShowNotificationsBox,
+  setUnseenNotificationsExist,
+} from "@store/slices/notificationsSlice";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Image from "next/image";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import Notification from "./Notification";
+import classNames from "classnames";
 interface NotificationsProps {}
 const Notifications = ({}: NotificationsProps) => {
+  const dispatch = useAppDispatch();
+
   const styles = useStyles();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
+  const notificationsContainerRef = useRef<HTMLDivElement>(null);
+  const [unreadNotificationPosition, setUnreadNotificationPosition] = useState<
+    "up" | "down" | ""
+  >("");
   const [fetchedNotifications, setFetchedNotifications] = useState<
     EntityActivity[]
   >([]);
+  const [scrollObserver, setScrollObserver] = useState(true);
   const showNotificationsBox = useAppSelector(
     (state) => state.notifications.showNotificationsBox
   );
@@ -29,19 +41,93 @@ const Notifications = ({}: NotificationsProps) => {
     activities: EntityActivity[];
   }>(activitiesApi.getAll, { deferred: true });
   useEffect(() => {
-    if (showNotificationsBox) {
+    getAllActivities.sendRequest();
+    setInterval(() => {
       getAllActivities.sendRequest();
-    }
-  }, [showNotificationsBox]);
+    }, 3000);
+  }, []);
   useEffect(() => {
-    console.log(getAllActivities.data);
     if (getAllActivities.data) {
       setFetchedNotifications(getAllActivities.data.activities);
     }
     // dayjs(activity.createdAt).format("MMM DD, h:mm A"
   }, [getAllActivities.data]);
-  const dispatch = useAppDispatch();
+  useEffect(() => {
+    // console.log(fetchedNotifications);
+    if (fetchedNotifications.every((v) => v.seen)) {
+      dispatch(setUnseenNotificationsExist(false));
+    } else {
+      dispatch(setUnseenNotificationsExist(true));
+    }
+  }, [fetchedNotifications]);
+  useEffect(() => {
+    const cb = (e: Event) => {
+      setScrollObserver((prev) => !prev);
+    };
+    const container = notificationsContainerRef.current;
+    setTimeout(() => {
+      notificationsContainerRef.current?.addEventListener("scroll", cb);
+    }, 1);
+    return () => {
+      container?.removeEventListener("scroll", cb);
+    };
+  }, [showNotificationsBox]);
+
   const dialogContent = () => {
+    if (fetchedNotifications.length) {
+      return (
+        <>
+          <div className={styles.top}>
+            <div
+              className="d"
+              onClick={() => {
+                // console.log("back clicked");
+                // console.log(showNotificationsBox);
+
+                dispatch(
+                  setShowNotificationsBox({ showNotificationsBox: false })
+                );
+              }}
+            >
+              {win.down("xs") && (
+                <Image
+                  alt="icon"
+                  src="/icons/notifications/backarrow.svg"
+                  width={20}
+                  height={18}
+                />
+              )}
+              Notifications
+            </div>
+            <p className="b">Mark all as read</p>
+          </div>
+          <div>
+            {fetchedNotifications.map((notification) => (
+              <Notification
+                key={notification._id}
+                scrollObserver={scrollObserver}
+                notification={notification}
+                notificationsContainerRef={notificationsContainerRef}
+                setUnreadNotificationPosition={setUnreadNotificationPosition}
+              />
+            ))}
+          </div>
+          {unreadNotificationPosition && (
+            <div
+              className={classNames(styles.unread, unreadNotificationPosition)}
+            >
+              {unreadNotificationPosition === "up" ? (
+                <ArrowUpwardIcon fontSize="small" />
+              ) : (
+                <ArrowDownwardIcon fontSize="small" />
+              )}
+              &nbsp; More unread notifications
+            </div>
+          )}
+        </>
+      );
+    }
+
     if (getAllActivities.loading) {
       return (
         <div className={styles.center}>
@@ -56,37 +142,6 @@ const Notifications = ({}: NotificationsProps) => {
         </div>
       );
     }
-    return (
-      <>
-        <div className={styles.top}>
-          <div
-            className="d"
-            onClick={() => {
-              // console.log("back clicked");
-              // console.log(showNotificationsBox);
-
-              dispatch(
-                setShowNotificationsBox({ showNotificationsBox: false })
-              );
-            }}
-          >
-            {win.down("xs") && (
-              <Image
-                alt="icon"
-                src="/icons/notifications/backarrow.svg"
-                width={20}
-                height={18}
-              />
-            )}
-            Notifications
-          </div>
-          <p className="b">Mark all as read</p>
-        </div>
-        {fetchedNotifications.map((notification, i) => (
-          <Notification key={i} notification={notification} />
-        ))}
-      </>
-    );
   };
 
   return (
@@ -103,13 +158,17 @@ const Notifications = ({}: NotificationsProps) => {
             dispatch(setShowNotificationsBox({ showNotificationsBox: false }));
           }}
         >
-          <DialogContent className={styles.dialogContent}>
+          <DialogContent
+            ref={notificationsContainerRef}
+            className={styles.dialogContent}
+          >
             {dialogContent()}
           </DialogContent>
         </Dialog>
       ) : (
         showNotificationsBox && (
           <div
+            ref={notificationsContainerRef}
             className={styles.mobileView}
             style={{ height: windowDimensions.innerHeight + "px" }}
           >
@@ -137,6 +196,7 @@ const useStyles = makeStyles((theme) => ({
     width: 550,
     maxWidth: "100vw",
     padding: 0,
+    position: "relative",
 
     "&:first-child": {
       paddingTop: 0,
@@ -174,5 +234,23 @@ const useStyles = makeStyles((theme) => ({
     top: 0,
     left: 0,
     overflow: "auto",
+  },
+  unread: {
+    position: "absolute",
+    left: "50%",
+    transform: "translateX(-50%)",
+    display: "flex",
+    alignItems: "center",
+    backgroundColor: theme.palette.secondary.main,
+    color: "white",
+    padding: "5px 10px",
+    borderRadius: 1000,
+    userSelect: "none",
+    "&.up": {
+      top: 20,
+    },
+    "&.down": {
+      bottom: 20,
+    },
   },
 }));

@@ -105,7 +105,7 @@ export const getEntityRecipientFromRecipientState = (
 ) => {
   const recipient: EntityRecipient = {
     email: recipientState.email.value,
-    name: recipientState.name.value,
+    name: recipientState.name.value.trim(),
     postalCode: recipientState.zipCode.value,
     address: recipientState.shippingAddress.value,
     city: recipientState.city.value,
