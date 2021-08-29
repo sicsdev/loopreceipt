@@ -17,6 +17,7 @@ import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
 import Notification from "./Notification";
 import classNames from "classnames";
+import Cookies from "js-cookie";
 interface NotificationsProps {}
 const Notifications = ({}: NotificationsProps) => {
   const dispatch = useAppDispatch();
@@ -35,16 +36,28 @@ const Notifications = ({}: NotificationsProps) => {
   const showNotificationsBox = useAppSelector(
     (state) => state.notifications.showNotificationsBox
   );
+  const patchMarkNotificationAsSeen = useFetch<any>(activitiesApi.markAsSeen, {
+    deferred: true,
+  });
 
   const getAllActivities = useFetch<{
     error: boolean;
     activities: EntityActivity[];
   }>(activitiesApi.getAll, { deferred: true });
-  useEffect(() => {
-    getAllActivities.sendRequest();
-    setInterval(() => {
+  const fetchNotifications = () => {
+    const token = Cookies.get("token");
+    if (token) {
       getAllActivities.sendRequest();
+    }
+  };
+  useEffect(() => {
+    fetchNotifications();
+    const i = setInterval(() => {
+      fetchNotifications();
     }, 3000);
+    return () => {
+      clearInterval(i);
+    };
   }, []);
   useEffect(() => {
     if (getAllActivities.data) {
@@ -72,7 +85,13 @@ const Notifications = ({}: NotificationsProps) => {
       container?.removeEventListener("scroll", cb);
     };
   }, [showNotificationsBox]);
-
+  const markAllAsRead = () => {
+    fetchedNotifications.forEach((notification) => {
+      if (!notification.seen) {
+        patchMarkNotificationAsSeen.sendRequest(notification._id);
+      }
+    });
+  };
   const dialogContent = () => {
     if (fetchedNotifications.length) {
       return (
@@ -99,7 +118,9 @@ const Notifications = ({}: NotificationsProps) => {
               )}
               Notifications
             </div>
-            <p className="b">Mark all as read</p>
+            <p className="b" onClick={markAllAsRead}>
+              Mark all as read
+            </p>
           </div>
           <div>
             {fetchedNotifications.map((notification) => (
@@ -121,7 +142,7 @@ const Notifications = ({}: NotificationsProps) => {
               ) : (
                 <ArrowDownwardIcon fontSize="small" />
               )}
-              &nbsp; More unread notifications
+              &nbsp;Unread Notifications
             </div>
           )}
         </>
@@ -223,6 +244,10 @@ const useStyles = makeStyles((theme) => ({
     "& .b": {
       fontWeight: 500,
       color: theme.palette.secondary.main,
+      cursor: "pointer",
+      "&:hover": {
+        textDecoration: "underline",
+      },
     },
   },
 

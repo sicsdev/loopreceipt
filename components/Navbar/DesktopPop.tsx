@@ -8,6 +8,7 @@ import {
 import React from "react";
 import HomeIcon from "@material-ui/icons/Home";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
 import PersonIcon from "@material-ui/icons/Person";
 import CreditCardIcon from "@material-ui/icons/CreditCard";
 import ContactMailIcon from "@material-ui/icons/ContactMail";
@@ -27,6 +28,9 @@ interface DesktopPopProps {
 }
 const DesktopPop = ({ anchorEl, showPop, setShowPop }: DesktopPopProps) => {
   const user = useAppSelector((state) => state.user.user);
+  const unseenNotificationsExist = useAppSelector(
+    (state) => state.notifications.unseenNotificationsExist
+  );
   const dispatch = useAppDispatch();
 
   const styles = useStyles();
@@ -50,8 +54,21 @@ const DesktopPop = ({ anchorEl, showPop, setShowPop }: DesktopPopProps) => {
       <div className="email">{user?.email}</div>
       <PopItem icon={<HomeIcon />} text="Home" href="/dashboard" />
       <PopItem
-        icon={<NotificationsIcon />}
-        text="Notifications"
+        icon={
+          unseenNotificationsExist ? (
+            <NotificationsActiveIcon />
+          ) : (
+            <NotificationsIcon />
+          )
+        }
+        text={
+          <p>
+            Notifications&nbsp;
+            {unseenNotificationsExist && (
+              <span className={styles.new}>new</span>
+            )}
+          </p>
+        }
         onClick={() => {
           dispatch(setShowNotificationsBox({ showNotificationsBox: true }));
         }}
@@ -95,7 +112,7 @@ const DesktopPop = ({ anchorEl, showPop, setShowPop }: DesktopPopProps) => {
   );
   interface PopItemProps {
     icon: JSX.Element;
-    text: string;
+    text: any;
     href?: string;
     onClick?: Function;
   }
@@ -144,5 +161,15 @@ const useStyles = makeStyles((theme) => ({
         borderColor: "#c4c4c4",
       },
     },
+  },
+  new: {
+    background: "red",
+    padding: "0 5px",
+    paddingBottom: 1,
+    color: "white",
+    borderRadius: 100,
+    fontSize: 14,
+    position: "relative",
+    bottom: 5,
   },
 }));

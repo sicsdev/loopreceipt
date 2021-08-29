@@ -23,6 +23,9 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
   const dispatch = useAppDispatch();
   const accountArrowDownRef = useRef<HTMLDivElement>(null);
   const [showPop, setShowPop] = useState(false);
+  const unseenNotificationsExist = useAppSelector(
+    (state) => state.notifications.unseenNotificationsExist
+  );
   return (
     <div className={styles.MobileNavbar}>
       <ToggleSidebar
@@ -86,15 +89,28 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
       </div>
 
       <div className="items">
-        <Image
-          alt="icon"
-          src="/icons/desktopnavbar/bell.svg"
-          width="25"
-          height="25"
+        <div
           onClick={() => {
             dispatch(setShowNotificationsBox({ showNotificationsBox: true }));
           }}
-        />
+        >
+          {unseenNotificationsExist ? (
+            <Image
+              alt="icon"
+              src="/icons/desktopnavbar/activebell.svg"
+              width="25"
+              height="25"
+            />
+          ) : (
+            <Image
+              alt="icon"
+              src="/icons/desktopnavbar/bell.svg"
+              width="25"
+              height="25"
+            />
+          )}
+        </div>
+
         <Image alt="icon" src="/icons/profile.png" width="38" height="38" />
         <div
           className="arrowDownContainer"
