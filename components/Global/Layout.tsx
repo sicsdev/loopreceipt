@@ -5,7 +5,6 @@ import Notifications from "@components/Notifications/Notifications";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import GettingStartedGuideMobile from "./GettingStartedGuideMobile";
 import { setShowAlert, setShowMobileSideBar } from "@store/slices/genericSlice";
-import { MobileView } from "react-device-detect";
 import { useSwipeable } from "react-swipeable";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
@@ -62,7 +61,6 @@ const Layout = ({ children }: LayoutProps) => {
           )}
         </Alert>
       </Snackbar>
-      <MobileView></MobileView>
       <Navbar />
       <Notifications />
       <InternalExternalModal />

@@ -14,6 +14,10 @@ const forgotPasswordForm: FormType = {
       inputProps: {
         required: true,
       },
+
+      validate: function () {
+        return validations.isRequired(this) && validations.email(this);
+      },
     },
   },
 };

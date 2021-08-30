@@ -17,7 +17,7 @@ import Slide from "@material-ui/core/Slide";
 import Alert from "@material-ui/lab/Alert";
 export type AuthTypes = "google" | "icloud" | "microsoft365";
 const authMethods: { [key: string]: string } = {
-  google: "Gmail",
+  google: "Google",
   icloud: "iCloud",
   microsoft365: "Microsoft 365",
 };

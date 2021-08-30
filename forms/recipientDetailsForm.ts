@@ -168,7 +168,6 @@ const recipientDetailsForm: FormType = {
           });
         }
       }
-      console.log(newSearchItems);
       store.dispatch(setSearchItems(newSearchItems));
     }
   },

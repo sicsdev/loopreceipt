@@ -144,14 +144,14 @@ export default Login;
 export const commonUserFormStyles = makeStyles((theme) => ({
   UserForm: {
     // border: "1px solid red",
-    padding: "7rem 16px",
+    padding: "2rem 16px",
 
     "& .form": {
       maxWidth: 600,
       margin: "auto",
       display: "flex",
       flexDirection: "column",
-      gap: "2rem",
+      gap: ".5rem",
       textAlign: "center",
       "&.card": {
         background: "#FFFFFF",
@@ -164,14 +164,14 @@ export const commonUserFormStyles = makeStyles((theme) => ({
         fontWeight: 500,
         fontSize: 36,
         color: theme.palette.secondary.main,
-        marginBottom: "1rem",
+        marginBottom: ".5rem",
         [theme.breakpoints.down("xs")]: {
           fontSize: 32,
         },
       },
       "& .subheading": {
         fontSize: 18,
-        marginTop: "-2rem",
+        marginTop: "-1rem",
       },
       "& .MyInputContainer": {
         width: "100%",
@@ -189,11 +189,11 @@ export const commonUserFormStyles = makeStyles((theme) => ({
     },
     "& .bottomLinks": {
       margin: "auto",
-      marginTop: "2rem",
+      marginTop: "1rem",
       maxWidth: 600,
       display: "flex",
       justifyContent: "space-between",
-      gap: 20,
+      gap: 10,
       [theme.breakpoints.down("md")]: {
         flexDirection: "column",
         alignItems: "center",
