@@ -24,12 +24,14 @@ interface SummaryProps {
   formsProps: useFormReturnType[];
   generatedLoopReceipt: () => void;
   currentDraftIdRef: React.MutableRefObject<string | undefined>;
+  setCreatedLoop: React.Dispatch<React.SetStateAction<EntityLoop | undefined>>;
 }
 const Summary = ({
   forms,
   formsProps,
   generatedLoopReceipt,
   currentDraftIdRef,
+  setCreatedLoop,
 }: SummaryProps) => {
   // console.log(formsProps);
   // log this to check the form state when coming to this page
@@ -61,14 +63,15 @@ const Summary = ({
       loopReceiptMode,
     });
     // console.log(loop);
-    const createdLoop = await loopApi.create(loop);
-    console.log(createdLoop);
+    const response = await loopApi.create(loop);
+    setCreatedLoop(response?.loop);
+    console.log(response);
     // remove confirmed loopers
     dispatch(setConfirmedLoopers({ loopers: [] }));
     // delete the draft if loop is created
     if (currentDraftIdRef.current) {
       console.log("deleting the draft");
-      const draftId = currentDraftIdRef.current
+      const draftId = currentDraftIdRef.current;
       currentDraftIdRef.current = "deleted";
       draftsApi.delete(draftId);
     }

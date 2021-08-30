@@ -83,6 +83,7 @@ const usersApi = {
     location: string;
     browser: string;
     os: string;
+    date: string;
   }): Promise<{ error: boolean; message: string } | undefined> => {
     try {
       const response = await axios.post("/users/reset", payload);

@@ -22,7 +22,12 @@ import {
   validateAllFieldsOfForm,
 } from "forms/formUtils";
 import { useRouter } from "next/router";
-import { EntityDraft, EntityGroup, EntityLoopMode } from "@apiHelpers/types";
+import {
+  EntityDraft,
+  EntityGroup,
+  EntityLoop,
+  EntityLoopMode,
+} from "@apiHelpers/types";
 import {
   setAddManuallyClickDetector,
   setConfirmedLoopers,
@@ -53,6 +58,8 @@ function AddByGroup({
 }: AddByGroupProps) {
   const styles = useStyles();
   const router = useRouter();
+  const [createdLoop, setCreatedLoop] = useState<EntityLoop>();
+
   const [showExistingGroups, setShowExistingGroups] = useState(
     () => !currentDraftIdRef.current || currentDraftIdRef.current === "deleted"
   );
@@ -347,7 +354,7 @@ function AddByGroup({
             upperBarContent={upperBarContent}
           />
           {index === forms.length + 2 ? (
-            <LoopReceipt />
+            <LoopReceipt createdLoop={createdLoop} />
           ) : index === forms.length + 1 ? (
             <Summary
               formsProps={formsProps}
@@ -356,6 +363,7 @@ function AddByGroup({
                 setIndex(index + 1);
               }}
               currentDraftIdRef={currentDraftIdRef}
+              setCreatedLoop={setCreatedLoop}
             />
           ) : (
             <BoxContent

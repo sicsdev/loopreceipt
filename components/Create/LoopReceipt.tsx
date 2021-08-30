@@ -4,20 +4,41 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-interface LoopReceiptProps {}
-const LoopReceipt = ({}: LoopReceiptProps) => {
+import { EntityLoop } from "@apiHelpers/types";
+import { populateCanvasWithBarcode } from "@helpers/utils";
+interface LoopReceiptProps {
+  createdLoop: EntityLoop | undefined;
+}
+const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const styles = useStyles();
   const [origin, setOrigin] = useState("");
+  const [scale, setScale] = useState(3);
   useEffect(() => {
     // console.log(window.location.origin);
     setOrigin(window.location.origin);
   }, []);
+  useEffect(() => {
+    if (createdLoop) {
+      populateCanvasWithBarcode({
+        scale,
+        textToEncode: createdLoop.loopid || "",
+        canvasId: "mycanvas",
+      });
+    }
+  }, [createdLoop, scale]);
+  useEffect(() => {
+    if (windowDimensions.innerWidth < 600) {
+      setScale(1);
+    } else {
+      setScale(2);
+    }
+  }, [windowDimensions]);
   const PrintLink = ({ children }: { children: any }) => {
     return (
       <a
-        href={`${origin}/_next/image?url=%2Ficons%2Fcreate%2Fbarcode.svg&w=1920&q=75`}
+        href={`${origin}/barcode?loopid=${createdLoop?.loopid}`}
         target="_blank"
         rel="noreferrer"
       >
@@ -49,12 +70,7 @@ const LoopReceipt = ({}: LoopReceiptProps) => {
         scanning it.
       </p>
       <div className="image">
-        <Image
-          alt="icon"
-          src="/icons/create/barcode.svg"
-          width={812}
-          height={116}
-        />
+        <canvas id="mycanvas"></canvas>
       </div>
       {win.down("sm") && (
         <PrintLink>
@@ -102,13 +118,6 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .image": {
       textAlign: "center",
-      [theme.breakpoints.down("sm")]: {
-        width: "calc(100% - 2rem)",
-        boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
-        borderRadius: "4px",
-        padding: "10px 5px",
-      },
-      "& img": {},
     },
   },
 }));

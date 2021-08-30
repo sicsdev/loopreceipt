@@ -1,5 +1,5 @@
 import { MatchDetails } from "@interfaces/SearchItemType";
-
+import bwipjs from "bwip-js";
 export const largestCommonSubstring = (
   s1: string,
   s2: string
@@ -172,4 +172,27 @@ export const hasValueAtAnyKey = (object: { [key: string]: any }) => {
     }
   }
   return false;
+};
+export const populateCanvasWithBarcode = ({
+  scale,
+  textToEncode,
+  canvasId,
+}: {
+  canvasId: string;
+  scale: number;
+  textToEncode: string;
+}) => {
+  try {
+    // The return value is the canvas element
+    return bwipjs.toCanvas(canvasId, {
+      bcid: "code128", // Barcode type
+      text: textToEncode, // Text to encode
+      scale: scale, // 3x scaling factor
+      height: 10, // Bar height, in millimeters
+      includetext: true, // Show human-readable text
+      textxalign: "center", // Always good to set this
+    });
+  } catch (e) {
+    // `e` may be a string or Error object
+  }
 };

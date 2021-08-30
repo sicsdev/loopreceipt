@@ -63,7 +63,6 @@ const Notifications = ({}: NotificationsProps) => {
     if (getAllActivities.data) {
       setFetchedNotifications(getAllActivities.data.activities);
     }
-    // dayjs(activity.createdAt).format("MMM DD, h:mm A"
   }, [getAllActivities.data]);
   useEffect(() => {
     // console.log(fetchedNotifications);

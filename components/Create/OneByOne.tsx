@@ -14,7 +14,7 @@ import Win from "@helpers/Win";
 import UpperBarMobile from "./UpperBarMobile";
 import LoopReceipt from "./LoopReceipt";
 import { validateAllFieldsOfForm } from "forms/formUtils";
-import { EntityDraft, EntityLoopMode } from "@apiHelpers/types";
+import { EntityDraft, EntityLoop, EntityLoopMode } from "@apiHelpers/types";
 import { useAppDispatch } from "@store/hooks";
 import { setLoopReceiptMode } from "@store/slices/loopReceiptSlice";
 import { useEffect } from "react";
@@ -38,6 +38,7 @@ function OneByOne({
   const dispatch = useAppDispatch();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
+  const [createdLoop, setCreatedLoop] = useState<EntityLoop>();
   const [index, setIndex] = useState(0);
   useEffect(() => {
     if (draftSelected) {
@@ -132,7 +133,7 @@ function OneByOne({
             upperBarContent={upperBarContent}
           />
           {index === forms.length + 1 ? (
-            <LoopReceipt />
+            <LoopReceipt createdLoop={createdLoop} />
           ) : index === forms.length ? (
             <Summary
               formsProps={formsProps}
@@ -142,6 +143,7 @@ function OneByOne({
                 setIndex(index + 1);
               }}
               currentDraftIdRef={currentDraftIdRef}
+              setCreatedLoop={setCreatedLoop}
             />
           ) : (
             <BoxContent
