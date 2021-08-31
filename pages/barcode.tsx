@@ -4,17 +4,17 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 const Barcode = ({}) => {
   const router = useRouter();
-  let { loopid } = router.query;
+  let { barcode } = router.query;
   const styles = useStyles();
   useEffect(() => {
-    if (loopid) {
+    if (barcode) {
       populateCanvasWithBarcode({
         scale: 2,
-        textToEncode: loopid as string,
+        textToEncode: barcode as string,
         canvasId: "mycanvas",
       });
     }
-  }, [loopid]);
+  }, [barcode]);
   return (
     <div className={styles.container}>
       <canvas id="mycanvas"></canvas>

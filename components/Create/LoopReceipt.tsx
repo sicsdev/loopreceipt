@@ -23,7 +23,7 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
     if (createdLoop) {
       populateCanvasWithBarcode({
         scale,
-        textToEncode: createdLoop.loopid || "",
+        textToEncode: createdLoop.barcode || "",
         canvasId: "mycanvas",
       });
     }
@@ -38,7 +38,7 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
   const PrintLink = ({ children }: { children: any }) => {
     return (
       <a
-        href={`${origin}/barcode?loopid=${createdLoop?.loopid}`}
+        href={`${origin}/barcode?barcode=${createdLoop?.barcode}`}
         target="_blank"
         rel="noreferrer"
       >
