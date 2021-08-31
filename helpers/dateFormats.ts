@@ -45,10 +45,7 @@ export const twoDateString = (d1: Date, d2: Date) => {
     return dmy(d1);
   }
 };
-export const getServerDate = (date: Date) => {
-  if (!date) return undefined;
-  return date.toISOString().slice(0, 19).replace("T", " ");
-};
+
 export const getEpochDateRangeFromDateRange = (dateRange: DateRange) => {
   const localDateRange = {
     start: dateRange.start && new Date(dateRange.start),

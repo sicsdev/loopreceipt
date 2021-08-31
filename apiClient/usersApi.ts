@@ -119,5 +119,15 @@ const usersApi = {
       throw axiosErrorHandler(error);
     }
   },
+  getContacts: async (): Promise<
+    { error: boolean; contacts: any[] } | undefined
+  > => {
+    try {
+      const response = await axios.get(`/users/contacts`);
+      return response.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
 };
 export default usersApi;

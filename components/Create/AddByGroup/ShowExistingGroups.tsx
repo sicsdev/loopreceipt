@@ -1,5 +1,5 @@
 import OptionCard from "@components/Dashboard/OptionCard";
-import { makeStyles, useTheme } from "@material-ui/core";
+import { Box, makeStyles, useTheme } from "@material-ui/core";
 import { useFetch } from "@hooks/useFetch";
 import groupsApi from "@apiClient/groupsApi";
 import { EntityGroup } from "apiHelpers/types";
@@ -110,6 +110,7 @@ const ShowExistingGroups = ({
       {!loading && totalGroups === 0 ? (
         <>
           <p className="normal">You do not have any groups at the moment.</p>
+          <Box height={10} />
           <p className="bolded">Create a group to send packages</p>
           <OptionCard
             iconSrc="/icons/create/group/create.svg"

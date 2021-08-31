@@ -19,7 +19,6 @@ import MessageCard from "@components/Shared/MessageCard";
 import Image from "next/image";
 import { useRef } from "react";
 import MyLoader from "@components/Shared/MyLoader";
-import { getServerDate } from "@helpers/dateFormats";
 // change this
 interface ResetPasswordProps {}
 const ResetPassword = ({}: ResetPasswordProps) => {
@@ -89,7 +88,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
         location: location,
         browser: browser,
         os: os,
-        date: getServerDate(new Date()),
+        date: new Date().toString(),
       };
       console.log(payload);
       const response = await sendRequest(payload);

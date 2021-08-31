@@ -14,7 +14,7 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
   const win = new Win(windowDimensions);
   const styles = useStyles();
   const [origin, setOrigin] = useState("");
-  const [scale, setScale] = useState(3);
+  const [scale, setScale] = useState(2);
   useEffect(() => {
     // console.log(window.location.origin);
     setOrigin(window.location.origin);
@@ -118,6 +118,8 @@ const useStyles = makeStyles((theme) => ({
     },
     "& .image": {
       textAlign: "center",
+      maxWidth: "100%",
+      overflow: "hidden",
     },
   },
 }));

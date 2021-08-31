@@ -1,4 +1,3 @@
-import loopsApi from "@apiClient/loopsApi";
 import { EntityRecipient } from "apiHelpers/types";
 import validations from "@helpers/validations";
 import _ from "lodash";
@@ -14,6 +13,7 @@ import {
   setSearchSpace,
 } from "@store/slices/searchBarSlice";
 import store from "@store/store";
+import usersApi from "@apiClient/usersApi";
 
 const recipientDetailsForm: FormType = {
   formName: "recipientDetailsForm",
@@ -134,6 +134,7 @@ const recipientDetailsForm: FormType = {
   },
   populateSearchItems: async function () {
     const state = store.getState();
+    let domain = "";
     if (state.searchBar.searchItemName !== "recipient") {
       store.dispatch(setSearchItemName("recipient"));
       if (state.loopReceipt.type === "internal") {
@@ -141,7 +142,7 @@ const recipientDetailsForm: FormType = {
         if (loggedInUser) {
           const email = loggedInUser.email;
           const domainStartIndex = email.indexOf("@") + 1;
-          const domain = email.substring(domainStartIndex, email.length);
+          domain = email.substring(domainStartIndex, email.length);
           if (!domain.includes("gmail")) {
             store.dispatch(
               setSearchSpace("You are searching contacts with " + domain)
@@ -155,19 +156,52 @@ const recipientDetailsForm: FormType = {
         store.dispatch(setSearchSpace(""));
       }
     }
-    const response = await loopsApi.getAll();
+    const response = await usersApi.getContacts();
     if (response) {
-      const loops = response.items;
+      const contacts = response.contacts;
+
       const newSearchItems: SearchItemType<EntityRecipient>[] = [];
-      for (let loop of loops) {
-        if (newSearchItems.every((s) => !_.isEqual(s.entity, loop.recipient))) {
+      if (state.loopReceipt.type === "internal" && !domain.includes("gmail")) {
+        // now we have to filter only those contacts which satisfy a have domain same as
+        // user
+        for (let contact of contacts) {
+          if (contact.email_id && contact.email_id.includes(domain))
+            newSearchItems.push({
+              primary: contact.name,
+              secondary: contact.email_id,
+              entity: {
+                email: contact.email_id || "",
+                name: contact.name,
+                phone: contact.phone_number,
+                company: "",
+                city: contact.address?.city,
+                country: contact.address?.country,
+                postalCode: contact.address?.postalCode,
+                state: contact.address?.region,
+                address: contact.address?.street,
+              },
+            });
+        }
+      } else {
+        for (let contact of contacts) {
           newSearchItems.push({
-            primary: loop.recipient.name,
-            secondary: loop.recipient.email,
-            entity: loop.recipient,
+            primary: contact.name,
+            secondary: contact.email_id,
+            entity: {
+              email: contact.email_id || "",
+              name: contact.name,
+              phone: contact.phone_number,
+              city: contact.address.city,
+              country: contact.address.country,
+              postalCode: contact.address.postalCode,
+              state: contact.address.region,
+              address: contact.address.street,
+              company: "",
+            },
           });
         }
       }
+
       store.dispatch(setSearchItems(newSearchItems));
     }
   },
