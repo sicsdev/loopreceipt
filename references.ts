@@ -37,3 +37,13 @@ javascript password validation
         );
       },
 */
+/*
+<div className="iconContainer">
+            <Image
+              src="/icons/logo-filled.svg"
+              height={49}
+              width={49}
+              alt="logo"
+            />
+          </div>
+ */

@@ -116,7 +116,9 @@ export default function Notification({
       </div>
       <div className="text">
         &ldquo;
-        {notification.title}
+        {notification.title.includes("You have created a loop")
+          ? notification.title.replace("a loop", "a Loopreceipt")
+          : notification.title}
         &rdquo;
       </div>
       <div className="time">

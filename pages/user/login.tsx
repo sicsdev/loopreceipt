@@ -158,6 +158,9 @@ export const commonUserFormStyles = makeStyles((theme) => ({
         boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
         borderRadius: "8px",
         padding: "2rem",
+        [theme.breakpoints.down("sm")]: {
+          padding: "1rem",
+        },
       },
       "& .iconContainer": {},
       "& .heading": {

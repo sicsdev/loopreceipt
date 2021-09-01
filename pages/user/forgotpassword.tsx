@@ -121,8 +121,7 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 24,
     },
     "& .text1": {
-      marginTop: "2rem",
-      marginBottom: "3rem",
+      marginTop: "1rem",
       fontSize: 18,
     },
     "& .text2": {
