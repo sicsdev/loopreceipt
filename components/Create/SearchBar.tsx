@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import SearchCard from "@components/Create/SearchCard";
 import UnmountOnWindowClickWrapper from "@components/Shared/UnmountOnWindowClickWrapper";
-import { SearchItemType } from "@interfaces/SearchItemType";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setSearchInput } from "@store/slices/searchBarSlice";
 

@@ -19,6 +19,7 @@ import MessageCard from "@components/Shared/MessageCard";
 import Image from "next/image";
 import { useRef } from "react";
 import MyLoader from "@components/Shared/MyLoader";
+import dayjs from "dayjs";
 // change this
 interface ResetPasswordProps {}
 const ResetPassword = ({}: ResetPasswordProps) => {
@@ -88,7 +89,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
         location: location,
         browser: browser,
         os: os,
-        date: new Date().toString(),
+        date: dayjs(new Date()).format("MMMM D, YYYY, h:m:s A"),
       };
       console.log(payload);
       const response = await sendRequest(payload);

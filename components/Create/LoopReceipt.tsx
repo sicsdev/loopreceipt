@@ -1,7 +1,7 @@
 import Button from "@components/Controls/Button";
 import Win from "@helpers/Win";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
-import { makeStyles } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { EntityLoop } from "@apiHelpers/types";
@@ -29,7 +29,7 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
     }
   }, [createdLoop, scale]);
   useEffect(() => {
-    if (windowDimensions.innerWidth < 600) {
+    if (windowDimensions.innerWidth < 1200) {
       setScale(1);
     } else {
       setScale(2);
@@ -72,6 +72,7 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
       <div className="image">
         <canvas id="mycanvas"></canvas>
       </div>
+      <Box height={20} />
       {win.down("sm") && (
         <PrintLink>
           <Button labelWeight="bold">Print Barcode</Button>
@@ -119,7 +120,6 @@ const useStyles = makeStyles((theme) => ({
     "& .image": {
       textAlign: "center",
       maxWidth: "100%",
-      overflow: "hidden",
     },
   },
 }));
