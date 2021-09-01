@@ -70,7 +70,9 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
         scanning it.
       </p>
       <div className="image">
-        <canvas id="mycanvas"></canvas>
+        <div className="canvasContainer">
+          <canvas id="mycanvas"></canvas>
+        </div>
       </div>
       <Box height={20} />
       {win.down("sm") && (
@@ -120,6 +122,12 @@ const useStyles = makeStyles((theme) => ({
     "& .image": {
       textAlign: "center",
       maxWidth: "100%",
+      [theme.breakpoints.down("xs")]: {
+        height: 450,
+        "& .canvasContainer": {
+          transform: "rotate(90deg) translateX(50%)",
+        },
+      },
     },
   },
 }));
