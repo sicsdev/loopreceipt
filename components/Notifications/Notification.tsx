@@ -100,7 +100,7 @@ export default function Notification({
       : notification.category === "Profile"
       ? "/icons/notifications/profile.svg"
       : notification.category === "Group"
-      ? "/icons/notifications/check.svg"
+      ? "/icons/notifications/group.svg"
       : "/icons/notifications/check.svg";
   return (
     <div
@@ -116,9 +116,7 @@ export default function Notification({
       </div>
       <div className="text">
         &ldquo;
-        {notification.title.includes("You have created a loop")
-          ? "You have created a new Loopreceipt"
-          : notification.title}
+        {notification.title}
         &rdquo;
       </div>
       <div className="time">
