@@ -188,7 +188,7 @@ export const populateCanvasWithBarcode = ({
       bcid: "code128", // Barcode type
       text: textToEncode, // Text to encode
       scale: scale, // 3x scaling factor
-      height: 10, // Bar height, in millimeters
+      height: 20, // Bar height, in millimeters
       includetext: true, // Show human-readable text
       textxalign: "center", // Always good to set this
     });

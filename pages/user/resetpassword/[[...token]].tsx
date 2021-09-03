@@ -29,7 +29,6 @@ const ResetPassword = ({}: ResetPasswordProps) => {
   const resetPasswordFormProps = useForm(resetPasswordForm.initialState);
   let { token } = router.query;
   token = token?.[0];
-  console.log(token);
 
   const [invalidLink, setInValidLink] = useState(false);
   const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false);
@@ -47,10 +46,19 @@ const ResetPassword = ({}: ResetPasswordProps) => {
     }
   }, [token]);
   useEffect(() => {
-    if (!waitingForParams && !token) {
-      console.log("exiting due to no token provided");
-      setInValidLink(true);
-    }
+    (async () => {
+      if (!waitingForParams) {
+        if (!token) {
+          console.log("exiting due to no token provided");
+          setInValidLink(true);
+        } else {
+          const response = await usersApi.validateResetPasswordToken(
+            token as string
+          );
+          console.log(response);
+        }
+      }
+    })();
   }, [waitingForParams]);
   const { data, loading, sendRequest, requestSent, error } = useFetch<string>(
     usersApi.passwordReset,
