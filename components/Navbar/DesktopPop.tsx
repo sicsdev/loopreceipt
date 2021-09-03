@@ -163,10 +163,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   new: {
-    background: "red",
+    background: theme.palette.primary.main,
     padding: "0 5px",
     paddingBottom: 1,
-    color: "white",
+    color: "black",
     borderRadius: 100,
     fontSize: 14,
     position: "relative",

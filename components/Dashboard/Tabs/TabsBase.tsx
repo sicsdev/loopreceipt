@@ -23,6 +23,7 @@ import Win from "@helpers/Win";
 import { setActiveTabIndex } from "@store/slices/dashboardSlice";
 import { useFetchReturnType } from "@hooks/useFetch";
 import MessageCard from "@components/Shared/MessageCard";
+import { useWaiter } from "@hooks/useWaiter";
 export const tabs: LoopType[] = ["outgoing", "received", "drafts"];
 export const itemsPerPageOptions = [5, 10, 15];
 export interface StdData {
@@ -37,7 +38,7 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
   const { windowDimensions } = useWindowDimensions();
   const dispatch = useAppDispatch();
-
+  const { wait } = useWaiter(0);
   const win = new Win(windowDimensions);
   const [dateRange, setDateRange] = useState<DateRange>({
     start: null,
@@ -121,7 +122,7 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
           setDateRange={setDateRange}
         />
       </div>
-      {getter.loading ? (
+      {wait || getter.loading ? (
         <div style={{ paddingTop: "3rem" }}>
           <MyLoader loaded={!getter.loading} />
         </div>

@@ -47,3 +47,6 @@ javascript password validation
             />
           </div>
  */
+// green colors for notification
+// 21F9AE
+// 6DD400

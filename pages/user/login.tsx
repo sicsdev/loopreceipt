@@ -144,14 +144,13 @@ export default Login;
 export const commonUserFormStyles = makeStyles((theme) => ({
   UserForm: {
     // border: "1px solid red",
-    padding: "2rem 16px",
+    padding: "1rem 8px",
 
     "& .form": {
       maxWidth: 600,
       margin: "auto",
       display: "flex",
       flexDirection: "column",
-      gap: ".5rem",
       textAlign: "center",
       "&.card": {
         background: "#FFFFFF",
@@ -169,7 +168,7 @@ export const commonUserFormStyles = makeStyles((theme) => ({
         color: theme.palette.secondary.main,
         marginBottom: ".5rem",
         [theme.breakpoints.down("xs")]: {
-          fontSize: 32,
+          fontSize: 30,
         },
       },
       "& .subheading": {

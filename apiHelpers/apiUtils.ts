@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 
-export const axiosErrorHandler = (error: AxiosError) => {
+export const axiosErrorHandler = (err: unknown) => {
+  const error = err as AxiosError;
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx

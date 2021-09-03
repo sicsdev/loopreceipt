@@ -20,6 +20,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import MyLoader from "@components/Shared/MyLoader";
 import dayjs from "dayjs";
+import { useWaiter } from "@hooks/useWaiter";
 // change this
 interface ResetPasswordProps {}
 const ResetPassword = ({}: ResetPasswordProps) => {
@@ -32,22 +33,15 @@ const ResetPassword = ({}: ResetPasswordProps) => {
 
   const [invalidLink, setInValidLink] = useState(false);
   const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false);
-  const [waitingForParams, setWaitingForParams] = useState(true);
-  useEffect(() => {
-    setTimeout(() => {
-      // we will wait for param for 3 seconds
-      // if param is still not set we are going to declare this link as invalid
-      setWaitingForParams(false);
-    }, 3000);
-  }, []);
+  const { wait, setWait } = useWaiter(3000);
   useEffect(() => {
     if (token) {
-      setWaitingForParams(false);
+      setWait(false);
     }
   }, [token]);
   useEffect(() => {
     (async () => {
-      if (!waitingForParams) {
+      if (!wait) {
         if (!token) {
           console.log("exiting due to no token provided");
           setInValidLink(true);
@@ -59,7 +53,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
         }
       }
     })();
-  }, [waitingForParams]);
+  }, [wait]);
   const { data, loading, sendRequest, requestSent, error } = useFetch<string>(
     usersApi.passwordReset,
     {
@@ -97,7 +91,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
         location: location,
         browser: browser,
         os: os,
-        date: dayjs(new Date()).format("MMMM D, YYYY, h:m:s A"),
+        date: dayjs(new Date()).format("MMMM Do, YYYY, h:m:s A"),
       };
       console.log(payload);
       const response = await sendRequest(payload);
@@ -115,7 +109,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
   useWindowKeyDownListener({
     Enter: resetPassword,
   });
-  return waitingForParams ? (
+  return wait ? (
     <MyLoader windowCentered />
   ) : (
     <Layout>
