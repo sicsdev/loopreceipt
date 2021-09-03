@@ -48,6 +48,10 @@ interface AddByGroupProps {
   handleCancelClick: () => void;
   currentDraftIdRef: React.MutableRefObject<string | undefined>;
   draftSelected: EntityDraft | undefined;
+  setSelectedGroup: React.Dispatch<
+    React.SetStateAction<EntityGroup | undefined>
+  >;
+  selectedGroup: EntityGroup | undefined;
 }
 function AddByGroup({
   forms,
@@ -55,6 +59,8 @@ function AddByGroup({
   handleCancelClick,
   currentDraftIdRef,
   draftSelected,
+  selectedGroup,
+  setSelectedGroup,
 }: AddByGroupProps) {
   const styles = useStyles();
   const router = useRouter();
@@ -63,7 +69,6 @@ function AddByGroup({
   const [showExistingGroups, setShowExistingGroups] = useState(
     () => !currentDraftIdRef.current || currentDraftIdRef.current === "deleted"
   );
-  const [selectedGroup, setSelectedGroup] = useState<EntityGroup>();
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const [groupsIsEmpty, setGroupsIsEmpty] = useState(true);
@@ -116,6 +121,8 @@ function AddByGroup({
   useEffect(() => {
     if (draftSelected) {
       (async () => {
+        console.log(draftSelected);
+        console.log(draftSelected.groupid);
         // i will handle it later
         // if (draftSelected.groupid) {
         //   const response = await groupsApi.getOne(draftSelected.groupid);
