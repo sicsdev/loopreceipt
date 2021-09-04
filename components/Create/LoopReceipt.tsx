@@ -14,7 +14,6 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
   const win = new Win(windowDimensions);
   const styles = useStyles();
   const [origin, setOrigin] = useState("");
-  const [scale, setScale] = useState(2);
   useEffect(() => {
     // console.log(window.location.origin);
     setOrigin(window.location.origin);
@@ -22,19 +21,13 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
   useEffect(() => {
     if (createdLoop) {
       populateCanvasWithBarcode({
-        scale,
+        scale: 1,
         textToEncode: createdLoop.barcode || "",
         canvasId: "mycanvas",
       });
     }
-  }, [createdLoop, scale]);
-  useEffect(() => {
-    if (windowDimensions.innerWidth < 1200) {
-      setScale(1);
-    } else {
-      setScale(2);
-    }
-  }, [windowDimensions]);
+  }, [createdLoop]);
+
   const PrintLink = ({ children }: { children: any }) => {
     return (
       <a

@@ -21,7 +21,12 @@ import { useRouter, withRouter } from "next/router";
 import draftsApi from "@apiClient/draftsApi";
 import { useRef } from "react";
 import { Debounce, hasValueAtAnyKey } from "@helpers/utils";
-import { EntityDraft, EntityLoopMode, EntityLoopType } from "@apiHelpers/types";
+import {
+  EntityDraft,
+  EntityGroup,
+  EntityLoopMode,
+  EntityLoopType,
+} from "@apiHelpers/types";
 import {
   setLoopReceiptMode,
   setLoopReceiptType,
@@ -33,6 +38,8 @@ const Create = () => {
   const { type: loopReceiptType, mode: loopReceiptMode } = useAppSelector(
     (state) => state.loopReceipt
   );
+  const [selectedGroup, setSelectedGroup] = useState<EntityGroup>();
+
   const [checkForExistingDraftComplete, setCheckForExistingDraftComplete] =
     useState(false);
   const [draftSelected, setDraftSelected] = useState<EntityDraft>();
@@ -67,6 +74,7 @@ const Create = () => {
       async ({
         forms,
         formsProps,
+        groupid,
         loopReceiptType,
         loopReceiptMode,
       }: {
@@ -74,6 +82,7 @@ const Create = () => {
         formsProps: useFormReturnType[];
         loopReceiptType: EntityLoopType;
         loopReceiptMode: EntityLoopMode;
+        groupid?: string;
       }) => {
         if (currentDraftIdRef.current === "deleted") return;
         console.log(formsProps[0].formState.name.value);
@@ -94,15 +103,15 @@ const Create = () => {
         // we can check here also if we don't have dummy values
         if (!currentDraftIdRef.current) {
           console.log("creating");
-          const response = await draftsApi.create(loop);
+          const response = await draftsApi.create({ ...loop, groupid });
           currentDraftIdRef.current = response?.draftId;
           // console.log(response);
         } else {
           console.log("updating");
-          const response = await draftsApi.update(
-            currentDraftIdRef.current,
-            loop
-          );
+          const response = await draftsApi.update(currentDraftIdRef.current, {
+            ...loop,
+            groupid,
+          });
           console.log(response);
         }
       },
@@ -158,14 +167,17 @@ const Create = () => {
     if (checkForExistingDraftComplete === false) {
       return;
     }
+    console.log(selectedGroup);
     saveDraftApiCallRef.current.callAfterDelay({
       forms,
       formsProps,
+      groupid: selectedGroup?.groupid,
       loopReceiptType,
       loopReceiptMode,
     });
   }, [
     ...formsProps.map((formProps) => formProps.formState),
+    selectedGroup,
     loopReceiptType,
     loopReceiptMode,
     confirmedLoopers,
@@ -224,6 +236,8 @@ const Create = () => {
           <AddByGroup
             handleCancelClick={handleCancelClick}
             forms={passedForms}
+            selectedGroup={selectedGroup}
+            setSelectedGroup={setSelectedGroup}
             formsProps={passedFormsProps}
             currentDraftIdRef={currentDraftIdRef}
             draftSelected={draftSelected}

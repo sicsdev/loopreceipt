@@ -92,7 +92,14 @@ const usersApi = {
       throw axiosErrorHandler(error);
     }
   },
-
+  validateResetPasswordToken: async (token: string) => {
+    try {
+      const response = await axios.get(`/users/reset/validate?token=${token}`);
+      return response.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
   verifyUser: async (payload: {
     userid: string;
     token: string;

@@ -74,8 +74,10 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
               </p>
               <div className="text2">
                 If there are any issues&nbsp;
-                <PrimaryLink href="/">email us</PrimaryLink>, and we&apos;ll
-                help fix it!
+                <PrimaryLink href="mailto: recovery@loopreceipt.com">
+                  email us
+                </PrimaryLink>
+                , and we&apos;ll help fix it!
               </div>
             </div>
           ) : (

@@ -49,9 +49,15 @@ const loopsApi = {
     filters?: LoopFilters
   ): Promise<{ items: EntityLoop[]; total: number } | undefined> => {
     try {
+      let url = `/loops/history${applyFilters(page, filters)}`;
+      console.log(url);
+
+      const response = await axios.get(url);
+
+      // console.log(response.data);
       return {
-        items: [],
-        total: 0,
+        items: response.data.history,
+        total: response.data.totalLoops || 0,
       };
     } catch (error) {
       throw axiosErrorHandler(error);
