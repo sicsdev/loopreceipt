@@ -136,7 +136,9 @@ export default function Account({ path }: AccountProps) {
                 value={value}
                 onChange={(e, value) => setValue(value)}
                 className={classes.tabs}
-                TabIndicatorProps={{ color: "#fff" }}
+                TabIndicatorProps={{
+                  style: { color: "#fff", backgroundColor: "#fff" },
+                }}
               >
                 {TABS.map((tab) => (
                   <Tab

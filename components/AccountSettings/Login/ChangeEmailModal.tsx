@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -7,8 +8,21 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+import classNames from "classnames";
+import usersApi from "@apiClient/usersApi";
+import { raiseAlert } from "@store/slices/genericSlice";
 
 const useStyles = makeStyles((theme) => ({
+  dialogBox: {
+    maxWidth: 465,
+    [theme.breakpoints.down("sm")]: {
+      padding: 24,
+      width: 310,
+    },
+    [theme.breakpoints.up("sm")]: {
+      padding: 40,
+    },
+  },
   title: {
     fontFamily: "Roboto",
     fontStyle: "normal",
@@ -26,11 +40,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   inputBox: {
-    display: "flex",
-    marginBottom: ".5rem",
-    gap: 10,
-    fontWeight: "bold",
-    fontSize: "1.1rem",
+    "& .MyInputContainer": {
+      width: "100%",
+    },
   },
 
   buttonContainer: {
@@ -101,57 +113,82 @@ export default function ChangeEmailModal({
   handleClose,
 }: ChangeEmailModalProps) {
   const classes = useStyles();
-  const handleInputChange = () => {};
+  const [state, setState] = useState({
+    password: "",
+    email: "",
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const handleInputChange = (event: any) => {
+    setState({ ...state, [event.target.name]: event.target.value });
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    let response = await usersApi.updateUser(state);
+    if (response?.error && response?.message) {
+      raiseAlert(response?.message, "error");
+    } else {
+      raiseAlert("Successfully Updated Email!", "success");
+      handleClose();
+    }
+
+    setIsSaving(false);
+  };
   return (
     <Dialog open={open} onClose={handleClose}>
-      <Box sx={{ p: 5 }}>
-        <Typography className={classes.title}>Change Log in Email</Typography>
+      <form onSubmit={onSubmit}>
+        <Box className={classNames(classes.dialogBox, classes.inputBox)}>
+          <Typography className={classes.title}>Change Log in Email</Typography>
 
-        <InputBox
-          input={{
-            type: "password",
-            label: "Password",
-            name: "password",
-            placeholder: "**********",
-            value: "",
-          }}
-          onChange={handleInputChange}
-          onBlur={(e) => {}}
-        />
-        <br />
+          <InputBox
+            input={{
+              type: "password",
+              label: "Password",
+              name: "password",
+              placeholder: "**********",
+              value: state.password,
+            }}
+            onChange={handleInputChange}
+            onBlur={(e) => {}}
+          />
+          <br />
 
-        <InputBox
-          input={{
-            type: "email",
-            label: "New Email Address",
-            name: "email",
-            placeholder: "newemailaddress@gmail.com",
-            value: "",
-          }}
-          onChange={handleInputChange}
-          onBlur={(e) => {}}
-        />
-        <br />
+          <InputBox
+            input={{
+              type: "email",
+              label: "New Email Address",
+              name: "email",
+              placeholder: "newemailaddress@gmail.com",
+              value: state.email,
+            }}
+            onChange={handleInputChange}
+            onBlur={(e) => {}}
+          />
+          <br />
 
-        <Box className={classes.buttonContainer1}>
-          <Button
-            variant="contained"
-            className={`${classes.buttons} ${classes.saveButton}`}
-            color="primary"
-            size="large"
-          >
-            Save Changes
-          </Button>
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            size="large"
-            className={classes.buttons}
-          >
-            Cancel
-          </Button>
+          <Box className={classes.buttonContainer1}>
+            <Button
+              variant="contained"
+              className={`${classes.buttons} ${classes.saveButton}`}
+              color="primary"
+              size="large"
+              disabled={isSaving}
+              type="submit"
+            >
+              Save Changes
+            </Button>
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              size="large"
+              className={classes.buttons}
+            >
+              Cancel
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </form>
     </Dialog>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -11,6 +11,8 @@ import InputBox from "@components/Controls/InputBox";
 import { validateSingleFieldOfForm } from "@forms/formUtils";
 import ChangeEmailModal from "./ChangeEmailModal";
 import ChangePasswordModal from "./ChangePasswordModal";
+import usersApi from "@apiClient/usersApi";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 
 const useStyles = makeStyles((theme) => ({
   pageLabel: {
@@ -109,7 +111,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles();
 
-  const handleInputChange = () => {};
+  let { user = { name: "" } } = useAppSelector((state) => state.user);
 
   const [changeEmail, setChangeEmail] = useState(false);
   const handleChangeEmailModalOpen = () => {
@@ -126,6 +128,29 @@ export default function Login() {
     setChangePassword(false);
   };
 
+  const [state, setState] = useState({
+    name: user.name || "",
+    email: user.email || "",
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const handleInputChange = (event: any) => {
+    setState({ ...state, [event.target.name]: event.target.value });
+  };
+
+  // const onSubmit = async () => {
+  //   setIsSaving(true);
+  //   let response = await usersApi.updateUser(state);
+  //   setIsSaving(false);
+  // };
+
+  // const deleteAccount = async () => {
+  //   let response = await usersApi.deleteAccount();
+  // };
+
+  // useEffect(() => {
+  //   setState({ name: user.name });
+  // }, [user]);
+
   return (
     <Container>
       <div style={{ padding: "10px 30px" }}>
@@ -140,7 +165,7 @@ export default function Login() {
             label: "Name",
             name: "name",
             placeholder: "Your full name",
-            value: "",
+            value: state.name,
           }}
           onChange={handleInputChange}
           onBlur={(e) => {}}
@@ -163,7 +188,7 @@ export default function Login() {
               label: "",
               name: "name",
               placeholder: "Your full name",
-              value: "test@gmail.com",
+              value: state.email,
               inputProps: {
                 className: classes.textFields,
 
@@ -204,13 +229,15 @@ export default function Login() {
         </Box>
 
         <div style={{ marginBottom: 100 }}></div>
-        <Box className={classes.buttonContainer}>
+        {/* <Box className={classes.buttonContainer}>
           <Box className={classes.buttonContainer1}>
             <Button
               variant="contained"
               className={`${classes.buttons} ${classes.saveButton}`}
               color="primary"
               size="large"
+              onClick={onSubmit}
+              disabled={isSaving}
             >
               Save Changes
             </Button>
@@ -218,10 +245,15 @@ export default function Login() {
               Cancel
             </Button>
           </Box>
-          <Button variant="outlined" size="large" className={classes.buttons}>
+          <Button
+            variant="outlined"
+            size="large"
+            className={classes.buttons}
+            onClick={deleteAccount}
+          >
             Delete Account
           </Button>
-        </Box>
+        </Box> */}
       </div>
       <ChangeEmailModal
         open={changeEmail}

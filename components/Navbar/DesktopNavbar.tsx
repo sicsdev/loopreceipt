@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 import Button from "@components/Controls/Button";
 import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
+import { Avatar } from "@material-ui/core";
 
 import Image from "next/image";
 import { openModal } from "@store/slices/modalSlice";
@@ -18,6 +19,7 @@ interface DesktopNavbarPropTypes {
   showOnlyLogo: boolean;
 }
 const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
+  const classes = useStyles();
   const router = useRouter();
   const styles = useStyles({ showOnlyLogo });
   const dispatch = useAppDispatch();
@@ -144,11 +146,12 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
               </div>
               <div className="item">
                 <div className="image">
-                  <Image
-                    alt="icon"
-                    src="/icons/profile.png"
-                    width="36"
-                    height="36"
+                  <Avatar
+                    alt="Avatar"
+                    src={
+                      user?.profileImage ? user?.profileImage : "/avatar.png"
+                    }
+                    className={classes.avatar}
                   />
                 </div>
                 <p className="text">{user?.name}</p>
@@ -235,4 +238,10 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   }),
+  avatar: {
+    width: theme.spacing(5),
+    height: theme.spacing(5),
+    marginLeft: "2rem",
+    backgroundColor: "#F1F3F6",
+  },
 }));
