@@ -14,12 +14,12 @@ import Cookies from "js-cookie";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import DesktopPop from "./DesktopPop";
+import { Theme } from "@material-ui/core/styles";
 
 interface DesktopNavbarPropTypes {
   showOnlyLogo: boolean;
 }
 const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
-  const classes = useStyles();
   const router = useRouter();
   const styles = useStyles({ showOnlyLogo });
   const dispatch = useAppDispatch();
@@ -151,7 +151,7 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
                     src={
                       user?.profileImage ? user?.profileImage : "/avatar.png"
                     }
-                    className={classes.avatar}
+                    className={styles.avatar}
                   />
                 </div>
                 <p className="text">{user?.name}</p>
@@ -185,7 +185,7 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
 
 export default DesktopNavbar;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   DesktopNavbar: ({ showOnlyLogo }: { showOnlyLogo: boolean }) => ({
     height: "70px",
     background: "white",

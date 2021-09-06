@@ -1,12 +1,12 @@
 import axios from "@apiHelpers/axios";
 import { EntityLoop, EntityUser, ErrorResponse } from "@apiHelpers/types";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
+
 const usersApi = {
   getMe: async (): Promise<
-    | {
+     {
         user: EntityUser;
       }
-    | undefined
   > => {
     // console.log(process.env.NEXT_PUBLIC_API_URL);
 
@@ -54,16 +54,7 @@ const usersApi = {
     profileImage?: string;
     address?: string;
     industry?: string;
-  }): Promise<
-    | {
-        user: {
-          isFirstTime: boolean;
-          name: string;
-          email: string;
-        };
-      }
-    | undefined
-  > => {
+  }): Promise< ErrorResponse > => {
     try {
       console.log("create usersApi called");
       // console.log(Cookies.get("token"));
@@ -72,8 +63,8 @@ const usersApi = {
       // console.log(response.data);
       return response.data;
     } catch (error) {
-      return error?.response?.data;
-      // throw axiosErrorHandler(error);
+      // return error?.response?.data;
+      throw axiosErrorHandler(error);
     }
   },
   sendVerificationLink: async ({
@@ -100,13 +91,13 @@ const usersApi = {
     newPassword: string;
     confirmPassword: string;
     currentPassword: string;
-  }): Promise<{ error: boolean; message: string } | undefined> => {
+  }): Promise< ErrorResponse | undefined> => {
     try {
       const response = await axios.put("/users/password/update", payload);
       return response.data;
     } catch (error) {
-      // throw axiosErrorHandler(error);
-      return error?.response?.data;
+      throw axiosErrorHandler(error);
+      // return error?.response?.data;
     }
   },
   passwordReset: async (payload: {
