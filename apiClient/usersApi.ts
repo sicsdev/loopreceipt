@@ -1,13 +1,11 @@
 import axios from "@apiHelpers/axios";
 import { EntityLoop, EntityUser, ErrorResponse } from "@apiHelpers/types";
 import { axiosErrorHandler } from "@apiHelpers/apiUtils";
+
 const usersApi = {
-  getMe: async (): Promise<
-    | {
-        user: EntityUser;
-      }
-    | undefined
-  > => {
+  getMe: async (): Promise<{
+    user: EntityUser;
+  }> => {
     // console.log(process.env.NEXT_PUBLIC_API_URL);
 
     try {
@@ -54,16 +52,7 @@ const usersApi = {
     profileImage?: string;
     address?: string;
     industry?: string;
-  }): Promise<
-    | {
-        user: {
-          isFirstTime: boolean;
-          name: string;
-          email: string;
-        };
-      }
-    | undefined
-  > => {
+  }): Promise<ErrorResponse> => {
     try {
       // console.log(Cookies.get("token"));
       const response = await axios.put(`/users/me`, user);
@@ -99,7 +88,7 @@ const usersApi = {
     newPassword: string;
     confirmPassword: string;
     currentPassword: string;
-  }): Promise<{ error: boolean; message: string } | undefined> => {
+  }): Promise<ErrorResponse | undefined> => {
     try {
       const response = await axios.put("/users/password/update", payload);
       return response.data;

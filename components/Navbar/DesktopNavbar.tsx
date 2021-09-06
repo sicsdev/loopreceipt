@@ -14,6 +14,7 @@ import Cookies from "js-cookie";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import DesktopPop from "./DesktopPop";
+import { Theme } from "@material-ui/core/styles";
 
 interface DesktopNavbarPropTypes {
   showOnlyLogo: boolean;
@@ -184,7 +185,7 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
 
 export default DesktopNavbar;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   DesktopNavbar: ({ showOnlyLogo }: { showOnlyLogo: boolean }) => ({
     height: "70px",
     background: "white",

@@ -127,7 +127,7 @@ export default function ChangeEmailModal({
     setIsSaving(true);
     let response: any = await usersApi.updateUser(state);
     if (response?.error && response?.message) {
-      raiseAlert(response?.message, "error");
+      raiseAlert(response.message, "error");
     } else {
       raiseAlert("Successfully Updated Email!", "success");
       handleClose();
