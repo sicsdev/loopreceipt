@@ -65,15 +65,14 @@ const usersApi = {
     | undefined
   > => {
     try {
-      console.log("create usersApi called");
       // console.log(Cookies.get("token"));
       const response = await axios.put(`/users/me`, user);
 
       // console.log(response.data);
       return response.data;
     } catch (error) {
-      return error?.response?.data;
-      // throw axiosErrorHandler(error);
+      // return error?.response?.data;
+      throw axiosErrorHandler(error);
     }
   },
   sendVerificationLink: async ({
@@ -105,8 +104,7 @@ const usersApi = {
       const response = await axios.put("/users/password/update", payload);
       return response.data;
     } catch (error) {
-      // throw axiosErrorHandler(error);
-      return error?.response?.data;
+      throw axiosErrorHandler(error);
     }
   },
   passwordReset: async (payload: {
@@ -169,7 +167,9 @@ const usersApi = {
       throw axiosErrorHandler(error);
     }
   },
-  deleteAccount: async (): Promise<{ error: boolean; message: string } | undefined> => {
+  deleteAccount: async (): Promise<
+    { error: boolean; message: string } | undefined
+  > => {
     try {
       const response = await axios.delete("/users/me");
       return response.data;

@@ -67,7 +67,7 @@ function AddByGroup({
   const [createdLoop, setCreatedLoop] = useState<EntityLoop>();
 
   const [showExistingGroups, setShowExistingGroups] = useState(
-    () => !currentDraftIdRef.current || currentDraftIdRef.current === "deleted"
+    () => !draftSelected
   );
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
@@ -121,23 +121,21 @@ function AddByGroup({
   useEffect(() => {
     if (draftSelected) {
       (async () => {
-        console.log(draftSelected);
-        console.log(draftSelected.groupid);
-        // i will handle it later
-        // if (draftSelected.groupid) {
-        //   const response = await groupsApi.getOne(draftSelected.groupid);
-        //   const associatedGroup = response?.group;
-        //   if (associatedGroup) {
-        //     groupFormProps.setFormState(
-        //       produce((prev) => {
-        //         prev.groupName.value = associatedGroup.name;
-        //         prev.createdFor.value = associatedGroup.createdFor;
-        //       })
-        //     );
-        //     setSelectedGroup(associatedGroup);
-        //     groupFetchedFromDraftRef.current = true;
-        //   }
-        // }
+        // console.log(draftSelected);
+        // console.log(draftSelected.groupId);
+        if (draftSelected.groupId) {
+          const response = await groupsApi.getOne(draftSelected.groupId);
+          const associatedGroup = response?.group;
+          if (associatedGroup) {
+            groupFormProps.setFormState(
+              produce((prev) => {
+                prev.groupName.value = associatedGroup.name;
+                prev.createdFor.value = associatedGroup.createdFor;
+              })
+            );
+            setSelectedGroup(associatedGroup);
+          }
+        }
         formsProps[0].setFormState(
           produce((prev) => {
             if (draftSelected.recipient?.address) {
@@ -174,11 +172,6 @@ function AddByGroup({
     }
   }, []);
   useEffect(() => {
-    // here we can show update form according to group and generate loop receipt based on
-    // specifications of the group
-    if (draftSelected) {
-      return;
-    }
     if (selectedGroup) {
       groupFormProps.setFormState(
         produce((prev) => {
@@ -217,7 +210,7 @@ function AddByGroup({
     } else if (index > 0) {
       setIndex(index - 1);
     } else {
-      if (!showExistingGroups && !draftSelected) {
+      if (!showExistingGroups) {
         setSelectedGroup(undefined);
         setShowExistingGroups(true);
       } else {
@@ -350,7 +343,7 @@ function AddByGroup({
       />
       <FormUpperBar
         hideBackButton={
-          (index === 0 && !!draftSelected) || index === forms.length + 2
+          (showExistingGroups && !!draftSelected) || index === forms.length + 2
         }
         // we want to hide backbutton on looprecipt page
         handleBackButtonClick={handleBackButtonClick}

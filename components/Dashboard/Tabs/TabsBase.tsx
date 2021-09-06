@@ -56,6 +56,7 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
     if (noItems && getter.data?.total) {
       setNoItems(false);
     }
+    console.log(getter.data);
   }, [getter.data]);
 
   useDateTypeFilterAndPagination({

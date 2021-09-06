@@ -74,7 +74,7 @@ const Create = () => {
       async ({
         forms,
         formsProps,
-        groupid,
+        groupId,
         loopReceiptType,
         loopReceiptMode,
       }: {
@@ -82,7 +82,7 @@ const Create = () => {
         formsProps: useFormReturnType[];
         loopReceiptType: EntityLoopType;
         loopReceiptMode: EntityLoopMode;
-        groupid?: string;
+        groupId?: string;
       }) => {
         if (currentDraftIdRef.current === "deleted") return;
         console.log(formsProps[0].formState.name.value);
@@ -103,14 +103,14 @@ const Create = () => {
         // we can check here also if we don't have dummy values
         if (!currentDraftIdRef.current) {
           console.log("creating");
-          const response = await draftsApi.create({ ...loop, groupid });
+          const response = await draftsApi.create({ ...loop, groupId });
           currentDraftIdRef.current = response?.draftId;
           // console.log(response);
         } else {
           console.log("updating");
           const response = await draftsApi.update(currentDraftIdRef.current, {
             ...loop,
-            groupid,
+            groupId,
           });
           console.log(response);
         }
@@ -171,7 +171,7 @@ const Create = () => {
     saveDraftApiCallRef.current.callAfterDelay({
       forms,
       formsProps,
-      groupid: selectedGroup?.groupid,
+      groupId: selectedGroup?.groupid,
       loopReceiptType,
       loopReceiptMode,
     });

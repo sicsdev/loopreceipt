@@ -46,10 +46,18 @@ const ResetPassword = ({}: ResetPasswordProps) => {
           console.log("exiting due to no token provided");
           setInValidLink(true);
         } else {
-          const response = await usersApi.validateResetPasswordToken(
-            token as string
-          );
-          console.log(response);
+          try {
+            const response = await usersApi.validateResetPasswordToken(
+              token as string
+            );
+            /*
+              error: false
+              message: "Link is valid"
+             */
+          } catch (err) {
+            // error will raised if token is inValid
+            setInValidLink(true);
+          }
         }
       }
     })();

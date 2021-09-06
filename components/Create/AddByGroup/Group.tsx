@@ -36,7 +36,6 @@ const Group = ({ group, selected }: GroupProps) => {
     // console.log(isDefault);
     if (group?.groupid) {
       (async () => {
-        console.log(group);
         const loopersWithoutId = group.loopers.map((looper) => {
           return {
             email: looper.email,
