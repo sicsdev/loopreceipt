@@ -4,7 +4,6 @@ import { Box } from "@material-ui/core";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { makeStyles } from "@material-ui/core";
 import { validateSingleFieldOfForm } from "@forms/formUtils";
-import ProfileFormDetails from "./profileFormDetails";
 
 interface FormProps {
   form: FormType;

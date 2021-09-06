@@ -1,19 +1,25 @@
 import { LoopSource } from "@interfaces/LoopTypes";
 
 export interface EntityUser {
-  contacts: {
+  contacts?: {
     google: [];
     microsoft: [];
   };
-  pushNotifications: boolean;
-  _id: string;
-  userId: string;
+  pushNotifications?: boolean;
+  _id?: string;
+  userId?: string;
   email: string;
-  stripeCustomerId: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  name: string;
+  stripeCustomerId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+  name?: string;
+  country?: string;
+  province?:string;
+  city?: string;
+  address?:string;
+  profileImage?: string;
+
 }
 export interface EntityRecipient {
   email: string;

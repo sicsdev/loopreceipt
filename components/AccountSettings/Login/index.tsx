@@ -111,7 +111,9 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles();
 
-  let { user = { name: "" } } = useAppSelector((state) => state.user);
+  let { user = { name: "", email: "" } } = useAppSelector(
+    (state) => state.user
+  );
 
   const [changeEmail, setChangeEmail] = useState(false);
   const handleChangeEmailModalOpen = () => {
