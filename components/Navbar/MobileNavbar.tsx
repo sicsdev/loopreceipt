@@ -5,6 +5,7 @@ import ToggleSidebar from "@components/Shared/ToggleSidebar";
 import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import { openModal } from "@store/slices/modalSlice";
 import Link from "next/link";
+import { Avatar } from "@material-ui/core";
 
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { setShowMobileSideBar } from "@store/slices/genericSlice";
@@ -111,7 +112,11 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
           )}
         </div>
 
-        <Image alt="icon" src="/icons/profile.png" width="38" height="38" />
+        <Avatar
+          alt="Avatar"
+          src={user?.profileImage ? user?.profileImage : "/avatar.png"}
+          className={styles.avatar}
+        />
         <div
           className="arrowDownContainer"
           ref={accountArrowDownRef}
@@ -207,5 +212,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 30,
     textAlign: "center",
     padding: "0 24px",
+  },
+  avatar: {
+    width: theme.spacing(5),
+    height: theme.spacing(5),
+    marginLeft: "2rem",
+    backgroundColor: "#F1F3F6",
   },
 }));

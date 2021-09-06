@@ -153,7 +153,7 @@ export default function LoopAnalytics() {
       y: {
         formatter: (y: number) => {
           if (typeof y !== "undefined") {
-            return `${y.toFixed(0)} visits`;
+            return `${y.toFixed(0)}`;
           }
           return y;
         },

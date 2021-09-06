@@ -10,6 +10,8 @@ import {
 import InputBox from "@components/Controls/InputBox";
 import classNames from "classnames";
 import usersApi from "@apiClient/usersApi";
+import { raiseAlert } from "@store/slices/genericSlice";
+import { logoutUser } from "@store/slices/userSlice";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -125,6 +127,18 @@ export default function ChangePasswordModal({
   const onSubmit = async () => {
     setIsSaving(true);
     let response = await usersApi.passwordUpdate(state);
+    if (response?.error && response?.message) {
+      raiseAlert(response?.message, "error");
+    } else {
+      raiseAlert(
+        "Successfully Updated Password! Logging out in 5 seconds.",
+        "success"
+      );
+      handleClose();
+      setTimeout(() => {
+        logoutUser();
+      }, 5000);
+    }
     setIsSaving(false);
   };
   return (
