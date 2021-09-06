@@ -173,6 +173,8 @@ function AddByGroup({
   }, []);
   useEffect(() => {
     if (selectedGroup) {
+      if (draftSelected) return;
+      // because we wanna fill data from draft and not selected group
       groupFormProps.setFormState(
         produce((prev) => {
           prev.groupName.value = selectedGroup.name;
