@@ -349,7 +349,9 @@ function AddByGroup({
         groupFormProps={groupFormProps}
       />
       <FormUpperBar
-        showBackButton={index !== forms.length + 2}
+        hideBackButton={
+          (index === 0 && !!draftSelected) || index === forms.length + 2
+        }
         // we want to hide backbutton on looprecipt page
         handleBackButtonClick={handleBackButtonClick}
         upperBarText={upperBarContent}
