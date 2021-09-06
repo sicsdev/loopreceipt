@@ -52,18 +52,21 @@ const Summary = ({
   );
   const dispatch = useAppDispatch();
 
+  const removeTrailingSpace = (loop: EntityLoop) => {
+    let formatLoop = JSON.parse(JSON.stringify(loop).replace(/"\s+|\s+"/g,'"'))
+    console.log(formatLoop)
+    return formatLoop
+  }
+
   const handleSubmit = async () => {
-    for (let i = 0; i < formsProps.length; i++) {
-      // console.log(formsProps[i].formState);
-    }
     const loop = getEntityLoopFromFormsProps({
       forms,
       formsProps,
       loopReceiptType,
       loopReceiptMode,
     });
-    // console.log(loop);
-    const response = await loopApi.create(loop);
+    let formattedLoop = removeTrailingSpace(loop);
+    const response = await loopApi.create(formattedLoop);
     setCreatedLoop(response?.loop);
     console.log(response);
     // remove confirmed loopers

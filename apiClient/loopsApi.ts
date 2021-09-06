@@ -52,6 +52,9 @@ const loopsApi = {
       let url = `/loops/history${applyFilters(page, filters)}`;
       console.log(url);
 
+      let listurl = `/loops/list${applyFilters(page, filters)}`;
+      const listResp = await axios.get(listurl)
+      console.log(listResp.data)
       const response = await axios.get(url);
 
       // console.log(response.data);
