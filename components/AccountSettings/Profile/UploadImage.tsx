@@ -5,6 +5,7 @@ import { raiseAlert } from "@store/slices/genericSlice";
 import usersApi from "@apiClient/usersApi";
 import { setUser } from "@store/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
+// @ts-ignore
 import S3 from "react-aws-s3";
 
 const config = {
@@ -83,7 +84,7 @@ export default function UploadImage() {
     // const newFileName = "test-file";
     setIsUploading(true);
     ReactS3Client.uploadFile(file)
-      .then(async (data) => {
+      .then(async (data: any) => {
         console.log(data);
 
         try {
@@ -91,7 +92,9 @@ export default function UploadImage() {
             profileImage: data.location,
           });
           let userData = await usersApi.getMe();
-          dispatch(setUser(userData.user));
+          if (userData) {
+            dispatch(setUser(userData.user));
+          }
         } catch (error) {
           console.log(error);
         }
@@ -99,7 +102,7 @@ export default function UploadImage() {
         setIsUploading(false);
         raiseAlert("Image Uploaded Successfully!", "success");
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error(err);
         setIsUploading(false);
         raiseAlert("Upload Failed, try again!", "success");
@@ -110,7 +113,7 @@ export default function UploadImage() {
     <Box display="flex">
       <Avatar
         alt="Avatar"
-        src={user.profileImage ? user.profileImage : "/avatar.png"}
+        src={user.profileImage || "/avatar.png"}
         className={classes.avatar}
       />
       <Box className={classes.uploadButtonDiv}>

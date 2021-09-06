@@ -122,10 +122,10 @@ export default function ChangeEmailModal({
     setState({ ...state, [event.target.name]: event.target.value });
   };
 
-  const onSubmit = async (e) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
     setIsSaving(true);
-    let response = await usersApi.updateUser(state);
+    let response: any = await usersApi.updateUser(state);
     if (response?.error && response?.message) {
       raiseAlert(response?.message, "error");
     } else {

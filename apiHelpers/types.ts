@@ -14,6 +14,11 @@ export interface EntityUser {
   updatedAt: string;
   __v: number;
   name: string;
+  country?: string;
+  city?: string;
+  province?: string;
+  address?: string;
+  profileImage?: string;
 }
 export interface EntityRecipient {
   email: string;

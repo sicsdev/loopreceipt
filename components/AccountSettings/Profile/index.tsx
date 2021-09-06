@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Profile() {
   const classes = useStyles();
-  let { user } = useAppSelector((state) => state.user);
+  let user = useAppSelector((state) => state.user.user);
 
   const ProfileFormDetails: FormType = {
     formName: "profileForm",
@@ -109,7 +109,7 @@ export default function Profile() {
         name: "country",
         label: "Country",
         placeholder: "Country",
-        value: user?.country ? user?.country : "",
+        value: user?.country || "",
         type: "country",
 
         validate: function () {
@@ -126,14 +126,14 @@ export default function Profile() {
         name: "city",
         label: "City",
         placeholder: "City",
-        value: user?.city ? user?.city : "",
+        value: user?.city || "",
         type: "text",
       },
       province: {
         name: "province",
         label: "State / Province",
         placeholder: "State / Province",
-        value: user?.province ? user?.province : "",
+        value: user?.province || "",
         type: "region",
         dependency: "country",
         validate: function () {
@@ -146,7 +146,7 @@ export default function Profile() {
         name: "address",
         label: "Address",
         placeholder: "Your address",
-        value: user?.address ? user?.address : "",
+        value: user?.address || "",
         type: "text",
         validate: function () {
           return validations.isRequired(this);
@@ -175,7 +175,9 @@ export default function Profile() {
       await usersApi.updateUser(u);
       let userData = await usersApi.getMe();
       raiseAlert("Successfully Saved Changes!", "success");
-      dispatch(setUser(userData.user));
+      if (userData) {
+        dispatch(setUser(userData.user));
+      }
       setIsSaving(false);
     }
   };

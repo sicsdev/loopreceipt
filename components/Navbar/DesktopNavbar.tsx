@@ -19,7 +19,6 @@ interface DesktopNavbarPropTypes {
   showOnlyLogo: boolean;
 }
 const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
-  const classes = useStyles();
   const router = useRouter();
   const styles = useStyles({ showOnlyLogo });
   const dispatch = useAppDispatch();
@@ -151,7 +150,7 @@ const DesktopNavbar = ({ showOnlyLogo }: DesktopNavbarPropTypes) => {
                     src={
                       user?.profileImage ? user?.profileImage : "/avatar.png"
                     }
-                    className={classes.avatar}
+                    className={styles.avatar}
                   />
                 </div>
                 <p className="text">{user?.name}</p>
