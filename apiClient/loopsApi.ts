@@ -42,23 +42,35 @@ const loopsApi = {
       throw axiosErrorHandler(error);
     }
   },
-  getRecieved: async (
+  getHistory: async (
     page: number = 1,
     filters?: LoopFilters
   ): Promise<{ items: EntityLoop[]; total: number } | undefined> => {
     try {
       let url = `/loops/history${applyFilters(page, filters)}`;
-      console.log(url);
 
-      let listurl = `/loops/list${applyFilters(page, filters)}`;
-      const listResp = await axios.get(listurl);
-      console.log(listResp.data);
       const response = await axios.get(url);
 
-      // console.log(response.data);
       return {
         items: response.data.history,
-        total: response.data.totalLoops || 0,
+        total: response.data.totalLoops || response.data.history?.length || 0,
+      };
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  },
+  getList: async (
+    page: number = 1,
+    filters?: LoopFilters
+  ): Promise<{ items: EntityLoop[]; total: number } | undefined> => {
+    try {
+      let url = `/loops/list${applyFilters(page, filters)}`;
+
+      const response = await axios.get(url);
+
+      return {
+        items: response.data.looplist,
+        total: response.data.totalLoops || response.data.looplist?.length || 0,
       };
     } catch (error) {
       throw axiosErrorHandler(error);

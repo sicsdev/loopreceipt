@@ -11,7 +11,7 @@ import { useDateTypeFilterAndPagination } from "@components/Dashboard/Tabs/useDa
 import { makeStyles } from "@material-ui/core";
 
 import { EntityLoop } from "@apiHelpers/types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import FilterDropdowns from "@components/Dashboard/FilterDropdowns";
@@ -56,7 +56,6 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
     if (noItems && getter.data?.total) {
       setNoItems(false);
     }
-    console.log(getter.data);
   }, [getter.data]);
 
   useDateTypeFilterAndPagination({
@@ -99,6 +98,18 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
       }
     },
   });
+  const filteredItems = useMemo(() => {
+    // console.log(getter.data?.items);
+    // console.log(user);
+    let filterLogic = (item: any) => true;
+    if (activeTabIndex === 0) {
+      filterLogic = (item: any) => item.owner.userid === user?.userId;
+    } else if (activeTabIndex === 1) {
+      filterLogic = (item: any) =>
+        item.isReceived === true && item.receivedBy === user?.email;
+    }
+    return getter.data ? getter.data.items.filter(filterLogic) : [];
+  }, [getter.data, user]);
   return (
     <div className={styles.right}>
       <div
@@ -144,7 +155,7 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
                 }}
               >
                 <div className="cards" {...swipeHandlers}>
-                  {getter.data.items.map((item, i) => (
+                  {filteredItems.map((item, i) => (
                     <LoopCard key={i} type={tabs[activeTabIndex]} loop={item} />
                   ))}
                 </div>
