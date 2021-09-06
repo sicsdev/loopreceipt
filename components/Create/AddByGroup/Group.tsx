@@ -143,10 +143,12 @@ const Group = ({ group, selected }: GroupProps) => {
           <div className="line">
             <p></p>
           </div>
-          <div className="column">
-            <div className="head">Save as default</div>
-            <div className="content">{switchButton}</div>
-          </div>
+          {group.groupid && (
+            <div className="column">
+              <div className="head">Save as default</div>
+              <div className="content">{switchButton}</div>
+            </div>
+          )}
         </div>
       </div>
     ) : (
@@ -166,10 +168,12 @@ const Group = ({ group, selected }: GroupProps) => {
             );
           })}
         </div>
-        <div className="row">
-          <span className="save">Save as default</span>
-          <div className="switch"> {switchButton}</div>
-        </div>
+        {group.groupid && (
+          <div className="row">
+            <span className="save">Save as default</span>
+            <div className="switch"> {switchButton}</div>
+          </div>
+        )}
       </div>
     )
   ) : null;

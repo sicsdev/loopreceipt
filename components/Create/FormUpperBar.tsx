@@ -6,19 +6,19 @@ import Image from "next/image";
 import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import Win from "@helpers/Win";
 interface FormUpperBarProps {
-  showBackButton: boolean;
+  hideBackButton: boolean;
   handleBackButtonClick: React.MouseEventHandler<any>;
   upperBarText?: JSX.Element | string;
 }
 const FormUpperBar = ({
-  showBackButton,
+  hideBackButton,
   handleBackButtonClick,
   upperBarText,
 }: FormUpperBarProps) => {
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const styles = useStyles();
-  const backButton = showBackButton ? (
+  const backButton = !hideBackButton ? (
     <div className={styles.backButton} onClick={handleBackButtonClick}>
       <Button expand>Back</Button>
     </div>

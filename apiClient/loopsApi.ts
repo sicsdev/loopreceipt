@@ -1,8 +1,6 @@
 import axios from "@apiHelpers/axios";
 import { EntityLoop, LoopFilters } from "@apiHelpers/types";
 import { axiosErrorHandler, cacheMap } from "@apiHelpers/apiUtils";
-import { LoopSource } from "@interfaces/LoopTypes";
-import Cookies from "js-cookie";
 import { applyFilters } from "./commonApiFunctions";
 const loopsApi = {
   create: async (
@@ -52,6 +50,9 @@ const loopsApi = {
       let url = `/loops/history${applyFilters(page, filters)}`;
       console.log(url);
 
+      let listurl = `/loops/list${applyFilters(page, filters)}`;
+      const listResp = await axios.get(listurl);
+      console.log(listResp.data);
       const response = await axios.get(url);
 
       // console.log(response.data);
