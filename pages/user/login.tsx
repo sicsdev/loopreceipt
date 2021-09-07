@@ -31,7 +31,7 @@ const Login = ({}: LoginProps) => {
     isFirstTime: boolean;
   }>(
     deferrer(authApi.login, {
-      email: loginFormProps.formState.email.value,
+      email: loginFormProps.formState.email.value.toLowerCase(),
       password: loginFormProps.formState.password.value,
     }),
     {
@@ -144,7 +144,7 @@ export default Login;
 export const commonUserFormStyles = makeStyles((theme) => ({
   UserForm: {
     // border: "1px solid red",
-    padding: "1rem 8px",
+    padding: "5rem 25px",
 
     "& .form": {
       maxWidth: 600,
@@ -158,22 +158,37 @@ export const commonUserFormStyles = makeStyles((theme) => ({
         borderRadius: "8px",
         padding: "2rem",
         [theme.breakpoints.down("sm")]: {
-          padding: "1rem",
+          padding: "2rem",
         },
+        "&.forgot-pass": {
+          marginTop: "3rem"
+        }
       },
       "& .iconContainer": {},
       "& .heading": {
         fontWeight: 500,
-        fontSize: 36,
+        fontSize: 28,
         color: theme.palette.secondary.main,
-        marginBottom: ".5rem",
+        marginBottom: "4rem",
+        marginTop: "20px",
         [theme.breakpoints.down("xs")]: {
-          fontSize: 30,
+          fontSize: 28,
+        },
+      },
+      "& .forgot-pass-head": {
+        marginBottom: ".5rem",
+        fontWeight: 500,
+        fontSize: 28,
+        color: theme.palette.secondary.main,
+        marginTop: "20px",
+        [theme.breakpoints.down("xs")]: {
+          fontSize: 28,
         },
       },
       "& .subheading": {
         fontSize: 18,
-        marginTop: "-1rem",
+        marginTop: "-4rem",
+        marginBottom: "2rem"
       },
       "& .MyInputContainer": {
         width: "100%",

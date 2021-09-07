@@ -5,7 +5,7 @@ interface SliceDashboardType {
   activeTabIndex: number;
 }
 const initialState: SliceDashboardType = {
-  showGettingStartedGuide: false,
+  showGettingStartedGuide: true,
   activeTabIndex: 0,
 };
 export const dashboardSlice = createSlice({

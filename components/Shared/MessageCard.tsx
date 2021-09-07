@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   MessageCard: (props: { type: string }) => ({
     borderRadius: 4,
     padding: "1rem",
-
+    marginTop: "30px",
     textAlign: "center",
     backgroundColor: messageColors[props.type].backgroundColor,
     border: `1px solid ${messageColors[props.type].textColor}`,
