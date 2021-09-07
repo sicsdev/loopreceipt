@@ -44,7 +44,7 @@ const ForgotPassword = ({}: ForgotPasswordProps) => {
   return (
     <Layout>
       <div className={commonStyles.UserForm}>
-        <div className="form card">
+        <div className="form card forgot-pass">
           <div className="iconContainer">
             <Image
               src="/icons/logo-filled.svg"

@@ -64,7 +64,7 @@ const Signup = ({}: SignupProps) => {
     if (validateAllFieldsOfForm(signupFormProps)) {
       const response = await sendSignupRequest({
         name: signupFormProps.formState.name.value,
-        email: signupFormProps.formState.email.value,
+        email: signupFormProps.formState.email.value.toLowerCase(),
         password: signupFormProps.formState.password.value,
       });
       console.log(response);

@@ -73,11 +73,11 @@ export default Layout;
 const useStyles = makeStyles((theme) => ({
   Layout: {},
   content: {
-    marginTop: 70,
+    // marginTop: 150,
+    // // [theme.breakpoints.down("sm")]: {
+    // //   marginTop: 0,
+    // // },
     // [theme.breakpoints.down("sm")]: {
-    //   marginTop: 0,
-    // },
-    // [theme.breakpoints.up("sm")]: {
     //   marginTop: 70,
     // },
   },

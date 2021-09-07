@@ -122,7 +122,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
   ) : (
     <Layout>
       <div className={commonStyles.UserForm}>
-        <div className="form card">
+        <div className="form card forgot-pass">
           <div className="iconContainer">
             <Image
               src="/icons/logo-filled.svg"
@@ -146,7 +146,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
             </>
           ) : (
             <>
-              <h1 className="heading">{resetPasswordForm.formHeading}</h1>
+              <h1 className="forgot-pass-head">{resetPasswordForm.formHeading}</h1>
               {invalidLink ? (
                 <MessageCard type="warning">
                   No password reset token found or your password reset link has
@@ -190,7 +190,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
         </div>
         <div className="bottomLinks">
           <div>
-            Already have a loopreceipt account?&nbsp;
+            Already have an account?&nbsp;
             <PrimaryLink href="/user/login">Log in</PrimaryLink>
           </div>
           <div>
