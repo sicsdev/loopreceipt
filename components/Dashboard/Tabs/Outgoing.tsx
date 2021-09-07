@@ -6,7 +6,7 @@ interface OutgoingProps {}
 const Outgoing = ({}: OutgoingProps) => {
   // const getter = useFetch<StdData>(loopsApi.getAll, { deferred: true });
   // use the above getter test created loopreceipts by the user
-  const getter = useFetch<StdData>(loopsApi.getList, { deferred: true });
+  const getter = useFetch<StdData>(loopsApi.getAll, { deferred: true });
   const styles = useStyles();
   return <TabsBase getter={getter} />;
 };
