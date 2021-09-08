@@ -124,16 +124,16 @@ const Verify = ({}: VerifyProps) => {
                 alt="logo"
               />
             </div>
-            <h1 className="heading">Resend Verification Link</h1>
+            <h1 className="verify-heading">Resend Verification Link</h1>
             <p>The link has expired or invalid link</p>
             <p>To get a new link please click the below button.</p>
 
             {postSendVerificationLink.loading ? (
-              <Button labelWeight="bold" color="default" labelColor="gray">
+              <Button className="verify-email-btn" labelWeight="bold" color="default" labelColor="gray">
                 Loading...
               </Button>
             ) : (
-              <Button labelWeight="bold" onClick={resendEmail}>
+              <Button className="verify-email-btn" labelWeight="bold" onClick={resendEmail}>
                 Resend Email
               </Button>
             )}
