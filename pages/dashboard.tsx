@@ -39,7 +39,6 @@ const Dashboard = ({ path }: DashboardProps) => {
 
   useEffect(() => {
     setIsFirstTime(Cookies.get("isFirstTime") === "true");
-    Cookies.get("isFirstTime") === "true" && openGettingStartedGuide
   }, []);
 
   return (

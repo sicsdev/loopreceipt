@@ -144,7 +144,7 @@ export default Login;
 export const commonUserFormStyles = makeStyles((theme) => ({
   UserForm: {
     // border: "1px solid red",
-    padding: "5rem 25px",
+    padding: "3rem 25px",
 
     "& .form": {
       maxWidth: 600,
@@ -174,6 +174,20 @@ export const commonUserFormStyles = makeStyles((theme) => ({
         [theme.breakpoints.down("xs")]: {
           fontSize: 28,
         },
+      },
+      "& .verify-heading": {
+        fontWeight: 500,
+        fontSize: 28,
+        color: theme.palette.secondary.main,
+        marginBottom: "0rem",
+        marginTop: "20px",
+        [theme.breakpoints.down("xs")]: {
+          fontSize: 28,
+        },
+      },
+      "& .verify-email-btn": {
+        marginTop: "2rem",
+        marginBottom: "1rem"
       },
       "& .forgot-pass-head": {
         marginBottom: ".5rem",

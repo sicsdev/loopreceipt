@@ -109,7 +109,7 @@ interface ItemProps {
   activeContent?: JSX.Element;
 }
 const Item = ({ i, text, activeContent }: ItemProps) => {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
   const parentRef = useRef<HTMLDivElement>(null);
   return (
     <div
