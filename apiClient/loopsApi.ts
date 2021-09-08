@@ -28,7 +28,7 @@ const loopsApi = {
       // /api/loops?page=1&filter1=type&type=internal
       // /api/loops?page=1&filter1=type&type=internal&filter2=date&from=1609775390&to=1628092190
 
-      let url = `/loops${applyFilters(page, filters)}`;
+      let url = `/loops/outgoing${applyFilters(page, filters)}`;
       console.log(url);
 
       const response = await axios.get(url);
@@ -64,13 +64,13 @@ const loopsApi = {
     filters?: LoopFilters
   ): Promise<{ items: EntityLoop[]; total: number } | undefined> => {
     try {
-      let url = `/loops/list${applyFilters(page, filters)}`;
+      let url = `/loops/received${applyFilters(page, filters)}`;
 
       const response = await axios.get(url);
 
       return {
-        items: response.data.looplist,
-        total: response.data.totalLoops || response.data.looplist?.length || 0,
+        items: response.data.loops,
+        total: response.data.totalLoops,
       };
     } catch (error) {
       throw axiosErrorHandler(error);
