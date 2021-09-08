@@ -168,7 +168,7 @@ const Signup = ({}: SignupProps) => {
             </div>
             {!emailAlreadyVerified ? (
               <>
-                <h1 className="heading">Please verify your email</h1>
+                <h1 className="verify-heading">Please verify your email</h1>
                 <p>
                   You’re almost there! We sent an email to&nbsp;
                   <span style={{ fontWeight: 500 }}>{userResponse?.email}</span>
@@ -177,11 +177,12 @@ const Signup = ({}: SignupProps) => {
                   Just click on the link in the email to complete your signup.
                 </p>
                 {postUserVerify.loading ? (
-                  <Button labelWeight="bold" color="default" labelColor="gray">
+                  <Button className="verify-email-btn" labelWeight="bold" color="default" labelColor="gray">
                     Loading...
                   </Button>
                 ) : (
                   <Button
+                    className="verify-email-btn"
                     labelWeight="bold"
                     onClick={() => {
                       if (userResponse) sendVerificationEmail(userResponse);

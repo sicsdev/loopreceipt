@@ -181,7 +181,7 @@ export const BottomBar = ({ skipListener, nextListener }: BottomBarProps) => {
 
 const useStyles = makeStyles((theme) => ({
   SelectIndustry: {
-    paddingTop: "3rem",
+    paddingTop: "5rem",
     textAlign: "center",
     paddingBottom: "10rem",
     [theme.breakpoints.down("sm")]: {
