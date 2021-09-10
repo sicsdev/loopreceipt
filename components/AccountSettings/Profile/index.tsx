@@ -17,6 +17,7 @@ import validations from "@helpers/validations";
 import { FormType } from "@interfaces/FormTypes";
 import { raiseAlert } from "@store/slices/genericSlice";
 import { setUser } from "@store/slices/userSlice";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
@@ -67,11 +68,16 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 15,
     },
   },
+  deleteButton: {
+    color: "#ff0000",
+    borderColor: "#ff0000",
+  },
 }));
 
 export default function Profile() {
   const classes = useStyles();
   let user = useAppSelector((state) => state.user.user);
+  const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
 
   const ProfileFormDetails: FormType = {
     formName: "profileForm",
@@ -129,11 +135,11 @@ export default function Profile() {
         value: user?.city || "",
         type: "text",
       },
-      province: {
-        name: "province",
+      state: {
+        name: "state",
         label: "State / Province",
         placeholder: "State / Province",
-        value: user?.province || "",
+        value: user?.state || "",
         type: "region",
         dependency: "country",
         validate: function () {
@@ -168,7 +174,7 @@ export default function Profile() {
         email: formProps.formState.email.value,
         country: formProps.formState.country.value,
         city: formProps.formState.city.value,
-        province: formProps.formState.province.value,
+        state: formProps.formState.state.value,
         address: formProps.formState.address.value,
       };
       setIsSaving(true);
@@ -182,8 +188,8 @@ export default function Profile() {
     }
   };
 
-  const deleteAccount = async () => {
-    let response = await usersApi.deleteAccount();
+  const handleCloseConfirmModal = () => {
+    setConfirmDeleteModal(false);
   };
 
   return (
@@ -194,6 +200,7 @@ export default function Profile() {
         formProps={formProps}
         // onSubmit={onSubmit}
       />
+
       <Box className={classes.buttonContainer}>
         <Box className={classes.buttonContainer1}>
           <Button
@@ -213,11 +220,16 @@ export default function Profile() {
         <Button
           variant="outlined"
           size="large"
-          className={classes.buttons}
-          onClick={deleteAccount}
+          className={`${classes.buttons} ${classes.deleteButton}`}
+          onClick={() => setConfirmDeleteModal(true)}
         >
           Delete Account
         </Button>
+
+        <DeleteConfirmModal
+          open={confirmDeleteModal}
+          handleClose={handleCloseConfirmModal}
+        />
       </Box>
     </Container>
   );

@@ -166,6 +166,9 @@ export default function Login() {
             name: "name",
             placeholder: "Your full name",
             value: state.name,
+            inputProps: {
+              disabled: true,
+            },
           }}
           onChange={handleInputChange}
           onBlur={(e) => {}}
