@@ -16,6 +16,7 @@ export interface EntityUser {
   name?: string;
   country?: string;
   province?: string;
+  state?: string;
   city?: string;
   address?: string;
   profileImage?: string;
