@@ -17,6 +17,7 @@ import Login from "@components/AccountSettings/Login";
 import Profile from "@components/AccountSettings/Profile";
 import { isMobile, BrowserView, MobileView } from "react-device-detect";
 import AuthGuard from "@components/Global/AuthGuard";
+import { useAppSelector } from "@store/hooks";
 
 // ----------------------------------------------------------------------
 
@@ -88,6 +89,7 @@ interface AccountProps {
 export default function Account({ path }: AccountProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState("Profile");
+  let user = useAppSelector((state) => state.user.user);
 
   const TABS = [
     {
@@ -153,12 +155,14 @@ export default function Account({ path }: AccountProps) {
               </Tabs>
             </BrowserView>
           </Grid>
-          <Grid item xs={12} sm={8} md={10}>
-            {TABS.map((tab) => {
-              const isMatched = tab.value === value;
-              return isMatched && <Box key={tab.value}>{tab.component}</Box>;
-            })}
-          </Grid>
+          {user?.userId ? (
+            <Grid item xs={12} sm={8} md={10}>
+              {TABS.map((tab) => {
+                const isMatched = tab.value === value;
+                return isMatched && <Box key={tab.value}>{tab.component}</Box>;
+              })}
+            </Grid>
+          ) : null}
         </Grid>
 
         <div style={{ marginBottom: 100 }}></div>

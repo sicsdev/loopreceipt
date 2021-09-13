@@ -13,6 +13,8 @@ import {
 import Layout from "@components/Global/Layout";
 import { makeStyles } from "@material-ui/core";
 import AuthGuard from "@components/Global/AuthGuard";
+import { useAppSelector } from "@store/hooks";
+import Cookies from "js-cookie";
 
 // ----------------------------------------------------------------------
 
@@ -171,6 +173,28 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
+    cursor: "pointer",
+  },
+  productComingSoonButton: {
+    background: "#FFFFFF",
+    border: "1px solid #999999",
+    borderRadius: 8,
+    "& > span": {
+      color: "#000000",
+      fontWeight: "bold",
+      fontSize: 16,
+      lineHeight: "19px",
+    },
+    marginRight: 5,
+    marginLeft: "auto",
+    width: 257,
+    height: 47,
+    textAlign: "center",
+    alignItems: "center",
+    display: "grid",
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
+    },
   },
   pageHead: {
     height: 132,
@@ -235,22 +259,37 @@ interface ProductProps {
   icon: string;
   label: string;
   status: string;
+  type?: string;
 }
-function Product({ icon, label, status }: ProductProps) {
+function Product({ icon, label, status, type }: ProductProps) {
   const classes = useStyles();
   return (
     <Box className={classes.product}>
       <img src={icon} alt="Brand Icon" className={classes.productIcon} />
       <Typography className={classes.productLabel}>{label}</Typography>
-      {status === "connected" ? (
+      {status === "Connected" ? (
         <Box className={classes.productConnectedButton}>
           <span>Connected</span>
         </Box>
-      ) : (
-        <Box className={classes.productNotConnectedButton}>
+      ) : null}
+      {status === "Not Connected" ? (
+        <Box
+          className={classes.productNotConnectedButton}
+          onClick={() => {
+            window.location.href =
+              process.env.NEXT_PUBLIC_API_URL +
+              `/api/users/contacts/${type}?token=` +
+              Cookies.get("token");
+          }}
+        >
           <span>Not Connected</span>
         </Box>
-      )}
+      ) : null}
+      {status === "Coming Soon" ? (
+        <Box className={classes.productComingSoonButton}>
+          <span>Coming Soon</span>
+        </Box>
+      ) : null}
       <Typography className={classes.productMobileLabel}>
         Access your {label} contacts
       </Typography>
@@ -260,6 +299,10 @@ function Product({ icon, label, status }: ProductProps) {
 
 export default function ContactConnections({ path }: ContactConnectionsProps) {
   const classes = useStyles();
+  let user = useAppSelector((state) => state.user.user);
+  let contacts = user?.contacts;
+  let google = contacts?.google || [];
+  let microsoft = contacts?.microsoft || [];
 
   return (
     <AuthGuard>
@@ -284,24 +327,26 @@ export default function ContactConnections({ path }: ContactConnectionsProps) {
             <Product
               icon="/icons/connect/gmail.png"
               label="Gmail"
-              status="connected"
+              status={google.length > 0 ? "Connected" : "Not Connected"}
+              type="google"
             />
             <Brand icon="/icons/connect/microsoft.png" label="Microsoft" />
             <Product
               icon="/icons/connect/office.png"
               label="Office 365"
-              status=""
+              status={microsoft.length > 0 ? "Connected" : "Not Connected"}
+              type="microsoft"
             />
             <Product
               icon="/icons/connect/office.png"
               label="Exchange"
-              status=""
+              status="Coming Soon"
             />
             <Brand icon="/icons/connect/apple.png" label="Apple" />
             <Product
               icon="/icons/connect/icloud.png"
               label="iCloud"
-              status=""
+              status="Coming Soon"
             />
           </Card>
         </Container>
