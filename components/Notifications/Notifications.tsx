@@ -54,7 +54,7 @@ const Notifications = ({}: NotificationsProps) => {
     fetchNotifications();
     const i = setInterval(() => {
       fetchNotifications();
-    }, 3000);
+    }, 60000);
     return () => {
       clearInterval(i);
     };
