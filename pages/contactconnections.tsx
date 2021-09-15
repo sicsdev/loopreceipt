@@ -133,7 +133,7 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: 19,
     },
   },
-  productConnectedButton: {
+  productNotConnectedButton: {
     background: "#21F9AE",
     borderRadius: 8,
     "& > span": {
@@ -152,8 +152,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
+    cursor: "pointer",
   },
-  productNotConnectedButton: {
+  productConnectedButton: {
     background: "#FFFFFF",
     border: "1px solid #999999",
     borderRadius: 8,
@@ -173,7 +174,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
-    cursor: "pointer",
   },
   productComingSoonButton: {
     background: "#FFFFFF",
@@ -272,8 +272,8 @@ function Product({ icon, label, status, type }: ProductProps) {
           <span>Connected</span>
         </Box>
       ) : null}
-      {status === "Not Connected" ? (
-        <Box
+      {status === "Connect" ? (
+        <Button
           className={classes.productNotConnectedButton}
           onClick={() => {
             window.location.href =
@@ -282,8 +282,8 @@ function Product({ icon, label, status, type }: ProductProps) {
               Cookies.get("token");
           }}
         >
-          <span>Not Connected</span>
-        </Box>
+          <span>Connect</span>
+        </Button>
       ) : null}
       {status === "Coming Soon" ? (
         <Box className={classes.productComingSoonButton}>
@@ -317,24 +317,25 @@ export default function ContactConnections({ path }: ContactConnectionsProps) {
           <Card className={classes.card}>
             <Box className={classes.pageHead}>
               <Typography className={classes.pageHeadTitle}>
-                Email Contacts
+                Select your Contact Directory
               </Typography>
               <Typography className={classes.pageHeadSubheading}>
-                Contacts you integrate ..........
+                Connect your Contact Directory to create Loopreceipts faster
+                with contacts you have saved
               </Typography>
             </Box>
             <Brand icon="/icons/connect/google.png" label="Google" />
             <Product
-              icon="/icons/connect/gmail.png"
-              label="Gmail"
-              status={google.length > 0 ? "Connected" : "Not Connected"}
+              icon="/icons/connect/google.svg"
+              label="Google Contacts"
+              status={google.length > 0 ? "Connected" : "Connect"}
               type="google"
             />
             <Brand icon="/icons/connect/microsoft.png" label="Microsoft" />
             <Product
               icon="/icons/connect/office.png"
               label="Office 365"
-              status={microsoft.length > 0 ? "Connected" : "Not Connected"}
+              status={microsoft.length > 0 ? "Connected" : "Connect"}
               type="microsoft"
             />
             <Product
