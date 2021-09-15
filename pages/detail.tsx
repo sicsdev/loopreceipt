@@ -28,9 +28,12 @@ const useStyles = makeStyles((theme) => ({
       }
     },
     detailview: {
-      padding: "0rem 20rem",
+      padding: "0rem 10rem",
       [theme.breakpoints.down("sm")]: {
         padding: "2rem",
+      },
+      [theme.breakpoints.down("md")]: {
+        padding: "5rem",
       },
     },
     detailViewFrom: {
@@ -161,6 +164,30 @@ const useStyles = makeStyles((theme) => ({
             },
           }
         }
+      },
+      "& .to-comment": {
+        display: "block",
+        paddingBottom: "0.5rem",
+        marginBottom: "1rem",
+        "& .to-comment-title": {
+          display: "inline-block",
+          fontSize: "18px",
+          color: "gray",
+          verticalAlign: "top",
+          [theme.breakpoints.down("sm")]: {
+            fontSize: "14px",
+          },
+        },
+        "& .to-comment-detail": {
+          display: "inline-block",
+          marginLeft: "20px",
+          "& .text": {
+            fontSize: "18px",
+            [theme.breakpoints.down("sm")]: {
+              fontSize: "14px",
+            },
+          }
+        }
       }
     }
   }));
@@ -172,6 +199,7 @@ const Detail = ({}) => {
   const { windowDimensions } = useWindowDimensions();
   const [loopData, setLoopData] = useState({
     loop: {
+      comment: "",
       owner: {
         name: "",
         email: ""
@@ -219,10 +247,11 @@ const Detail = ({}) => {
                             From
                           </div>
                           <div className="from-detail">
-                            <span className="text">{loopData?.loop?.owner?.name}</span>
+                            <span className="text">{loopData?.loop?.owner?.name.charAt(0).toUpperCase() + loopData?.loop?.owner?.name.slice(1)}</span>
+                            <br />
+                            <span className="text">{loopData?.loop?.owner?.email}</span>
                           </div>
                         </div>
-                        <span className="text">{loopData?.loop?.owner?.email}</span>
                       </div>
                       <div className={classes.detailViewTo}>
                         <div className="to">
@@ -259,6 +288,16 @@ const Detail = ({}) => {
                             <span className="text">{loopData?.loop?.recipient?.address}, {loopData?.loop?.recipient?.city}, {loopData?.loop?.recipient?.state}, {loopData?.loop?.recipient?.country}, {loopData?.loop?.recipient?.postalCode}</span><br /> 
                           </div>
                         </div>
+                        {
+                          loopData?.loop?.comment && loopData?.loop?.comment !== "" && (
+                            <div className="to-comment">
+                              <div className="to-comment-title">Comment </div>
+                              <div className="to-comment-detail">
+                                <span className="text">{loopData?.loop?.comment}</span><br /> 
+                              </div>
+                            </div>
+                          )
+                        }
                       </div>
                     </div>
                   )
