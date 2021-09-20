@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
         },
         "& .to-detail": {
           display: "inline-block",
-          marginLeft: "20px",
+          marginLeft: "40px",
           "& .text": {
             fontSize: "24px",
             [theme.breakpoints.down("sm")]: {
@@ -218,7 +218,7 @@ const Detail = ({}) => {
       }]
     }
   });
-
+  const [toData, setToData] = useState('');
   const win = new Win(windowDimensions);
   const getLoopData = async (loopId: any) => {
     const data = await loopsApi.getLoop(loopId)
@@ -228,7 +228,17 @@ const Detail = ({}) => {
 
   useEffect(() => {
     if(loopId) {
-        getLoopData(loopId).then(data => setLoopData(data))
+        getLoopData(loopId).then(data => {
+          setLoopData(data)
+          if(data.loop.owner !== null) {
+            const firstname = data?.loop?.owner?.name.charAt(0).toUpperCase();
+            const lastname = data?.loop?.owner?.name.slice(1)
+            setToData(firstname+lastname);
+          }
+          else {
+            setToData("User not found");
+          }
+        })
     }
   }, [loopId])
 
@@ -247,7 +257,7 @@ const Detail = ({}) => {
                             From
                           </div>
                           <div className="from-detail">
-                            <span className="text">{loopData?.loop?.owner?.name.charAt(0).toUpperCase() + loopData?.loop?.owner?.name.slice(1)}</span>
+                            <span className="text">{toData}</span>
                             <br />
                             <span className="text">{loopData?.loop?.owner?.email}</span>
                           </div>
