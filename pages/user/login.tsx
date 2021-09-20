@@ -161,7 +161,10 @@ export const commonUserFormStyles = makeStyles((theme) => ({
           padding: "2rem",
         },
         "&.forgot-pass": {
-          marginTop: "3rem"
+          marginTop: "3rem",
+          [theme.breakpoints.down("sm")]: {
+            marginTop: 0,
+          },
         }
       },
       "& .iconContainer": {},
