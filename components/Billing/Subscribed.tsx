@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -23,6 +23,11 @@ import DowngradeModal from "./modals/Downgrade";
 import UpgradeModal from "./modals/Upgrade";
 import MsgModal from "./modals/MsgModal";
 import classNames from "classnames";
+import subscriptionApi from "@apiClient/subscriptionApi";
+import { raiseAlert } from "@store/slices/genericSlice";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import moment from "moment";
+import { PLAN_ID_TO_PLAN_DETAILS } from "@constants/plans";
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -151,7 +156,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Subscribed() {
+interface SubscribedProps {
+  subsriptionDetails?: any;
+}
+
+export default function Subscribed({ subscriptionDetails }: SubscribedProps) {
   const classes = useStyles();
   const [downgraded, setDowngraded] = useState(false);
 
@@ -167,6 +176,22 @@ export default function Subscribed() {
   const [msgModal, setMsgModal] = useState(false);
   const handleMsgModalOpen = () => setMsgModal(true);
   const handleMsgModalClose = () => setMsgModal(false);
+
+  let { user } = useAppSelector((state) => state.user);
+
+  let [paymentHistory, setPaymentHistory] = useState([]);
+  let fetchPaymentHistory = async () => {
+    const res = await subscriptionApi.getPaymentHistory(
+      subscriptionDetails?.customerId
+    );
+    if (res.error == false && res.details) {
+      setPaymentHistory(res.details);
+    }
+  };
+
+  useEffect(() => {
+    fetchPaymentHistory();
+  }, [subscriptionDetails?.customerId]);
 
   return (
     <Box className={classes.box}>
@@ -190,14 +215,24 @@ export default function Subscribed() {
       ) : (
         <>
           <Typography className={classes.heading}>
-            You’re subscribed to the PRO Monthly plan for 1 member
+            You’re subscribed to the{" "}
+            {PLAN_ID_TO_PLAN_DETAILS[
+              subscriptionDetails?.current_plan?.id
+            ]?.planType?.toUpperCase()}{" "}
+            {
+              PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
+                ?.planDuration
+            }{" "}
+            plan for {subscriptionDetails?.current_plan?.members} member(s)
           </Typography>
           <Typography className={classes.subheading}>
-            Your subscription will renew on 3 June 2021 using your MasterCard
-            ending in 5972.
+            Your subscription will renew on{" "}
+            {moment(subscriptionDetails?.expires_at).format("DD MMM YYYY")}{" "}
+            using your MasterCard ending in {subscriptionDetails?.card?.last4}.
           </Typography>
           <Button className={classes.nextPaymentButton} variant="outlined">
-            Next payment: Scheduled for 3 July 2020
+            Next payment: Scheduled for{" "}
+            {moment(subscriptionDetails?.expires_at).format("DD MMM YYYY")}
           </Button>
         </>
       )}
@@ -254,33 +289,27 @@ export default function Subscribed() {
               <TableCell>Date</TableCell>
               <TableCell align="left">Plan</TableCell>
               <TableCell align="left">Payment Status</TableCell>
-              <TableCell align="right">Amount(CAD)</TableCell>
+              <TableCell align="right">Amount</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell data-th="Date">3 May 2021</TableCell>
-              <TableCell data-th="Plan" align="left">
-                Pro Monthly
-              </TableCell>
-              <TableCell data-th="Payment Status" align="left">
-                Paid
-              </TableCell>
-              <TableCell data-th="Amount(CAD)" align="right">
-                $14
-              </TableCell>
-            </TableRow>
-            {/* {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-            </TableRow>
-          ))} */}
+            {paymentHistory?.map((payment: any, index) => (
+              <TableRow key={index}>
+                <TableCell data-th="Date">
+                  {moment.unix(payment?.timestamp).format("DD MMM YYYY")}
+                </TableCell>
+                <TableCell data-th="Plan" align="left">
+                  {PLAN_ID_TO_PLAN_DETAILS[payment?.plan]?.planType}{" "}
+                  {PLAN_ID_TO_PLAN_DETAILS[payment?.plan]?.planDuration}
+                </TableCell>
+                <TableCell data-th="Payment Status" align="left">
+                  {payment?.status == "succeeded" ? "Paid" : payment?.status}
+                </TableCell>
+                <TableCell data-th="Amount(CAD)" align="right">
+                  ${payment?.amount} {payment?.currency?.toUpperCase()}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -325,19 +354,36 @@ export default function Subscribed() {
           </Box>
         </Box>
       </Card>
-      {modal === "1" && <AddMembersModal open={true} handleClose={setModal} />}
+      {modal === "1" && (
+        <AddMembersModal
+          open={true}
+          handleClose={setModal}
+          subscriptionDetails={subscriptionDetails}
+        />
+      )}
       {modal === "2" && (
-        <RemoveMembersModal open={true} handleClose={setModal} />
+        <RemoveMembersModal
+          open={true}
+          handleClose={setModal}
+          subscriptionDetails={subscriptionDetails}
+        />
       )}
       {modal === "3" && (
         <UpdatePaymentMethodModal open={true} handleClose={setModal} />
       )}
-      {modal === "5" && <UpgradeModal open={true} handleClose={setModal} />}
+      {modal === "5" && (
+        <UpgradeModal
+          open={true}
+          handleClose={setModal}
+          subscriptionDetails={subscriptionDetails}
+        />
+      )}
       {modal === "6" && (
         <DowngradeModal
           open={true}
           handleClose={setModal}
           setDowngraded={setDowngraded}
+          // subscriptionDetails={subscriptionDetails}
         />
       )}
       <MsgModal

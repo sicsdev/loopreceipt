@@ -144,7 +144,7 @@ export default function Enterprise({ onUpgrade }: PackageProps) {
           variant="contained"
           color="primary"
           className={`${classes.buttons} ${classes.saveButton}`}
-          onClick={() => onUpgrade("Enterprise")}
+          onClick={() => onUpgrade("ENTERPRISE")}
         >
           Upgrade Now
         </Button>

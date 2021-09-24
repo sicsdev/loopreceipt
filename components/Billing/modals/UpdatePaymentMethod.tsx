@@ -9,8 +9,10 @@ import {
   TextField,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
-/* @ts-ignore */
-import CreditCardInput from "react-credit-card-input";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import subscriptionApi from "@apiClient/subscriptionApi";
+import { raiseAlert } from "@store/slices/genericSlice";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -182,17 +184,57 @@ export default function UpdatePaymentMethodModal({
   const classes = useStyles();
   const handleInputChange = () => {};
 
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvc, setCVC] = useState("");
-  const handleCardNumberChange = (e: any) => {
-    setCardNumber(e.target.value);
-  };
-  const handleCardExpiryChange = (e: any) => {
-    setExpiry(e.target.value);
-  };
-  const handleCardCVCChange = (e: any) => {
-    setCVC(e.target.value);
+  let { user } = useAppSelector((state) => state.user);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const stripe = useStripe();
+  const elements = useElements();
+  const handleSubmit = async (event: any) => {
+    // Block native form submission.
+    event.preventDefault();
+    setIsSaving(true);
+
+    if (!stripe || !elements) {
+      // Stripe.js has not loaded yet. Make sure to disable
+      // form submission until Stripe.js has loaded.
+      return;
+    }
+
+    // Get a reference to a mounted CardElement. Elements knows how
+    // to find your CardElement because there can only ever be one of
+    // each type of element.
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) return;
+    // Use your card Element with other Stripe.js APIs
+
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: "card",
+      card: cardElement,
+      billing_details: {
+        email: user?.email,
+      },
+    });
+    if (error) {
+      console.log("[error]", error);
+      raiseAlert("Some error occurred. Try Again", "error");
+      return;
+    }
+
+    console.log("[PaymentMethod]", paymentMethod);
+    if (!paymentMethod) {
+      raiseAlert("Some error occurred. Try Again", "error");
+      return;
+    }
+
+    const res = await subscriptionApi.updateSubscriptionDetails(
+      paymentMethod?.id
+    );
+    if (res.error == false) {
+      raiseAlert("Successfully Updated!", "success");
+      handleClose();
+    } else {
+      raiseAlert("Some error occurred. Try Again", "error");
+    }
   };
 
   return (
@@ -201,48 +243,55 @@ export default function UpdatePaymentMethodModal({
       onClose={handleClose}
       classes={{ paper: classes.dialog }}
     >
-      <Box className={classes.dialogBox}>
-        <Typography className={classes.title}>Enter New Card</Typography>
+      <form onSubmit={handleSubmit}>
+        <Box className={classes.dialogBox}>
+          <Typography className={classes.title}>Enter New Card</Typography>
 
-        <Box marginBottom={2}>
-          <Typography className={classes.inputBox}>Credit Card</Typography>
-          <CreditCardInput
-            cardNumberInputProps={{
-              value: cardNumber,
-              onChange: handleCardNumberChange,
-            }}
-            cardExpiryInputProps={{
-              value: expiry,
-              onChange: handleCardExpiryChange,
-            }}
-            cardCVCInputProps={{ value: cvc, onChange: handleCardCVCChange }}
-            containerClassName={classes.creditcardContainer}
-            fieldClassName={classes.creditcardInput}
-          />
-        </Box>
-        <br />
+          <Box marginBottom={2}>
+            <Typography className={classes.inputBox}>Credit Card</Typography>
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#424770",
+                    "::placeholder": {
+                      color: "#aab7c4",
+                    },
+                  },
+                  invalid: {
+                    color: "#9e2146",
+                  },
+                },
+              }}
+            />
+          </Box>
+          <br />
 
-        <Box className={classes.buttonContainer1}>
-          <Button
-            fullWidth
-            onClick={handleClose}
-            variant="outlined"
-            size="large"
-            className={classes.buttons}
-          >
-            Cancel
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            className={`${classes.buttons} ${classes.saveButton}`}
-            color="primary"
-            size="large"
-          >
-            Save
-          </Button>
+          <Box className={classes.buttonContainer1}>
+            <Button
+              fullWidth
+              onClick={handleClose}
+              variant="outlined"
+              size="large"
+              className={classes.buttons}
+            >
+              Cancel
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              className={`${classes.buttons} ${classes.saveButton}`}
+              color="primary"
+              size="large"
+              type="submit"
+              disabled={!stripe || isSaving}
+            >
+              Save
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </form>
     </Dialog>
   );
 }

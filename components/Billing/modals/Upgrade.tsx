@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -8,7 +9,11 @@ import {
   TextField,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+import subscriptionApi from "@apiClient/subscriptionApi";
+import { raiseAlert } from "@store/slices/genericSlice";
 import classNames from "classnames";
+import { PLAN_ID_TO_PLAN_DETAILS, PLANS } from "@constants/plans";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -152,57 +157,117 @@ const useStyles = makeStyles((theme) => ({
 interface UpgradeProps {
   open: boolean;
   handleClose: any;
+  subscriptionDetails: any;
 }
-export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
+export default function UpgradeModal({
+  open,
+  handleClose,
+  subscriptionDetails,
+}: UpgradeProps) {
   const classes = useStyles();
-  const handleInputChange = () => {};
+  const [planId, setPlanId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  // const handleInputChange = () => {};
+
+  useEffect(() => {
+    if (
+      PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
+        ?.planType == "Pro" &&
+      PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
+        ?.planDuration == "Monthly"
+    ) {
+      setPlanId(PLANS.ENTERPRISE.MONTHLY.planId);
+    } else if (
+      PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
+        ?.planType == "Pro" &&
+      PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
+        ?.planDuration == "Annually"
+    ) {
+      setPlanId(PLANS.ENTERPRISE.ANNUALLY.planId);
+    } else if (
+      PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
+        ?.planType == "Enterprise"
+    ) {
+      raiseAlert("You already have Upgraded Plan!", "success");
+    }
+  }, []);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    let data = {
+      subscriptionId: subscriptionDetails?.subscriptionId,
+      data: {
+        price: planId,
+      },
+    };
+    let res = await subscriptionApi.updateSubscriptionPlan(data);
+    if (!res.error) {
+      raiseAlert("Successfully Upgraded!", "success");
+    } else {
+      raiseAlert("Unknown error occurred!", "success");
+    }
+  };
+
   return (
     <Dialog open={open} onClose={handleClose}>
-      <Box className={classes.dialogBox}>
-        <Typography className={classes.title}>Upgrade to Pro</Typography>
-        <Typography className={classes.titleCaption}>
-          Prices are in CAD/USD
-        </Typography>
-        <Typography className={classes.descriptionText}>
-          Your new monthly bill will be $15 starting 3 June 2021.
-        </Typography>
-        <Typography className={classes.descriptionText}>
-          Your new monthly bill will be $15 will be applied today to your
-          MasterCard ending in 5972.
-        </Typography>
-        <br />
-        <Box textAlign="center">
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            size="large"
-            className={classNames(classes.buttons, classes.changeCardButton)}
-          >
-            Change Card
-          </Button>
+      <form onSubmit={handleSubmit}>
+        <Box className={classes.dialogBox}>
+          <Typography className={classes.title}>
+            Upgrade to {PLAN_ID_TO_PLAN_DETAILS[planId]?.planType}
+          </Typography>
+          <Typography className={classes.titleCaption}>
+            Prices are in CAD/USD
+          </Typography>
+          <Typography className={classes.descriptionText}>
+            Your new monthly bill will be $
+            {PLAN_ID_TO_PLAN_DETAILS[planId]?.price *
+              subscriptionDetails?.current_plan?.members}{" "}
+            starting{" "}
+            {moment(subscriptionDetails?.expires_at).format("DD MMM YYYY")}.
+          </Typography>
+          <Typography className={classes.descriptionText}>
+            Your new monthly bill will be $
+            {PLAN_ID_TO_PLAN_DETAILS[planId]?.price *
+              subscriptionDetails?.current_plan?.members}{" "}
+            will be applied today to your card.
+            {/* MasterCard ending in 5972. */}
+          </Typography>
+          <br />
+          <Box textAlign="center">
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              size="large"
+              className={classNames(classes.buttons, classes.changeCardButton)}
+            >
+              Change Card
+            </Button>
+          </Box>
+          <br />
+          <Box className={classes.buttonContainer1}>
+            <Button
+              fullWidth
+              onClick={handleClose}
+              variant="outlined"
+              size="large"
+              className={classes.buttons}
+            >
+              Cancel
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              className={`${classes.buttons} ${classes.saveButton}`}
+              color="primary"
+              size="large"
+              type="submit"
+              disabled={isSaving}
+            >
+              Upgrade
+            </Button>
+          </Box>
         </Box>
-        <br />
-        <Box className={classes.buttonContainer1}>
-          <Button
-            fullWidth
-            onClick={handleClose}
-            variant="outlined"
-            size="large"
-            className={classes.buttons}
-          >
-            Cancel
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            className={`${classes.buttons} ${classes.saveButton}`}
-            color="primary"
-            size="large"
-          >
-            Upgrade
-          </Button>
-        </Box>
-      </Box>
+      </form>
     </Dialog>
   );
 }

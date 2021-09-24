@@ -36,11 +36,10 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
       >
         <div className={styles.mobileSidebar}>
           <div className={styles.profile}>
-            <Image
-              alt="icon"
-              src="/icons/sidebar/profilehq.png"
-              width="74"
-              height="74"
+            <Avatar
+              alt="Avatar"
+              src={user?.profileImage ? user?.profileImage : "/avatar.png"}
+              className={styles.avatarLarge}
             />
             <p className="name">{user?.name}</p>
           </div>
@@ -217,6 +216,11 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(5),
     height: theme.spacing(5),
     marginLeft: "2rem",
+    backgroundColor: "#F1F3F6",
+  },
+  avatarLarge: {
+    width: theme.spacing(10),
+    height: theme.spacing(10),
     backgroundColor: "#F1F3F6",
   },
 }));

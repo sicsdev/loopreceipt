@@ -14,13 +14,23 @@ import InputBox from "@components/Controls/InputBox";
 /* @ts-ignore */
 import CreditCardInput from "react-credit-card-input";
 import LockIcon from "@material-ui/icons/Lock";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import subscriptionApi from "@apiClient/subscriptionApi";
+import { raiseAlert } from "@store/slices/genericSlice";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { PLANS } from "@constants/plans";
+import { FormType, useFormReturnType } from "@interfaces/FormTypes";
+import { useForm } from "@hooks/useForm";
+import billingDetailsForm from "@forms/billing/billingDetailsForm";
+import Form from "@forms/billing/Form";
+import { validateAllFieldsOfForm } from "forms/formUtils";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
     backgroundColor: "#fff",
-    [theme.breakpoints.up("sm")]: {
-      width: 600,
-    },
+    // [theme.breakpoints.up("sm")]: {
+    //   width: 600,
+    // },
   },
   title: {
     fontFamily: "Roboto",
@@ -251,34 +261,28 @@ interface PaymentProps {
   upgradePlan: string;
 }
 
-type PAYMENTS_MODE_TYPE = {
-  [key: string]: any;
-};
-
-const PAYMENTS_MODE: PAYMENTS_MODE_TYPE = {
-  Choice: {
-    monthly: 14,
-    yearly: 11,
-  },
-  Pro: {
-    monthly: 20,
-    yearly: 17,
-  },
-  Enterprize: {
-    monthly: 20,
-    yearly: 17,
-  },
-};
-
 export default function Payment({
   open,
   handleClose,
   upgradePlan,
 }: PaymentProps) {
   const classes = useStyles();
-  const handleInputChange = () => {};
+  const [values, setValues] = useState({
+    // email: "",
+    phone: "",
+    city: "",
+    country: "",
+    state: "",
+    address: "",
+  });
+  const handleInputChange = (event: any) => {
+    setValues({ ...values, [event.target.name]: [event.target.value] });
+  };
 
-  const [value, setValue] = useState("monthly");
+  let { user } = useAppSelector((state) => state.user);
+
+  const [memberCount, setMemberCount] = useState(0);
+  const [value, setValue] = useState("MONTHLY");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
   };
@@ -296,144 +300,237 @@ export default function Payment({
     setCVC(e.target.value);
   };
 
+  const formProps = useForm(billingDetailsForm.initialState);
+  const dispatch = useAppDispatch();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const stripe = useStripe();
+  const elements = useElements();
+  const handleSubmit = async (event: any) => {
+    // Block native form submission.
+    event.preventDefault();
+    setIsSaving(true);
+
+    if (!stripe || !elements) {
+      // Stripe.js has not loaded yet. Make sure to disable
+      // form submission until Stripe.js has loaded.
+      return;
+    }
+
+    // Get a reference to a mounted CardElement. Elements knows how
+    // to find your CardElement because there can only ever be one of
+    // each type of element.
+    const cardElement = elements.getElement(CardElement);
+    if (!cardElement) return;
+
+    // Use your card Element with other Stripe.js APIs
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: "card",
+      card: cardElement,
+      billing_details: {
+        email: user?.email,
+      },
+    });
+
+    if (error) {
+      console.log("[error]", error);
+      raiseAlert("Some error occurred. Try Again", "error");
+      return;
+    }
+
+    console.log("[PaymentMethod]", paymentMethod);
+
+    let data = {
+      priceId: PLANS[upgradePlan][value].planId,
+      memberCount: memberCount,
+    };
+
+    const res = await subscriptionApi.create(data);
+
+    if (res?.error) {
+      raiseAlert("Subscription Failed!", "error");
+      return;
+    }
+
+    stripe
+      .confirmCardPayment(res?.client_secret, {
+        payment_method: paymentMethod?.id,
+      })
+      .then((result: any) => {
+        if (result.error) {
+          raiseAlert(result?.error?.message, "error");
+        } else {
+          // Successful subscription payment
+          raiseAlert(`Subscription Succeeded `, "success");
+          handleClose();
+        }
+        setIsSaving(false);
+      })
+      .catch(() => {
+        setIsSaving(false);
+      });
+  };
+
   return (
     <Box className={classes.modal}>
-      <Typography className={classes.title}>
-        Upgrade to {upgradePlan}
-      </Typography>
-      <Typography className={classes.titleCaption}>
-        Prices are in CAD/USD
-      </Typography>
-
-      <Box className={classes.membersBox} textAlign="center">
-        <Typography className={classes.subtitle}>Add Members</Typography>
-        <TextField
-          type="number"
-          size="small"
-          variant="outlined"
-          label="0"
-          style={{ backgroundColor: "#fff" }}
-        />
-        <RadioGroup
-          className={classes.radioGroup}
-          name="fee"
-          value={value}
-          onChange={handleChange}
-        >
-          <Box className={classes.radioContainer}>
-            <FormControlLabel
-              value="monthly"
-              control={<Radio color="secondary" />}
-              label={
-                <Box textAlign="left">
-                  <Typography className={classes.radioTitle}>
-                    ${PAYMENTS_MODE[upgradePlan].monthly} /member/mo paid
-                    monthly
-                  </Typography>
-                  <Typography className={classes.radioCaption}>
-                    ${PAYMENTS_MODE[upgradePlan].monthly} due today
-                  </Typography>
-                </Box>
-              }
-              className={classes.radioControlMobile}
-            />
-
-            <FormControlLabel
-              value="yearly"
-              control={<Radio color="secondary" />}
-              label={
-                <Box textAlign="left">
-                  <Typography className={classes.radioTitle}>
-                    ${PAYMENTS_MODE[upgradePlan].yearly} /member/mo paid monthly
-                  </Typography>
-                  <Typography className={classes.radioCaption}>
-                    ${PAYMENTS_MODE[upgradePlan].yearly * 12} due today
-                  </Typography>
-                </Box>
-              }
-            />
-          </Box>
-        </RadioGroup>
-      </Box>
-
-      <Box className={classes.billingBox} textAlign="center">
-        <Typography className={classes.subtitle}>
-          Billing Information
+      <form onSubmit={handleSubmit}>
+        <Typography className={classes.title}>
+          Upgrade to {upgradePlan}
         </Typography>
-        <Card className={classes.billingCard}>
-          <InputBox
-            input={{
-              type: "email",
-              label: "Email",
-              name: "email",
-              placeholder: "Your email address",
-              value: "",
+        <Typography className={classes.titleCaption}>
+          Prices are in CAD/USD
+        </Typography>
+
+        <Box className={classes.membersBox} textAlign="center">
+          <Typography className={classes.subtitle}>Add Members</Typography>
+          <TextField
+            type="number"
+            size="small"
+            variant="outlined"
+            placeholder="0"
+            inputProps={{ style: { textAlign: "center" }, min: 0 }}
+            style={{ backgroundColor: "#fff" }}
+            name="memberCount"
+            onChange={(e: any) => {
+              setMemberCount(e.target.value);
             }}
-            onChange={handleInputChange}
-            onBlur={(e) => {}}
+            required={true}
           />
-        </Card>
+          <RadioGroup
+            className={classes.radioGroup}
+            name="fee"
+            value={value}
+            onChange={handleChange}
+          >
+            <Box className={classes.radioContainer}>
+              <FormControlLabel
+                value="MONTHLY"
+                control={<Radio color="secondary" />}
+                label={
+                  <Box textAlign="left">
+                    <Typography className={classes.radioTitle}>
+                      ${PLANS[upgradePlan].MONTHLY.price} /member/mo paid
+                      monthly
+                    </Typography>
+                    <Typography className={classes.radioCaption}>
+                      ${PLANS[upgradePlan].MONTHLY.price} due today
+                    </Typography>
+                  </Box>
+                }
+                className={classes.radioControlMobile}
+              />
+
+              <FormControlLabel
+                value="ANNUALLY"
+                control={<Radio color="secondary" />}
+                label={
+                  <Box textAlign="left">
+                    <Typography className={classes.radioTitle}>
+                      ${PLANS[upgradePlan].ANNUALLY.price} /member/mo paid
+                      monthly
+                    </Typography>
+                    <Typography className={classes.radioCaption}>
+                      ${PLANS[upgradePlan].ANNUALLY.price} due today
+                    </Typography>
+                  </Box>
+                }
+              />
+            </Box>
+          </RadioGroup>
+        </Box>
+
+        <Box className={classes.billingBox} textAlign="center">
+          <Typography className={classes.subtitle}>
+            Billing Information
+          </Typography>
+          {/* <Card className={classes.billingCard}>
+            <Form
+              form={billingDetailsForm}
+              formProps={formProps}
+              padForm={false}
+              // onSubmit={onSubmit}
+            />
+          </Card> */}
+          <br />
+
+          <Card className={classes.billingCard}>
+            <Typography className={classes.inputBox}>Credit Card</Typography>
+
+            {/* <CreditCardInput
+              cardNumberInputProps={{
+                value: cardNumber,
+                onChange: handleCardNumberChange,
+              }}
+              cardExpiryInputProps={{
+                value: expiry,
+                onChange: handleCardExpiryChange,
+              }}
+              cardCVCInputProps={{ value: cvc, onChange: handleCardCVCChange }}
+              containerClassName={classes.creditcardContainer}
+              fieldClassName={classes.creditcardInput}
+            /> */}
+
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#424770",
+                    "::placeholder": {
+                      color: "#aab7c4",
+                    },
+                  },
+                  invalid: {
+                    color: "#9e2146",
+                  },
+                },
+              }}
+            />
+
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              style={{ marginTop: 10 }}
+            >
+              <LockIcon fontSize="small" className={classes.secureIcon} />
+              <Typography className={classes.secureText}>
+                Secure payment
+              </Typography>
+            </Box>
+          </Card>
+
+          <Typography className={classes.payment}>
+            Total payment due: ${PLANS[upgradePlan][value].price * memberCount}
+          </Typography>
+        </Box>
+
         <br />
 
-        <Card className={classes.billingCard}>
-          <Typography className={classes.inputBox}>Credit Card</Typography>
-          <CreditCardInput
-            cardNumberInputProps={{
-              value: cardNumber,
-              onChange: handleCardNumberChange,
-            }}
-            cardExpiryInputProps={{
-              value: expiry,
-              onChange: handleCardExpiryChange,
-            }}
-            cardCVCInputProps={{ value: cvc, onChange: handleCardCVCChange }}
-            containerClassName={classes.creditcardContainer}
-            fieldClassName={classes.creditcardInput}
-          />
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            style={{ marginTop: 10 }}
+        <Box className={classes.buttonContainer}>
+          <Button
+            fullWidth
+            onClick={handleClose}
+            variant="outlined"
+            size="large"
+            className={classes.buttons}
           >
-            <LockIcon fontSize="small" className={classes.secureIcon} />
-            <Typography className={classes.secureText}>
-              Secure payment
-            </Typography>
-          </Box>
-        </Card>
+            Cancel
+          </Button>
 
-        <Typography className={classes.payment}>
-          Total payment due: $
-          {value === "yearly"
-            ? `${PAYMENTS_MODE[upgradePlan].yearly * 12}`
-            : `${PAYMENTS_MODE[upgradePlan].monthly}`}
-        </Typography>
-      </Box>
-
-      <br />
-
-      <Box className={classes.buttonContainer}>
-        <Button
-          fullWidth
-          onClick={handleClose}
-          variant="outlined"
-          size="large"
-          className={classes.buttons}
-        >
-          Cancel
-        </Button>
-
-        <Button
-          fullWidth
-          variant="contained"
-          className={`${classes.buttons} ${classes.saveButton}`}
-          color="primary"
-          size="large"
-        >
-          Save Changes
-        </Button>
-      </Box>
+          <Button
+            fullWidth
+            variant="contained"
+            className={`${classes.buttons} ${classes.saveButton}`}
+            color="primary"
+            size="large"
+            type="submit"
+            disabled={!stripe || isSaving}
+          >
+            Save Changes
+          </Button>
+        </Box>
+      </form>
     </Box>
   );
 }
