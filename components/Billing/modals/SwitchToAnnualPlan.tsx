@@ -9,12 +9,13 @@ import {
   TextField,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import subscriptionApi from "@apiClient/subscriptionApi";
-import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { raiseAlert } from "@store/slices/genericSlice";
 import classNames from "classnames";
 import { PLAN_ID_TO_PLAN_DETAILS, PLANS } from "@constants/plans";
 import moment from "moment";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -155,15 +156,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface UpgradeProps {
+interface SwitchToAnnualPlanProps {
   open: boolean;
   handleClose: any;
 }
-export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
+export default function SwitchToAnnualPlan({
+  open,
+  handleClose,
+}: SwitchToAnnualPlanProps) {
   const classes = useStyles();
+  const [changeCard, setChangeCard] = useState(false);
   const [planId, setPlanId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-
+  let { user } = useAppSelector((state) => state.user);
   let { subscription } = useAppSelector((state) => state.subscription);
 
   useEffect(() => {
@@ -174,37 +179,89 @@ export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
         PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planDuration ==
           "Monthly"
       ) {
-        setPlanId(PLANS.ENTERPRISE.MONTHLY.planId);
+        setPlanId(PLANS.PRO.ANNUALLY.planId);
       } else if (
         PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planType ==
-          "Pro" &&
+          "Enterprise" &&
         PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planDuration ==
-          "Annually"
+          "Monthly"
       ) {
         setPlanId(PLANS.ENTERPRISE.ANNUALLY.planId);
-      } else if (
-        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planType ==
-        "Enterprise"
-      ) {
-        raiseAlert("You already have Upgraded Plan!", "success");
+      } else {
+        raiseAlert("You already have Annual Plan!", "success");
       }
     }
   }, []);
 
+  const stripe = useStripe();
+  const elements = useElements();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    let data = {
-      subscriptionId: subscription?.subscriptionId,
-      data: {
-        price: planId,
-      },
-    };
-    let res = await subscriptionApi.updateSubscriptionPlan(data);
-    if (!res.error) {
-      raiseAlert("Successfully Upgraded!", "success");
-      handleClose();
+
+    if (changeCard) {
+      if (!stripe || !elements) {
+        // Stripe.js has not loaded yet. Make sure to disable
+        // form submission until Stripe.js has loaded.
+        return;
+      }
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) return;
+
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+        billing_details: {
+          email: user?.email,
+        },
+      });
+      if (error) {
+        console.log("[error]", error);
+        raiseAlert("Some error occurred. Try Again", "error");
+        return;
+      }
+
+      console.log("[PaymentMethod]", paymentMethod);
+      if (!paymentMethod) {
+        raiseAlert("Some error occurred. Try Again", "error");
+        return;
+      }
+
+      const res = await subscriptionApi.updateSubscriptionDetails(
+        paymentMethod?.id
+      );
+      if (res.error == false) {
+        let data = {
+          subscriptionId: subscription?.subscriptionId,
+          data: {
+            price: planId,
+          },
+        };
+        let resp = await subscriptionApi.updateSubscriptionPlan(data);
+        if (!resp.error) {
+          raiseAlert("Successfully Switched to Annual Plan!", "success");
+          handleClose();
+        } else {
+          raiseAlert("Switch to Annual Plan failed.!", "success");
+        }
+        handleClose();
+      } else {
+        raiseAlert("Some error occurred. Try Again", "error");
+      }
     } else {
-      raiseAlert("Unknown error occurred!", "success");
+      let data = {
+        subscriptionId: subscription?.subscriptionId,
+        data: {
+          price: planId,
+          quantity: subscription?.current_plan?.members,
+        },
+      };
+      let res = await subscriptionApi.updateSubscriptionPlan(data);
+      if (!res.error) {
+        raiseAlert("Successfully Switched to Annual Plan!", "success");
+        handleClose();
+      } else {
+        raiseAlert("Unknown error occurred!", "success");
+      }
     }
   };
 
@@ -212,41 +269,63 @@ export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
     <Dialog open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit}>
         <Box className={classes.dialogBox}>
-          <Typography className={classes.title}>
-            Upgrade to {PLAN_ID_TO_PLAN_DETAILS[planId]?.planType}
-          </Typography>
-          <Typography className={classes.titleCaption}>
-            Prices are in CAD/USD
-          </Typography>
+          <Typography className={classes.title}>Switch to Annual</Typography>
+          <br />
           {subscription?.current_plan?.members && (
             <>
               <Typography className={classes.descriptionText}>
-                Your new monthly bill will be $
-                {PLAN_ID_TO_PLAN_DETAILS[planId]?.price *
-                  parseInt(subscription?.current_plan?.members)}{" "}
+                Your new annual bill will be $
+                {PLAN_ID_TO_PLAN_DETAILS[
+                  PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                    .moveToAnnually
+                ]?.price * parseInt(subscription?.current_plan?.members)}{" "}
                 starting{" "}
                 {moment(subscription?.expires_at).format("DD MMM YYYY")}.
               </Typography>
               <Typography className={classes.descriptionText}>
-                Your new monthly bill will be $
-                {PLAN_ID_TO_PLAN_DETAILS[planId]?.price *
-                  parseInt(subscription?.current_plan?.members)}{" "}
-                will be applied today to your card.
-                {/* MasterCard ending in 5972. */}
+                An estimated charge of $
+                {PLAN_ID_TO_PLAN_DETAILS[
+                  PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                    .moveToAnnually
+                ]?.price * parseInt(subscription?.current_plan?.members)}{" "}
+                will be applied today to your <strong>MasterCard</strong> ending
+                in <strong>5972</strong>.
               </Typography>
             </>
           )}
           <br />
-          <Box textAlign="center">
-            <Button
-              onClick={handleClose}
-              variant="outlined"
-              size="large"
-              className={classNames(classes.buttons, classes.changeCardButton)}
-            >
-              Change Card
-            </Button>
-          </Box>
+          {!changeCard ? (
+            <Box textAlign="center">
+              <Button
+                onClick={() => setChangeCard(true)}
+                variant="outlined"
+                size="large"
+                className={classNames(
+                  classes.buttons,
+                  classes.changeCardButton
+                )}
+              >
+                Change Card
+              </Button>
+            </Box>
+          ) : (
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#424770",
+                    "::placeholder": {
+                      color: "#aab7c4",
+                    },
+                  },
+                  invalid: {
+                    color: "#9e2146",
+                  },
+                },
+              }}
+            />
+          )}
           <br />
           <Box className={classes.buttonContainer1}>
             <Button
@@ -267,7 +346,7 @@ export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
               type="submit"
               disabled={isSaving}
             >
-              Upgrade
+              Switch
             </Button>
           </Box>
         </Box>

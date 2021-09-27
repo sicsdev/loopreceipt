@@ -110,3 +110,19 @@ export interface EntityActivity {
   createdAt: string;
   metadata?: any;
 }
+
+export interface EntitySubscription {
+  subscriptionId?: string,
+    customerId?: string,
+    email?: string,
+    status?: string,
+    expires_at?: string,
+    card: {
+      brand?: string,
+      last4?: string
+    },
+    current_plan?: {
+      id: string,
+      members: string
+    }
+}

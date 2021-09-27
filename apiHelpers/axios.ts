@@ -1,8 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import router from "next/router";
-export const baseURL = process.env.NEXT_PUBLIC_API_URL + "/api";
-// export const baseURL = "https://loop-staging-api.herokuapp.com" + "/api";
+// export const baseURL = process.env.NEXT_PUBLIC_API_URL + "/api";
+export const baseURL = "https://loop-staging-api.herokuapp.com" + "/api";
 const instance = axios.create({
   baseURL,
 });
@@ -26,6 +26,7 @@ instance.interceptors.response.use(
   (error) => {
     // console.log(error.response.data);
     if (error.response.data.message === "Access denied no token provided.") {
+    // || error.response.data.message === "User associated with this token does not exist.") {
       router.push("/user/login");
     }
     return Promise.reject(error);

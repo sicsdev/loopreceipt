@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,6 +9,12 @@ import {
   TextField,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+import subscriptionApi from "@apiClient/subscriptionApi";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { raiseAlert } from "@store/slices/genericSlice";
+import classNames from "classnames";
+import { PLAN_ID_TO_PLAN_DETAILS, PLANS } from "@constants/plans";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -147,72 +153,122 @@ export default function DowngradeModal({
   const classes = useStyles();
   const [reason, setReason] = useState("");
 
+  let { subscription } = useAppSelector((state) => state.subscription)
+
   const handleDowngrade = () => {
     setDowngraded(true);
     handleClose();
   };
+
+  const [planId, setPlanId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  // const handleInputChange = () => {};
+
+  useEffect(() => {
+    if(subscription?.current_plan?.id) {
+      if (
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+          ?.planType == "Enterprise" &&
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+          ?.planDuration == "Monthly"
+      ) {
+        setPlanId(PLANS.PRO.MONTHLY.planId);
+      } else if (
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+          ?.planType == "Enterprise" &&
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+          ?.planDuration == "Annually"
+      ) {
+        setPlanId(PLANS.PRO.ANNUALLY.planId);
+      } else if (
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+          ?.planType == "Pro"
+      ) {
+        raiseAlert("Their is no plan lower than Pro!", "success");
+      }
+    }
+  }, []);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    let data = {
+      subscriptionId: subscription?.subscriptionId,
+      data: {
+        price: planId,
+      },
+    };
+    let res = await subscriptionApi.updateSubscriptionPlan(data);
+    if (!res.error) {
+      raiseAlert("Successfully Downgraded!", "success");
+    } else {
+      raiseAlert("Unknown error occurred!", "success");
+    }
+  };
+
   return (
     <Dialog open={open} onClose={handleClose}>
-      <Box className={classes.dialogBox}>
-        <Typography className={classes.title}>Downgrade to Super</Typography>
-        <Typography className={classes.titleCaption}>
-          Your Pro plan will end on 3 June 2021, and you will no longer be
-          charged for your subscription.
-        </Typography>
-        <Typography className={classes.inputBox}>
-          Reason for downgrading*
-        </Typography>
-        <TextField
-          fullWidth
-          select
-          SelectProps={{ native: true }}
-          variant="outlined"
-          onChange={(e) => setReason(e.target.value)}
-        >
-          <option value="Select Reason">Select Reason</option>
-          <option value="I no longer need it">I no longer need it</option>
-          <option value="I found a better tool">I found a better tool</option>
-          <option value="The product doesn't do what I need">
-            The product doesn&apos;t do what I need
-          </option>
-          <option value="It's too expensive">It&apos;s too expensive</option>
-          <option value="Other">Other</option>
-        </TextField>
-        <br /> <br />
-        <Typography className={classes.inputBox}>
-          Additional comments
-        </Typography>
-        <TextField
-          fullWidth
-          variant="outlined"
-          multiline={true}
-          type="text"
-          // @Malik min rows max rows was raising error please set height
-        />
-        <br /> <br />
-        <Box className={classes.buttonContainer1}>
-          <Button
+      <form onSubmit={handleSubmit}>
+        <Box className={classes.dialogBox}>
+          <Typography className={classes.title}>Downgrade to Super</Typography>
+          <Typography className={classes.titleCaption}>
+            Your Pro plan will end on 3 June 2021, and you will no longer be
+            charged for your subscription.
+          </Typography>
+          <Typography className={classes.inputBox}>
+            Reason for downgrading*
+          </Typography>
+          <TextField
             fullWidth
-            variant="contained"
-            className={`${classes.buttons} ${classes.saveButton}`}
-            color="primary"
-            size="large"
-            disabled={!reason}
-            onClick={handleDowngrade}
-          >
-            Downgrade
-          </Button>
-          <Button
-            fullWidth
-            onClick={handleClose}
+            select
+            SelectProps={{ native: true }}
             variant="outlined"
-            size="large"
-            className={classes.buttons}
+            onChange={(e) => setReason(e.target.value)}
           >
-            Cancel
-          </Button>
+            <option value="Select Reason">Select Reason</option>
+            <option value="I no longer need it">I no longer need it</option>
+            <option value="I found a better tool">I found a better tool</option>
+            <option value="The product doesn't do what I need">
+              The product doesn&apos;t do what I need
+            </option>
+            <option value="It's too expensive">It&apos;s too expensive</option>
+            <option value="Other">Other</option>
+          </TextField>
+          <br /> <br />
+          <Typography className={classes.inputBox}>
+            Additional comments
+          </Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            multiline={true}
+            type="text"
+            // @Malik min rows max rows was raising error please set height
+          />
+          <br /> <br />
+          <Box className={classes.buttonContainer1}>
+            <Button
+              fullWidth
+              variant="contained"
+              className={`${classes.buttons} ${classes.saveButton}`}
+              color="primary"
+              size="large"
+              type="submit"
+              disabled={isSaving || !reason}
+            >
+              Downgrade
+            </Button>
+            <Button
+              fullWidth
+              onClick={handleClose}
+              variant="outlined"
+              size="large"
+              className={classes.buttons}
+            >
+              Cancel
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </form>
     </Dialog>
   );
 }

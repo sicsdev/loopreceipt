@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -21,8 +21,13 @@ import RemoveMembersModal from "./modals/RemoveMembers";
 import UpdatePaymentMethodModal from "./modals/UpdatePaymentMethod";
 import DowngradeModal from "./modals/Downgrade";
 import UpgradeModal from "./modals/Upgrade";
-import MsgModal from "./modals/MsgModal";
+import SwitchToAnnualPlan from "./modals/SwitchToAnnualPlan";
 import classNames from "classnames";
+import subscriptionApi from "@apiClient/subscriptionApi";
+import { raiseAlert } from "@store/slices/genericSlice";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import moment from "moment";
+import { PLAN_ID_TO_PLAN_DETAILS } from "@constants/plans";
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -164,9 +169,23 @@ export default function Subscribed() {
   const [msgDescription, setMsgDescription] = useState(
     "You will no longer be billed."
   );
-  const [msgModal, setMsgModal] = useState(false);
-  const handleMsgModalOpen = () => setMsgModal(true);
-  const handleMsgModalClose = () => setMsgModal(false);
+
+  let { user } = useAppSelector((state) => state.user);
+  let { subscription } = useAppSelector((state) => state.subscription);
+
+  let [paymentHistory, setPaymentHistory] = useState([]);
+  let fetchPaymentHistory = async () => {
+    const res = await subscriptionApi.getPaymentHistory(
+      subscription?.customerId
+    );
+    if (res.error == false && res.details) {
+      setPaymentHistory(res.details);
+    }
+  };
+
+  useEffect(() => {
+    fetchPaymentHistory();
+  }, [subscription?.customerId]);
 
   return (
     <Box className={classes.box}>
@@ -189,16 +208,30 @@ export default function Subscribed() {
         </>
       ) : (
         <>
-          <Typography className={classes.heading}>
-            You’re subscribed to the PRO Monthly plan for 1 member
-          </Typography>
-          <Typography className={classes.subheading}>
-            Your subscription will renew on 3 June 2021 using your MasterCard
-            ending in 5972.
-          </Typography>
-          <Button className={classes.nextPaymentButton} variant="outlined">
-            Next payment: Scheduled for 3 July 2020
-          </Button>
+          {subscription?.current_plan?.id && (
+            <>
+              <Typography className={classes.heading}>
+                You’re subscribed to the{" "}
+                {PLAN_ID_TO_PLAN_DETAILS[
+                  subscription?.current_plan?.id
+                ]?.planType?.toUpperCase()}{" "}
+                {
+                  PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                    ?.planDuration
+                }{" "}
+                plan for {subscription?.current_plan?.members} member(s)
+              </Typography>
+              <Typography className={classes.subheading}>
+                Your subscription will renew on{" "}
+                {moment(subscription?.expires_at).format("DD MMM YYYY")} using
+                your MasterCard ending in {subscription?.card?.last4}.
+              </Typography>
+              <Button className={classes.nextPaymentButton} variant="outlined">
+                Next payment: Scheduled for{" "}
+                {moment(subscription?.expires_at).format("DD MMM YYYY")}
+              </Button>
+            </>
+          )}
         </>
       )}
       <br /> <br /> <br />
@@ -232,6 +265,7 @@ export default function Subscribed() {
           variant="contained"
           color="primary"
           className={classes.switchButton}
+          onClick={() => setModal("4")}
         >
           Switch to annual (save $24 per year)
         </Button>
@@ -254,33 +288,27 @@ export default function Subscribed() {
               <TableCell>Date</TableCell>
               <TableCell align="left">Plan</TableCell>
               <TableCell align="left">Payment Status</TableCell>
-              <TableCell align="right">Amount(CAD)</TableCell>
+              <TableCell align="right">Amount</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell data-th="Date">3 May 2021</TableCell>
-              <TableCell data-th="Plan" align="left">
-                Pro Monthly
-              </TableCell>
-              <TableCell data-th="Payment Status" align="left">
-                Paid
-              </TableCell>
-              <TableCell data-th="Amount(CAD)" align="right">
-                $14
-              </TableCell>
-            </TableRow>
-            {/* {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-            </TableRow>
-          ))} */}
+            {paymentHistory?.map((payment: any, index) => (
+              <TableRow key={index}>
+                <TableCell data-th="Date">
+                  {moment.unix(payment?.timestamp).format("DD MMM YYYY")}
+                </TableCell>
+                <TableCell data-th="Plan" align="left">
+                  {PLAN_ID_TO_PLAN_DETAILS[payment?.plan]?.planType}{" "}
+                  {PLAN_ID_TO_PLAN_DETAILS[payment?.plan]?.planDuration}
+                </TableCell>
+                <TableCell data-th="Payment Status" align="left">
+                  {payment?.status == "succeeded" ? "Paid" : payment?.status}
+                </TableCell>
+                <TableCell data-th="Amount(CAD)" align="right">
+                  ${payment?.amount} {payment?.currency?.toUpperCase()}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -332,6 +360,9 @@ export default function Subscribed() {
       {modal === "3" && (
         <UpdatePaymentMethodModal open={true} handleClose={setModal} />
       )}
+      {modal === "4" && (
+        <SwitchToAnnualPlan open={true} handleClose={setModal} />
+      )}
       {modal === "5" && <UpgradeModal open={true} handleClose={setModal} />}
       {modal === "6" && (
         <DowngradeModal
@@ -340,13 +371,6 @@ export default function Subscribed() {
           setDowngraded={setDowngraded}
         />
       )}
-      <MsgModal
-        open={msgModal}
-        handleClose={handleMsgModalClose}
-        title={msgTitle}
-        description={msgDescription}
-      />
-      {/* </MobileView> */}
     </Box>
   );
 }

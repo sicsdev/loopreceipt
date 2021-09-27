@@ -53,6 +53,7 @@ function InputBox({
       {input.type === "country" ? (
         <div className={styles.inputContainer + " MyInputContainer"}>
           <CountryDropdown
+            {...input?.inputProps}
             classes={styles.input}
             name={input.name}
             value={input.value}
@@ -67,6 +68,7 @@ function InputBox({
       ) : input.type === "region" ? (
         <div className={styles.inputContainer + " MyInputContainer"}>
           <RegionDropdown
+            {...input?.inputProps}
             classes={styles.input}
             country={dependency!}
             name={input.name}

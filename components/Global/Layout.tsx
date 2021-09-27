@@ -12,6 +12,7 @@ import Fade from "@material-ui/core/Fade";
 import Slide from "@material-ui/core/Slide";
 import { useState } from "react";
 import PrimaryLink from "@components/Shared/PrimaryLink";
+import MessageDialog from "@components/Shared/MessageDialog";
 interface LayoutProps {
   children: JSX.Element | JSX.Element[];
 }
@@ -38,6 +39,26 @@ const Layout = ({ children }: LayoutProps) => {
     >
       <Snackbar
         open={showAlert}
+        // autoHideDuration={10000}
+        // anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={(e, reason) => {
+          // reason 'timeout' | 'clickaway';
+          dispatch(setShowAlert(false));
+        }}
+        TransitionComponent={Fade}
+        // TransitionComponent={(props) => <Slide {...props} direction="down" />}
+      >
+        <MessageDialog
+          open={showAlert}
+          message={alertMessage}
+          link={alertLink}
+          onClose={() => {
+            dispatch(setShowAlert(false));
+          }}
+        />
+      </Snackbar>
+      {/* <Snackbar
+        open={showAlert}
         autoHideDuration={3000}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         onClose={(e, reason) => {
@@ -60,7 +81,7 @@ const Layout = ({ children }: LayoutProps) => {
             </PrimaryLink>
           )}
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
       <Navbar />
       <Notifications />
       <InternalExternalModal />

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -8,6 +9,11 @@ import {
   TextField,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+import subscriptionApi from "@apiClient/subscriptionApi";
+import { raiseAlert } from "@store/slices/genericSlice";
+import { useAppDispatch, useAppSelector } from "@store/hooks";
+import moment from "moment";
+import { PLAN_ID_TO_PLAN_DETAILS } from "@constants/plans";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -154,7 +160,34 @@ export default function RemoveMembersModal({
   handleClose,
 }: RemoveMembersProps) {
   const classes = useStyles();
-  const handleInputChange = () => {};
+  const [quantity, setQuantity] = useState(0);
+  const handleInputChange = (event: any) => {
+    setQuantity(parseInt(event.target.value));
+  };
+
+  let { subscription } = useAppSelector((state) => state.subscription)
+
+  let [isSaving, setIsSaving] = useState(false);
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
+    setIsSaving(true);
+
+    let obj = {
+      subscriptionId: subscription?.subscriptionId,
+      data: {
+        quantity:
+          parseInt(subscription?.current_plan?.members || "0") - quantity,
+      },
+    };
+
+    let res = await subscriptionApi.updateSubscriptionPlan(obj);
+    if (res.error == false) {
+      raiseAlert("Successfully Updated!", "success");
+      handleClose();
+    }
+
+    setIsSaving(false);
+  };
   return (
     <Dialog open={open} onClose={handleClose}>
       <Box className={classes.dialogBox}>
@@ -163,45 +196,61 @@ export default function RemoveMembersModal({
           Prices are in CAD/USD
         </Typography>
 
-        <Box display="flex" alignItems="center" justifyContent="space-around">
-          <Typography className={classes.inputTexts}>Remove</Typography>
-          <TextField
-            type="number"
-            size="small"
-            placeholder="0"
-            variant="outlined"
-            className={classes.input}
-          />
-          <Typography className={classes.inputTexts}>Member(s)</Typography>
-        </Box>
+        <form onSubmit={onSubmit}>
+          <Box display="flex" alignItems="center" justifyContent="space-around">
+            <Typography className={classes.inputTexts}>Remove</Typography>
+            <TextField
+              type="number"
+              size="small"
+              placeholder="0"
+              variant="outlined"
+              inputProps={{
+                style: { textAlign: "center" },
+                min: 0,
+                max: parseInt(subscription?.current_plan?.members || "0"),
+              }}
+              className={classes.input}
+              onChange={handleInputChange}
+            />
+            <Typography className={classes.inputTexts}>Member(s)</Typography>
+          </Box>
 
-        <br />
-        <Typography className={classes.text1}>
-          Your new member count will be 0 and your monthly charge will be
-          increased to $14
-        </Typography>
-        <br />
+          <br />
+          {subscription?.current_plan &&
+            <Typography className={classes.text1}>
+              Your new member count will be{" "}
+              {parseInt(subscription?.current_plan?.members) - quantity}{" "}
+              and your monthly charge will be decrease to $
+              {PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                ?.price *
+                (parseInt(subscription?.current_plan?.members) - quantity)}
+            </Typography>
+          }
+          <br />
 
-        <Box className={classes.buttonContainer1}>
-          <Button
-            fullWidth
-            onClick={handleClose}
-            variant="outlined"
-            size="large"
-            className={classes.buttons}
-          >
-            Cancel
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            className={`${classes.buttons} ${classes.saveButton}`}
-            color="primary"
-            size="large"
-          >
-            Remove
-          </Button>
-        </Box>
+          <Box className={classes.buttonContainer1}>
+            <Button
+              fullWidth
+              onClick={handleClose}
+              variant="outlined"
+              size="large"
+              className={classes.buttons}
+            >
+              Cancel
+            </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              className={`${classes.buttons} ${classes.saveButton}`}
+              color="primary"
+              size="large"
+              type="submit"
+              disabled={isSaving}
+            >
+              Remove
+            </Button>
+          </Box>
+        </form>
       </Box>
     </Dialog>
   );
