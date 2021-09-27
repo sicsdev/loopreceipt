@@ -99,6 +99,9 @@ const recipientDetailsForm: FormType = {
       placeholder: "City",
       value: "",
       type: "text",
+      validate: function () {
+        return validations.isRequired(this);
+      },
     },
     state: {
       name: "state",
@@ -130,6 +133,9 @@ const recipientDetailsForm: FormType = {
       placeholder: "Code",
       value: "",
       type: "text",
+      validate: function () {
+        return validations.isRequired(this);
+      },
     },
   },
   populateSearchItems: async function () {

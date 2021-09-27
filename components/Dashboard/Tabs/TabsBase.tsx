@@ -99,16 +99,15 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
     },
   });
   const filteredItems = useMemo(() => {
-    // console.log(getter.data?.items);
     // console.log(user);
-    let filterLogic = (item: any) => true;
-    if (activeTabIndex === 0) {
-      filterLogic = (item: any) => item.owner.userid === user?.userId;
-    } else if (activeTabIndex === 1) {
-      filterLogic = (item: any) =>
-        item.isReceived === true && item.receivedBy === user?.email;
-    }
-    return getter.data ? getter.data.items.filter(filterLogic) : [];
+    // let filterLogic = (item: any) => true;
+    // if (activeTabIndex === 0) {
+    //   filterLogic = (item: any) => item.owner.userid === user?.userId;
+    // } else if (activeTabIndex === 1) {
+    //   filterLogic = (item: any) =>
+    //     item.isReceived === true && item.receivedBy === user?.email;
+    // }
+    return getter.data ? getter.data.items : [];
   }, [getter.data, user]);
   return (
     <div className={styles.right}>

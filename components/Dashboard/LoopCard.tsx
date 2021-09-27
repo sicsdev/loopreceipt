@@ -13,6 +13,7 @@ const LoopCard = ({ type, loop }: LoopCardProps) => {
   // console.log(loop);
   const styles = useStyles();
   const draftId = (loop as EntityDraft).draftId;
+  const loopId = (loop as EntityLoop).loopid;
   return (
     <div
       className={styles.LoopCard}
@@ -24,6 +25,14 @@ const LoopCard = ({ type, loop }: LoopCardProps) => {
               draftId,
             },
           });
+        }
+        if(loopId) {
+          router.push({
+            pathname: "/detail",
+            query: {
+              loopId,
+            },
+          })
         }
       }}
     >

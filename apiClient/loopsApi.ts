@@ -6,12 +6,8 @@ const loopsApi = {
   create: async (
     loop: EntityLoop
   ): Promise<{ loop: EntityLoop } | undefined> => {
-    // console.log(process.env.NEXT_PUBLIC_API_URL);
-
     try {
       const response = await axios.post(`/loops`, loop);
-
-      // console.log(response.data);
       return response.data;
     } catch (error) {
       throw axiosErrorHandler(error);
@@ -22,18 +18,8 @@ const loopsApi = {
     filters?: LoopFilters
   ): Promise<{ items: EntityLoop[]; total: number } | undefined> => {
     try {
-      // console.log("get all");
-      // console.log(Cookies.get("token"));
-      // Sample queries - /api/loops?page=1&filter1=date&from=1609775390&to=1628092190
-      // /api/loops?page=1&filter1=type&type=internal
-      // /api/loops?page=1&filter1=type&type=internal&filter2=date&from=1609775390&to=1628092190
-
-      let url = `/loops${applyFilters(page, filters)}`;
-      console.log(url);
-
+      let url = `/loops/outgoing${applyFilters(page, filters)}`;
       const response = await axios.get(url);
-
-      // console.log(response.data);
       return {
         items: response.data.loops,
         total: response.data.totalLoops,
@@ -64,17 +50,26 @@ const loopsApi = {
     filters?: LoopFilters
   ): Promise<{ items: EntityLoop[]; total: number } | undefined> => {
     try {
-      let url = `/loops/list${applyFilters(page, filters)}`;
+      let url = `/loops/received${applyFilters(page, filters)}`;
 
       const response = await axios.get(url);
 
       return {
-        items: response.data.looplist,
-        total: response.data.totalLoops || response.data.looplist?.length || 0,
+        items: response.data.loops,
+        total: response.data.totalLoops,
       };
     } catch (error) {
       throw axiosErrorHandler(error);
     }
   },
+  getLoop: async(loopId: string) => {
+    try {
+      let url = `/loops/${loopId}`;
+      const response = await axios.get(url);
+      return response?.data;
+    } catch (error) {
+      throw axiosErrorHandler(error);
+    }
+  }
 };
 export default loopsApi;

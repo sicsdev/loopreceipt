@@ -4,22 +4,45 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { Box, makeStyles } from "@material-ui/core";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { EntityLoop } from "@apiHelpers/types";
+import { EntityGroup, EntityLoop } from "@apiHelpers/types";
 import { populateCanvasWithBarcode } from "@helpers/utils";
+import Switch from '@mui/material/Switch';
+import SaveGroupDialog from './SaveGroupDialog';
+import { useForm } from "@hooks/useForm";
+import validations from "@helpers/validations";
+import groupsApi from "@apiClient/groupsApi";
+
 interface LoopReceiptProps {
   createdLoop: EntityLoop | undefined;
 }
+
+const label = { inputProps: { 'aria-label': 'Save as group' } };
+
 const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
   const { windowDimensions } = useWindowDimensions();
   const win = new Win(windowDimensions);
   const styles = useStyles();
   const [origin, setOrigin] = useState("");
+  const [saveGroupDialogOpen, setSaveGroupDialogOpen] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [checkMode, setCheckMode] = useState('');
+  const groupFormProps = useForm({groupName: {
+    name: "groupName",
+    label: "Group Name",
+    placeholder: "Group Name",
+    value: "",
+    type: "text",
+    validate: function () {
+      return validations.isRequired(this);
+    },
+  }});
   useEffect(() => {
     // console.log(window.location.origin);
     setOrigin(window.location.origin);
   }, []);
   useEffect(() => {
     if (createdLoop) {
+      setCheckMode(createdLoop.mode);
       populateCanvasWithBarcode({
         scale: 1,
         textToEncode: createdLoop.barcode || "",
@@ -39,8 +62,40 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
       </a>
     );
   };
+
+  const saveGroup = async () => {
+    const groupName = groupFormProps.formState.groupName.value;
+    const recipient = createdLoop?.recipient;
+    const loopers = createdLoop?.loopers;
+    if(recipient && loopers && groupName !== "") {
+      const groupSaveData: EntityGroup = {
+        recipient,
+        loopers,
+        name: groupName,
+        createdFor: groupName
+      }
+      const response = await groupsApi.create(groupSaveData);
+      if(response) {
+        setSaveGroupDialogOpen(false)
+      }
+    }
+  };
+
+  const handleSaveGroupSwitch = (value: any) => {
+    if(checked === false) {
+      setSaveGroupDialogOpen(true)
+    }
+    setChecked(!checked);
+  }
+
   return (
     <div className={styles.LoopReceipt}>
+      <SaveGroupDialog
+        saveGroupDialogOpen={saveGroupDialogOpen}
+        setSaveGroupDialogOpen={setSaveGroupDialogOpen}
+        saveGroup={saveGroup}
+        groupFormProps={groupFormProps}
+      />
       {win.up("md") && (
         <div className="print">
           <PrintLink>
@@ -67,6 +122,18 @@ const LoopReceipt = ({ createdLoop }: LoopReceiptProps) => {
           <canvas id="mycanvas"></canvas>
         </div>
       </div>
+      {
+        checkMode !== "group" ? (
+          <div className="save-as-group">
+            <p className="save-group-text">Save this loopreceipt as a group for next time</p>
+            <Switch 
+              {...label} 
+              className="save-group-switch"
+              onChange={(event) => handleSaveGroupSwitch(event.target.value)}
+              checked={checked}/>
+          </div>
+        ) : ""
+      }
       <Box height={20} />
       {win.down("sm") && (
         <PrintLink>
@@ -122,5 +189,24 @@ const useStyles = makeStyles((theme) => ({
         },
       },
     },
+    "& .save-as-group": {
+      width: "100%",
+      padding: "2rem",
+      "& .save-group-text": {
+        display: "inline-block",
+        color: "#4F4F4F",
+        fontSize: "16px",
+      },
+      "& .save-group-switch": {
+        float: "right",
+        color: "#21F9AE",
+        "& .MuiSwitch-track": {
+          backgroundColor: "#21F9AE"
+        },
+        "& .Mui-checked": {
+          color: "#21F9AE"
+        }
+      }
+    }
   },
 }));
