@@ -18,6 +18,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import subscriptionApi from "@apiClient/subscriptionApi";
 import { raiseAlert } from "@store/slices/genericSlice";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setSubscription } from "@store/slices/subscriptionSlice";
 import { PLANS } from "@constants/plans";
 import { FormType, useFormReturnType } from "@interfaces/FormTypes";
 import { useForm } from "@hooks/useForm";
@@ -258,26 +259,15 @@ const useStyles = makeStyles((theme) => ({
 interface PaymentProps {
   open: boolean;
   handleClose: any;
-  upgradePlan: string;
+  upgradePlan: string
 }
 
 export default function Payment({
   open,
   handleClose,
-  upgradePlan,
+  upgradePlan
 }: PaymentProps) {
   const classes = useStyles();
-  const [values, setValues] = useState({
-    // email: "",
-    phone: "",
-    city: "",
-    country: "",
-    state: "",
-    address: "",
-  });
-  const handleInputChange = (event: any) => {
-    setValues({ ...values, [event.target.name]: [event.target.value] });
-  };
 
   let { user } = useAppSelector((state) => state.user);
 
@@ -287,20 +277,6 @@ export default function Payment({
     setValue((event.target as HTMLInputElement).value);
   };
 
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvc, setCVC] = useState("");
-  const handleCardNumberChange = (e: any) => {
-    setCardNumber(e.target.value);
-  };
-  const handleCardExpiryChange = (e: any) => {
-    setExpiry(e.target.value);
-  };
-  const handleCardCVCChange = (e: any) => {
-    setCVC(e.target.value);
-  };
-
-  const formProps = useForm(billingDetailsForm.initialState);
   const dispatch = useAppDispatch();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -356,12 +332,16 @@ export default function Payment({
       .confirmCardPayment(res?.client_secret, {
         payment_method: paymentMethod?.id,
       })
-      .then((result: any) => {
+      .then(async (result: any) => {
         if (result.error) {
           raiseAlert(result?.error?.message, "error");
         } else {
           // Successful subscription payment
           raiseAlert(`Subscription Succeeded `, "success");
+          const res = await subscriptionApi.getDetails({ email: user?.email });
+          if (res.error == false && res.details) {
+            dispatch(setSubscription(res.details))
+          }
           handleClose();
         }
         setIsSaving(false);

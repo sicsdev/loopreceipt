@@ -21,7 +21,7 @@ import RemoveMembersModal from "./modals/RemoveMembers";
 import UpdatePaymentMethodModal from "./modals/UpdatePaymentMethod";
 import DowngradeModal from "./modals/Downgrade";
 import UpgradeModal from "./modals/Upgrade";
-import MsgModal from "./modals/MsgModal";
+import SwitchToAnnualPlan from "./modals/SwitchToAnnualPlan";
 import classNames from "classnames";
 import subscriptionApi from "@apiClient/subscriptionApi";
 import { raiseAlert } from "@store/slices/genericSlice";
@@ -156,11 +156,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface SubscribedProps {
-  subsriptionDetails?: any;
-}
-
-export default function Subscribed({ subscriptionDetails }: SubscribedProps) {
+export default function Subscribed() {
   const classes = useStyles();
   const [downgraded, setDowngraded] = useState(false);
 
@@ -173,16 +169,14 @@ export default function Subscribed({ subscriptionDetails }: SubscribedProps) {
   const [msgDescription, setMsgDescription] = useState(
     "You will no longer be billed."
   );
-  const [msgModal, setMsgModal] = useState(false);
-  const handleMsgModalOpen = () => setMsgModal(true);
-  const handleMsgModalClose = () => setMsgModal(false);
 
   let { user } = useAppSelector((state) => state.user);
+  let { subscription } = useAppSelector((state) => state.subscription);
 
   let [paymentHistory, setPaymentHistory] = useState([]);
   let fetchPaymentHistory = async () => {
     const res = await subscriptionApi.getPaymentHistory(
-      subscriptionDetails?.customerId
+      subscription?.customerId
     );
     if (res.error == false && res.details) {
       setPaymentHistory(res.details);
@@ -191,7 +185,7 @@ export default function Subscribed({ subscriptionDetails }: SubscribedProps) {
 
   useEffect(() => {
     fetchPaymentHistory();
-  }, [subscriptionDetails?.customerId]);
+  }, [subscription?.customerId]);
 
   return (
     <Box className={classes.box}>
@@ -214,26 +208,30 @@ export default function Subscribed({ subscriptionDetails }: SubscribedProps) {
         </>
       ) : (
         <>
-          <Typography className={classes.heading}>
-            You’re subscribed to the{" "}
-            {PLAN_ID_TO_PLAN_DETAILS[
-              subscriptionDetails?.current_plan?.id
-            ]?.planType?.toUpperCase()}{" "}
-            {
-              PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
-                ?.planDuration
-            }{" "}
-            plan for {subscriptionDetails?.current_plan?.members} member(s)
-          </Typography>
-          <Typography className={classes.subheading}>
-            Your subscription will renew on{" "}
-            {moment(subscriptionDetails?.expires_at).format("DD MMM YYYY")}{" "}
-            using your MasterCard ending in {subscriptionDetails?.card?.last4}.
-          </Typography>
-          <Button className={classes.nextPaymentButton} variant="outlined">
-            Next payment: Scheduled for{" "}
-            {moment(subscriptionDetails?.expires_at).format("DD MMM YYYY")}
-          </Button>
+          {subscription?.current_plan?.id && (
+            <>
+              <Typography className={classes.heading}>
+                You’re subscribed to the{" "}
+                {PLAN_ID_TO_PLAN_DETAILS[
+                  subscription?.current_plan?.id
+                ]?.planType?.toUpperCase()}{" "}
+                {
+                  PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                    ?.planDuration
+                }{" "}
+                plan for {subscription?.current_plan?.members} member(s)
+              </Typography>
+              <Typography className={classes.subheading}>
+                Your subscription will renew on{" "}
+                {moment(subscription?.expires_at).format("DD MMM YYYY")} using
+                your MasterCard ending in {subscription?.card?.last4}.
+              </Typography>
+              <Button className={classes.nextPaymentButton} variant="outlined">
+                Next payment: Scheduled for{" "}
+                {moment(subscription?.expires_at).format("DD MMM YYYY")}
+              </Button>
+            </>
+          )}
         </>
       )}
       <br /> <br /> <br />
@@ -267,6 +265,7 @@ export default function Subscribed({ subscriptionDetails }: SubscribedProps) {
           variant="contained"
           color="primary"
           className={classes.switchButton}
+          onClick={() => setModal("4")}
         >
           Switch to annual (save $24 per year)
         </Button>
@@ -354,45 +353,24 @@ export default function Subscribed({ subscriptionDetails }: SubscribedProps) {
           </Box>
         </Box>
       </Card>
-      {modal === "1" && (
-        <AddMembersModal
-          open={true}
-          handleClose={setModal}
-          subscriptionDetails={subscriptionDetails}
-        />
-      )}
+      {modal === "1" && <AddMembersModal open={true} handleClose={setModal} />}
       {modal === "2" && (
-        <RemoveMembersModal
-          open={true}
-          handleClose={setModal}
-          subscriptionDetails={subscriptionDetails}
-        />
+        <RemoveMembersModal open={true} handleClose={setModal} />
       )}
       {modal === "3" && (
         <UpdatePaymentMethodModal open={true} handleClose={setModal} />
       )}
-      {modal === "5" && (
-        <UpgradeModal
-          open={true}
-          handleClose={setModal}
-          subscriptionDetails={subscriptionDetails}
-        />
+      {modal === "4" && (
+        <SwitchToAnnualPlan open={true} handleClose={setModal} />
       )}
+      {modal === "5" && <UpgradeModal open={true} handleClose={setModal} />}
       {modal === "6" && (
         <DowngradeModal
           open={true}
           handleClose={setModal}
           setDowngraded={setDowngraded}
-          // subscriptionDetails={subscriptionDetails}
         />
       )}
-      <MsgModal
-        open={msgModal}
-        handleClose={handleMsgModalClose}
-        title={msgTitle}
-        description={msgDescription}
-      />
-      {/* </MobileView> */}
     </Box>
   );
 }

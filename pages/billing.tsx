@@ -26,6 +26,7 @@ import Subscribed from "@components/Billing/Subscribed";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import subscriptionApi from "@apiClient/subscriptionApi";
 import { raiseAlert } from "@store/slices/genericSlice";
+import { setSubscription } from "@store/slices/subscriptionSlice";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 
 import { Elements } from "@stripe/react-stripe-js";
@@ -137,6 +138,7 @@ interface BillingProps {
 
 export default function Billing({ path }: BillingProps) {
   const classes = useStyles();
+  const dispatch = useAppDispatch();
   const [value, setValue] = React.useState("PRO");
   const [freePlanUpgrade, setFreePlanUpgrade] = useState(false);
   const handleChangeFreePlanUpgrade = (value: boolean) =>
@@ -154,9 +156,8 @@ export default function Billing({ path }: BillingProps) {
     handlePaymentModalOpen();
   };
 
-  const [subscribed, setSubscribed] = useState(false);
-
   let { user } = useAppSelector((state) => state.user);
+  let { subscription } = useAppSelector((state) => state.subscription)
 
   const TABS = [
     // {
@@ -173,16 +174,11 @@ export default function Billing({ path }: BillingProps) {
     },
   ];
 
-  let [subscriptionDetails, setSubscriptionDetails] = useState({});
+  
   let fetchSubscriptionDetails = async () => {
     const res = await subscriptionApi.getDetails({ email: user?.email });
-
     if (res.error == false && res.details) {
-      if (res.details.expires_at) {
-        setSubscribed(true);
-
-        setSubscriptionDetails(res.details);
-      }
+      dispatch(setSubscription(res.details))
     }
   };
 
@@ -195,7 +191,7 @@ export default function Billing({ path }: BillingProps) {
       <Layout>
         <Elements stripe={stripePromise}>
           <div className={classes.heading}>
-            {!subscribed && freePlanUpgrade && paymentModal ? (
+            {!subscription?.current_plan?.id && freePlanUpgrade && paymentModal ? (
               <MobileView>
                 <Box
                   display="flex"
@@ -216,8 +212,8 @@ export default function Billing({ path }: BillingProps) {
 
           <Container maxWidth="lg">
             <Card className={classes.card}>
-              {subscribed ? (
-                <Subscribed subscriptionDetails={subscriptionDetails} />
+              {subscription?.current_plan?.id ? (
+                <Subscribed />
               ) : (
                 <>
                   {freePlanUpgrade ? (

@@ -36,7 +36,7 @@ const subscriptionApi = {
       throw axiosErrorHandler(error);
     }
   },
-  getPaymentHistory: async (customerId:string) => {
+  getPaymentHistory: async (customerId?:string) => {
     try {
       const response = await axios.get(`/subscribe/payments/${customerId}`);
 
@@ -46,10 +46,10 @@ const subscriptionApi = {
     }
   },
   updateSubscriptionPlan: async (subscriptionUpdateObj: {
-    subscriptionId: string;
-    data: {
+    subscriptionId?: string;
+    data?: {
       price?: string;
-      quantity?: number;
+      quantity?: number | string;
     },
   }): Promise<ErrorResponse> => {
     try {

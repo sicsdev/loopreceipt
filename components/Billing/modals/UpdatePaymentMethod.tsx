@@ -185,6 +185,7 @@ export default function UpdatePaymentMethodModal({
   const handleInputChange = () => {};
 
   let { user } = useAppSelector((state) => state.user);
+  let { subscription } = useAppSelector((state) => state.subscription)
   const [isSaving, setIsSaving] = useState(false);
 
   const stripe = useStripe();

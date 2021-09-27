@@ -154,12 +154,10 @@ const useStyles = makeStyles((theme) => ({
 interface RemoveMembersProps {
   open: boolean;
   handleClose: any;
-  subscriptionDetails: any;
 }
 export default function RemoveMembersModal({
   open,
   handleClose,
-  subscriptionDetails,
 }: RemoveMembersProps) {
   const classes = useStyles();
   const [quantity, setQuantity] = useState(0);
@@ -167,15 +165,18 @@ export default function RemoveMembersModal({
     setQuantity(parseInt(event.target.value));
   };
 
+  let { subscription } = useAppSelector((state) => state.subscription)
+
   let [isSaving, setIsSaving] = useState(false);
   const onSubmit = async (e: any) => {
     e.preventDefault();
     setIsSaving(true);
+
     let obj = {
-      subscriptionId: subscriptionDetails?.subscriptionId,
+      subscriptionId: subscription?.subscriptionId,
       data: {
         quantity:
-          parseInt(subscriptionDetails?.current_plan?.members) - quantity,
+          parseInt(subscription?.current_plan?.members || "0") - quantity,
       },
     };
 
@@ -206,7 +207,7 @@ export default function RemoveMembersModal({
               inputProps={{
                 style: { textAlign: "center" },
                 min: 0,
-                max: parseInt(subscriptionDetails?.current_plan?.members),
+                max: parseInt(subscription?.current_plan?.members || "0"),
               }}
               className={classes.input}
               onChange={handleInputChange}
@@ -215,14 +216,16 @@ export default function RemoveMembersModal({
           </Box>
 
           <br />
-          <Typography className={classes.text1}>
-            Your new member count will be{" "}
-            {parseInt(subscriptionDetails?.current_plan?.members) - quantity}{" "}
-            and your monthly charge will be decrease to $
-            {PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
-              ?.price *
-              (parseInt(subscriptionDetails?.current_plan?.members) - quantity)}
-          </Typography>
+          {subscription?.current_plan &&
+            <Typography className={classes.text1}>
+              Your new member count will be{" "}
+              {parseInt(subscription?.current_plan?.members) - quantity}{" "}
+              and your monthly charge will be decrease to $
+              {PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                ?.price *
+                (parseInt(subscription?.current_plan?.members) - quantity)}
+            </Typography>
+          }
           <br />
 
           <Box className={classes.buttonContainer1}>

@@ -151,12 +151,11 @@ const useStyles = makeStyles((theme) => ({
 interface AddMembersProps {
   open: boolean;
   handleClose: any;
-  subscriptionDetails: any;
 }
 export default function AddMembersModal({
   open,
   handleClose,
-  subscriptionDetails,
+  
 }: AddMembersProps) {
   const classes = useStyles();
   const [quantity, setQuantity] = useState(0);
@@ -164,15 +163,19 @@ export default function AddMembersModal({
     setQuantity(parseInt(event.target.value));
   };
 
+  let { subscription } = useAppSelector((state) => state.subscription);
+
+
   let [isSaving, setIsSaving] = useState(false);
   const onSubmit = async (e: any) => {
     e.preventDefault();
     setIsSaving(true);
+
     let obj = {
-      subscriptionId: subscriptionDetails?.subscriptionId,
+      subscriptionId: subscription?.subscriptionId,
       data: {
         quantity:
-          parseInt(subscriptionDetails?.current_plan?.members) + quantity,
+          parseInt(subscription?.current_plan?.members || "0") + quantity,
       },
     };
 
@@ -208,14 +211,16 @@ export default function AddMembersModal({
           </Box>
 
           <br />
-          <Typography className={classes.text1}>
-            Your new member count will be{" "}
-            {parseInt(subscriptionDetails?.current_plan?.members) + quantity}{" "}
-            and your monthly charge will be increased to $
-            {PLAN_ID_TO_PLAN_DETAILS[subscriptionDetails?.current_plan?.id]
-              ?.price *
-              (parseInt(subscriptionDetails?.current_plan?.members) + quantity)}
-          </Typography>
+          {subscription?.current_plan?.members && subscription?.current_plan?.id &&
+            <Typography className={classes.text1}>
+              Your new member count will be{" "}
+              {parseInt(subscription?.current_plan?.members) + quantity}{" "}
+              and your monthly charge will be increased to $
+              {PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                ?.price *
+                (parseInt(subscription?.current_plan?.members) + quantity)}
+            </Typography>
+          }
           <br />
 
           <Box className={classes.buttonContainer1}>

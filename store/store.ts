@@ -9,6 +9,7 @@ import notificationsReducer from "./slices/notificationsSlice";
 import genericReducer from "./slices/genericSlice";
 import searchBarReducer from "./slices/searchBarSlice";
 import dashboardReducer from "./slices/dashboardSlice";
+import subscriptionReducer from "./slices/subscriptionSlice";
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -20,6 +21,7 @@ export const store = configureStore({
     generic: genericReducer,
     searchBar: searchBarReducer,
     dashboard: dashboardReducer,
+    subscription: subscriptionReducer
   },
 });
 export default store;
