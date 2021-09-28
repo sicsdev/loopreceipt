@@ -130,7 +130,7 @@ export default function FreePlan({ upgrade, onUpgrade }: FreePlanProps) {
         You are enjoying the FREE PLAN.
       </Typography>
       <Typography className={classes.subheading}>
-        Your trial will expire on June 3, 20121.
+        Your trial will expire on Oct 3, 2021.
       </Typography>
 
       <Button

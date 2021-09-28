@@ -259,13 +259,13 @@ const useStyles = makeStyles((theme) => ({
 interface PaymentProps {
   open: boolean;
   handleClose: any;
-  upgradePlan: string
+  upgradePlan: string;
 }
 
 export default function Payment({
   open,
   handleClose,
-  upgradePlan
+  upgradePlan,
 }: PaymentProps) {
   const classes = useStyles();
 
@@ -310,20 +310,25 @@ export default function Payment({
 
     if (error) {
       console.log("[error]", error);
-      raiseAlert("Some error occurred. Try Again", "error");
+      setIsSaving(false);
+      raiseAlert("" + error?.message, "error");
       return;
     }
-
-    console.log("[PaymentMethod]", paymentMethod);
 
     let data = {
       priceId: PLANS[upgradePlan][value].planId,
       memberCount: memberCount,
     };
 
-    const res = await subscriptionApi.create(data);
+    let res: any;
+    try {
+      res = await subscriptionApi.create(data);
+    } catch (error) {
+      res = error;
+    }
 
     if (res?.error) {
+      setIsSaving(false);
       raiseAlert("Subscription Failed!", "error");
       return;
     }
@@ -331,16 +336,18 @@ export default function Payment({
     stripe
       .confirmCardPayment(res?.client_secret, {
         payment_method: paymentMethod?.id,
+        setup_future_usage: "off_session",
       })
       .then(async (result: any) => {
         if (result.error) {
+          setIsSaving(false);
           raiseAlert(result?.error?.message, "error");
         } else {
           // Successful subscription payment
           raiseAlert(`Subscription Succeeded `, "success");
           const res = await subscriptionApi.getDetails({ email: user?.email });
           if (res.error == false && res.details) {
-            dispatch(setSubscription(res.details))
+            dispatch(setSubscription(res.details));
           }
           handleClose();
         }

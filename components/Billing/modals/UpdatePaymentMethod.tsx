@@ -185,7 +185,7 @@ export default function UpdatePaymentMethodModal({
   const handleInputChange = () => {};
 
   let { user } = useAppSelector((state) => state.user);
-  let { subscription } = useAppSelector((state) => state.subscription)
+  let { subscription } = useAppSelector((state) => state.subscription);
   const [isSaving, setIsSaving] = useState(false);
 
   const stripe = useStripe();
@@ -217,24 +217,28 @@ export default function UpdatePaymentMethodModal({
     });
     if (error) {
       console.log("[error]", error);
-      raiseAlert("Some error occurred. Try Again", "error");
+      setIsSaving(false);
+      raiseAlert("" + error?.message, "error");
       return;
     }
-
-    console.log("[PaymentMethod]", paymentMethod);
     if (!paymentMethod) {
+      setIsSaving(false);
       raiseAlert("Some error occurred. Try Again", "error");
       return;
     }
 
-    const res = await subscriptionApi.updateSubscriptionDetails(
-      paymentMethod?.id
-    );
+    let res: any;
+    try {
+      res = await subscriptionApi.updateSubscriptionDetails(paymentMethod?.id);
+    } catch (error) {
+      res = error;
+    }
     if (res.error == false) {
       raiseAlert("Successfully Updated!", "success");
       handleClose();
     } else {
-      raiseAlert("Some error occurred. Try Again", "error");
+      setIsSaving(false);
+      raiseAlert("" + res?.info, "error");
     }
   };
 

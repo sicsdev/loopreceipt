@@ -153,7 +153,7 @@ export default function DowngradeModal({
   const classes = useStyles();
   const [reason, setReason] = useState("");
 
-  let { subscription } = useAppSelector((state) => state.subscription)
+  let { subscription } = useAppSelector((state) => state.subscription);
 
   const handleDowngrade = () => {
     setDowngraded(true);
@@ -165,26 +165,26 @@ export default function DowngradeModal({
   // const handleInputChange = () => {};
 
   useEffect(() => {
-    if(subscription?.current_plan?.id) {
+    if (subscription?.current_plan?.id) {
       if (
-        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
-          ?.planType == "Enterprise" &&
-        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
-          ?.planDuration == "Monthly"
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planType ==
+          "Enterprise" &&
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planDuration ==
+          "Monthly"
       ) {
         setPlanId(PLANS.PRO.MONTHLY.planId);
       } else if (
-        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
-          ?.planType == "Enterprise" &&
-        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
-          ?.planDuration == "Annually"
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planType ==
+          "Enterprise" &&
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planDuration ==
+          "Annually"
       ) {
         setPlanId(PLANS.PRO.ANNUALLY.planId);
       } else if (
-        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
-          ?.planType == "Pro"
+        PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.planType ==
+        "Pro"
       ) {
-        raiseAlert("Their is no plan lower than Pro!", "success");
+        raiseAlert("There is no plan lower than Pro!", "success");
       }
     }
   }, []);
@@ -197,7 +197,12 @@ export default function DowngradeModal({
         price: planId,
       },
     };
-    let res = await subscriptionApi.updateSubscriptionPlan(data);
+    let res: any;
+    try {
+      res = await subscriptionApi.updateSubscriptionPlan(data);
+    } catch (error) {
+      res = error;
+    }
     if (!res.error) {
       raiseAlert("Successfully Downgraded!", "success");
     } else {
@@ -209,11 +214,22 @@ export default function DowngradeModal({
     <Dialog open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit}>
         <Box className={classes.dialogBox}>
-          <Typography className={classes.title}>Downgrade to Super</Typography>
-          <Typography className={classes.titleCaption}>
-            Your Pro plan will end on 3 June 2021, and you will no longer be
-            charged for your subscription.
-          </Typography>
+          {subscription?.current_plan?.id && (
+            <>
+              <Typography className={classes.title}>
+                Downgrade to {PLAN_ID_TO_PLAN_DETAILS[planId]?.planType}
+              </Typography>
+              <Typography className={classes.titleCaption}>
+                Your{" "}
+                {
+                  PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                    .planType
+                }{" "}
+                plan will end on 3 June 2021, and you will no longer be charged
+                for your subscription.
+              </Typography>
+            </>
+          )}
           <Typography className={classes.inputBox}>
             Reason for downgrading*
           </Typography>
