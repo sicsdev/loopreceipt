@@ -1,6 +1,7 @@
 import { Box, Button, makeStyles, Typography } from "@material-ui/core";
 import CheckIcon from "@material-ui/icons/Check";
 import Link from "next/link";
+import { PLANS } from "@constants/plans";
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -120,9 +121,12 @@ export default function Pro({ onUpgrade }: PackageProps) {
       <Typography className={classes.subheading}>
         For small and medium-sized <br /> businesses
       </Typography>
-      <Typography className={classes.prize}>$14/user/mo</Typography>
+      <Typography className={classes.prize}>
+        ${PLANS.PRO.MONTHLY.price}/user/mo
+      </Typography>
       <Typography className={classes.subheading}>
-        $11 per user, per month ($132 when billed <br />
+        ${PLANS.PRO.MONTHLY.price} per user, per month ($
+        {PLANS.PRO.ANNUALLY.price} when billed <br />
         yearly)
       </Typography>
       <Typography className={classes.features}>Top features:</Typography>

@@ -155,7 +155,6 @@ interface AddMembersProps {
 export default function AddMembersModal({
   open,
   handleClose,
-  
 }: AddMembersProps) {
   const classes = useStyles();
   const [quantity, setQuantity] = useState(0);
@@ -164,7 +163,6 @@ export default function AddMembersModal({
   };
 
   let { subscription } = useAppSelector((state) => state.subscription);
-
 
   let [isSaving, setIsSaving] = useState(false);
   const onSubmit = async (e: any) => {
@@ -179,7 +177,13 @@ export default function AddMembersModal({
       },
     };
 
-    let res = await subscriptionApi.updateSubscriptionPlan(obj);
+    let res: any;
+    try {
+      res = await subscriptionApi.updateSubscriptionPlan(obj);
+    } catch (error) {
+      res = error;
+    }
+
     if (res.error == false) {
       raiseAlert("Successfully Updated!", "success");
       handleClose();
@@ -211,16 +215,17 @@ export default function AddMembersModal({
           </Box>
 
           <br />
-          {subscription?.current_plan?.members && subscription?.current_plan?.id &&
-            <Typography className={classes.text1}>
-              Your new member count will be{" "}
-              {parseInt(subscription?.current_plan?.members) + quantity}{" "}
-              and your monthly charge will be increased to $
-              {PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
-                ?.price *
-                (parseInt(subscription?.current_plan?.members) + quantity)}
-            </Typography>
-          }
+          {subscription?.current_plan?.members &&
+            subscription?.current_plan?.id && (
+              <Typography className={classes.text1}>
+                Your new member count will be{" "}
+                {parseInt(subscription?.current_plan?.members) + quantity} and
+                your monthly charge will be increased to $
+                {PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
+                  ?.price *
+                  (parseInt(subscription?.current_plan?.members) + quantity)}
+              </Typography>
+            )}
           <br />
 
           <Box className={classes.buttonContainer1}>

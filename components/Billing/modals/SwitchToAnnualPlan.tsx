@@ -16,6 +16,7 @@ import classNames from "classnames";
 import { PLAN_ID_TO_PLAN_DETAILS, PLANS } from "@constants/plans";
 import moment from "moment";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
+import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -197,6 +198,7 @@ export default function SwitchToAnnualPlan({
   const elements = useElements();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setIsSaving(true);
 
     if (changeCard) {
       if (!stripe || !elements) {
@@ -215,21 +217,26 @@ export default function SwitchToAnnualPlan({
         },
       });
       if (error) {
-        console.log("[error]", error);
-        raiseAlert("Some error occurred. Try Again", "error");
+        setIsSaving(false);
+        raiseAlert("" + error?.message, "error");
         return;
       }
-
-      console.log("[PaymentMethod]", paymentMethod);
       if (!paymentMethod) {
+        setIsSaving(false);
         raiseAlert("Some error occurred. Try Again", "error");
         return;
       }
 
-      const res = await subscriptionApi.updateSubscriptionDetails(
-        paymentMethod?.id
-      );
-      if (res.error == false) {
+      let res: any;
+      try {
+        res = await subscriptionApi.updateSubscriptionDetails(
+          paymentMethod?.id
+        );
+      } catch (error) {
+        res = error;
+      }
+
+      if (res?.error == false) {
         let data = {
           subscriptionId: subscription?.subscriptionId,
           data: {
@@ -241,11 +248,16 @@ export default function SwitchToAnnualPlan({
           raiseAlert("Successfully Switched to Annual Plan!", "success");
           handleClose();
         } else {
-          raiseAlert("Switch to Annual Plan failed.!", "success");
+          setIsSaving(false);
+          raiseAlert(
+            "Successfully updated the payment method but Switch to Annual Plan failed.!",
+            "success"
+          );
         }
         handleClose();
       } else {
-        raiseAlert("Some error occurred. Try Again", "error");
+        setIsSaving(false);
+        raiseAlert("" + res?.info, "error");
       }
     } else {
       let data = {
@@ -260,7 +272,8 @@ export default function SwitchToAnnualPlan({
         raiseAlert("Successfully Switched to Annual Plan!", "success");
         handleClose();
       } else {
-        raiseAlert("Unknown error occurred!", "success");
+        setIsSaving(false);
+        raiseAlert("" + res?.info, "success");
       }
     }
   };
@@ -288,8 +301,14 @@ export default function SwitchToAnnualPlan({
                   PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
                     .moveToAnnually
                 ]?.price * parseInt(subscription?.current_plan?.members)}{" "}
-                will be applied today to your <strong>MasterCard</strong> ending
-                in <strong>5972</strong>.
+                will be applied today to your{" "}
+                <strong>
+                  {_.startCase(
+                    _.toLower(subscription?.paymentMethod?.card?.brand)
+                  )}
+                </strong>{" "}
+                ending in{" "}
+                <strong>{subscription?.paymentMethod?.card?.last4}</strong>.
               </Typography>
             </>
           )}

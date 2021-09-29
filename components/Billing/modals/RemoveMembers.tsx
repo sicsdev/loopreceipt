@@ -165,7 +165,7 @@ export default function RemoveMembersModal({
     setQuantity(parseInt(event.target.value));
   };
 
-  let { subscription } = useAppSelector((state) => state.subscription)
+  let { subscription } = useAppSelector((state) => state.subscription);
 
   let [isSaving, setIsSaving] = useState(false);
   const onSubmit = async (e: any) => {
@@ -180,7 +180,12 @@ export default function RemoveMembersModal({
       },
     };
 
-    let res = await subscriptionApi.updateSubscriptionPlan(obj);
+    let res: any;
+    try {
+      res = await subscriptionApi.updateSubscriptionPlan(obj);
+    } catch (error) {
+      res = error;
+    }
     if (res.error == false) {
       raiseAlert("Successfully Updated!", "success");
       handleClose();
@@ -216,16 +221,15 @@ export default function RemoveMembersModal({
           </Box>
 
           <br />
-          {subscription?.current_plan &&
+          {subscription?.current_plan && (
             <Typography className={classes.text1}>
               Your new member count will be{" "}
-              {parseInt(subscription?.current_plan?.members) - quantity}{" "}
-              and your monthly charge will be decrease to $
-              {PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]
-                ?.price *
+              {parseInt(subscription?.current_plan?.members) - quantity} and
+              your monthly charge will be decrease to $
+              {PLAN_ID_TO_PLAN_DETAILS[subscription?.current_plan?.id]?.price *
                 (parseInt(subscription?.current_plan?.members) - quantity)}
             </Typography>
-          }
+          )}
           <br />
 
           <Box className={classes.buttonContainer1}>

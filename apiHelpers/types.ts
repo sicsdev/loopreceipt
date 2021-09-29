@@ -101,6 +101,7 @@ export interface LoopFilters {
 export interface ErrorResponse {
   error: boolean;
   message: string;
+  info?: string;
 }
 export interface EntityActivity {
   _id: string;
@@ -124,5 +125,12 @@ export interface EntitySubscription {
     current_plan?: {
       id: string,
       members: string
+    },
+    paymentMethod?: {
+      id: string,
+      card?: {
+        last4: string,
+        brand: string
+      }
     }
 }

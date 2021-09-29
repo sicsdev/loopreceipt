@@ -15,6 +15,7 @@ import { raiseAlert } from "@store/slices/genericSlice";
 import classNames from "classnames";
 import { PLAN_ID_TO_PLAN_DETAILS, PLANS } from "@constants/plans";
 import moment from "moment";
+import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -199,7 +200,13 @@ export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
         price: planId,
       },
     };
-    let res = await subscriptionApi.updateSubscriptionPlan(data);
+
+    let res: any;
+    try {
+      await subscriptionApi.updateSubscriptionPlan(data);
+    } catch (error) {
+      res = error;
+    }
     if (!res.error) {
       raiseAlert("Successfully Upgraded!", "success");
       handleClose();
@@ -231,8 +238,11 @@ export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
                 Your new monthly bill will be $
                 {PLAN_ID_TO_PLAN_DETAILS[planId]?.price *
                   parseInt(subscription?.current_plan?.members)}{" "}
-                will be applied today to your card.
-                {/* MasterCard ending in 5972. */}
+                will be applied today to your card{" "}
+                {_.startCase(
+                  _.toLower(subscription?.paymentMethod?.card?.brand)
+                )}{" "}
+                ending in {subscription?.paymentMethod?.card?.last4}.
               </Typography>
             </>
           )}

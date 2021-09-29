@@ -28,6 +28,7 @@ import { raiseAlert } from "@store/slices/genericSlice";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import moment from "moment";
 import { PLAN_ID_TO_PLAN_DETAILS } from "@constants/plans";
+import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -191,17 +192,25 @@ export default function Subscribed() {
     <Box className={classes.box}>
       {downgraded ? (
         <>
-          <Typography className={classes.heading}>
-            You’ve downgraded to the Basic plan.
-          </Typography>
-          <Typography className={classes.subheading}>
-            You have access to Pro features until your subscription ends on 3
-            June 2021.
-            <br />
-            <br />
-            Changed your mind? Undo your downgrade and pick up right where you
-            left off.
-          </Typography>
+          {subscription?.current_plan?.id && (
+            <>
+              <Typography className={classes.heading}>
+                You’ve downgraded to the Basic plan.
+              </Typography>
+              <Typography className={classes.subheading}>
+                You have access to{" "}
+                {PLAN_ID_TO_PLAN_DETAILS[
+                  subscription?.current_plan?.id
+                ]?.planType?.toUpperCase()}{" "}
+                features until your subscription ends on{" "}
+                {moment(subscription?.expires_at).format("DD MMM YYYY")}.
+                <br />
+                <br />
+                Changed your mind? Undo your downgrade and pick up right where
+                you left off.
+              </Typography>
+            </>
+          )}
           <Button color="primary" variant="contained">
             Undo Downgrade
           </Button>
@@ -224,7 +233,11 @@ export default function Subscribed() {
               <Typography className={classes.subheading}>
                 Your subscription will renew on{" "}
                 {moment(subscription?.expires_at).format("DD MMM YYYY")} using
-                your MasterCard ending in {subscription?.card?.last4}.
+                your{" "}
+                {_.startCase(
+                  _.toLower(subscription?.paymentMethod?.card?.brand)
+                )}{" "}
+                ending in {subscription?.paymentMethod?.card?.last4}.
               </Typography>
               <Button className={classes.nextPaymentButton} variant="outlined">
                 Next payment: Scheduled for{" "}
@@ -302,7 +315,7 @@ export default function Subscribed() {
                   {PLAN_ID_TO_PLAN_DETAILS[payment?.plan]?.planDuration}
                 </TableCell>
                 <TableCell data-th="Payment Status" align="left">
-                  {payment?.status == "succeeded" ? "Paid" : payment?.status}
+                  {_.startCase(_.toLower(payment?.status))}
                 </TableCell>
                 <TableCell data-th="Amount(CAD)" align="right">
                   ${payment?.amount} {payment?.currency?.toUpperCase()}
