@@ -55,8 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Head>
             <link rel="icon" href="/loop-fav.png" />
             <title>
-              Loopreceipt | The power of connecting your deliveries with smarter
-              workflow
+              Loopreceipt | Control the chaos of delivery with a single tool.
             </title>
             <meta
               name="description"

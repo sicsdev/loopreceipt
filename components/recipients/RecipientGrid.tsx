@@ -2,7 +2,13 @@ import UPadWrapper from "@components/Shared/UPadWrapper";
 import MyLoader from "@components/Shared/MyLoader";
 import { useDateTypeFilterAndPagination } from "@components/Dashboard/Tabs/useDateTypeFilterAndPagination";
 import { makeStyles } from "@material-ui/core";
-
+import {
+  TextField,
+  InputAdornment,
+  IconButton,
+  Icon
+} from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
 import React, { useEffect, useMemo, useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
@@ -14,6 +20,7 @@ import { useFetchReturnType } from "@hooks/useFetch";
 import MessageCard from "@components/Shared/MessageCard";
 import { useWaiter } from "@hooks/useWaiter";
 import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
+import { NONAME } from "node:dns";
 
 export const itemsPerPageOptions = [5, 10, 15];
 export interface StdData {
@@ -92,7 +99,17 @@ const RecipientGrid = ({ getter }: TabsBaseProps) => {
           <h3 className={styles.pckgHeadTitle}>Reports</h3>
         </div>
         <div className={styles.pckgHeadTwo}>
-          <input type="text" placeholder="Search" className={styles.recipientSearch}/>
+          <TextField
+            placeholder="Search"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              )
+            }}
+            className={styles.recipientSearch}
+          />
         <div
           className="dropdowns"
           style={{ display: noItems ? "none" : "inline-block" }}
@@ -104,6 +121,17 @@ const RecipientGrid = ({ getter }: TabsBaseProps) => {
             setDateRange={setDateRange}
           />
         </div>
+        <TextField
+          placeholder="Search"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            )
+          }}
+          className={styles.recipientSearchMobile}
+        />
         </div>
       </div>
       {wait || getter.loading ? (
@@ -115,7 +143,7 @@ const RecipientGrid = ({ getter }: TabsBaseProps) => {
           <UPadWrapper>
             <>
                 <div style={{ height: 520, width: '100%' }}>
-                <DataGrid rows={packagesToShow} columns={columns} checkboxSelection={true} hideFooter={true}/>
+                <DataGrid rows={packagesToShow} columns={columns} hideFooter={true}/>
                 </div>
 
                 <div className={styles.packagePagination}>
@@ -155,10 +183,11 @@ const useStyles = makeStyles((theme) => ({
       padding: "0",
     },
     "& .dropdowns": {
-      padding: "0 4%",
       paddingTop: "0rem",
+      marginTop: "-5px",
       [theme.breakpoints.down("sm")]: {
-        paddingTop: "2rem",
+        padding: "0px 0px 15px 0px",
+        width: "100%",
       },
     },
     "& .top": {
@@ -200,18 +229,27 @@ const useStyles = makeStyles((theme) => ({
   packagesHead: {
     display: "block",
     overflow: "auto",
-    padding: "20px 0px 0px 20px"
+    [theme.breakpoints.up("md")]: {
+      padding: "20px 20px 0px 20px"
+    },
   },
   pckgHeadOne: {
     display: "inline-block",
-    width: "50%",
-    marginTop: "10px"
+    width: "25%",
+    [theme.breakpoints.down("sm")]: {
+        display: "none",
+      },
   },
   pckgHeadTwo: {
-    display: "inline-block",
-    width: "50%",
-    float: "right",
-    marginBottom: "20px"
+    marginBottom: "15px",
+    [theme.breakpoints.up("md")]: {
+      display: "inline-block",
+      width: "75%",
+      textAlign: "right"
+    },
+    [theme.breakpoints.down("sm")]: {
+      padding: "15px"
+    },
   },
   pckgHeadTitle: {
     display: "inline-block",
@@ -233,7 +271,13 @@ const useStyles = makeStyles((theme) => ({
   packageMainHead: {
     fontSize: "22px",
     fontWeight: 500,
-    marginBottom: "35px"
+    
+    [theme.breakpoints.down("md")]: {
+      padding: "15px",
+    },
+    [theme.breakpoints.up("md")]: {
+      marginBottom: "35px",
+    },
   },
   recipientSearch: {
     height: "42px",
@@ -241,6 +285,41 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "5px",
     background: "#DFDFDF",
     padding: "5px",
-    fontSize: "16px"
+    fontSize: "16px",
+    display: "inline-block",
+    width: "25%",
+    marginRight: "20px",
+    [theme.breakpoints.down("sm")]: {
+      display: "none"
+    },
+    "& .MuiInput-underline:after , .MuiInput-underline:before": {
+      display: "none",
+    },
+    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+      borderBottom: "0px"
+    },
+  },
+  recipientSearchMobile: {
+    height: "42px",
+    border: "0px",
+    borderRadius: "5px",
+    background: "#fff",
+    padding: "5px",
+    fontSize: "16px",
+    "& .MuiInput-underline:after": {
+      display: "none",
+    },
+    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+      borderBottom: "0px"
+    },
+    "& .MuiInput-underline:after , .MuiInput-underline:before": {
+      display: "none",
+    },
+    [theme.breakpoints.up("md")]: {
+      display: "none"
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "100%"
+    },
   }
 }));

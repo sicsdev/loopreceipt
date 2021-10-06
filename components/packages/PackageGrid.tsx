@@ -2,7 +2,7 @@ import UPadWrapper from "@components/Shared/UPadWrapper";
 import MyLoader from "@components/Shared/MyLoader";
 import { useDateTypeFilterAndPagination } from "@components/Dashboard/Tabs/useDateTypeFilterAndPagination";
 import { makeStyles } from "@material-ui/core";
-
+import ListenClickAtParentElement from "@components/Shared/ListenClickAtParentElement";
 import React, { useEffect, useMemo, useState } from "react";
 import { DateRange, LoopSource, LoopType } from "@interfaces/LoopTypes";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
@@ -17,6 +17,8 @@ import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import moment from "moment";
 import PackagesIcon from "@components/Shared/PackagesIcon";
 import { randomMemoizedColor } from "@helpers/utils";
+import { openModal } from "@store/slices/modalSlice";
+import Link from "next/link";
 
 export const itemsPerPageOptions = [5, 10, 15];
 export interface StdData {
@@ -69,6 +71,18 @@ const PackageGrid = ({ getter }: TabsBaseProps) => {
           <b>{cellValues.row.looper}</b>
         )
       }
+    },
+    { 
+      field: 'detail',
+      headerName: 'Detail',
+      width: 50, 
+      disableColumnMenu:true, 
+      renderCell(cellValues) {
+        console.log(cellValues?.row)
+        return (
+          <Link href={`/detail?loopId=${cellValues.row.loopId}`}>View</Link>
+        )
+      }
     }
   ];
 
@@ -96,6 +110,7 @@ const PackageGrid = ({ getter }: TabsBaseProps) => {
             const recipientInfo = items.recipient.name + ", " + items.recipient.company
             const dateCreated = moment(items.updatedAt).format("MM/DD/YYYY");
             const contactInfo = items.recipient.email
+            const loopId = items.loopid
             const loopersList = [] as any;
             items.loopers.map((looper: any) => {
                 loopersList.push(looper)
@@ -105,7 +120,8 @@ const PackageGrid = ({ getter }: TabsBaseProps) => {
               receiver: recipientInfo,
               date: dateCreated,
               contact: contactInfo,
-              looper: loopersList
+              looper: loopersList,
+              loopId: loopId
             })
         })
         setPackagesToShow(listOfItems)
@@ -117,12 +133,30 @@ const PackageGrid = ({ getter }: TabsBaseProps) => {
 
   return (
     <div className={styles.right}>
-      <h2 className={styles.packageMainHead}>My Loops</h2>
+      <h2 className={styles.packageMainHead}>Packages</h2>
       <div className={styles.packageBox}>
       <div className={styles.packagesHead}>
         <div className={styles.pckgHeadOne}>
           <h3 className={styles.pckgHeadTitle}>Reports</h3>
-          <button type='button' className={styles.pckgHeadAction}>+ Create Loopreceipt</button>
+          {ListenClickAtParentElement(
+                  (e) => {
+                    openModal(e, {
+                      translationsFrom: "element",
+                      positionWRTPoint: {
+                        bottom: true,
+                        right: true,
+                      },
+                      translations: {
+                        y: -145,
+                        x: 10,
+                      },
+                    });
+                  },
+                  (childClick) => (
+                    <button type='button' onClick={childClick} className={styles.pckgHeadAction}>+ Create Loopreceipt</button>
+                  )
+                )}
+          
         </div>
         <div className={styles.pckgHeadTwo}>
         <div
@@ -147,7 +181,7 @@ const PackageGrid = ({ getter }: TabsBaseProps) => {
           <UPadWrapper>
             <>
                 <div style={{ height: 520, width: '100%' }}>
-                <DataGrid rows={packagesToShow} columns={columns} checkboxSelection={true} hideFooter={true}/>
+                <DataGrid rows={packagesToShow} columns={columns} hideFooter={true} />
                 </div>
 
                 <div className={styles.packagePagination}>
@@ -189,8 +223,9 @@ const useStyles = makeStyles((theme) => ({
     "& .dropdowns": {
       padding: "0 4%",
       paddingTop: "0rem",
-      [theme.breakpoints.down("sm")]: {
-        paddingTop: "2rem",
+      [theme.breakpoints.down("md")]: {
+        paddingTop: "1rem",
+        paddingBottom: "1rem",
       },
     },
     "& .top": {
@@ -232,16 +267,25 @@ const useStyles = makeStyles((theme) => ({
   packagesHead: {
     display: "block",
     overflow: "auto",
-    padding: "20px 0px 0px 20px"
+    [theme.breakpoints.up("md")]: {
+      padding: "20px 0px 0px 20px"
+    },
   },
   pckgHeadOne: {
     display: "inline-block",
-    width: "50%",
+    width: "40%",
+    padding: "25px 0px 25px 0px",
+    [theme.breakpoints.down("sm")]: {
+        display: "none",
+      },
   },
   pckgHeadTwo: {
-    display: "inline-block",
-    width: "50%",
-    float: "right"
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      display: "inline-block",
+      width: "60%",
+      float: "right"
+    },
   },
   pckgHeadTitle: {
     display: "inline-block",
@@ -263,6 +307,12 @@ const useStyles = makeStyles((theme) => ({
   packageMainHead: {
     fontSize: "22px",
     fontWeight: 500,
-    marginBottom: "35px"
+    
+    [theme.breakpoints.down("md")]: {
+      padding: "15px",
+    },
+    [theme.breakpoints.up("md")]: {
+      marginBottom: "35px",
+    },
   }
 }));

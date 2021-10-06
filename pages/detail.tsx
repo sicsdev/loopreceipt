@@ -7,6 +7,7 @@ import { useWindowDimensions } from "@hooks/useWindowDimensions";
 import { makeStyles } from "@material-ui/core";
 import AuthGuard from "@components/Global/AuthGuard";
 import loopsApi from "@apiClient/loopsApi";
+import { useAppSelector } from "@store/hooks";
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -219,6 +220,7 @@ const Detail = ({}) => {
     }
   });
   const [toData, setToData] = useState('');
+  const user = useAppSelector((state) => state.user.user);
   const win = new Win(windowDimensions);
   const getLoopData = async (loopId: any) => {
     const data = await loopsApi.getLoop(loopId)
@@ -299,7 +301,7 @@ const Detail = ({}) => {
                           </div>
                         </div>
                         {
-                          loopData?.loop?.comment && loopData?.loop?.comment !== "" && (
+                          loopData?.loop?.comment && loopData?.loop?.comment !== "" && user?.email !== loopData?.loop?.owner?.email && (
                             <div className="to-comment">
                               <div className="to-comment-title">Comment </div>
                               <div className="to-comment-detail">
