@@ -21,6 +21,7 @@ import { useRef } from "react";
 import MyLoader from "@components/Shared/MyLoader";
 import dayjs from "dayjs";
 import { useWaiter } from "@hooks/useWaiter";
+import moment from 'moment-timezone';
 // change this
 interface ResetPasswordProps {}
 const ResetPassword = ({}: ResetPasswordProps) => {
@@ -74,15 +75,15 @@ const ResetPassword = ({}: ResetPasswordProps) => {
     if (validateAllFieldsOfForm(resetPasswordFormProps)) {
       let c = deviceDetect();
 
-      let browser = "";
-      let os = "";
-      if (c.isMobile) {
-        browser = `${c.model} ${c.vendor} ${c.ua}`;
-        os = c.os;
-      } else {
-        browser = c.browserName;
-        os = c.osName;
-      }
+      let browser = c.browserName;
+      let os = c.osName;
+      // if (c.isMobile) {
+      //   browser = `${c.model} ${c.vendor} ${c.ua}`;
+      //   os = c.os;
+      // } else {
+      //   browser = c.browserName;
+      //   os = c.osName;
+      // }
       let location = "";
       try {
         const response = await axios.get("https://extreme-ip-lookup.com/json/");
@@ -91,7 +92,8 @@ const ResetPassword = ({}: ResetPasswordProps) => {
       } catch (err) {
         console.log(err);
       }
-
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const currentTime = moment().tz(timezone).format();
       const payload = {
         token: token,
         newPassword: resetPasswordFormProps.formState.newPassword.value,
@@ -99,7 +101,7 @@ const ResetPassword = ({}: ResetPasswordProps) => {
         location: location,
         browser: browser,
         os: os,
-        date: dayjs(new Date()).format("MMMM Do, YYYY, h:m:s A"),
+        date: dayjs(currentTime).format("MMMM DD, YYYY, h:m:s A"),
       };
       console.log(payload);
       const response = await sendRequest(payload);
