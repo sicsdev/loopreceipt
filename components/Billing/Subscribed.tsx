@@ -203,7 +203,10 @@ export default function Subscribed() {
                   subscription?.current_plan?.id
                 ]?.planType?.toUpperCase()}{" "}
                 features until your subscription ends on{" "}
-                {moment(subscription?.expires_at).format("DD MMM YYYY")}.
+                {moment
+                  .unix(subscription?.current_period_end)
+                  .format("DD MMM YYYY")}
+                .
                 <br />
                 <br />
                 Changed your mind? Undo your downgrade and pick up right where
@@ -232,8 +235,10 @@ export default function Subscribed() {
               </Typography>
               <Typography className={classes.subheading}>
                 Your subscription will renew on{" "}
-                {moment(subscription?.expires_at).format("DD MMM YYYY")} using
-                your{" "}
+                {moment
+                  .unix(subscription?.current_period_end)
+                  .format("DD MMM YYYY")}{" "}
+                using your{" "}
                 {_.startCase(
                   _.toLower(subscription?.paymentMethod?.card?.brand)
                 )}{" "}
@@ -241,7 +246,9 @@ export default function Subscribed() {
               </Typography>
               <Button className={classes.nextPaymentButton} variant="outlined">
                 Next payment: Scheduled for{" "}
-                {moment(subscription?.expires_at).format("DD MMM YYYY")}
+                {moment
+                  .unix(subscription?.current_period_end)
+                  .format("DD MMM YYYY")}
               </Button>
             </>
           )}
@@ -299,7 +306,7 @@ export default function Subscribed() {
           <TableHead>
             <TableRow>
               <TableCell>Date</TableCell>
-              <TableCell align="left">Plan</TableCell>
+              <TableCell align="left">Transaction</TableCell>
               <TableCell align="left">Payment Status</TableCell>
               <TableCell align="right">Amount</TableCell>
             </TableRow>
@@ -310,7 +317,7 @@ export default function Subscribed() {
                 <TableCell data-th="Date">
                   {moment.unix(payment?.timestamp).format("DD MMM YYYY")}
                 </TableCell>
-                <TableCell data-th="Plan" align="left">
+                <TableCell data-th="Transaction" align="left">
                   {PLAN_ID_TO_PLAN_DETAILS[payment?.plan]?.planType}{" "}
                   {PLAN_ID_TO_PLAN_DETAILS[payment?.plan]?.planDuration}
                 </TableCell>

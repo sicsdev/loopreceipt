@@ -157,7 +157,7 @@ export default function Billing({ path }: BillingProps) {
   };
 
   let { user } = useAppSelector((state) => state.user);
-  let { subscription } = useAppSelector((state) => state.subscription)
+  let { subscription } = useAppSelector((state) => state.subscription);
 
   const TABS = [
     // {
@@ -174,12 +174,13 @@ export default function Billing({ path }: BillingProps) {
     },
   ];
 
-  
+  let [isFetchingDetails, setIsFetchingDetails] = useState(true);
   let fetchSubscriptionDetails = async () => {
     const res = await subscriptionApi.getDetails({ email: user?.email });
     if (res.error == false && res.details) {
-      dispatch(setSubscription(res.details))
+      dispatch(setSubscription(res.details));
     }
+    setIsFetchingDetails(false);
   };
 
   useEffect(() => {
@@ -191,7 +192,9 @@ export default function Billing({ path }: BillingProps) {
       <Layout>
         <Elements stripe={stripePromise}>
           <div className={classes.heading}>
-            {!subscription?.current_plan?.id && freePlanUpgrade && paymentModal ? (
+            {!subscription?.current_plan?.id &&
+            freePlanUpgrade &&
+            paymentModal ? (
               <MobileView>
                 <Box
                   display="flex"
@@ -216,19 +219,74 @@ export default function Billing({ path }: BillingProps) {
                 <Subscribed />
               ) : (
                 <>
-                  {freePlanUpgrade ? (
+                  {!isFetchingDetails ? (
                     <>
-                      <MobileView>
-                        {paymentModal ? (
-                          <Payment
-                            upgradePlan={upgradePlan}
-                            open={paymentModal}
-                            handleClose={handlePaymentModalClose}
-                          />
-                        ) : (
-                          <>
+                      {freePlanUpgrade ? (
+                        <>
+                          <MobileView>
+                            {paymentModal ? (
+                              <Payment
+                                upgradePlan={upgradePlan}
+                                open={paymentModal}
+                                handleClose={handlePaymentModalClose}
+                              />
+                            ) : (
+                              <>
+                                <Typography className={classes.pageHeading}>
+                                  You are enjoying a free PRO trial with access
+                                  to all the features
+                                </Typography>
+                                <Typography
+                                  className={classes.pageHeading}
+                                  style={{ color: "#666666" }}
+                                >
+                                  Our Pricing Plans
+                                </Typography>
+
+                                <Tabs
+                                  variant="fullWidth"
+                                  value={value}
+                                  onChange={(e, value) => setValue(value)}
+                                  className={classes.tabs}
+                                  TabIndicatorProps={{
+                                    style: {
+                                      height: "2px",
+                                      color: "#234361",
+                                    },
+                                  }}
+                                >
+                                  {TABS.map((tab) => (
+                                    <Tab
+                                      disableRipple
+                                      key={tab.value}
+                                      label={tab.value}
+                                      value={tab.value}
+                                      className={classes.tab}
+                                      classes={{ selected: classes.selected }}
+                                    />
+                                  ))}
+                                </Tabs>
+                                <Divider />
+
+                                <Box>
+                                  {TABS.map((tab) => {
+                                    const isMatched = tab.value === value;
+                                    return (
+                                      isMatched && (
+                                        <Box key={tab.value}>
+                                          {tab.component}
+                                        </Box>
+                                      )
+                                    );
+                                  })}
+                                </Box>
+                              </>
+                            )}
+                          </MobileView>
+
+                          <BrowserView>
                             <Typography className={classes.pageHeading}>
-                              You are enjoying a free pro trial with access to
+                              You are enjoying a free PRO trial with access to
                               all the features
                             </Typography>
                             <Typography
@@ -238,82 +296,35 @@ export default function Billing({ path }: BillingProps) {
                               Our Pricing Plans
                             </Typography>
 
-                            <Tabs
-                              variant="fullWidth"
-                              value={value}
-                              onChange={(e, value) => setValue(value)}
-                              className={classes.tabs}
-                              TabIndicatorProps={{
-                                style: {
-                                  height: "2px",
-                                  color: "#234361",
-                                },
-                              }}
-                            >
-                              {TABS.map((tab) => (
-                                <Tab
-                                  disableRipple
-                                  key={tab.value}
-                                  label={tab.value}
-                                  value={tab.value}
-                                  className={classes.tab}
-                                  classes={{ selected: classes.selected }}
-                                />
-                              ))}
-                            </Tabs>
-                            <Divider />
-
-                            <Box>
-                              {TABS.map((tab) => {
-                                const isMatched = tab.value === value;
-                                return (
-                                  isMatched && (
-                                    <Box key={tab.value}>{tab.component}</Box>
-                                  )
-                                );
-                              })}
-                            </Box>
-                          </>
-                        )}
-                      </MobileView>
-
-                      <BrowserView>
-                        <Typography className={classes.pageHeading}>
-                          You are enjoying a free pro trial with access to all
-                          the features
-                        </Typography>
-                        <Typography
-                          className={classes.pageHeading}
-                          style={{ color: "#666666" }}
-                        >
-                          Our Pricing Plans
-                        </Typography>
-
-                        <Grid container className={classes.grid}>
-                          {/* <Grid item xs={12} md={4}>
+                            <Grid container className={classes.grid}>
+                              {/* <Grid item xs={12} md={4}>
                           <Choice onUpgrade={handleChooseUpgradePlan} />
                         </Grid> */}
-                          <Grid item xs={12} md={6}>
-                            <Pro onUpgrade={handleChooseUpgradePlan} />
-                          </Grid>
-                          <Grid item xs={12} md={6}>
-                            <Enterprise onUpgrade={handleChooseUpgradePlan} />
-                          </Grid>
-                        </Grid>
+                              <Grid item xs={12} md={6}>
+                                <Pro onUpgrade={handleChooseUpgradePlan} />
+                              </Grid>
+                              <Grid item xs={12} md={6}>
+                                <Enterprise
+                                  onUpgrade={handleChooseUpgradePlan}
+                                />
+                              </Grid>
+                            </Grid>
 
-                        <PaymentModal
-                          upgradePlan={upgradePlan}
-                          open={paymentModal}
-                          handleClose={handlePaymentModalClose}
+                            <PaymentModal
+                              upgradePlan={upgradePlan}
+                              open={paymentModal}
+                              handleClose={handlePaymentModalClose}
+                            />
+                          </BrowserView>
+                        </>
+                      ) : (
+                        <FreePlan
+                          upgrade={freePlanUpgrade}
+                          onUpgrade={handleChangeFreePlanUpgrade}
                         />
-                      </BrowserView>
+                      )}
                     </>
-                  ) : (
-                    <FreePlan
-                      upgrade={freePlanUpgrade}
-                      onUpgrade={handleChangeFreePlanUpgrade}
-                    />
-                  )}
+                  ) : null}
                 </>
               )}
             </Card>

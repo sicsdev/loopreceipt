@@ -159,7 +159,7 @@ export default function ChangeEmailModal({
               type: "email",
               label: "New Email Address",
               name: "email",
-              placeholder: "newemailaddress@gmail.com",
+              placeholder: "newemail@company.com",
               value: state.email,
             }}
             onChange={handleInputChange}

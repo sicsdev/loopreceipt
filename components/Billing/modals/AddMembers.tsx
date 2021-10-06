@@ -14,6 +14,7 @@ import { raiseAlert } from "@store/slices/genericSlice";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import moment from "moment";
 import { PLAN_ID_TO_PLAN_DETAILS } from "@constants/plans";
+import { setSubscription } from "@store/slices/subscriptionSlice";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -157,12 +158,21 @@ export default function AddMembersModal({
   handleClose,
 }: AddMembersProps) {
   const classes = useStyles();
+  const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(0);
   const handleInputChange = (event: any) => {
     setQuantity(parseInt(event.target.value));
   };
 
+  let { user } = useAppSelector((state) => state.user);
   let { subscription } = useAppSelector((state) => state.subscription);
+
+  let fetchSubscriptionDetails = async () => {
+    const res = await subscriptionApi.getDetails({ email: user?.email });
+    if (res.error == false && res.details) {
+      dispatch(setSubscription(res.details));
+    }
+  };
 
   let [isSaving, setIsSaving] = useState(false);
   const onSubmit = async (e: any) => {
@@ -186,6 +196,7 @@ export default function AddMembersModal({
 
     if (res.error == false) {
       raiseAlert("Successfully Updated!", "success");
+      fetchSubscriptionDetails();
       handleClose();
     }
 

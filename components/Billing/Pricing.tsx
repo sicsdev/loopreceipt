@@ -172,7 +172,7 @@ export default function Pricing({ path }: PricingProps) {
               ) : (
                 <>
                   <Typography className={classes.pageHeading}>
-                    You are enjoying a free pro trial with access to all the
+                    You are enjoying a free PRO trial with access to all the
                     features
                   </Typography>
                   <Typography
@@ -221,7 +221,7 @@ export default function Pricing({ path }: PricingProps) {
 
             <BrowserView>
               <Typography className={classes.pageHeading}>
-                You are enjoying a free pro trial with access to all the
+                You are enjoying a free PRO trial with access to all the
                 features
               </Typography>
               <Typography
