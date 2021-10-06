@@ -151,7 +151,7 @@ export const getEntityLoopFromFormsProps = ({
         city: recipient.city,
         country: recipient.country,
         postalCode: recipient.postalCode,
-        province: "nothing",
+        province: recipient.state,
         type: "internal",
         mode: loopReceiptMode,
         loopers,
@@ -160,13 +160,13 @@ export const getEntityLoopFromFormsProps = ({
       break;
     }
     case "external": {
-      const companyState = formsProps[companyFormIdx].formState;
+      // const companyState = formsProps[companyFormIdx].formState;
       loop = {
         barcode: uuidv4(),
-        city: companyState.city.value || recipient.city,
-        country: companyState.country.value || recipient.country,
-        postalCode: companyState.zipCode.value || recipient.postalCode,
-        province: companyState.province.value || recipient.state,
+        city: recipient.city,
+        country: recipient.country,
+        postalCode: recipient.postalCode,
+        province: recipient.state,
         type: "external",
         mode: loopReceiptMode,
         loopers,

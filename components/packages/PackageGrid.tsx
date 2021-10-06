@@ -19,6 +19,7 @@ import PackagesIcon from "@components/Shared/PackagesIcon";
 import { randomMemoizedColor } from "@helpers/utils";
 import { openModal } from "@store/slices/modalSlice";
 import Link from "next/link";
+import Button from "@components/Controls/Button";
 
 export const itemsPerPageOptions = [5, 10, 15];
 export interface StdData {
@@ -153,7 +154,7 @@ const PackageGrid = ({ getter }: TabsBaseProps) => {
                     });
                   },
                   (childClick) => (
-                    <button type='button' onClick={childClick} className={styles.pckgHeadAction}>+ Create Loopreceipt</button>
+                    <Button size="medium" onClick={childClick} className={styles.pckgHeadAction}>+ Create Loopreceipt</Button>
                   )
                 )}
           
@@ -293,13 +294,14 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600    
   },
   pckgHeadAction: {
-    border: "1px solid #797979",
     color: "#797979",
     padding: "5px",
-    fontSize: "12px",
-    borderRadius: "2px",
+    borderRadius: "5px",
     cursor: "pointer",
-    marginLeft: "20px"
+    marginLeft: "20px",
+    "& span": {
+      fontSize: "12px",
+    }
   },
   packagePagination: {
     marginTop: "20px"

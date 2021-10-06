@@ -85,7 +85,10 @@ const MobileNavbar = ({}: MobileNavbarProps) => {
           width={20}
           height={20}
         />
-        <span className={"text"}>Home</span>
+        
+      </div>
+      <div className={styles.makeHomeLink}>
+        <MyLink link="/dashboard">Home</MyLink>
       </div>
 
       <div className="items">
@@ -199,6 +202,18 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   links: {
+    "& .link": {
+      cursor: "pointer",
+      color: "#828282",
+      fontWeight: "500",
+      padding: "1rem",
+      borderBottom: "2px solid #F6F2F2",
+    },
+  },
+  makeHomeLink: {
+    position: "absolute",
+    top: "8px",
+    left: "30px",
     "& .link": {
       cursor: "pointer",
       color: "#828282",

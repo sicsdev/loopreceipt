@@ -49,6 +49,24 @@ const recipientDetailsForm: FormType = {
     },
   },
   initialState: {
+    receivingCompanyName: {
+      name: "receivingCompanyName",
+      label: "Receiving Company Name",
+      placeholder: "Receiving Company Name",
+      value: "",
+      type: "text",
+
+      // validate: function () {
+      //   return (
+      //     // we can give custom message to validation
+      //     validations.isRequired(
+      //       this,
+      //       "Receiving Company Name can't be empty"
+      //     ) && validations.minMaxLength({ min: 5 })(this)
+      //     // this way we can chain validations
+      //   );
+      // },
+    },
     name: {
       name: "name",
       label: "Name",
@@ -247,19 +265,19 @@ const recipientDetailsForm: FormType = {
     setFormState: useFormReturnType["setFormState"];
   }) {
     setFormState((prev) => {
-      let optionalFieldsAdded = true;
-      for (let key in recipientDetailsForm.optionalFields) {
-        if (!prev[key]) {
-          optionalFieldsAdded = false;
-          break;
-        }
-      }
-      if (!optionalFieldsAdded) {
-        return {
-          ...recipientDetailsForm.optionalFields,
-          ...prev,
-        };
-      }
+      // let optionalFieldsAdded = true;
+      // for (let key in recipientDetailsForm.optionalFields) {
+      //   if (!prev[key]) {
+      //     optionalFieldsAdded = false;
+      //     break;
+      //   }
+      // }
+      // if (!optionalFieldsAdded) {
+      //   return {
+      //     ...recipientDetailsForm.optionalFields,
+      //     ...prev,
+      //   };
+      // }
       return prev;
     });
   },

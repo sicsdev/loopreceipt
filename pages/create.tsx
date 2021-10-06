@@ -60,14 +60,14 @@ const Create = () => {
 
   let forms: FormType[] = [
     recipientDetailsForm,
-    companyDetailsForm,
+    // companyDetailsForm,
     loopersDetailsForm,
   ];
 
   const formsProps = [
     useForm(forms[0].initialState),
     useForm(forms[1].initialState),
-    useForm(forms[2].initialState),
+    // useForm(forms[2].initialState),
   ];
   const saveDraftApiCallRef = useRef(
     new Debounce(
@@ -85,7 +85,6 @@ const Create = () => {
         groupId?: string;
       }) => {
         if (currentDraftIdRef.current === "deleted") return;
-        console.log(formsProps[0].formState.name.value);
         const recipientDetails: { [key: string]: any } = {};
         for (let key in formsProps[0].formState) {
           recipientDetails[key] = formsProps[0].formState[key].value;
@@ -213,10 +212,10 @@ const Create = () => {
 
   let passedForms: FormType[] = forms;
   let passedFormsProps: useFormReturnType[] = formsProps;
-  if (loopReceiptType === "internal") {
-    passedForms = [forms[0], forms[2]];
-    passedFormsProps = [formsProps[0], formsProps[2]];
-  }
+  // if (loopReceiptType === "internal") {
+  //   passedForms = [forms[0], forms[1]];
+  //   passedFormsProps = [formsProps[0], formsProps[1]];
+  // }
   return (
     <Layout>
       <div className={styles.Create}>
