@@ -114,23 +114,24 @@ export interface EntityActivity {
 
 export interface EntitySubscription {
   subscriptionId?: string,
-    customerId?: string,
-    email?: string,
-    status?: string,
-    expires_at?: string,
-    card: {
-      brand?: string,
-      last4?: string
-    },
-    current_plan?: {
-      id: string,
-      members: string
-    },
-    paymentMethod?: {
-      id: string,
-      card?: {
-        last4: string,
-        brand: string
-      }
+  customerId?: string,
+  email?: string,
+  status?: string,
+  expires_at?: string,
+  current_period_end: number,
+  card: {
+    brand?: string,
+    last4?: string
+  },
+  current_plan?: {
+    id: string,
+    members: string
+  },
+  paymentMethod?: {
+    id: string,
+    card?: {
+      last4: string,
+      brand: string
     }
+  }
 }

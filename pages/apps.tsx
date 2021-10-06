@@ -181,7 +181,10 @@ const Apps = () => {
                   display="flex"
                   style={{ marginRight: 0, marginLeft: "auto" }}
                 >
-                  <Link href="/" passHref>
+                  <Link
+                    href="https://play.google.com/store/apps/details?id=com.app.loopreceipt"
+                    passHref
+                  >
                     <a style={{ alignSelf: "center" }}>
                       <img
                         src="/images/android-store.png"

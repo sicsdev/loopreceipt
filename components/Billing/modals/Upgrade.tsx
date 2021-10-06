@@ -9,6 +9,7 @@ import {
   TextField,
 } from "@material-ui/core";
 import InputBox from "@components/Controls/InputBox";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import subscriptionApi from "@apiClient/subscriptionApi";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import { raiseAlert } from "@store/slices/genericSlice";
@@ -16,6 +17,7 @@ import classNames from "classnames";
 import { PLAN_ID_TO_PLAN_DETAILS, PLANS } from "@constants/plans";
 import moment from "moment";
 import _ from "lodash";
+import { setSubscription } from "@store/slices/subscriptionSlice";
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -162,10 +164,20 @@ interface UpgradeProps {
 }
 export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
   const classes = useStyles();
+  const dispatch = useAppDispatch();
+  const [changeCard, setChangeCard] = useState(false);
   const [planId, setPlanId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  let { user } = useAppSelector((state) => state.user);
   let { subscription } = useAppSelector((state) => state.subscription);
+
+  let fetchSubscriptionDetails = async () => {
+    const res = await subscriptionApi.getDetails({ email: user?.email });
+    if (res.error == false && res.details) {
+      dispatch(setSubscription(res.details));
+    }
+  };
 
   useEffect(() => {
     if (subscription?.current_plan?.id) {
@@ -192,26 +204,90 @@ export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
     }
   }, []);
 
+  const stripe = useStripe();
+  const elements = useElements();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    let data = {
-      subscriptionId: subscription?.subscriptionId,
-      data: {
-        price: planId,
-      },
-    };
+    setIsSaving(true);
 
-    let res: any;
-    try {
-      await subscriptionApi.updateSubscriptionPlan(data);
-    } catch (error) {
-      res = error;
-    }
-    if (!res.error) {
-      raiseAlert("Successfully Upgraded!", "success");
-      handleClose();
+    if (changeCard) {
+      if (!stripe || !elements) {
+        // Stripe.js has not loaded yet. Make sure to disable
+        // form submission until Stripe.js has loaded.
+        return;
+      }
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) return;
+
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+        billing_details: {
+          email: user?.email,
+        },
+      });
+      if (error) {
+        setIsSaving(false);
+        raiseAlert("" + error?.message, "error");
+        return;
+      }
+      if (!paymentMethod) {
+        setIsSaving(false);
+        raiseAlert("Some error occurred. Try Again", "error");
+        return;
+      }
+
+      let res: any;
+      try {
+        res = await subscriptionApi.updateSubscriptionDetails(
+          paymentMethod?.id
+        );
+      } catch (error) {
+        res = error;
+      }
+
+      if (res?.error == false) {
+        let data = {
+          subscriptionId: subscription?.subscriptionId,
+          data: {
+            price: planId,
+          },
+        };
+        let resp = await subscriptionApi.updateSubscriptionPlan(data);
+        if (!resp.error) {
+          raiseAlert("Successfully Upgraded!", "success");
+          fetchSubscriptionDetails();
+          handleClose();
+        } else {
+          setIsSaving(false);
+          fetchSubscriptionDetails();
+          raiseAlert(
+            "Successfully updated the payment method but Upgraded Plan failed.!",
+            "success"
+          );
+        }
+        handleClose();
+      } else {
+        setIsSaving(false);
+        raiseAlert("" + res?.info, "error");
+      }
     } else {
-      raiseAlert("Unknown error occurred!", "success");
+      let data = {
+        subscriptionId: subscription?.subscriptionId,
+        data: {
+          price: planId,
+          quantity: subscription?.current_plan?.members,
+        },
+      };
+      let res = await subscriptionApi.updateSubscriptionPlan(data);
+      if (!res.error) {
+        raiseAlert("Successfully Switched to Annual Plan!", "success");
+        fetchSubscriptionDetails();
+        handleClose();
+      } else {
+        setIsSaving(false);
+        raiseAlert("" + res?.info, "success");
+      }
     }
   };
 
@@ -247,16 +323,38 @@ export default function UpgradeModal({ open, handleClose }: UpgradeProps) {
             </>
           )}
           <br />
-          <Box textAlign="center">
-            <Button
-              onClick={handleClose}
-              variant="outlined"
-              size="large"
-              className={classNames(classes.buttons, classes.changeCardButton)}
-            >
-              Change Card
-            </Button>
-          </Box>
+          {!changeCard ? (
+            <Box textAlign="center">
+              <Button
+                onClick={() => setChangeCard(true)}
+                variant="outlined"
+                size="large"
+                className={classNames(
+                  classes.buttons,
+                  classes.changeCardButton
+                )}
+              >
+                Change Card
+              </Button>
+            </Box>
+          ) : (
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#424770",
+                    "::placeholder": {
+                      color: "#aab7c4",
+                    },
+                  },
+                  invalid: {
+                    color: "#9e2146",
+                  },
+                },
+              }}
+            />
+          )}
           <br />
           <Box className={classes.buttonContainer1}>
             <Button

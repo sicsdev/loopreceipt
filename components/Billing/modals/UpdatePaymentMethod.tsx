@@ -13,6 +13,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import subscriptionApi from "@apiClient/subscriptionApi";
 import { raiseAlert } from "@store/slices/genericSlice";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
+import { setSubscription } from "@store/slices/subscriptionSlice";
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -182,11 +183,19 @@ export default function UpdatePaymentMethodModal({
   handleClose,
 }: UpdatePaymentMethodProps) {
   const classes = useStyles();
+  const dispatch = useAppDispatch();
   const handleInputChange = () => {};
 
   let { user } = useAppSelector((state) => state.user);
   let { subscription } = useAppSelector((state) => state.subscription);
   const [isSaving, setIsSaving] = useState(false);
+
+  let fetchSubscriptionDetails = async () => {
+    const res = await subscriptionApi.getDetails({ email: user?.email });
+    if (res.error == false && res.details) {
+      dispatch(setSubscription(res.details));
+    }
+  };
 
   const stripe = useStripe();
   const elements = useElements();
@@ -235,6 +244,7 @@ export default function UpdatePaymentMethodModal({
     }
     if (res.error == false) {
       raiseAlert("Successfully Updated!", "success");
+      fetchSubscriptionDetails();
       handleClose();
     } else {
       setIsSaving(false);

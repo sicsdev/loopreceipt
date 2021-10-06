@@ -150,7 +150,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     display: "grid",
     [theme.breakpoints.down("sm")]: {
-      display: "none",
+      // display: "none",
+      width: "unset",
+      marginLeft: "unset",
+      marginRight: "unset",
+      marginTop: 10,
     },
     cursor: "pointer",
   },
@@ -172,7 +176,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     display: "grid",
     [theme.breakpoints.down("sm")]: {
-      display: "none",
+      // display: "none",
+      width: "unset",
+      marginLeft: "unset",
+      marginRight: "unset",
+      marginTop: 10,
     },
   },
   productComingSoonButton: {
@@ -193,7 +201,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     display: "grid",
     [theme.breakpoints.down("sm")]: {
-      display: "none",
+      // display: "none",
+      width: "unset",
+      marginLeft: "unset",
+      marginRight: "unset",
+      marginTop: 10,
     },
   },
   pageHead: {
@@ -231,6 +243,7 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: "26px",
     color: "#828282",
     alignSelf: "center",
+    textAlign: "center",
     [theme.breakpoints.up("sm")]: {
       display: "none",
     },
@@ -267,6 +280,9 @@ function Product({ icon, label, status, type }: ProductProps) {
     <Box className={classes.product}>
       <img src={icon} alt="Brand Icon" className={classes.productIcon} />
       <Typography className={classes.productLabel}>{label}</Typography>
+      <Typography className={classes.productMobileLabel}>
+        Access your {label} contacts
+      </Typography>
       {status === "Connected" ? (
         <Box className={classes.productConnectedButton}>
           <span>Connected</span>
@@ -290,9 +306,6 @@ function Product({ icon, label, status, type }: ProductProps) {
           <span>Coming Soon</span>
         </Box>
       ) : null}
-      <Typography className={classes.productMobileLabel}>
-        Access your {label} contacts
-      </Typography>
     </Box>
   );
 }

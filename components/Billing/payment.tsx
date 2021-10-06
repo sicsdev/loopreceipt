@@ -308,7 +308,7 @@ export default function Payment({
       },
     });
 
-    if (error) {
+    if (error || !paymentMethod) {
       console.log("[error]", error);
       setIsSaving(false);
       raiseAlert("" + error?.message, "error");
@@ -331,6 +331,14 @@ export default function Payment({
       setIsSaving(false);
       raiseAlert("Subscription Failed!", "error");
       return;
+    }
+
+    try {
+      let res = await subscriptionApi.updateSubscriptionDetails(
+        paymentMethod?.id
+      );
+    } catch (error) {
+      console.log(error);
     }
 
     stripe
