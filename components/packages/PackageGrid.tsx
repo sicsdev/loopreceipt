@@ -33,6 +33,7 @@ interface TabsBaseProps {
 const PackageGrid = ({ getter }: TabsBaseProps) => {
   const styles = useStyles();
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
+  const [searchStr, setSearchStr] = useState<string>("");
   const { windowDimensions } = useWindowDimensions();
   const { wait } = useWaiter(0);
   const win = new Win(windowDimensions);
@@ -100,6 +101,7 @@ const PackageGrid = ({ getter }: TabsBaseProps) => {
     page,
     dateRange,
     loopSource,
+    searchStr,
     setPage,
   });
 

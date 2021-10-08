@@ -36,6 +36,7 @@ interface TabsBaseProps {
 const TabsBase = ({ getter }: TabsBaseProps) => {
   const styles = useStyles();
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
+  const [searchStr, setSearchStr] = useState<string>("");
   const { windowDimensions } = useWindowDimensions();
   const dispatch = useAppDispatch();
   const { wait } = useWaiter(0);
@@ -63,6 +64,7 @@ const TabsBase = ({ getter }: TabsBaseProps) => {
     page,
     dateRange,
     loopSource,
+    searchStr,
     setPage,
   });
   // this should be defined before return statements
