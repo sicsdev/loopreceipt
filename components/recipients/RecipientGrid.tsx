@@ -34,6 +34,7 @@ interface TabsBaseProps {
 const RecipientGrid = ({ getter }: TabsBaseProps) => {
   const styles = useStyles();
   const [loopSource, setLoopSource] = useState<LoopSource>("all");
+  const [searchStr, setSearchStr] = useState<string>("");
   const { windowDimensions } = useWindowDimensions();
   const { wait } = useWaiter(0);
   const win = new Win(windowDimensions);
@@ -54,6 +55,14 @@ const RecipientGrid = ({ getter }: TabsBaseProps) => {
 
   const user = useAppSelector((state) => state.user.user);
   
+  const setSearchStrValue = (event: any) => {
+    if(event.target.value.length > 3) {
+      setSearchStr(event.target.value)
+    }
+    else {
+      setSearchStr("")
+    }
+  }
   useEffect(() => {
     if (noItems && getter.data?.total) {
       setNoItems(false);
@@ -65,6 +74,7 @@ const RecipientGrid = ({ getter }: TabsBaseProps) => {
     page,
     dateRange,
     loopSource,
+    searchStr,
     setPage,
   });
 
@@ -109,6 +119,7 @@ const RecipientGrid = ({ getter }: TabsBaseProps) => {
               )
             }}
             className={styles.recipientSearch}
+            onChange={(event) => setSearchStrValue(event)}
           />
         <div
           className="dropdowns"
@@ -131,6 +142,7 @@ const RecipientGrid = ({ getter }: TabsBaseProps) => {
             )
           }}
           className={styles.recipientSearchMobile}
+          onChange={(event) => setSearchStrValue(event)}
         />
         </div>
       </div>

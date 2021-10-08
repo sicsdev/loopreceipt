@@ -97,6 +97,7 @@ export interface LoopFilters {
   type: LoopSource;
   from: Date;
   to: Date;
+  name: string;
 }
 export interface ErrorResponse {
   error: boolean;

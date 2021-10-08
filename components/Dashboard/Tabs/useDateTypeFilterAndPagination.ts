@@ -7,29 +7,45 @@ export const useDateTypeFilterAndPagination = <T>({
   dateRange,
   loopSource,
   page,
+  searchStr,
   setPage,
 }: {
   getter: useFetchReturnType<T>;
   dateRange: DateRange;
   loopSource: LoopSource;
   page: number;
+  searchStr: string;
   setPage: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const fetchData = async () => {
-    if (dateRange.start || dateRange.end) {
-      // apply date filters
-
-      // console.log(localDateRange);
-      const { start, end } = getEpochDateRangeFromDateRange(dateRange);
-      await getter.sendRequest(page, {
-        type: loopSource === "all" ? undefined : loopSource,
-        from: start,
-        to: end,
-      });
+    if(searchStr !== "") {
+      if (dateRange.start || dateRange.end) {
+        const { start, end } = getEpochDateRangeFromDateRange(dateRange);
+        await getter.sendRequest(page, {
+          type: loopSource === "all" ? undefined : loopSource,
+          from: start,
+          to: end,
+          name: searchStr
+        });
+      } else {
+        await getter.sendRequest(page, {
+          type: loopSource === "all" ? undefined : loopSource,
+          name: searchStr
+        });
+      }
     } else {
-      await getter.sendRequest(page, {
-        type: loopSource === "all" ? undefined : loopSource,
-      });
+      if (dateRange.start || dateRange.end) {
+        const { start, end } = getEpochDateRangeFromDateRange(dateRange);
+        await getter.sendRequest(page, {
+          type: loopSource === "all" ? undefined : loopSource,
+          from: start,
+          to: end,
+        });
+      } else {
+        await getter.sendRequest(page, {
+          type: loopSource === "all" ? undefined : loopSource,
+        });
+      }
     }
   };
 
@@ -43,5 +59,5 @@ export const useDateTypeFilterAndPagination = <T>({
     } else {
       fetchData();
     }
-  }, [loopSource, dateRange]);
+  }, [loopSource, dateRange, searchStr]);
 };

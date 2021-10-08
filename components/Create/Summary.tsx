@@ -145,7 +145,7 @@ const Summary = ({
         <Button color="secondary" labelColor="white" onClick={handleSubmit}>
           Generate Loopreceipt
         </Button>
-        <Image alt="icon" src="/icons/form/man.svg" width={300} height={300} />
+        <Image alt="icon" src="/icons/form/man.svg" width={250} height={250} className="summary-image-btm"/>
       </div>
     </div>
   );
@@ -211,6 +211,10 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: "column",
       gap: 20,
       alignItems: "center",
+      "& .summary-image-btm": {
+        filter: "contrast(1.25)",
+        mixBlendMode: "darken",
+      }
     },
   },
 }));
