@@ -347,6 +347,7 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 500,
       color: "#BDBDBD",
       marginBottom: "1rem",
+      textAlign: "left",
       [theme.breakpoints.down("sm")]: {
         padding: "0 1rem",
         color: "gray",
